@@ -570,8 +570,10 @@ EVENTS.forEach(ev => ev.badges.forEach(b => { if(b.img) EV_BY_IMG[b.img] = {ev, 
 
 // normalized archive rows
 // rows: [title, img, added, free, users, set?] — several rows can belong to one set (versions); group them
+const JUNK = /beta_title|^test|placeholder|creator[- ]campaign/i;
 function normalize(rows){
   const groups = new Map();
+  rows = rows.filter(r => !JUNK.test(r[0]) && !JUNK.test(r[5]||""));
   rows.forEach(r => { const key = r[5] || r[1]; if(!groups.has(key)) groups.set(key, []); groups.get(key).push(r); });
   return [...groups.entries()].map(([key, rs]) => {
     rs.sort((a,b)=>(a[2]||"9999").localeCompare(b[2]||"9999") || a[0].localeCompare(b[0], undefined, {numeric:true}));
