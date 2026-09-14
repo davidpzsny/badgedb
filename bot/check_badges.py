@@ -17,6 +17,10 @@ import json, os, sys, io, datetime, requests
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 DB = os.path.join(ROOT, "badges.json")
 MAX_POSTS_PER_RUN = 5          # safety valve so one bad run can't burn credits
+import re
+# Twitch internal / placeholder sets that should be saved but never announced
+JUNK = re.compile(r"beta_title|^test|placeholder|creator[- ]campaign", re.I)
+def is_junk(b): return bool(JUNK.search(b["title"]) or JUNK.search(b["set"]))
 DRY_RUN = os.environ.get("DRY_RUN") == "1"
 
 # ---------- Twitch ----------
@@ -100,7 +104,9 @@ def main():
     new_sets, seen = [], set()
     for b in new_versions:
         if b["set"] not in known_sets and b["set"] not in seen:
-            seen.add(b["set"]); new_sets.append(b)
+            seen.add(b["set"])
+            if is_junk(b): print("skipping internal badge:", b["title"])
+            else: new_sets.append(b)
     print(f"{len(live)} versions live, {len(new_versions)} new versions, {len(new_sets)} new sets to announce")
 
     today = datetime.date.today().isoformat()
