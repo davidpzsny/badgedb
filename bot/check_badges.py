@@ -170,7 +170,7 @@ def main():
     # 2) save every new version: extra versions of a known set inherit that set's date (not announced),
     #    versions of a brand-new set get today's date
     for b in new_versions:
-        added = set_added.get(b["set"], today) if b["set"] in known_sets else today
+        added = set_added.get(b["set"], "") if b["set"] in known_sets else today
         rows.insert(0, [b["title"], b["img"], added, 0, 0, b["set"]]); changed = True
 
     if changed:
