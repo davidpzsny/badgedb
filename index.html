@@ -569,7 +569,18 @@ const EV_BY_IMG = {};
 EVENTS.forEach(ev => ev.badges.forEach(b => { if(b.img) EV_BY_IMG[b.img] = {ev, b}; }));
 
 // normalized archive rows
-let globalBadges = BADGES.map(r => ({ set:r[1], name:r[0], img:cdn(r[1]), imgId:r[1], added:r[2], free:r[3]===1, users:r[4], versions:[{id:"1",img:cdn(r[1])}] }));
+// rows: [title, img, added, free, users, set?] — several rows can belong to one set (versions); group them
+function normalize(rows){
+  const groups = new Map();
+  rows.forEach(r => { const key = r[5] || r[1]; if(!groups.has(key)) groups.set(key, []); groups.get(key).push(r); });
+  return [...groups.entries()].map(([key, rs]) => {
+    rs.sort((a,b)=>(a[2]||"9999").localeCompare(b[2]||"9999") || a[0].localeCompare(b[0], undefined, {numeric:true}));
+    const p = rs[0];
+    return { set:key, name:p[0], img:cdn(p[1]), imgId:p[1], added:p[2], free:rs.some(x=>x[3]===1), users:Math.max(...rs.map(x=>x[4]||0)),
+             versions: rs.map((x,i)=>({ id:String(i+1), title:x[0], img:cdn(x[1]) })) };
+  });
+}
+let globalBadges = normalize(BADGES);
 let channelBadges = [], token = null;
 try{ CONFIG.clientId = CONFIG.clientId || localStorage.getItem("badgedb_client_id") || ""; }catch(_){}
 const isFile = location.protocol === "file:";
@@ -750,7 +761,7 @@ function openBadge(set,type){
   open(`<div class="hero-img">${tile(b)}</div><h3>${esc(b.name)}</h3><div class="sub">${type==='global'?'Twitch global badge':'Channel badge'}${b.free?' · <span class="pill free">Free</span>':''}${st==="live"?' · <span class="pill live">Active now</span>':st==="soon"?' · <span class="pill soon">Upcoming</span>':''}</div>
     ${ev&&st==="live"?`<div class="cd" data-cd="${ev.ev.end}">${countdown(ev.ev.end)}<small>until it ends</small></div>`:''}
     <dl class="kv"><dt>How to get it</dt><dd>${esc(how)}</dd>${ev?`<dt>Event</dt><dd>${esc(ev.ev.name)}<br><span style="color:var(--muted)">${fmtFull(ev.ev.start)} – ${fmtFull(ev.ev.end)}</span></dd>`:''}${b.added?`<dt>Added</dt><dd>${fmt(b.added)}</dd>`:''}${b.users?`<dt>Users</dt><dd>${num(b.users)}</dd>`:''}<dt>Versions</dt><dd>${b.versions.length}</dd>${type==='global'?`<dt>Set ID</dt><dd><code>${esc(b.set)}</code></dd>`:''}</dl>
-    ${b.versions.length>1?`<div class="versions">${b.versions.map(v=>`<span class="v">${tile({name:v.title||v.id,img:v.img})}<span>${esc(v.title&&v.title!==b.name?v.title:v.id)}</span></span>`).join('')}</div>`:''}
+    ${b.versions.length>1?`<div class="versions">${b.versions.map(v=>`<span class="v">${tile({name:v.title||v.id,img:v.img})}<span>${esc(v.title&&v.title!==b.name?v.title.replace(b.name,'').trim()||v.id:v.id)}</span></span>`).join('')}</div>`:''}
     <div class="actions">${ev?`<button class="btn" data-openev="${ev.ev.id}">Open event</button>`:''}<a class="btn ghost" href="${esc(b.img)}" target="_blank" rel="noopener">Open image</a><button class="btn ghost" data-copy="${esc(b.img)}">Copy image URL</button></div>`);
 }
 
@@ -789,7 +800,7 @@ renderAll(); route(); setInterval(tick,1000);
 // When hosted, prefer the live badges.json kept up to date by the bot (see badgedb-bot/).
 if(!isFile) fetch('badges.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(rows=>{
   if(!Array.isArray(rows)||!rows.length) return;
-  globalBadges = rows.map(r=>({ set:r[1], name:r[0], img:cdn(r[1]), imgId:r[1], added:r[2], free:r[3]===1, users:r[4], versions:[{id:"1",img:cdn(r[1])}] }));
+  globalBadges = normalize(rows);
   renderAll();
 }).catch(()=>{});
 </script>
