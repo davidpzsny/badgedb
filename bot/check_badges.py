@@ -75,40 +75,58 @@ def post_to_discord(badge):
     print("posted to Discord")
 
 # ---------- main ----------
+# badges.json rows: [title, img, added, free, users, set_id]
 def main():
-    rows = json.load(open(DB, encoding="utf-8"))          # [title, img, added, free, users]
-    known = {r[1] for r in rows}
+    rows = json.load(open(DB, encoding="utf-8"))
     live = twitch_global_badges()
-    new = [b for b in live if b["img"] not in known]
-    # one post per SET (e.g. a 10-level gifter badge should not be 10 posts)
-    seen_sets, todo = set(), []
-    for b in new:
-        if b["set"] not in seen_sets:
-            seen_sets.add(b["set"]); todo.append(b)
-    print(f"{len(live)} versions live, {len(new)} new, {len(todo)} sets to announce")
-    if not new:
-        return
+    img_to_set = {b["img"]: b["set"] for b in live}
+    changed = False
+
+    # 1) make sure every existing row knows its set id (older rows had no 6th field)
+    for r in rows:
+        if len(r) < 6:
+            r.append(img_to_set.get(r[1], "")); changed = True
+        elif not r[5] and r[1] in img_to_set:
+            r[5] = img_to_set[r[1]]; changed = True
+
+    known_imgs = {r[1] for r in rows}
+    known_sets = {r[5] for r in rows if r[5]}
+    set_added = {}
+    for r in rows:
+        if r[5] and r[2] and (r[5] not in set_added or r[2] < set_added[r[5]]):
+            set_added[r[5]] = r[2]
+
+    new_versions = [b for b in live if b["img"] not in known_imgs]
+    new_sets, seen = [], set()
+    for b in new_versions:
+        if b["set"] not in known_sets and b["set"] not in seen:
+            seen.add(b["set"]); new_sets.append(b)
+    print(f"{len(live)} versions live, {len(new_versions)} new versions, {len(new_sets)} new sets to announce")
+
     today = datetime.date.today().isoformat()
     posted = 0
-    for b in todo:
+    for b in new_sets:
         if posted >= MAX_POSTS_PER_RUN:
-            print("post cap for this run reached; remaining badges are still saved")
-            break
-        img = requests.get(b["url"], timeout=30).content
+            print("post cap for this run reached; remaining badges are still saved"); break
         if DRY_RUN:
             print("DRY RUN, would post:", b["title"])
         else:
             try:
-                post_to_x(b, img)
-                post_to_discord(b)
+                img = requests.get(b["url"], timeout=30).content
+                post_to_x(b, img); post_to_discord(b)
             except Exception as e:
                 print("posting failed:", e)
         posted += 1
-    # save every new version so it is never announced twice, and so the site shows it
-    for b in new:
-        rows.insert(0, [b["title"], b["img"], today, 0, 0])
-    json.dump(rows, open(DB, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
-    print("badges.json updated")
+
+    # 2) save every new version: extra versions of a known set inherit that set's date (not announced),
+    #    versions of a brand-new set get today's date
+    for b in new_versions:
+        added = set_added.get(b["set"], today) if b["set"] in known_sets else today
+        rows.insert(0, [b["title"], b["img"], added, 0, 0, b["set"]]); changed = True
+
+    if changed:
+        json.dump(rows, open(DB, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+        print("badges.json updated")
 
 if __name__ == "__main__":
     main()
