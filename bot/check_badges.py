@@ -45,19 +45,62 @@ def twitch_global_badges():
                         "desc": v.get("description", "")})
     return out
 
+# ---------- post image (1200x675 card) ----------
+def make_card(badge_png_bytes, title, subtitle=""):
+    from PIL import Image, ImageDraw, ImageFont, ImageFilter
+    W, H = 1200, 675
+    def font(sz, bold=True):
+        p = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if bold else "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+        try: return ImageFont.truetype(p, sz)
+        except Exception: return ImageFont.load_default(size=sz)
+    img = Image.new("RGB", (W, H), (12, 11, 17))
+    glow = Image.new("RGB", (W, H), (12, 11, 17)); ImageDraw.Draw(glow).ellipse((330, 120, 870, 600), fill=(60, 38, 110))
+    img = Image.blend(img, glow.filter(ImageFilter.GaussianBlur(130)), 0.9)
+    d = ImageDraw.Draw(img)
+    # header
+    try:
+        logo = Image.open(os.path.join(ROOT, "logo.png")).convert("RGBA").resize((72, 72)); img.paste(logo, (56, 46), logo)
+    except Exception: pass
+    d.text((148, 52), "NEW TWITCH GLOBAL BADGE", font=font(24), fill=(167, 139, 250))
+    d.text((148, 82), "Badge added on Twitch", font=font(26, False), fill=(158, 154, 176))
+    d.line((56, 150, W - 56, 150), fill=(45, 43, 58), width=2)
+    # badge on a rounded tile, centered
+    tile = Image.new("RGBA", (300, 300), (0, 0, 0, 0))
+    ImageDraw.Draw(tile).rounded_rectangle((0, 0, 299, 299), radius=52, fill=(30, 29, 42), outline=(70, 66, 95), width=2)
+    b = Image.open(io.BytesIO(badge_png_bytes)).convert("RGBA").resize((216, 216), Image.NEAREST)
+    tile.alpha_composite(b, (42, 42)); img.paste(tile, ((W - 300) // 2, 178), tile)
+    # title
+    tsz = 66 if len(title) <= 22 else 52 if len(title) <= 40 else 40
+    f = font(tsz); lines, cur = [], ""
+    for w in title.split():
+        t = (cur + " " + w).strip()
+        if d.textlength(t, font=f) > W - 160 and cur: lines.append(cur); cur = w
+        else: cur = t
+    lines.append(cur); y = 500 if len(lines) == 1 else 490
+    for ln in lines[:2]: d.text(((W - d.textlength(ln, font=f)) / 2, y), ln, font=f, fill=(244, 243, 248)); y += int(tsz * 1.12)
+    # footer
+    d.line((56, H - 78, W - 56, H - 78), fill=(45, 43, 58), width=2)
+    f = font(24); d.text((56, H - 56), "BADGEDATABASE.COM", font=f, fill=(120, 116, 140))
+    r = "X.COM/BADGEDATABASE"; d.text((W - 56 - d.textlength(r, font=f), H - 56), r, font=f, fill=(120, 116, 140))
+    c = "TWITCH.TV/BADGE_DB"; d.text(((W - d.textlength(c, font=f)) / 2, H - 56), c, font=f, fill=(120, 116, 140))
+    out = io.BytesIO(); img.save(out, "PNG"); return out.getvalue()
+
+def subtitle_for(badge): return ""
+
 # ---------- X ----------
 def post_to_x(badge, image_bytes):
     import tweepy
     kw = dict(consumer_key=os.environ["X_API_KEY"], consumer_secret=os.environ["X_API_SECRET"],
               access_token=os.environ["X_ACCESS_TOKEN"], access_token_secret=os.environ["X_ACCESS_SECRET"])
-    text = (f"🆕 New Twitch global badge: {badge['title']}\n"
-            f"{badge['desc'] or 'Availability and objective TBA — check the timeline.'}\n"
-            f"#Twitch #TwitchBadges")
+    sub = ""
+    text = f"Twitch global badge added: {badge['title']}"
     client = tweepy.Client(**kw)
     media_ids = None
     try:  # media upload (v1.1 endpoint) — falls back to text-only if unavailable on your plan
         api = tweepy.API(tweepy.OAuth1UserHandler(*kw.values()))
-        m = api.media_upload(filename=f"{badge['img']}.png", file=io.BytesIO(image_bytes))
+        try: card = make_card(image_bytes, badge["title"], sub)
+        except Exception as e: print("card render failed, using raw badge:", e); card = image_bytes
+        m = api.media_upload(filename=f"{badge['img']}.png", file=io.BytesIO(card))
         media_ids = [m.media_id]
     except Exception as e:
         print("media upload failed, posting text only:", e)
