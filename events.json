@@ -1,5 +1,80 @@
 [
  {
+  "id": "teddie",
+  "name": "Teddie",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Teddie",
+    "img": "80786dcb-bf5e-4069-ab13-32b4fa436c51",
+    "how": "This badge was earned by subscribing to a streamer in the Persona 4 Golden category during the 2026 ATLUS celebration!",
+    "cost": "na"
+   }
+  ]
+ },
+ {
+  "id": "nahobiho",
+  "name": "Nahobiho",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Nahobiho",
+    "img": "adc8a831-4884-471b-9723-aad8bf3e05b8",
+    "how": "This badge was earned by subscribing to a streamer in the Shin Megami Tensei V: Vengeance category during the 2026 ATLUS celebration!",
+    "cost": "na"
+   }
+  ]
+ },
+ {
+  "id": "morgana",
+  "name": "Morgana",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Morgana",
+    "img": "a0c09111-b247-4b40-88a2-7ef1cfc60f65",
+    "how": "This badge was earned by subscribing to a streamer in the Persona 5 Royal category during the 2026 ATLUS celebration!",
+    "cost": "na"
+   }
+  ]
+ },
+ {
+  "id": "koromaru",
+  "name": "Koromaru",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Koromaru",
+    "img": "d08bb5f3-7638-45c6-919a-9f2eb4ef505e",
+    "how": "This badge was earned by subscribing to a streamer in the Persona 3 Reload category during the 2026 ATLUS celebration!",
+    "cost": "na"
+   }
+  ]
+ },
+ {
+  "id": "homo-tenta",
+  "name": "Homo Tenta",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Homo Tenta",
+    "img": "3ec6f155-ebc7-4624-89d9-ead63122dc52",
+    "how": "This badge was earned by subscribing to a streamer in the Metaphor: ReFantazio category during the 2026 ATLUS celebration!",
+    "cost": "na"
+   }
+  ]
+ },
+ {
   "id": "blue-creeper-boss",
   "name": "TGS 2026: Blue Creeper Boss",
   "category": "Minecraft",
