@@ -19,8 +19,8 @@ DB = os.path.join(ROOT, "badges.json")
 MAX_POSTS_PER_RUN = 5          # safety valve so one bad run can't burn credits
 import re
 # Twitch internal / placeholder sets that should be saved but never announced
-JUNK = re.compile(r"beta_title|^test|placeholder|creator[- ]campaign", re.I)
-def is_junk(b): return bool(JUNK.search(b["title"]) or JUNK.search(b["set"]))
+JUNK = re.compile(r"beta_title|_beta$|^beta$|placeholder|default-creator-campaign", re.I)
+def is_junk(b): return bool(JUNK.search(b["set"]) or JUNK.search(b["title"]))
 DRY_RUN = os.environ.get("DRY_RUN") == "1"
 
 # ---------- Twitch ----------
@@ -44,6 +44,108 @@ def twitch_global_badges():
                         "img": img_id, "url": v["image_url_4x"],
                         "desc": v.get("description", "")})
     return out
+
+# ---------- events.json: one entry per badge set so it shows on the timeline ----------
+def slugify(t):
+    import re as _re
+    return _re.sub(r"[^a-z0-9]+", "-", t.lower()).strip("-")[:48] or "badge"
+
+def add_events(new_sets):
+    """Create a timeline entry for each newly discovered badge set.
+    start/end stay empty -> the site lists it under 'Date not announced'.
+    Fill in the dates by editing events.json in the repo (or on the web UI)."""
+    try: events = json.load(open(EV_DB, encoding="utf-8"))
+    except Exception: events = []
+    known_imgs = {b.get("img") for e in events for b in e.get("badges", [])}
+    by_id = {e["id"] for e in events}
+    added = 0
+    for b in new_sets:
+        if b["img"] in known_imgs: continue
+        eid = slugify(b["set"] or b["title"])
+        while eid in by_id: eid += "-2"
+        by_id.add(eid); known_imgs.add(b["img"]); added += 1
+        events.insert(0, {"id": eid, "name": b["title"], "category": "Unknown", "start": "", "end": "",
+                          "badges": [{"name": b["title"], "img": b["img"],
+                                      "how": b.get("desc") or "Objective not announced yet.", "cost": "na"}]})
+    if added:
+        json.dump(events, open(EV_DB, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        print(f"events.json: {added} new timeline entries (dates still need filling in)")
+
+# ---------- channel campaign badges (sub / watch / ranking) ----------
+EV_DB = os.path.join(ROOT, "events.json")
+CH_DB = os.path.join(ROOT, "channel-badges.json")
+CH_STATE = os.path.join(ROOT, "channels-state.json")
+CH_LIST = os.path.join(ROOT, "channels.txt")
+CH_PER_RUN = 120            # channels checked per run
+CH_RECHECK_HOURS = 24
+
+def helix_get(token, path, params=None):
+    r = requests.get("https://api.twitch.tv/helix/" + path, params=params or {}, timeout=30,
+                     headers={"Client-Id": os.environ["TWITCH_CLIENT_ID"], "Authorization": f"Bearer {token}"})
+    r.raise_for_status(); return r.json().get("data", [])
+
+def app_token():
+    r = requests.post("https://id.twitch.tv/oauth2/token", params={"client_id": os.environ["TWITCH_CLIENT_ID"],
+        "client_secret": os.environ["TWITCH_CLIENT_SECRET"], "grant_type": "client_credentials"}, timeout=30)
+    r.raise_for_status(); return r.json()["access_token"]
+
+def load_json(path, default):
+    try: return json.load(open(path, encoding="utf-8"))
+    except Exception: return default
+
+def crawl_channel_badges(token):
+    db = load_json(CH_DB, [])                 # rows: [title, img, first_seen, channel_login, channel_display, set_id, type]
+    state = load_json(CH_STATE, {})           # login -> {"id":..., "checked": iso}
+    known = {r[1] for r in db}
+    now = datetime.datetime.utcnow(); now_iso = now.isoformat(timespec="seconds")
+
+    # candidates: manual list + top live streams
+    wanted = {}
+    if os.path.exists(CH_LIST):
+        for line in open(CH_LIST, encoding="utf-8"):
+            l = line.strip().lower().lstrip("@")
+            if l and not l.startswith("#"): wanted[l] = None
+    try:
+        for st in helix_get(token, "streams", {"first": 100}):
+            wanted[st["user_login"].lower()] = (st["user_id"], st["user_name"])
+    except Exception as e: print("streams lookup failed:", e)
+
+    # resolve ids for manual names
+    need_ids = [l for l, v in wanted.items() if v is None and not state.get(l, {}).get("id")]
+    for i in range(0, len(need_ids), 100):
+        try:
+            for u in helix_get(token, "users", [("login", l) for l in need_ids[i:i+100]]):
+                wanted[u["login"].lower()] = (u["id"], u["display_name"])
+        except Exception as e: print("users lookup failed:", e)
+
+    due = []
+    for login, v in wanted.items():
+        st = state.get(login, {})
+        if v: st["id"], st["display"] = v
+        if not st.get("id"): continue
+        last = st.get("checked")
+        if not last or (now - datetime.datetime.fromisoformat(last)).total_seconds() > CH_RECHECK_HOURS * 3600:
+            due.append(login)
+        state[login] = st
+    due.sort(key=lambda l: state[l].get("checked") or "")   # least-recently-checked first
+    added = 0
+    for login in due[:CH_PER_RUN]:
+        st = state[login]
+        try:
+            for sset in helix_get(token, "chat/badges", {"broadcaster_id": st["id"]}):
+                sid = sset["set_id"]
+                if not sid.startswith("campaign-"): continue
+                typ = "sub" if sid.endswith("-sub") else "watch" if sid.endswith("-mw") else "ranking" if sid.endswith("-ranking") else "other"
+                for v in sset["versions"]:
+                    img = v["image_url_4x"].split("/badges/v1/")[1].split("/")[0]
+                    if img in known: continue
+                    known.add(img); added += 1
+                    db.insert(0, [v.get("title") or sid, img, now_iso[:10], login, st.get("display") or login, sid, typ])
+        except Exception as e: print("channel", login, "failed:", e)
+        st["checked"] = now_iso
+    json.dump(db, open(CH_DB, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+    json.dump(state, open(CH_STATE, "w", encoding="utf-8"), separators=(",", ":"))
+    print(f"channel badges: checked {min(len(due), CH_PER_RUN)} channels, {added} new campaign badges, {len(db)} total")
 
 # ---------- post image (1200x675 card) ----------
 def make_card(badge_png_bytes, title, subtitle=""):
@@ -176,6 +278,11 @@ def main():
     if changed:
         json.dump(rows, open(DB, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
         print("badges.json updated")
+
+    add_events(new_sets)
+
+    try: crawl_channel_badges(app_token())
+    except Exception as e: print("channel crawl failed:", e)
 
 if __name__ == "__main__":
     main()
