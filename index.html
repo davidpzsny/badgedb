@@ -158,6 +158,8 @@
   .pill{font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:999px;letter-spacing:.02em;white-space:nowrap}
   .pill.free{background:rgba(52,211,153,.14);color:var(--mint)} .pill.paid{background:rgba(139,92,246,.2);color:var(--purple-2)} .pill.na{background:rgba(255,255,255,.06);color:var(--muted)} .pill.live{background:rgba(52,211,153,.14);color:var(--mint)} .pill.soon{background:rgba(251,191,36,.14);color:var(--amber)}
   .more-wrap{display:flex;justify-content:center;margin-top:18px}
+  .pill.sub{background:rgba(139,92,246,.2);color:var(--purple-2)}.pill.watch{background:rgba(52,211,153,.14);color:var(--mint)}.pill.ranking{background:rgba(251,191,36,.14);color:var(--amber)}.pill.other{background:rgba(255,255,255,.06);color:var(--muted)}
+  .brow .ch{color:var(--purple-2);font-weight:700}
   .faq{display:flex;flex-direction:column;gap:6px;margin-bottom:22px}
   .faq details{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0 16px}
   .faq summary{cursor:pointer;font-weight:700;font-size:14px;padding:12px 0;list-style:none;display:flex;align-items:center;gap:10px}
@@ -321,7 +323,7 @@
     <nav class="nav group" aria-label="Twitch">
       <h6>Twitch</h6>
       <a href="#global" data-route="global"><img src="https://static-cdn.jtvnw.net/badges/v1/bd444ec6-8f34-4bf9-91f4-af1e3428d80f/3" alt="">Global Badges <span class="count" id="cGlobal"></span></a>
-      <a href="#channel" data-route="channel"><img src="https://static-cdn.jtvnw.net/badges/v1/5d9f2208-5dd8-11e7-8513-2ff4adfae661/3" alt="">Channel Badges</a>
+      <a href="#channel" data-route="channel"><img src="https://static-cdn.jtvnw.net/badges/v1/5d9f2208-5dd8-11e7-8513-2ff4adfae661/3" alt="">Channel Badges <span class="count" id="cChannel"></span></a>
     </nav>
     <nav class="nav group" aria-label="Legal">
       <h6>Legal</h6>
@@ -436,16 +438,23 @@
     <!-- CHANNEL -->
     <section data-page="channel" hidden>
       <div class="crumbs"><a href="#home">Home</a><span>/</span>Twitch<span>/</span>Channel Badges</div>
-      <div class="page-head"><div><h1>Twitch Channel Badges</h1><p class="lead">Subscriber and Bits badges a broadcaster designed for their own chat.</p></div></div>
+      <div class="page-head"><div><h1>Twitch Channel Badges</h1><p class="lead">Campaign badges streamers hand out for subscribing, watching or being a top supporter — collected automatically from live channels.</p></div></div>
+      <div class="toolbar">
+        <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="qC" type="search" placeholder="Search badge or channel…" autocomplete="off"></label>
+        <div class="seg" id="cFilter"><span class="lbl">Type</span><button data-v="all" class="on">All</button><button data-v="sub">Sub</button><button data-v="watch">Watch</button><button data-v="ranking">Ranking</button></div>
+      </div>
+      <div class="count-line" id="chCount"></div>
+      <div class="blist" id="gridChannel"></div>
+      <div class="more-wrap" id="cMore"></div>
+
+      <h2>Look up any channel</h2>
+      <p class="sec-sub">Load a channel's own subscriber, Bits and campaign badges straight from Twitch (needs the Twitch connection from the Global Badges page).</p>
       <div class="connect">
-        <div class="txt"><b>Look up any channel</b>Type a Twitch username to load its subscriber and Bits badges. Needs the Twitch connection from the Global Badges page.</div>
         <label class="search" style="flex:1;min-width:220px"><input id="chanInput" placeholder="badge_db" autocomplete="off"></label>
         <button class="btn" id="btnChan">Load badges</button>
       </div>
       <div class="note" id="chanNote"></div>
-      <div class="toolbar"><label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="qC" type="search" placeholder="Search…" autocomplete="off"></label><div class="seg" id="cFilter"><button data-v="all" class="on">All</button><button data-v="subscriber">Subscriber</button><button data-v="bits">Bits</button></div></div>
-      <div class="count-line" id="chCount"></div>
-      <div class="blist" id="gridChannel"></div>
+      <div class="blist" id="gridLookup" style="margin-top:14px"></div>
     </section>
 
     <!-- BADGE DETAIL -->
@@ -508,71 +517,7 @@ const CONFIG = {
    ===================================================================== */
 const cdn = id => id ? `https://static-cdn.jtvnw.net/badges/v1/${id}/3` : "";
 const SUB = "Subscribe (Tier 1) or gift a Tier 1 sub in the category.";
-const EVENTS = [
-  { id:"clipped-that", name:"Clipped That", category:"Twitch", start:"2026-09-01T00:00:00Z", end:"2026-09-15T23:59:00Z",
-    badges:[{ name:"Clipped That", img:"", how:"Download a clip of your stream and share it to social by Sep 15.", cost:"free" }] },
-  { id:"onimusha", name:"Onimusha: Way of the Sword", category:"Onimusha: Way of the Sword", start:"2026-09-04T04:00:00Z", end:"2026-09-18T03:59:00Z",
-    badges:[{ name:"Onimusha Armament", img:"379bfc94-8276-4e9e-9a34-615e10c55baf", how:SUB, cost:"paid" }] },
-  { id:"lego-harley", name:"LEGO Batman: Harley", category:"LEGO Batman: Legacy of the Dark Knight", start:"2026-09-01T07:00:00Z", end:"2026-09-20T06:59:00Z",
-    badges:[{ name:"Harley Mayhem", img:"1d235db6-09cc-458f-9805-be2efc178e54", how:SUB, cost:"paid" }] },
-  { id:"resonance", name:"Resonance: A Plague Tale Legacy", category:"Resonance: A Plague Tale Legacy", start:"2026-08-26T16:00:00Z", end:"2026-09-23T15:59:00Z",
-    badges:[{ name:"Resonance Minotaur", img:"63cf6329-f34c-449e-8f70-fafa1eb1de9e", how:"Watch 60 minutes in the category.", cost:"free" }] },
-  { id:"blizzcon", name:"BlizzCon 2026", category:"Diablo IV", start:"2026-09-11T17:00:00Z", end:"2026-09-26T16:59:00Z",
-    badges:[{ name:"Diablo", img:"12e66b34-5748-4eb0-8cf1-63d01e925b4f", how:SUB, cost:"paid" }] },
-  { id:"lego-joker", name:"LEGO Batman: Joker", category:"LEGO Batman: Legacy of the Dark Knight", start:"2026-09-12T07:00:00Z", end:"2026-09-28T06:59:00Z",
-    badges:[{ name:"Joker Mayhem", img:"7973c062-7a4f-41de-9a20-77d4b2edc56a", how:SUB, cost:"paid" }] },
-  { id:"elden-q1", name:"Questline 1: Path of the Tarnished", category:"ELDEN RING", start:"2026-09-01T07:00:00Z", end:"2026-09-29T06:59:00Z",
-    badges:[{ name:"Sorcerer Rogier", img:"3d6ad3b0-0a0f-43ae-a969-c5215d8d5a06", how:SUB, cost:"paid" }] },
-  { id:"solasta", name:"Solasta II", category:"Solasta II", start:"2026-09-08T10:30:00Z", end:"2026-09-29T06:59:00Z",
-    badges:[{ name:"Solasta II Multiplayer", img:"e8430418-13e9-4325-b2ad-85664d2a4ddd", how:"Watch 30 minutes in the category.", cost:"free" }] },
-  { id:"nopixel", name:"nopixel V", category:"Grand Theft Auto V", start:"2026-09-08T04:00:00Z", end:"2026-09-30T03:59:00Z",
-    badges:[{ name:"nopixel V Launch", img:"6a34b65f-93f6-4ebd-8f75-898bdaff79e8", how:SUB, cost:"paid" }] },
-  { id:"wardogs", name:"WARDOGS", category:"WARDOGS", start:"2026-09-03T18:00:00Z", end:"2026-09-30T17:59:00Z",
-    badges:[{ name:"WARDOG", img:"a00140ee-7c25-4cd1-95d9-54b9603f1f80", how:"Watch 30 minutes in the category.", cost:"free" },
-            { name:"WARLORD", img:"233322a6-0c31-43e7-acfa-f10e732e87da", how:SUB, cost:"paid" }] },
-  { id:"dawnwalker", name:"The Blood of Dawnwalker Launch", category:"The Blood of Dawnwalker", start:"2026-09-03T00:00:00Z", end:"2026-09-30T23:58:00Z",
-    badges:[{ name:"Launch", img:"1c04ddd1-6baa-4e5c-a685-976c621d5114", how:"Watch 60 minutes in the category.", cost:"free" },
-            { name:"Supporter", img:"63076299-4910-4594-a05c-60899d32c765", how:SUB, cost:"paid" }] },
-  { id:"pokemon", name:"Pokémon First Partners Collection", category:"20 eligible Pokémon categories", start:"2026-08-24T17:00:00Z", end:"2026-10-01T07:00:00Z",
-    note:"Unlock the starters before Oct 1 — otherwise you can't get their evolution badges later.",
-    badges:[{ name:"Pichu", img:"20f214cf-36b0-4b42-8992-3b769bcb0461", how:"Watch 20 minutes a day for 3 days.", cost:"free" },
-            { name:"Bulbasaur", img:"68072d07-8648-4066-9694-3f9fb594eb3d", how:"Sub / gift sub, or watch 20 min a day for 3 days (1 in 3 chance).", cost:"free" },
-            { name:"Charmander", img:"afe60f97-56d1-493d-a55c-2f1cec7aca7c", how:"Sub / gift sub, or watch 20 min a day for 3 days (1 in 3 chance).", cost:"free" },
-            { name:"Squirtle", img:"6e19714e-571f-4737-bc8b-865ebfb3e2c7", how:"Sub / gift sub, or watch 20 min a day for 3 days (1 in 3 chance).", cost:"free" }] },
-  { id:"mouseathon", name:"Mouseathon", category:"Any · channel: ironmouse", start:"2026-09-01T08:00:00Z", end:"2026-10-01T07:00:00Z",
-    badges:[{ name:"Mouseathon", img:"8bce8f4e-f53a-4922-b715-35167b0fae7b", how:"Watch ironmouse for 15 minutes.", cost:"free" }] },
-  { id:"subtember", name:"SUBtember 2026", category:"Any", start:"2026-08-28T17:00:00Z", end:"2026-10-01T17:00:00Z",
-    badges:[{ name:"SUBtember 2026", img:"6ae639f0-a06d-40a9-ad16-7b7e7c18a323", how:"Subscribe, gift a sub, or cheer a single Bit anywhere.", cost:"paid" }] },
-  { id:"twitchcon-sd", name:"TwitchCon 2026 San Diego", category:"TwitchCon", start:"2026-07-22T17:00:00Z", end:"2026-11-15T23:59:00Z",
-    badges:[{ name:"BeachBall", img:"b3f69c97-a9a7-4360-bb9e-485ec8db72bb", how:"Buy a 1-day TwitchCon ticket.", cost:"paid" },
-            { name:"Taco", img:"aea5244a-3fb5-48f9-a17c-a377760df226", how:"Buy a 3-day TwitchCon ticket.", cost:"paid" }] },
-  { id:"wolverine", name:"Marvel's Wolverine", category:"Marvel's Wolverine", start:"2026-09-14T14:00:00Z", end:"2026-09-28T13:59:00Z",
-    badges:[{ name:"Marvel's Wolverine", img:"55090800-82e4-4d31-8b3c-f9feb5e25557", how:SUB, cost:"paid" }] },
-  { id:"elden-q2", name:"Questline 2: Path of the Cardinal Sin", category:"ELDEN RING", start:"2026-10-01T00:00:00Z", end:"2026-10-28T23:59:00Z",
-    badges:[{ name:"Festering Bloody Finger", img:"", how:"Details not announced yet.", cost:"na" }] },
-  { id:"ffxiv", name:"Final Fantasy XIV Fan Festival 2026 JP", category:"Final Fantasy XIV", start:"2026-10-30T00:00:00Z", end:"2026-11-01T23:59:00Z",
-    badges:[{ name:"Alpha Chat", img:"1826cb5f-32a9-409a-9829-f6f47ea68239", how:"Watch any creator in the FFXIV category for 60 minutes during Fan Fest.", cost:"free" },
-            { name:"Quest Complete Chat", img:"e7d696ad-4479-4e44-bceb-5643f80bef38", how:"Watch the Fan Fest on /finalfantasyxiv for 60 minutes.", cost:"free" }] },
-  { id:"elden-q3", name:"Questline 3: Path of the Elden Lord", category:"ELDEN RING", start:"2026-11-02T00:00:00Z", end:"2026-11-28T23:59:00Z",
-    badges:[{ name:"Warrior Jar Alexander", img:"", how:"Details not announced yet.", cost:"na" }] },
-  { id:"elden-q4", name:"Questline 4: Path of Shadows", category:"ELDEN RING", start:"2026-12-01T00:00:00Z", end:"2026-12-28T23:59:00Z",
-    badges:[{ name:"St. Trina", img:"", how:"Details not announced yet.", cost:"na" }] },
-  { id:"twitchcon-berlin", name:"TwitchCon 2027 Berlin", category:"TwitchCon", start:"2027-05-22T00:00:00Z", end:"2027-05-23T23:59:00Z",
-    badges:[{ name:"TwitchCon Berlin badges", img:"", how:"TwitchCon always ships its own badges — expected again this year.", cost:"na" }] },
-  { id:"pokemon-evo", name:"Pokémon evolution badges", category:"Pokémon", start:"", end:"",
-    badges:[{ name:"Evolutions (up to 8)", img:"", how:"Requires the four starter badges unlocked before Oct 1. Details later.", cost:"na" }] },
-  { id:"wasteland", name:"Wasteland Circuit", category:"Rainbow Six Siege", start:"", end:"",
-    badges:[{ name:"DRON-E", img:"70e9e169-1fbf-4279-b23c-a714ccb0c9ef", how:SUB, cost:"paid" }] },
-  { id:"dragonwilds", name:"RuneScape: Dragonwilds", category:"RuneScape: Dragonwilds", start:"", end:"",
-    badges:[{ name:"Dragonwilds Eye", img:"a5b43a31-4534-4f9e-875b-b9f0d1be8f73", how:"Watch 30 minutes in the category.", cost:"free" }] },
-  { id:"payday3", name:"PAYDAY 3", category:"PAYDAY 3", start:"", end:"",
-    badges:[{ name:"Chains", img:"909fa1c7-8f4c-41c4-9910-ee936f7236d7", how:"Watch 30 minutes.", cost:"free" },
-            { name:"Hoxton", img:"bce13ab6-e9ae-4d9a-bf52-8ea7ba3ce8c4", how:"Watch 60 minutes.", cost:"free" },
-            { name:"Wolf", img:"714081b8-aded-46d7-a6c3-14b2d79f19be", how:"Watch 90 minutes.", cost:"free" },
-            { name:"Dallas", img:"a5ba44a9-2ccd-4b69-b5b8-9e28f1c887e7", how:SUB, cost:"paid" }] },
-  { id:"wsci", name:"2026 World Star Challengers Invitational", category:"Unknown", start:"", end:"",
-    badges:[{ name:"WSCI 2026", img:"e61d79be-7d9d-4de2-8571-41f00bf2081a", how:SUB, cost:"paid" }] },
-];
+let EVENTS = [{"id": "clipped-that", "name": "Clipped That", "category": "Twitch", "start": "2026-09-01T00:00:00Z", "end": "2026-09-15T23:59:00Z", "badges": [{"name": "Clipped That", "img": "", "how": "Download a clip of your stream and share it to social by Sep 15.", "cost": "free"}]}, {"id": "onimusha", "name": "Onimusha: Way of the Sword", "category": "Onimusha: Way of the Sword", "start": "2026-09-04T04:00:00Z", "end": "2026-09-18T03:59:00Z", "badges": [{"name": "Onimusha Armament", "img": "379bfc94-8276-4e9e-9a34-615e10c55baf", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "lego-harley", "name": "LEGO Batman: Harley", "category": "LEGO Batman: Legacy of the Dark Knight", "start": "2026-09-01T07:00:00Z", "end": "2026-09-20T06:59:00Z", "badges": [{"name": "Harley Mayhem", "img": "1d235db6-09cc-458f-9805-be2efc178e54", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "resonance", "name": "Resonance: A Plague Tale Legacy", "category": "Resonance: A Plague Tale Legacy", "start": "2026-08-26T16:00:00Z", "end": "2026-09-23T15:59:00Z", "badges": [{"name": "Resonance Minotaur", "img": "63cf6329-f34c-449e-8f70-fafa1eb1de9e", "how": "Watch 60 minutes in the category.", "cost": "free"}]}, {"id": "blizzcon", "name": "BlizzCon 2026", "category": "Diablo IV", "start": "2026-09-11T17:00:00Z", "end": "2026-09-26T16:59:00Z", "badges": [{"name": "Diablo", "img": "12e66b34-5748-4eb0-8cf1-63d01e925b4f", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "lego-joker", "name": "LEGO Batman: Joker", "category": "LEGO Batman: Legacy of the Dark Knight", "start": "2026-09-12T07:00:00Z", "end": "2026-09-28T06:59:00Z", "badges": [{"name": "Joker Mayhem", "img": "7973c062-7a4f-41de-9a20-77d4b2edc56a", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "elden-q1", "name": "Questline 1: Path of the Tarnished", "category": "ELDEN RING", "start": "2026-09-01T07:00:00Z", "end": "2026-09-29T06:59:00Z", "badges": [{"name": "Sorcerer Rogier", "img": "3d6ad3b0-0a0f-43ae-a969-c5215d8d5a06", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "solasta", "name": "Solasta II", "category": "Solasta II", "start": "2026-09-08T10:30:00Z", "end": "2026-09-29T06:59:00Z", "badges": [{"name": "Solasta II Multiplayer", "img": "e8430418-13e9-4325-b2ad-85664d2a4ddd", "how": "Watch 30 minutes in the category.", "cost": "free"}]}, {"id": "nopixel", "name": "nopixel V", "category": "Grand Theft Auto V", "start": "2026-09-08T04:00:00Z", "end": "2026-09-30T03:59:00Z", "badges": [{"name": "nopixel V Launch", "img": "6a34b65f-93f6-4ebd-8f75-898bdaff79e8", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "wardogs", "name": "WARDOGS", "category": "WARDOGS", "start": "2026-09-03T18:00:00Z", "end": "2026-09-30T17:59:00Z", "badges": [{"name": "WARDOG", "img": "a00140ee-7c25-4cd1-95d9-54b9603f1f80", "how": "Watch 30 minutes in the category.", "cost": "free"}, {"name": "WARLORD", "img": "233322a6-0c31-43e7-acfa-f10e732e87da", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "dawnwalker", "name": "The Blood of Dawnwalker Launch", "category": "The Blood of Dawnwalker", "start": "2026-09-03T00:00:00Z", "end": "2026-09-30T23:58:00Z", "badges": [{"name": "Launch", "img": "1c04ddd1-6baa-4e5c-a685-976c621d5114", "how": "Watch 60 minutes in the category.", "cost": "free"}, {"name": "Supporter", "img": "63076299-4910-4594-a05c-60899d32c765", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "pokemon", "name": "Pokémon First Partners Collection", "category": "20 eligible Pokémon categories", "start": "2026-08-24T17:00:00Z", "end": "2026-10-01T07:00:00Z", "note": "Unlock the starters before Oct 1 — otherwise you can't get their evolution badges later.", "badges": [{"name": "Pichu", "img": "20f214cf-36b0-4b42-8992-3b769bcb0461", "how": "Watch 20 minutes a day for 3 days.", "cost": "free"}, {"name": "Bulbasaur", "img": "68072d07-8648-4066-9694-3f9fb594eb3d", "how": "Sub / gift sub, or watch 20 min a day for 3 days (1 in 3 chance).", "cost": "free"}, {"name": "Charmander", "img": "afe60f97-56d1-493d-a55c-2f1cec7aca7c", "how": "Sub / gift sub, or watch 20 min a day for 3 days (1 in 3 chance).", "cost": "free"}, {"name": "Squirtle", "img": "6e19714e-571f-4737-bc8b-865ebfb3e2c7", "how": "Sub / gift sub, or watch 20 min a day for 3 days (1 in 3 chance).", "cost": "free"}]}, {"id": "mouseathon", "name": "Mouseathon", "category": "Any · channel: ironmouse", "start": "2026-09-01T08:00:00Z", "end": "2026-10-01T07:00:00Z", "badges": [{"name": "Mouseathon", "img": "8bce8f4e-f53a-4922-b715-35167b0fae7b", "how": "Watch ironmouse for 15 minutes.", "cost": "free"}]}, {"id": "subtember", "name": "SUBtember 2026", "category": "Any", "start": "2026-08-28T17:00:00Z", "end": "2026-10-01T17:00:00Z", "badges": [{"name": "SUBtember 2026", "img": "6ae639f0-a06d-40a9-ad16-7b7e7c18a323", "how": "Subscribe, gift a sub, or cheer a single Bit anywhere.", "cost": "paid"}]}, {"id": "twitchcon-sd", "name": "TwitchCon 2026 San Diego", "category": "TwitchCon", "start": "2026-07-22T17:00:00Z", "end": "2026-11-15T23:59:00Z", "badges": [{"name": "BeachBall", "img": "b3f69c97-a9a7-4360-bb9e-485ec8db72bb", "how": "Buy a 1-day TwitchCon ticket.", "cost": "paid"}, {"name": "Taco", "img": "aea5244a-3fb5-48f9-a17c-a377760df226", "how": "Buy a 3-day TwitchCon ticket.", "cost": "paid"}]}, {"id": "wolverine", "name": "Marvel's Wolverine", "category": "Marvel's Wolverine", "start": "2026-09-14T14:00:00Z", "end": "2026-09-28T13:59:00Z", "badges": [{"name": "Marvel's Wolverine", "img": "55090800-82e4-4d31-8b3c-f9feb5e25557", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "elden-q2", "name": "Questline 2: Path of the Cardinal Sin", "category": "ELDEN RING", "start": "2026-10-01T00:00:00Z", "end": "2026-10-28T23:59:00Z", "badges": [{"name": "Festering Bloody Finger", "img": "", "how": "Details not announced yet.", "cost": "na"}]}, {"id": "ffxiv", "name": "Final Fantasy XIV Fan Festival 2026 JP", "category": "Final Fantasy XIV", "start": "2026-10-30T00:00:00Z", "end": "2026-11-01T23:59:00Z", "badges": [{"name": "Alpha Chat", "img": "1826cb5f-32a9-409a-9829-f6f47ea68239", "how": "Watch any creator in the FFXIV category for 60 minutes during Fan Fest.", "cost": "free"}, {"name": "Quest Complete Chat", "img": "e7d696ad-4479-4e44-bceb-5643f80bef38", "how": "Watch the Fan Fest on /finalfantasyxiv for 60 minutes.", "cost": "free"}]}, {"id": "elden-q3", "name": "Questline 3: Path of the Elden Lord", "category": "ELDEN RING", "start": "2026-11-02T00:00:00Z", "end": "2026-11-28T23:59:00Z", "badges": [{"name": "Warrior Jar Alexander", "img": "", "how": "Details not announced yet.", "cost": "na"}]}, {"id": "elden-q4", "name": "Questline 4: Path of Shadows", "category": "ELDEN RING", "start": "2026-12-01T00:00:00Z", "end": "2026-12-28T23:59:00Z", "badges": [{"name": "St. Trina", "img": "", "how": "Details not announced yet.", "cost": "na"}]}, {"id": "twitchcon-berlin", "name": "TwitchCon 2027 Berlin", "category": "TwitchCon", "start": "2027-05-22T00:00:00Z", "end": "2027-05-23T23:59:00Z", "badges": [{"name": "TwitchCon Berlin badges", "img": "", "how": "TwitchCon always ships its own badges — expected again this year.", "cost": "na"}]}, {"id": "pokemon-evo", "name": "Pokémon evolution badges", "category": "Pokémon", "start": "", "end": "", "badges": [{"name": "Evolutions (up to 8)", "img": "", "how": "Requires the four starter badges unlocked before Oct 1. Details later.", "cost": "na"}]}, {"id": "wasteland", "name": "Wasteland Circuit", "category": "Rainbow Six Siege", "start": "", "end": "", "badges": [{"name": "DRON-E", "img": "70e9e169-1fbf-4279-b23c-a714ccb0c9ef", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "dragonwilds", "name": "RuneScape: Dragonwilds", "category": "RuneScape: Dragonwilds", "start": "", "end": "", "badges": [{"name": "Dragonwilds Eye", "img": "a5b43a31-4534-4f9e-875b-b9f0d1be8f73", "how": "Watch 30 minutes in the category.", "cost": "free"}]}, {"id": "payday3", "name": "PAYDAY 3", "category": "PAYDAY 3", "start": "", "end": "", "badges": [{"name": "Chains", "img": "909fa1c7-8f4c-41c4-9910-ee936f7236d7", "how": "Watch 30 minutes.", "cost": "free"}, {"name": "Hoxton", "img": "bce13ab6-e9ae-4d9a-bf52-8ea7ba3ce8c4", "how": "Watch 60 minutes.", "cost": "free"}, {"name": "Wolf", "img": "714081b8-aded-46d7-a6c3-14b2d79f19be", "how": "Watch 90 minutes.", "cost": "free"}, {"name": "Dallas", "img": "a5ba44a9-2ccd-4b69-b5b8-9e28f1c887e7", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "wsci", "name": "2026 World Star Challengers Invitational", "category": "Unknown", "start": "", "end": "", "badges": [{"name": "WSCI 2026", "img": "e61d79be-7d9d-4de2-8571-41f00bf2081a", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}];
 
 /* =====================================================================
    BADGES — snapshot of every Twitch global badge set.
@@ -596,12 +541,13 @@ function countdown(iso){ let d=Math.max(0,Date.parse(iso)-Date.now()); const day
 const evCost = ev => ev.badges.some(b=>b.cost==="free")?"free":ev.badges.some(b=>b.cost==="paid")?"paid":"na";
 
 // event lookup by image id → objective + status for the archive drawer
-const EV_BY_IMG = {};
-EVENTS.forEach(ev => ev.badges.forEach(b => { if(b.img) EV_BY_IMG[b.img] = {ev, b}; }));
+let EV_BY_IMG = {};
+function indexEvents(){ EV_BY_IMG = {}; EVENTS.forEach(ev => ev.badges.forEach(b => { if(b.img) EV_BY_IMG[b.img] = {ev, b}; })); }
+indexEvents();
 
 // normalized archive rows
 // rows: [title, img, added, free, users, set?] — several rows can belong to one set (versions); group them
-const JUNK = /beta_title|^test|placeholder|creator[- ]campaign/i;
+const JUNK = /beta_title|_beta$|^beta$|placeholder|default-creator-campaign/i;
 function normalize(rows){
   const groups = new Map();
   rows = rows.filter(r => !JUNK.test(r[0]) && !JUNK.test(r[5]||""));
@@ -616,7 +562,10 @@ function normalize(rows){
   });
 }
 let globalBadges = normalize(BADGES);
-let channelBadges = [], token = null;
+let channelBadges = [], lookupBadges = [], token = null;
+const CTYPE = {sub:"Sub badge", watch:"Watch badge", ranking:"Top supporter", other:"Campaign"};
+// channel-badges.json rows: [title, img, first_seen, login, display, set_id, type]
+const normChannel = rows => rows.map(r => ({ set:r[1], name:r[0], img:cdn(r[1]), imgId:r[1], added:r[2], login:r[3], display:r[4], setId:r[5], type:r[6], versions:[{id:"1",title:r[0],img:cdn(r[1])}] }));
 try{ CONFIG.clientId = CONFIG.clientId || localStorage.getItem("badgedb_client_id") || ""; }catch(_){}
 const isFile = location.protocol === "file:";
 const redirectUri = () => location.origin + location.pathname;
@@ -626,6 +575,7 @@ const ROUTES = ["home","timeline","global","channel","privacy","terms"];
 function route(){
   let h = location.hash.replace('#','') || "home";
   if(h.startsWith("badge/")){ renderBadgePage(decodeURIComponent(h.slice(6))); h = "badge"; }
+  else if(h.startsWith("channel-badge/")){ renderChannelBadgePage(decodeURIComponent(h.slice(14))); h = "badge"; }
   else if(!ROUTES.includes(h)) h = "home";
   $$('[data-page]').forEach(s => s.hidden = s.dataset.page !== h);
   $$('.nav a').forEach(a => a.classList.toggle('on', a.dataset.route === h));
@@ -644,7 +594,7 @@ function renderHome(){
   $('#socials').innerHTML = defs.map(([n,u,c,svg])=>`<a class="social" style="--c:${c}" href="${esc(u)}" target="_blank" rel="noopener"><span class="ic" ${n==='X'?'style="color:#111"':''}>${svg}</span><span><b>${n}</b><small>${esc(u.replace(/^https?:\/\/(www\.)?/,''))}</small></span><span class="go">↗</span></a>`).join('');
 
   const live = EVENTS.filter(e=>status(e)==="live");
-  const soon = EVENTS.filter(e=>["soon","tba"].includes(status(e)));
+  const soon = allEvents().filter(e=>["soon","tba"].includes(status(e)));
   $('#sLive').textContent = live.reduce((n,e)=>n+e.badges.length,0);
   $('#sSoon').textContent = soon.length;
   $('#sFree').textContent = live.reduce((n,e)=>n+e.badges.filter(b=>b.cost==="free").length,0);
@@ -671,7 +621,7 @@ function renderHome(){
   $('#tools').innerHTML = `
     <a class="tool" href="#global"><h3>Twitch Global Badges</h3><p>Badges that look the same in every channel — ${globalBadges.length} sets.</p><div class="strip">${strip(globalBadges)}</div><span class="arrow">→</span></a>
     <a class="tool" href="#timeline"><h3>Timeline</h3><p>Current and upcoming Twitch badge events with countdowns.</p><div class="strip">${strip(evBadges)}</div><span class="arrow">→</span></a>
-    <a class="tool" href="#channel"><h3>Twitch Channel Badges</h3><p>Subscriber and Bits badges of any channel.</p><div class="strip"><img src="${cdn('5d9f2208-5dd8-11e7-8513-2ff4adfae661')}" alt=""><img src="${cdn('73b5c3fb-24f9-4a82-a852-2f475b59411c')}" alt=""><img src="${cdn('511b78a9-ab37-472f-9569-457753bbe7d3')}" alt=""></div><span class="arrow">→</span></a>`;
+    <a class="tool" href="#channel"><h3>Twitch Channel Badges</h3><p>Campaign badges from live channels — sub, watch-time and top-supporter.</p><div class="strip"><img src="${cdn('5d9f2208-5dd8-11e7-8513-2ff4adfae661')}" alt=""><img src="${cdn('73b5c3fb-24f9-4a82-a852-2f475b59411c')}" alt=""><img src="${cdn('511b78a9-ab37-472f-9569-457753bbe7d3')}" alt=""></div><span class="arrow">→</span></a>`;
 }
 
 /* ---------- timeline page ---------- */
@@ -685,9 +635,17 @@ function eventCard(ev, st){
     : st==="ended"?`<span class="st ended"></span><span class="lbl">Ended ${fmt(ev.end)}</span>`:`<span class="st tba"></span><span class="lbl">Dates not announced</span>`;
   return `<button class="ev ${st}" data-ev="${ev.id}"><span class="top">${imgs}<span><span class="title">${esc(ev.name)}</span><span class="cat">${esc(ev.category)}${ev.badges.length>1?` · ${ev.badges.length} badges`:''}</span></span></span><span class="obj">${esc(ev.badges[0].how)}${ev.badges.length>1?' …':''}</span>${st==="live"?`<span class="bar ${urgent?'urgent':''}"><i style="width:${progress(ev).toFixed(1)}%"></i></span>`:''}<span class="foot">${foot}<span class="pill ${cost}">${{free:"Free",paid:"Sub / paid",na:"TBA"}[cost]}</span></span></button>`;
 }
+// badges in the archive that no event covers yet — so nothing is ever missing from the timeline
+function orphanEvents(){
+  const seen = new Set(Object.keys(EV_BY_IMG));
+  return globalBadges.filter(b => !seen.has(b.imgId) && b.added && (Date.now() - Date.parse(b.added)) < 45*864e5)
+    .map(b => ({ id:"orphan-"+b.set, name:b.name, category:"Unknown", start:"", end:"",
+                 badges:[{ name:b.name, img:b.imgId, how:b.how || "Objective not confirmed yet.", cost: b.free ? "free" : "na" }] }));
+}
+function allEvents(){ return EVENTS.concat(orphanEvents()); }
 function renderEvents(){
   const buckets = {live:[],soon:[],tba:[],ended:[]};
-  EVENTS.forEach(ev => {
+  allEvents().forEach(ev => {
     const hay = (ev.name+" "+ev.category+" "+ev.badges.map(b=>b.name+" "+b.how).join(" ")).toLowerCase();
     if(evQuery && !hay.includes(evQuery)) return;
     if(evFilter==="free" && !ev.badges.some(b=>b.cost==="free")) return;
@@ -731,12 +689,18 @@ function renderGlobal(){
   $('#gridGlobal').innerHTML = list.length ? list.slice(0,gShown).map(b=>badgeRow(b,'global')).join('') : `<div class="empty">No badges match “${esc(gQuery)}”.</div>`;
   $('#gMore').innerHTML = list.length>gShown ? `<button class="btn ghost" id="btnMore">Show ${Math.min(90,list.length-gShown)} more</button>` : '';
 }
-let cQuery="", cFilter="all";
+let cQuery="", cFilter="all", cShown=90;
+function channelRow(b){
+  return `<button class="brow" data-cbadge="${esc(b.imgId)}">${tile(b)}<span class="t"><span class="n">${esc(b.name)}</span><span class="m"><span class="pill ${b.type}">${CTYPE[b.type]||b.type}</span><span class="ch">${esc(b.display||b.login)}</span>${b.added?`<span>· ${fmt(b.added)}</span>`:''}</span></span></button>`;
+}
 function renderChannel(){
-  let list = channelBadges.filter(b => !cQuery || (b.name+" "+b.set).toLowerCase().includes(cQuery));
-  if(cFilter!=="all") list = list.filter(b=>b.set===cFilter);
-  $('#gridChannel').innerHTML = list.length ? list.map(b=>badgeRow(b,'channel')).join('') : `<div class="empty">${channelBadges.length?'No badges match.':'Load a channel above to see its badges.'}</div>`;
-  $('#chCount').textContent = channelBadges.length ? `${list.length} badge sets` : '';
+  let list = channelBadges.filter(b => !cQuery || (b.name+" "+b.login+" "+(b.display||"")).toLowerCase().includes(cQuery));
+  if(cFilter!=="all") list = list.filter(b=>b.type===cFilter);
+  $('#gridChannel').innerHTML = list.length ? list.slice(0,cShown).map(channelRow).join('') : `<div class="empty">${channelBadges.length?'No badges match.':'The bot is still collecting channel badges — check back soon.'}</div>`;
+  $('#chCount').textContent = channelBadges.length ? `${list.length} of ${channelBadges.length} campaign badges from ${new Set(channelBadges.map(b=>b.login)).size} channels` : '';
+  $('#cMore').innerHTML = list.length>cShown ? `<button class="btn ghost" id="btnCMore">Show ${Math.min(90,list.length-cShown)} more</button>` : '';
+  $('#cChannel').textContent = channelBadges.length || '';
+  $('#gridLookup').innerHTML = lookupBadges.map(b=>badgeRow(b,'channel')).join('');
 }
 function renderAll(){ renderHome(); renderEvents(); renderTimeline(); renderGlobal(); renderChannel(); }
 
@@ -759,14 +723,14 @@ async function loadGlobal(){
     globalBadges = live.map(b=>{ const s=snap[b.imgId]||{}; return {...b, added:s.added||"", free:!!s.free, users:s.users||0}; });
     $('#connectMsg').textContent=`Live list loaded: ${globalBadges.length} sets straight from Twitch.`; $('#btnConnect').textContent="Connected"; $('#globalNote').textContent="";
     renderAll(); toast(`${globalBadges.length} global badge sets loaded`); history.replaceState(null,"","#global");
-    if(!channelBadges.length) loadChannel(CONFIG.channel);
+    if(!lookupBadges.length) loadChannel(CONFIG.channel);
   }catch(e){ $('#globalNote').className='note err'; $('#globalNote').textContent="Couldn't load badges: "+e.message; $('#btnConnect').disabled=false; $('#btnConnect').textContent="Connect Twitch"; }
 }
 async function loadChannel(login){
   if(!token){ $('#chanNote').className='note err'; $('#chanNote').textContent="Connect Twitch on the Global Badges page first."; return; }
   $('#chanNote').className='note'; $('#chanNote').textContent=`Loading ${login}…`;
   try{ const u=(await helix("users?login="+encodeURIComponent(login)))[0]; if(!u) throw new Error("channel not found");
-    channelBadges = mapSets(await helix("chat/badges?broadcaster_id="+u.id)); $('#chanNote').textContent=`${u.display_name} · ${channelBadges.length} badge sets`; $('#chanInput').value=u.login; renderChannel();
+    lookupBadges = mapSets(await helix("chat/badges?broadcaster_id="+u.id)); $('#chanNote').textContent=`${u.display_name} · ${lookupBadges.length} badge sets`; $('#chanInput').value=u.login; renderChannel();
   }catch(e){ $('#chanNote').className='note err'; $('#chanNote').textContent="Couldn't load: "+e.message; }
 }
 (function handleOAuth(){
@@ -782,7 +746,7 @@ function open(html){ $('#drawerBody').innerHTML=html; $('#drawer').classList.add
 function closeDrawer(){ $('#drawer').classList.remove('open'); $('#scrim').classList.remove('show'); $('#drawer').setAttribute('aria-hidden','true'); }
 const catUrl = c => `https://www.twitch.tv/directory/category/${encodeURIComponent(c.toLowerCase().replace(/[:'’]/g,'').replace(/\s+/g,'-'))}`;
 function openEvent(id){
-  const ev=EVENTS.find(e=>e.id===id); if(!ev) return; const st=status(ev);
+  const ev=allEvents().find(e=>e.id===id); if(!ev) return; const st=status(ev);
   const cd = st==="live"?`<div class="cd" data-cd="${ev.end}">${countdown(ev.end)}<small>until it ends</small></div>`:st==="soon"?`<div class="cd" data-cd="${ev.start}">${countdown(ev.start)}<small>until it starts</small></div>`:"";
   open(`<div class="hero-img">${ev.badges.map(b=>tile({...b,img:cdn(b.img)})).join('')}</div><h3>${esc(ev.name)}</h3><div class="sub">${esc(ev.category)}</div>${cd}
     <dl class="kv"><dt>Status</dt><dd>${{live:"Active now",soon:"Upcoming",ended:"Ended",tba:"Date not announced"}[st]}</dd><dt>Starts</dt><dd>${fmtFull(ev.start)}</dd><dt>Ends</dt><dd>${fmtFull(ev.end)}</dd></dl>
@@ -791,7 +755,7 @@ function openEvent(id){
     <div class="actions">${!/any|unknown|twitch|eligible/i.test(ev.category)?`<a class="btn" target="_blank" rel="noopener" href="${catUrl(ev.category)}">Open category on Twitch</a>`:''}<button class="btn ghost" data-copy="${esc(ev.name)} — ${esc(ev.badges.map(b=>b.name+': '+b.how).join(' | '))} (${fmt(ev.start)} – ${fmt(ev.end)})">Copy summary</button></div>`);
 }
 function openBadge(set,type){
-  const b=(type==='global'?globalBadges:channelBadges).find(x=>x.set===set); if(!b) return;
+  const b=(type==='global'?globalBadges:lookupBadges).find(x=>x.set===set); if(!b) return;
   const ev = EV_BY_IMG[b.imgId]; const st = ev?status(ev.ev):null;
   const how = b.how || (ev ? ev.b.how : "") || "No public description for this badge.";
   open(`<div class="hero-img">${tile(b)}</div><h3>${esc(b.name)}</h3><div class="sub">${type==='global'?'Twitch global badge':'Channel badge'}${b.free?' · <span class="pill free">Free</span>':''}${st==="live"?' · <span class="pill live">Active now</span>':st==="soon"?' · <span class="pill soon">Upcoming</span>':''}</div>
@@ -804,7 +768,7 @@ function openBadge(set,type){
 /* ---------- badge detail page ---------- */
 let bpVersion = 0, bpTheme = "dark";
 function renderBadgePage(set){
-  const box=$('#badgePage');
+  const box=$('#badgePage'); $('.back').setAttribute('href','#global'); $('.back').textContent='← All Twitch Global Badges';
   const b = globalBadges.find(x=>x.set===set) || globalBadges.find(x=>x.imgId===set) || globalBadges.find(x=>x.versions.some(v=>v.img.includes(set)));
   if(!b){ box.innerHTML = `<div class="page-head"><div><h1>Badge not found</h1><p class="lead">This badge is not in the archive (yet).</p></div></div>`; return; }
   if(bpVersion >= b.versions.length) bpVersion = 0;
@@ -861,6 +825,34 @@ document.addEventListener('click', e => {
   const vv=e.target.closest('[data-ver]'); if(vv){ bpVersion=+vv.dataset.ver; route(); e.preventDefault(); }
 });
 
+function renderChannelBadgePage(imgId){
+  const box=$('#badgePage'); const b = channelBadges.find(x=>x.imgId===imgId);
+  $('.back').setAttribute('href','#channel'); $('.back').textContent='← All Twitch Channel Badges';
+  if(!b){ box.innerHTML = `<div class="page-head"><div><h1>Badge not found</h1><p class="lead">This channel badge is not in the archive.</p></div></div>`; return; }
+  const bg = bpTheme==="dark" ? "#18181b" : "#f7f7f8";
+  const siblings = channelBadges.filter(x=>x.setId.replace(/-(sub|mw|ranking)$/,'')===b.setId.replace(/-(sub|mw|ranking)$/,'') && x.imgId!==b.imgId);
+  const how = {sub:"Subscribe (or gift a sub) to the channel while the campaign is running.", watch:"Watch the channel for the required time while the campaign is running.", ranking:"Be one of the top supporters of the campaign.", other:"See the channel for details."}[b.type];
+  box.innerHTML = `
+    <div class="page-head"><div><h1>${esc(b.name)}</h1><p class="lead">Channel badge from <a href="https://twitch.tv/${esc(b.login)}" target="_blank" rel="noopener" style="color:var(--purple-2);font-weight:700">${esc(b.display||b.login)}</a></p></div><div><span class="pill ${b.type}">${CTYPE[b.type]||b.type}</span></div></div>
+    <div class="bp-grid">
+      <div class="card2"><h3>Images <span class="seg mini" id="bpTheme"><button data-t="dark" class="${bpTheme==='dark'?'on':''}">Dark</button><button data-t="light" class="${bpTheme==='light'?'on':''}">Light</button></span></h3>
+        <div class="sizes" style="--bp-bg:${bg}">${[1,2,3].map((s,i)=>`<a href="${esc(b.img.replace(/\/3$/,'/'+s))}" target="_blank" rel="noopener"><span class="box"><img src="${esc(b.img.replace(/\/3$/,'/'+s))}" width="${18*(i===2?4:i+1)}" height="${18*(i===2?4:i+1)}" alt=""></span>${['1x','2x','4x'][i]}</a>`).join('')}</div>
+        ${siblings.length?`<h3 style="margin-top:18px">Same campaign</h3><div class="vers">${siblings.map(x=>`<a href="#channel-badge/${esc(x.imgId)}"><img src="${esc(x.img)}" alt="">${esc(x.name)}</a>`).join('')}</div>`:''}
+      </div>
+      <div class="card2"><h3>Details</h3>
+        <dl class="kv2">
+          <dt>Title</dt><dd>${esc(b.name)}</dd>
+          <dt>Channel</dt><dd><a href="https://twitch.tv/${esc(b.login)}" target="_blank" rel="noopener">${esc(b.display||b.login)}</a></dd>
+          <dt>Type</dt><dd>${CTYPE[b.type]||b.type}</dd>
+          <dt>How to get it</dt><dd>${how}</dd>
+          <dt>Set ID</dt><dd><code>${esc(b.setId)}</code></dd>
+          <dt>First seen</dt><dd>${fmt(b.added)}</dd>
+        </dl>
+        <div class="actions" style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="https://twitch.tv/${esc(b.login)}" target="_blank" rel="noopener">Open channel</a><a class="btn ghost" href="${esc(b.img)}" target="_blank" rel="noopener">Open image</a><button class="btn ghost" data-copy="${esc(b.img)}">Copy image URL</button></div>
+      </div>
+    </div>`;
+}
+
 /* ---------- stream bar ---------- */
 function togglePlayer(){
   const p=$('#player'); if(!p.hidden){ p.hidden=true; $('#playerBody').innerHTML=''; $('#btnPlayer').textContent='Load stream & chat'; return; }
@@ -875,6 +867,8 @@ document.addEventListener('click', e => {
   const seg=e.target.closest('.seg button'); if(seg){ const id=seg.parentElement.id; seg.parentElement.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===seg)); const v=seg.dataset.v;
     if(id==='evFilter') evFilter=v; if(id==='gSort') gSort=v; if(id==='gDir') gDir=v; if(id==='gFilter') gFilter=v; if(id==='cFilter') cFilter=v; gShown=90; renderEvents(); renderGlobal(); renderChannel(); return; }
   if(e.target.id==='btnMore'){ gShown+=90; renderGlobal(); return; }
+  if(e.target.id==='btnCMore'){ cShown+=90; renderChannel(); return; }
+  const cb=e.target.closest('[data-cbadge]'); if(cb){ location.hash='#channel-badge/'+cb.dataset.cbadge; return; }
   const ev=e.target.closest('[data-ev]'); if(ev){ openEvent(ev.dataset.ev); return; }
   const oe=e.target.closest('[data-openev]'); if(oe){ openEvent(oe.dataset.openev); return; }
   const bd=e.target.closest('[data-badge]'); if(bd){ if(bd.dataset.type==='global'){ bpVersion=0; location.hash='#badge/'+encodeURIComponent(bd.dataset.badge); } else openBadge(bd.dataset.badge,bd.dataset.type); return; }
@@ -882,7 +876,7 @@ document.addEventListener('click', e => {
 });
 $('#qEv').addEventListener('input',e=>{evQuery=e.target.value.trim().toLowerCase();renderEvents();});
 $('#qG').addEventListener('input',e=>{gQuery=e.target.value.trim().toLowerCase();gShown=90;renderGlobal();});
-$('#qC').addEventListener('input',e=>{cQuery=e.target.value.trim().toLowerCase();renderChannel();});
+$('#qC').addEventListener('input',e=>{cQuery=e.target.value.trim().toLowerCase();cShown=90;renderChannel();});
 $('#scrim').addEventListener('click',closeDrawer); $('#closeDrawer').addEventListener('click',closeDrawer);
 $('#btnConnect').addEventListener('click',connect); $('#btnSaveId').addEventListener('click',saveClientId);
 $('#clientIdInput').addEventListener('keydown',e=>{if(e.key==='Enter')saveClientId();});
@@ -898,6 +892,14 @@ if(!isFile) fetch('badges.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).
   if(!Array.isArray(rows)||!rows.length) return;
   globalBadges = normalize(rows);
   renderAll(); if(location.hash.startsWith('#badge/')) route();
+}).catch(()=>{});
+if(!isFile) fetch('events.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(rows=>{
+  if(!Array.isArray(rows)||!rows.length) return;
+  EVENTS = rows; indexEvents(); renderAll(); if(location.hash.startsWith('#badge/')) route();
+}).catch(()=>{});
+if(!isFile) fetch('channel-badges.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(rows=>{
+  if(!Array.isArray(rows)) return;
+  channelBadges = normChannel(rows); renderChannel(); if(location.hash.startsWith('#channel-badge/')) route();
 }).catch(()=>{});
 </script>
 </body>
