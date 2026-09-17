@@ -1,5 +1,36 @@
 [
  {
+  "id": "blue-creeper-boss",
+  "name": "TGS 2026: Blue Creeper Boss",
+  "category": "Minecraft",
+  "start": "2026-09-17T18:00:00Z",
+  "end": "2026-09-22T06:58:00Z",
+  "note": "Short window — only on Minecraft streams that have the reward enabled. Receiving a gifted sub or using Prime does not count.",
+  "badges": [
+   {
+    "name": "Blue Creeper Boss",
+    "img": "e349e84d-1d91-4086-afda-e0c946717878",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub to a streamer live in the Minecraft category.",
+    "cost": "paid"
+   }
+  ]
+ },
+ {
+  "id": "ultramarine",
+  "name": "Space Marine II 2nd Anniversary",
+  "category": "Warhammer 40,000: Space Marine II",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Ultramarine",
+    "img": "12cb6b16-063b-4fcf-b312-c5c8f01e49ac",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid"
+   }
+  ]
+ },
+ {
   "id": "clipped-that",
   "name": "Clipped That",
   "category": "Twitch",
