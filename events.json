@@ -1,151 +1,98 @@
 [
  {
-  "id": "the-inverted-man",
-  "name": "The Inverted Man",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "The Inverted Man",
-    "img": "755022bc-26e1-47a4-8d6f-961224713355",
-    "how": "This badge was earned by subscribing or gifting a sub to a streamer in the CONTROL Resonant category during the game launch",
-    "cost": "na"
-   }
-  ]
- },
- {
-  "id": "dont-eat-the-mold",
-  "name": "Don't Eat The Mold",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
+  "id": "control-resonant",
+  "name": "CONTROL Resonant Launch",
+  "category": "CONTROL Resonant",
+  "start": "2026-09-22T14:00:00Z",
+  "end": "2026-10-13T13:59:00Z",
   "badges": [
    {
     "name": "Don't Eat The Mold",
     "img": "f1617a53-9e8f-4bd4-b440-ab44f6f8f650",
-    "how": "This badge was earned by watching a streamer in the CONTROL Resonant category for 1 hour",
-    "cost": "na"
-   }
-  ]
- },
- {
-  "id": "sevastopol-station",
-  "name": "Sevastopol Station",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
+    "how": "Watch 60 minutes in the category.",
+    "cost": "free"
+   },
    {
-    "name": "Sevastopol Station",
-    "img": "a6a681a9-3253-42de-b09a-7bda7c05c342",
-    "how": "This badge was earned by subscribing or gifting a sub to a streamer in the Alien Isolation category",
-    "cost": "na"
+    "name": "The Inverted Man",
+    "img": "755022bc-26e1-47a4-8d6f-961224713355",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid"
    }
   ]
  },
  {
-  "id": "seegson-synthetics",
-  "name": "SEEGSON Synthetics",
-  "category": "Unknown",
+  "id": "alien-isolation",
+  "name": "Alien: Isolation",
+  "category": "Alien: Isolation",
   "start": "",
   "end": "",
   "badges": [
    {
     "name": "SEEGSON Synthetics",
     "img": "4709f62b-9cd9-4759-8953-c096527401c7",
-    "how": "This badge was earned by watching the Alien Isolation category for 30 minutes",
-    "cost": "na"
+    "how": "Watch in the category (exact time not announced yet).",
+    "cost": "free"
+   },
+   {
+    "name": "Sevastopol Station",
+    "img": "a6a681a9-3253-42de-b09a-7bda7c05c342",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid"
    }
   ]
  },
  {
-  "id": "d20",
-  "name": "d20",
-  "category": "Unknown",
+  "id": "dnd-dungeon-masters",
+  "name": "D&D: World of Warcraft (Dungeon Masters)",
+  "category": "Dungeons & Dragons",
   "start": "",
   "end": "",
   "badges": [
    {
     "name": "d20",
     "img": "263a5bf1-c1ea-4f26-8bf8-db42ea2ebc7c",
-    "how": "This badge was earned by watching Dungeon Masters on Twitch.",
-    "cost": "na"
-   }
-  ]
- },
- {
-  "id": "ampersand",
-  "name": "Ampersand",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
+    "how": "Watch in the category (exact time not announced yet).",
+    "cost": "free"
+   },
    {
     "name": "Ampersand",
     "img": "b17f6b68-4a2d-4d2a-9967-aa8ff26012a0",
-    "how": "This badge was earned by subscribing to a streamer in the Dungeons & Dragons category.",
-    "cost": "na"
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid"
    }
   ]
  },
  {
-  "id": "teddie",
-  "name": "Teddie",
-  "category": "Unknown",
+  "id": "atlus-2026",
+  "name": "ATLUS 2026 Celebration",
+  "category": "Persona 3 Reload",
   "start": "",
   "end": "",
-  "badges": [
-   {
-    "name": "Teddie",
-    "img": "80786dcb-bf5e-4069-ab13-32b4fa436c51",
-    "how": "This badge was earned by subscribing to a streamer in the Persona 4 Golden category during the 2026 ATLUS celebration!",
-    "cost": "na"
-   }
-  ]
- },
- {
-  "id": "nahobiho",
-  "name": "Nahobiho",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "Nahobiho",
-    "img": "adc8a831-4884-471b-9723-aad8bf3e05b8",
-    "how": "This badge was earned by subscribing to a streamer in the Shin Megami Tensei V: Vengeance category during the 2026 ATLUS celebration!",
-    "cost": "na"
-   }
-  ]
- },
- {
-  "id": "morgana",
-  "name": "Morgana",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "Morgana",
-    "img": "a0c09111-b247-4b40-88a2-7ef1cfc60f65",
-    "how": "This badge was earned by subscribing to a streamer in the Persona 5 Royal category during the 2026 ATLUS celebration!",
-    "cost": "na"
-   }
-  ]
- },
- {
-  "id": "koromaru",
-  "name": "Koromaru",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
+  "note": "Each badge belongs to a different ATLUS game category (Persona 3 Reload, Persona 4, Persona 5, Metaphor).",
   "badges": [
    {
     "name": "Koromaru",
     "img": "d08bb5f3-7638-45c6-919a-9f2eb4ef505e",
-    "how": "This badge was earned by subscribing to a streamer in the Persona 3 Reload category during the 2026 ATLUS celebration!",
-    "cost": "na"
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the Persona 3 Reload category.",
+    "cost": "paid"
+   },
+   {
+    "name": "Teddie",
+    "img": "80786dcb-bf5e-4069-ab13-32b4fa436c51",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid"
+   },
+   {
+    "name": "Morgana",
+    "img": "a0c09111-b247-4b40-88a2-7ef1cfc60f65",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid"
+   },
+   {
+    "name": "Nahobiho",
+    "img": "adc8a831-4884-471b-9723-aad8bf3e05b8",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid"
    }
   ]
  },
