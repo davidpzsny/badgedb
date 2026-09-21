@@ -1,5 +1,35 @@
 [
  {
+  "id": "the-inverted-man",
+  "name": "The Inverted Man",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "The Inverted Man",
+    "img": "755022bc-26e1-47a4-8d6f-961224713355",
+    "how": "This badge was earned by subscribing or gifting a sub to a streamer in the CONTROL Resonant category during the game launch",
+    "cost": "na"
+   }
+  ]
+ },
+ {
+  "id": "dont-eat-the-mold",
+  "name": "Don't Eat The Mold",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Don't Eat The Mold",
+    "img": "f1617a53-9e8f-4bd4-b440-ab44f6f8f650",
+    "how": "This badge was earned by watching a streamer in the CONTROL Resonant category for 1 hour",
+    "cost": "na"
+   }
+  ]
+ },
+ {
   "id": "sevastopol-station",
   "name": "Sevastopol Station",
   "category": "Unknown",
