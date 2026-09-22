@@ -1,5 +1,20 @@
 [
  {
+  "id": "rematch-blue-lock",
+  "name": "Rematch Blue Lock",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Rematch Blue Lock",
+    "img": "13afe621-edd4-48b6-a09b-453a2dee52e9",
+    "how": "This badge was earned by watching a streamer in the Rematch category for 30 minutes",
+    "cost": "na"
+   }
+  ]
+ },
+ {
   "id": "control-resonant",
   "name": "CONTROL Resonant Launch",
   "category": "CONTROL Resonant",
