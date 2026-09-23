@@ -1,5 +1,20 @@
 [
  {
+  "id": "clipped-that-2",
+  "name": "Clipped That",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Clipped That",
+    "img": "5b648ccf-dc37-4233-a96e-c6e5d693a0ae",
+    "how": "This limited-time badge was earned by a DJ Program creator who clipped an epic mid-set moment and downloaded + shared it to social.",
+    "cost": "na"
+   }
+  ]
+ },
+ {
   "id": "rematch-blue-lock",
   "name": "Rematch Blue Lock",
   "category": "Unknown",
