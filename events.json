@@ -1,5 +1,20 @@
 [
  {
+  "id": "big-walk",
+  "name": "Big Walk",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Big Walk",
+    "img": "3de5a89b-533b-483a-8db2-036f9f13b9bd",
+    "how": "This badge was earned by subscribing or gifting a sub to a streamer in the Big Walk category.",
+    "cost": "na"
+   }
+  ]
+ },
+ {
   "id": "clipped-that-2",
   "name": "Clipped That",
   "category": "Unknown",
