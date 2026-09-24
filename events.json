@@ -1,5 +1,20 @@
 [
  {
+  "id": "runescape-shrimp",
+  "name": "RuneScape Shrimp",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "RuneScape Shrimp",
+    "img": "aed4a5ae-3e02-40c6-92bc-dfb8d33576f5",
+    "how": "This badge was awarded to people who viewed any eligible channel co-streaming RuneFest 2026 in the Old School RuneScape category for one hour. It was added to promote the RuneScape Franchise's RuneFest event.",
+    "cost": "na"
+   }
+  ]
+ },
+ {
   "id": "big-walk",
   "name": "Big Walk",
   "category": "Unknown",
