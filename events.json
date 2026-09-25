@@ -1,5 +1,20 @@
 [
  {
+  "id": "yellow-party-hat",
+  "name": "Yellow Party Hat",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Yellow Party Hat",
+    "img": "6325b96b-0187-4a60-90d0-8bb45efa3fff",
+    "how": "This badge was awarded to people who viewed the official 2026 RuneFest livestream for one hour. It was added to promote the RuneScape Franchise's RuneFest event.",
+    "cost": "na"
+   }
+  ]
+ },
+ {
   "id": "runescape-shrimp",
   "name": "RuneScape Shrimp",
   "category": "Unknown",
