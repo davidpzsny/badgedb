@@ -1,5 +1,20 @@
 [
  {
+  "id": "ace-combat-8-nugget",
+  "name": "ACE COMBAT 8 Nugget",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "ACE COMBAT 8 Nugget",
+    "img": "8468fb6c-1d33-4482-85ef-fa1898288ee2",
+    "how": "This badge was earned by subscribing or gifting a sub to a streamer in the ACE COMBAT 8 category during the game's launch!",
+    "cost": "na"
+   }
+  ]
+ },
+ {
   "id": "yellow-party-hat",
   "name": "Yellow Party Hat",
   "category": "Unknown",
