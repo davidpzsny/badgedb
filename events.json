@@ -48,8 +48,8 @@
   "id": "big-walk",
   "name": "Big Walk",
   "category": "Unknown",
-  "start": "",
-  "end": "",
+  "start": "2026-09-25T07:00:00Z",
+  "end": "2026-10-04T06:58:00Z",
   "badges": [
    {
     "name": "Big Walk",
@@ -77,9 +77,9 @@
  {
   "id": "rematch-blue-lock",
   "name": "Rematch Blue Lock",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
+  "category": "REMATCH",
+  "start": "2026-09-23T23:01:00Z",
+  "end": "2026-10-22T10:58:00Z",
   "badges": [
    {
     "name": "Rematch Blue Lock",
@@ -135,8 +135,8 @@
   "id": "dnd-dungeon-masters",
   "name": "D&D: World of Warcraft (Dungeon Masters)",
   "category": "Dungeons & Dragons",
-  "start": "",
-  "end": "",
+  "start": "2026-09-24T01:15:00Z",
+  "end": "2026-10-21T06:58:00Z",
   "badges": [
    {
     "name": "d20",
@@ -156,8 +156,8 @@
   "id": "atlus-2026",
   "name": "ATLUS 2026 Celebration",
   "category": "Persona 3 Reload",
-  "start": "",
-  "end": "",
+  "start": "2026-09-24T16:00:00Z",
+  "end": "2026-10-11T06:58:00Z",
   "note": "Each badge belongs to a different ATLUS game category (Persona 3 Reload, Persona 4, Persona 5, Metaphor).",
   "badges": [
    {
@@ -190,8 +190,8 @@
   "id": "homo-tenta",
   "name": "Homo Tenta",
   "category": "Unknown",
-  "start": "",
-  "end": "",
+  "start": "2026-09-24T16:00:00Z",
+  "end": "2026-10-11T06:58:00Z",
   "badges": [
    {
     "name": "Homo Tenta",
@@ -609,8 +609,8 @@
   "id": "wasteland",
   "name": "Wasteland Circuit",
   "category": "Rainbow Six Siege",
-  "start": "",
-  "end": "",
+  "start": "2026-09-23T14:00:00Z",
+  "end": "2026-10-13T13:59:00Z",
   "badges": [
    {
     "name": "DRON-E",
@@ -624,8 +624,8 @@
   "id": "dragonwilds",
   "name": "RuneScape: Dragonwilds",
   "category": "RuneScape: Dragonwilds",
-  "start": "",
-  "end": "",
+  "start": "2026-09-15T12:00:00Z",
+  "end": "2026-10-04T16:59:00Z",
   "badges": [
    {
     "name": "Dragonwilds Eye",
@@ -639,8 +639,8 @@
   "id": "payday3",
   "name": "PAYDAY 3",
   "category": "PAYDAY 3",
-  "start": "",
-  "end": "",
+  "start": "2026-09-24T12:00:00Z",
+  "end": "2026-10-10T12:00:00Z",
   "badges": [
    {
     "name": "Chains",
@@ -672,8 +672,8 @@
   "id": "wsci",
   "name": "2026 World Star Challengers Invitational",
   "category": "Unknown",
-  "start": "",
-  "end": "",
+  "start": "2026-09-19T16:00:00Z",
+  "end": "2026-10-03T03:59:00Z",
   "badges": [
    {
     "name": "WSCI 2026",
