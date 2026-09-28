@@ -355,6 +355,7 @@
   @keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(52,211,153,.2)}50%{box-shadow:0 0 0 6px rgba(52,211,153,.08)}}
   .streambar b{font-size:14px}.streambar span{font-size:13px;color:var(--muted)}
   .streambar .sp{flex:1}
+  .streambar .btn span{color:inherit;font-size:inherit}
   .streambar .sb-sub{padding-left:10px;margin-left:2px;border-left:1px solid var(--line-2)}
   .streambar .sb-alerts{display:flex;align-items:center;gap:6px;margin-right:6px}
   .streambar .sb-alerts a{display:inline-flex;align-items:center;gap:5px;color:var(--text);font-weight:700;padding:4px 9px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid var(--line)}
@@ -395,20 +396,120 @@
   @media (prefers-reduced-motion:reduce){.drawer,.scrim,.toast,.ev,.brow,.btn,.tool,.social,.watch{transition:none}}
 
   /* ================= mobile ================= */
+  .menu-btn{display:none}
+  .side-menu{display:contents}
+  .btn .sm{display:none}
+  .cal-m{display:none}
   @media (max-width:880px){
-    .app{grid-template-columns:1fr}
-    .side{position:sticky;top:0;height:auto;flex-direction:row;align-items:center;gap:6px;padding:10px 12px;border-right:0;border-bottom:1px solid var(--line);z-index:6;overflow-x:auto;overflow-y:hidden}
-    .brand{gap:0;padding:0}.brand img{width:34px;height:34px}.brand span{display:none}
-    .group{flex-direction:row;gap:2px}.group h6{display:none}
-    .nav a{padding:7px 9px;font-size:13px;gap:6px}.nav a svg{width:15px;height:15px}.nav a img{width:18px;height:18px}.nav .count{display:none}.nav a.on{box-shadow:none}
-    .side-foot{display:none}
-    main{padding:0 14px 110px}
-    .hero2{grid-template-columns:1fr;gap:22px;padding:22px 0 4px}.hero2-h{font-size:26px}.biglogo{width:72px;height:72px;border-radius:18px}.wm{font-size:32px}.lp-grid{grid-template-columns:1fr}.lp-grid .lp{border-right:0!important}.hero2 .lead{font-size:15px}.hero2-stats{gap:18px}
-    h1{font-size:28px}.lead{font-size:15px}
-    .toolbar{padding-top:10px}.seg{flex-wrap:wrap}
-    .events,.blist{grid-template-columns:1fr}
-    .streambar{left:0;padding:10px 14px}.streambar span{display:none}
+    html,body{overflow-x:hidden}
+    .app{grid-template-columns:minmax(0,1fr)}
+    main{min-width:0;padding:0 16px calc(96px + env(safe-area-inset-bottom))}
+    main::before{width:100%}
+
+    /* header bar + slide-down menu */
+    .side{position:sticky;top:0;height:60px;flex-direction:row;align-items:center;justify-content:space-between;gap:10px;padding:0 14px;border-right:0;border-bottom:1px solid var(--line);z-index:30;overflow:visible;background:#111017;backdrop-filter:none}
+    .brand{padding:0;gap:10px}.brand img{width:36px;height:36px;border-radius:10px}
+    .brand b{font-size:17px}.brand small{display:none}
+    .menu-btn{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:var(--panel);border:1px solid var(--line);color:var(--text)}
+    .menu-btn svg{width:22px;height:22px}.menu-btn path{transition:transform .2s,opacity .2s;transform-origin:12px 12px}
+    .side.open .menu-btn .l1{transform:translateY(5px) rotate(45deg)}.side.open .menu-btn .l2{opacity:0}.side.open .menu-btn .l3{transform:translateY(-5px) rotate(-45deg)}
+    .side-menu{display:none;position:fixed;top:60px;left:0;right:0;bottom:0;background:var(--bg-2);padding:14px 16px calc(24px + env(safe-area-inset-bottom));overflow-y:auto;flex-direction:column;gap:18px;z-index:29}
+    .side.open .side-menu{display:flex;animation:menuIn .18s ease-out}
+    @keyframes menuIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+    .side-menu .group{flex-direction:column;gap:2px}
+    .side-menu .group h6{display:block}
+    .side-menu .nav a{padding:12px 14px;font-size:16px}
+    .side-menu .nav a svg,.side-menu .nav a img{width:20px;height:20px}
+    .side-menu .nav .count{display:inline-block}
+    .side-menu .side-foot{display:block;margin-top:6px}
+    body.menu-open{overflow:hidden}
+
+    /* type + hero */
+    h1{font-size:28px}.lead{font-size:15px}h2{font-size:20px;margin:32px 0 12px}
+    .crumbs{padding-top:16px}
+    .hero2{grid-template-columns:minmax(0,1fr);gap:22px;padding:22px 0 4px}
+    .brandrow{gap:14px;margin-bottom:18px}.biglogo{width:64px;height:64px;border-radius:16px}.wm{font-size:30px}
+    .hero2-h{font-size:25px}.hero2 .lead{font-size:15px;margin-top:12px}
+    .hero2-cta{margin-top:20px}.hero2-cta .btn{flex:1;justify-content:center}
+    .hero2-stats{justify-content:space-between;gap:10px;margin-top:22px;padding-top:18px}
+    .hero2-stats b{font-size:24px}
+    .stream-card{border-radius:16px}
+    .sc-head .ch{display:none}
+    .sc-foot{flex-wrap:wrap}
+
+    /* home sections */
+    .cards{grid-template-columns:minmax(0,1fr)}
+    .recent{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+    .rc{padding:10px 6px}.rc .tile{height:60px}.rc .tile img{width:38px;height:38px}.rc .n{font-size:11.5px}
+    .tools{grid-template-columns:minmax(0,1fr)}
+
+    /* lists: 2-column tile grid instead of long rows */
+    .toolbar{position:static;padding:8px 0 4px;gap:8px}
+    .toolbar .search{flex:1 1 100%;min-width:0}
+    .seg{flex-wrap:nowrap;overflow-x:auto;max-width:100%;scrollbar-width:none}.seg::-webkit-scrollbar{display:none}
+    .seg button{padding:7px 10px;font-size:12.5px}
+    .blist{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+    .brow{flex-direction:column;align-items:stretch;text-align:center;gap:8px;padding:10px}
+    .brow .tile{width:100%;height:72px;border-radius:10px}.brow .tile img{width:44px;height:44px}
+    .brow .n{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;font-size:13px;min-height:2.5em}
+    .brow .m{justify-content:center;font-size:11px;gap:4px}
+    .brow:hover{transform:none}
+    .events{grid-template-columns:minmax(0,1fr)}
+    .ev:hover{transform:none}
+    .faq{margin-bottom:14px}
+
+    /* badge page */
+    .page-head{padding-top:12px}
+    .card2{padding:16px}
+    .kv2{grid-template-columns:96px minmax(0,1fr);font-size:13.5px}
+    .sizes{gap:10px}
+    .vers a{width:calc(33.33% - 7px)}
+    .card2 .actions .btn{flex:1;justify-content:center}
+
+    /* bottom bar + player */
+    .streambar{left:0;padding:8px 12px calc(8px + env(safe-area-inset-bottom));gap:8px}
+    .streambar .sb-sub,.streambar .sb-alerts{display:none}
+    .streambar b{font-size:13px}
+    .streambar .btn{padding:8px 12px;font-size:12.5px}
+    .btn .lg{display:none}.btn .sm{display:inline}
+    .player{left:8px;right:8px;width:auto;bottom:calc(62px + env(safe-area-inset-bottom))}
+    .player iframe{height:200px}
+    .drawer{width:100%;padding:22px 18px}
+    footer{padding-bottom:8px}
+
+    /* calendar: phone layout */
+    .cal{border-radius:16px;margin-top:22px}
+    .cal-head{padding:12px}
+    .cal-head{gap:8px}
+    .cal-head h3{width:100%;font-size:16px;margin:0;gap:8px}
+    .cal-head h3 .pill{margin-left:auto}
+    .cal-head .seg.mini{margin-left:0}
+    .cal-range{width:100%;font-size:12px;margin-top:-4px}
+    .cal-nav{margin-left:auto}
+    .cal-nav button{min-width:32px;height:32px}
+    .cal-foot{font-size:11px;gap:10px}.cal-foot .sp{margin-left:0}
   }
+  @media (max-width:640px){
+    .cal-scroll{overflow:visible}
+    .cal-inner{min-width:0!important}
+    .cal-day{font-size:10px;padding:7px 0 6px;letter-spacing:0}
+    .cal-day b{font-size:12px}
+    .cal-body{padding:4px 0 8px;background-size:calc(100% / var(--g)) 100%}
+    .cal-row,.cal-bar,.cal-out,.cal-now{display:none}
+    .cal-m{display:block;width:100%;text-align:left;padding:7px 0 8px;border-bottom:1px solid var(--line)}
+    .cal-m:last-of-type{border-bottom:0}
+    .cal-mtop{display:flex;align-items:center;gap:9px;padding:0 12px}
+    .cal-mtop img,.cal-mtop .ph{width:28px;height:28px;border-radius:7px;flex:none;object-fit:contain;background:rgba(255,255,255,.05)}
+    .cal-mtop .nm{font-weight:700;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+    .cal-mtop .lft{font-size:11.5px;font-weight:700;color:var(--muted);white-space:nowrap}
+    .cal-mtop .lft.urgent{color:var(--amber)}
+    .cal-mtrack{position:relative;display:block;height:6px;margin-top:7px;background:rgba(255,255,255,.05)}
+    .cal-mtrack i{position:absolute;top:0;bottom:0;border-radius:3px}
+    .cal-m.free .cal-mtrack i{background:var(--mint)}.cal-m.paid .cal-mtrack i{background:var(--purple)}.cal-m.na .cal-mtrack i{background:var(--muted)}
+    .cal-m.soon .cal-mtrack i{opacity:.45}
+    .cal-mtrack .nowt{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--text);border-radius:1px}
+  }
+
 </style>
 </head>
 <body>
@@ -416,6 +517,8 @@
 <div class="app">
   <aside class="side">
     <a class="brand" href="#home"><img src="logo-192.png" alt="BadgeDB"><span><b>BadgeDB</b><small>Twitch badge tracker</small></span></a>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path class="l1" d="M4 7h16"/><path class="l2" d="M4 12h16"/><path class="l3" d="M4 17h16"/></svg></button>
+    <div class="side-menu" id="sideMenu">
     <nav class="nav group" aria-label="Main">
       <a href="#home" data-route="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>Home</a>
       <a href="#timeline" data-route="timeline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Timeline <span class="count" id="cEvents"></span></a>
@@ -437,6 +540,7 @@
         <a class="dc" href="https://discord.gg/QkuRDXcZH5" target="_blank" rel="noopener" title="Join the Discord"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.5 5.5A16 16 0 0 0 15.6 4l-.5 1a15 15 0 0 0-6.2 0l-.5-1a16 16 0 0 0-3.9 1.5C2 9.3 1.3 13 1.6 16.6A16 16 0 0 0 6.5 19l1-1.6a10 10 0 0 1-1.6-.8l.4-.3a11.5 11.5 0 0 0 11.4 0l.4.3-1.6.8 1 1.6a16 16 0 0 0 4.9-2.4c.4-4.2-.7-7.8-2.9-11.1zM8.7 14.4c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2zm6.6 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2z"/></svg><span>Join the Discord</span></a>
         <a class="xx" href="https://x.com/BadgeDatabase" target="_blank" rel="noopener" title="Follow @BadgeDatabase on X"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 3h3l-7 8 8 10h-6l-4.7-6.2L5.5 21h-3l7.5-8.6L2.5 3h6l4.3 5.7z"/></svg><span>Follow @BadgeDatabase</span></a>
       </div>
+    </div>
     </div>
   </aside>
 
@@ -580,7 +684,7 @@
   <a class="btn ghost" href="https://www.twitch.tv/subs/badge_db" target="_blank" rel="noopener">Subscribe</a>
   <span class="sp"></span>
   <span class="sb-alerts">New badge alerts on <a href="https://x.com/BadgeDatabase" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 3h3l-7 8 8 10h-6l-4.7-6.2L5.5 21h-3l7.5-8.6L2.5 3h6l4.3 5.7z"/></svg> @BadgeDatabase</a> and right here on the site</span>
-  <button class="btn" id="btnPlayer">Load stream &amp; chat</button>
+  <button class="btn" id="btnPlayer"><span class="lg">Load stream &amp; chat</span><span class="sm">Watch live</span></button>
 </div>
 <div class="player" id="player" hidden><button class="x" id="btnPlayerX" aria-label="Close">×</button><div id="playerBody"></div></div>
 
@@ -748,6 +852,16 @@ function renderEvents(){
   for(const k of Object.keys(buckets)){ const K=k[0].toUpperCase()+k.slice(1); $('#ev'+K).innerHTML = buckets[k].length?buckets[k].map(ev=>eventCard(ev,k)).join(''):`<div class="empty">${evQuery?'No events match your search.':'Nothing here right now.'}</div>`; $('#n'+K).textContent = buckets[k].length||''; }
 }
 const DAY=864e5, COLW=46;
+/* ---------- mobile menu ---------- */
+function setMenu(open){ const s=document.querySelector('.side'); s.classList.toggle('open',open); document.body.classList.toggle('menu-open',open);
+  const b=$('#menuBtn'); b.setAttribute('aria-expanded',open); b.setAttribute('aria-label',open?'Close menu':'Open menu'); }
+document.addEventListener('click', e=>{
+  if(e.target.closest('#menuBtn')){ setMenu(!document.querySelector('.side').classList.contains('open')); return; }
+  if(e.target.closest('.side-menu a')) setMenu(false);
+});
+window.addEventListener('hashchange', ()=>setMenu(false));
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') setMenu(false); });
+
 /* ---------- badge calendar (one row per badge, BadgeBase-style) ---------- */
 const CAL = { calHome:{offset:0,span:7,limit:10}, calTimeline:{offset:0,span:7,limit:0} };
 function calRange(st){
@@ -774,7 +888,11 @@ function leftText(r){
 function renderCalendar(id){
   const el=document.getElementById(id); if(!el) return; const st=CAL[id];
   const [a0,a1]=calRange(st), n=st.span, now=Date.now(), rows=calRows(a0,a1);
-  const days=Array.from({length:n},(_,i)=>{ const d=new Date(a0+i*DAY), t=d.toDateString()===new Date().toDateString();
+  const compact = window.matchMedia('(max-width:640px)').matches;
+  const cols = compact && n===28 ? 4 : n;                           // phones: 4 week columns instead of 28 day columns
+  const days=Array.from({length:cols},(_,i)=>{ const step = cols===n ? DAY : 7*DAY, d=new Date(a0+i*step);
+    const t = cols===n ? d.toDateString()===new Date().toDateString() : (now>=d.getTime() && now<d.getTime()+step);
+    if(compact) return `<div class="cal-day ${t?'today':''} ${cols===n&&[0,6].includes(d.getDay())?'wk':''}">${cols===n?d.toLocaleDateString(undefined,{weekday:'narrow'}):'Week of'}<b>${cols===n?d.getDate():d.toLocaleDateString(undefined,{month:'short',day:'numeric'})}</b></div>`;
     return `<div class="cal-day ${t?'today':''} ${[0,6].includes(d.getDay())?'wk':''}">${d.toLocaleDateString(undefined,{weekday:'short'})}<b>${d.toLocaleDateString(undefined,{month:'short',day:'numeric'})}</b></div>`; }).join('');
   const shown = st.limit && !st.all ? rows.slice(0, st.limit) : rows;
   const bars=shown.map((r,k)=>{
@@ -791,7 +909,12 @@ function renderCalendar(id){
     const out = !narrow ? '' : (left + w > 70
       ? `<span class="cal-out" style="right:calc(${100-left}% + 4px);flex-direction:row-reverse;padding:0 8px 0 0">${label}</span>`
       : `<span class="cal-out" style="left:calc(${left}% + max(${w}%, 34px) + 4px)">${label}</span>`);
-    return `<div class="cal-row">${bar}${out}</div>`;
+    const pctL=(s-a0)/(a1-a0)*100, pctW=Math.max((e-s)/(a1-a0)*100,1.5), urgent=r.st==="live" && r.e-now<48*36e5;
+    const nowTick = now>=a0 && now<a1 ? `<span class="nowt" style="left:${(now-a0)/(a1-a0)*100}%"></span>` : '';
+    const mrow = `<button class="cal-m ${r.b.cost||'na'} ${r.st==='soon'?'soon':''}" data-k="${k}" ${set?`data-set="${esc(set)}"`:`data-ev="${esc(r.ev.id)}"`}>
+      <span class="cal-mtop">${icon}<span class="nm">${esc(nm)}</span><span class="lft ${urgent?'urgent':''}">${leftText(r)}</span></span>
+      <span class="cal-mtrack"><i style="left:${pctL}%;width:${Math.min(pctW,100-pctL)}%"></i>${nowTick}</span></button>`;
+    return compact ? mrow : `<div class="cal-row">${bar}${out}</div>`;
   }).join('') + (st.limit && rows.length > st.limit ? `<div class="cal-more"><button class="btn ghost" data-calall="${id}">${st.all?'Show less':`Show all ${rows.length} badges`}</button></div>` : '');
   const nowX = now>=a0 && now<a1 ? `<div class="cal-now" style="left:${(now-a0)/(a1-a0)*100}%"></div>` : '';
   const label = `${new Date(a0).toLocaleDateString(undefined,{month:'short',day:'numeric'})} – ${new Date(a1-1).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'})}`;
@@ -802,26 +925,26 @@ function renderCalendar(id){
       <div class="seg mini" data-calview="${id}"><button data-span="7" class="${n===7?'on':''}">Week</button><button data-span="28" class="${n===28?'on':''}">4 weeks</button></div>
       <div class="cal-nav" data-calnav="${id}"><button data-d="-1" aria-label="Previous">‹</button><button class="today" data-d="0">Today</button><button data-d="1" aria-label="Next">›</button></div>
     </div>
-    <div class="cal-scroll"><div class="cal-inner" style="--n:${n};${n===28?'min-width:1400px':''}">
+    <div class="cal-scroll"><div class="cal-inner" style="--n:${cols};--g:${cols};${n===28&&!compact?'min-width:1400px':''}">
       <div class="cal-days">${days}</div>
       <div class="cal-body">${rows.length?bars:`<div class="cal-empty">No badges with known dates in this range.</div>`}${nowX}</div>
     </div></div>
     <div class="cal-foot"><span><i style="background:rgba(52,211,153,.5)"></i>Free</span><span><i style="background:rgba(139,92,246,.6)"></i>Sub / paid</span><span><i style="border:1px dashed var(--line-2)"></i>Starts later</span>
       <span class="sp">* Shown in your local time (${esc(Intl.DateTimeFormat().resolvedOptions().timeZone||'')}). Hover a badge for details, click to open it.</span></div>`;
   el._rows = rows;
-  if(n===28){ const sc=el.querySelector('.cal-scroll'); if(sc && now>=a0 && now<a1) sc.scrollLeft = Math.max(0,(now-a0)/(a1-a0)*sc.scrollWidth - sc.clientWidth/3); }
+  if(n===28 && !compact){ const sc=el.querySelector('.cal-scroll'); if(sc && now>=a0 && now<a1) sc.scrollLeft = Math.max(0,(now-a0)/(a1-a0)*sc.scrollWidth - sc.clientWidth/3); }
 }
 function renderCalendars(){ renderCalendar('calHome'); renderCalendar('calTimeline'); }
 document.addEventListener('click', e=>{
   const nv=e.target.closest('[data-calnav] button'); if(nv){ const id=nv.parentElement.dataset.calnav, d=+nv.dataset.d; CAL[id].offset = d===0?0:CAL[id].offset+d; renderCalendar(id); return; }
   const ca=e.target.closest('[data-calall]'); if(ca){ const id=ca.dataset.calall; CAL[id].all=!CAL[id].all; renderCalendar(id); return; }
   const vw=e.target.closest('[data-calview] button'); if(vw){ const id=vw.parentElement.dataset.calview; CAL[id].span=+vw.dataset.span; CAL[id].offset=0; renderCalendar(id); return; }
-  const cb=e.target.closest('.cal-bar[data-set]'); if(cb){ hideTip(); location.hash='#badge/'+encodeURIComponent(cb.dataset.set); }
+  const cb=e.target.closest('.cal-bar[data-set], .cal-m[data-set]'); if(cb){ hideTip(); location.hash='#badge/'+encodeURIComponent(cb.dataset.set); }
 });
 const calTip = document.createElement('div'); calTip.id='calTip'; document.body.appendChild(calTip);
 function hideTip(){ calTip.classList.remove('show'); }
 document.addEventListener('mouseover', e=>{
-  const b=e.target.closest('.cal-bar'); if(!b){ hideTip(); return; }
+  const b=e.target.closest('.cal-bar'); if(!b || window.matchMedia('(hover:none)').matches){ hideTip(); return; }
   const cal=b.closest('.cal'), r=cal && cal._rows && cal._rows[+b.dataset.k]; if(!r) return;
   const gt=(globalBadges.find(x=>x.imgId===r.b.img)||{}).name||r.b.name;
   calTip.innerHTML = `<b>${esc(gt)}</b><div style="color:var(--muted)">${esc(r.ev.name)}${r.ev.category&&r.ev.category!=="Unknown"?` · ${esc(r.ev.category)}`:''}</div>
@@ -835,6 +958,7 @@ document.addEventListener('mousemove', e=>{ if(!calTip.classList.contains('show'
   const w=calTip.offsetWidth, hh=calTip.offsetHeight; let x=e.clientX+14, y=e.clientY+14;
   if(x+w>innerWidth-8) x=e.clientX-w-14; if(y+hh>innerHeight-8) y=e.clientY-hh-14; calTip.style.left=x+'px'; calTip.style.top=y+'px'; });
 setInterval(renderCalendars, 60000);
+window.matchMedia('(max-width:640px)').addEventListener('change', renderCalendars);
 
 /* ---------- FAQ ---------- */
 const FAQ = [
@@ -1159,11 +1283,11 @@ if(!isFile) fetch(`https://api.github.com/repos/${CONFIG.repo}/commits?per_page=
 
 /* ---------- stream bar ---------- */
 function togglePlayer(){
-  const p=$('#player'); if(!p.hidden){ p.hidden=true; $('#playerBody').innerHTML=''; $('#btnPlayer').textContent='Load stream & chat'; return; }
+  const p=$('#player'); if(!p.hidden){ p.hidden=true; $('#playerBody').innerHTML=''; $('#btnPlayer').innerHTML='<span class="lg">Load stream &amp; chat</span><span class="sm">Watch live</span>'; return; }
   const ch=CONFIG.channel;
   $('#playerBody').innerHTML = isFile ? `<div class="ph2">The embedded player only works when the site is hosted over http(s).<br><a class="btn" style="margin-top:12px" href="https://twitch.tv/${ch}" target="_blank" rel="noopener">Open twitch.tv/${ch} ↗</a></div>`
     : `<iframe src="https://player.twitch.tv/?channel=${ch}&${PARENTS()}&muted=true" allowfullscreen></iframe><iframe src="https://www.twitch.tv/embed/${ch}/chat?${PARENTS()}&darkpopout" style="height:300px"></iframe>`;
-  p.hidden=false; $('#btnPlayer').textContent='Hide stream';
+  p.hidden=false; $('#btnPlayer').innerHTML='Hide stream';
 }
 
 /* ---------- wiring ---------- */
