@@ -53,6 +53,12 @@
   .watch:hover{transform:translateY(-1px);border-color:var(--purple)}
   .watch img{width:46px;height:46px;border-radius:12px}
   .watch b{display:block;font-size:14px}.watch small{color:var(--muted);font-size:12px}
+  .side-social{display:grid;grid-template-columns:1fr;gap:6px;margin-top:8px}
+  .side-social a{display:flex;align-items:center;justify-content:flex-start;gap:10px;padding:9px 14px;border-radius:11px;font-size:12.5px;font-weight:700;border:1px solid var(--line);background:var(--panel);transition:transform .15s,border-color .15s,background .15s;white-space:nowrap;overflow:hidden}
+  .side-social a span{overflow:hidden;text-overflow:ellipsis}
+  .side-social svg{width:16px;height:16px;flex:none}
+  .side-social .dc{color:#c9ccff}.side-social .dc:hover{background:rgba(88,101,242,.18);border-color:#5865F2;transform:translateY(-1px)}
+  .side-social .xx{color:var(--text)}.side-social .xx:hover{background:rgba(255,255,255,.07);border-color:var(--line-2);transform:translateY(-1px)}
 
   main{padding:0 40px 120px;max-width:1180px;width:100%;justify-self:center;position:relative;z-index:0}
   main::before{content:"";position:absolute;top:-80px;left:50%;width:900px;height:420px;transform:translateX(-50%);background:radial-gradient(ellipse at center,rgba(139,92,246,.14),transparent 65%);pointer-events:none;z-index:-1}
@@ -349,6 +355,12 @@
   @keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(52,211,153,.2)}50%{box-shadow:0 0 0 6px rgba(52,211,153,.08)}}
   .streambar b{font-size:14px}.streambar span{font-size:13px;color:var(--muted)}
   .streambar .sp{flex:1}
+  .streambar .sb-sub{padding-left:10px;margin-left:2px;border-left:1px solid var(--line-2)}
+  .streambar .sb-alerts{display:flex;align-items:center;gap:6px;margin-right:6px}
+  .streambar .sb-alerts a{display:inline-flex;align-items:center;gap:5px;color:var(--text);font-weight:700;padding:4px 9px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid var(--line)}
+  .streambar .sb-alerts a:hover{border-color:var(--line-2);background:rgba(255,255,255,.1)}
+  .streambar .sb-alerts svg{width:13px;height:13px}
+  @media (max-width:1100px){.streambar .sb-alerts{display:none}}
   .streambar .btn{padding:8px 14px;font-size:13px}
   .player{position:fixed;right:24px;bottom:64px;width:min(440px,calc(100vw - 48px));background:var(--bg-2);border:1px solid var(--line-2);border-radius:14px;overflow:hidden;box-shadow:0 30px 60px -20px rgba(0,0,0,.9);z-index:9}
   .player iframe{display:block;width:100%;height:248px;border:0}
@@ -421,6 +433,10 @@
     </nav>
     <div class="side-foot">
       <a class="watch" href="https://twitch.tv/badge_db" target="_blank" rel="noopener"><img src="logo-192.png" alt=""><span><b>Watch on Twitch</b><small>twitch.tv/badge_db</small></span></a>
+      <div class="side-social">
+        <a class="dc" href="https://discord.gg/QkuRDXcZH5" target="_blank" rel="noopener" title="Join the Discord"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.5 5.5A16 16 0 0 0 15.6 4l-.5 1a15 15 0 0 0-6.2 0l-.5-1a16 16 0 0 0-3.9 1.5C2 9.3 1.3 13 1.6 16.6A16 16 0 0 0 6.5 19l1-1.6a10 10 0 0 1-1.6-.8l.4-.3a11.5 11.5 0 0 0 11.4 0l.4.3-1.6.8 1 1.6a16 16 0 0 0 4.9-2.4c.4-4.2-.7-7.8-2.9-11.1zM8.7 14.4c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2zm6.6 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2z"/></svg><span>Join the Discord</span></a>
+        <a class="xx" href="https://x.com/BadgeDatabase" target="_blank" rel="noopener" title="Follow @BadgeDatabase on X"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 3h3l-7 8 8 10h-6l-4.7-6.2L5.5 21h-3l7.5-8.6L2.5 3h6l4.3 5.7z"/></svg><span>Follow @BadgeDatabase</span></a>
+      </div>
     </div>
   </aside>
 
@@ -446,7 +462,7 @@
           <div class="stream-card">
             <div class="sc-head"><span class="live-dot"></span><b>24/7 stream</b><span class="ch">twitch.tv/badge_db</span><a href="https://twitch.tv/badge_db" target="_blank" rel="noopener">Open ↗</a></div>
             <div class="sc-body" id="homeStream"></div>
-            <div class="sc-foot"><span>Badge alerts in chat the moment a new one drops.</span><a class="btn ghost" href="https://www.twitch.tv/subs/badge_db" target="_blank" rel="noopener">Subscribe</a></div>
+            <div class="sc-foot"><span>Live countdowns for every active badge, 24/7.</span><a class="btn ghost" href="https://www.twitch.tv/subs/badge_db" target="_blank" rel="noopener">Subscribe</a></div>
           </div>
         </div>
       </div>
@@ -560,9 +576,10 @@
 </div>
 
 <div class="streambar">
-  <span class="live-dot"></span><b>24/7 Stream</b><span>· badge alerts in chat</span>
+  <span class="live-dot"></span><b>24/7 Stream</b><span class="sb-sub">Live badge countdowns</span>
   <a class="btn ghost" href="https://www.twitch.tv/subs/badge_db" target="_blank" rel="noopener">Subscribe</a>
   <span class="sp"></span>
+  <span class="sb-alerts">New badge alerts on <a href="https://x.com/BadgeDatabase" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 3h3l-7 8 8 10h-6l-4.7-6.2L5.5 21h-3l7.5-8.6L2.5 3h6l4.3 5.7z"/></svg> @BadgeDatabase</a> and right here on the site</span>
   <button class="btn" id="btnPlayer">Load stream &amp; chat</button>
 </div>
 <div class="player" id="player" hidden><button class="x" id="btnPlayerX" aria-label="Close">×</button><div id="playerBody"></div></div>
@@ -837,7 +854,7 @@ const FAQ = [
   ]],
   ["About Badge Database", [
     ["Where does the data come from?", "Badge images, titles and descriptions come from the public Twitch API and are checked every 15 minutes. Dates and objectives are added from official announcements."],
-    ["How do I get notified about new badges?", "Follow <a href='https://x.com/BadgeDatabase' target='_blank' rel='noopener'>@BadgeDatabase on X</a>, join the <a href='https://discord.gg/QkuRDXcZH5' target='_blank' rel='noopener'>Discord</a>, or keep the <a href='https://twitch.tv/badge_db' target='_blank' rel='noopener'>24/7 stream</a> open — every new global badge is posted the moment it appears."],
+    ["How do I get notified about new badges?", "Every new global badge is posted on <a href='https://x.com/BadgeDatabase' target='_blank' rel='noopener'>@BadgeDatabase on X</a> the moment it appears, and it shows up here on the site at the same time. The <a href='https://twitch.tv/badge_db' target='_blank' rel='noopener'>24/7 stream</a> shows live countdowns, and the <a href='https://discord.gg/QkuRDXcZH5' target='_blank' rel='noopener'>Discord</a> is the place to ask questions and chat about badges."],
     ["Is Badge Database affiliated with Twitch?", "No. Badge Database is an independent fan project and is not affiliated with or endorsed by Twitch Interactive, Inc."],
     ["I found a mistake — how do I report it?", "Message us on <a href='https://discord.gg/QkuRDXcZH5' target='_blank' rel='noopener'>Discord</a> or <a href='https://x.com/BadgeDatabase' target='_blank' rel='noopener'>X</a> with the badge name and the correct info, and we'll fix it."]
   ]]
