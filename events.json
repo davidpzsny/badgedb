@@ -1,5 +1,21 @@
 [
  {
+  "id": "witcher-3",
+  "name": "Witcher 3",
+  "category": "Witcher 3",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Wolf Medallion",
+    "img": "3e008d8a-4a24-4858-9e8f-74e8a3808955",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in The Witcher 3 category during launch of The Witcher 3: Wild Hunt – Remastered"
+   }
+  ]
+ },
+ {
   "id": "ace-combat-8-nugget",
   "name": "ACE COMBAT 8 Nugget",
   "category": "ACE COMBAT 8",
