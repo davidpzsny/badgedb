@@ -356,6 +356,7 @@
   .streambar b{font-size:14px}.streambar span{font-size:13px;color:var(--muted)}
   .streambar .sp{flex:1}
   .streambar .btn span{color:inherit;font-size:inherit}
+  .streambar .sb-follow svg{width:15px;height:15px;color:#a970ff}
   .streambar .sb-sub{padding-left:10px;margin-left:2px;border-left:1px solid var(--line-2)}
   .streambar .sb-alerts{display:flex;align-items:center;gap:6px;margin-right:6px}
   .streambar .sb-alerts a{display:inline-flex;align-items:center;gap:5px;color:var(--text);font-weight:700;padding:4px 9px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid var(--line)}
@@ -681,7 +682,7 @@
 
 <div class="streambar">
   <span class="live-dot"></span><b>24/7 Stream</b><span class="sb-sub">Live badge countdowns</span>
-  <a class="btn ghost" href="https://www.twitch.tv/subs/badge_db" target="_blank" rel="noopener">Subscribe</a>
+  <a class="btn ghost sb-follow" href="https://www.twitch.tv/badge_db" target="_blank" rel="noopener" title="Follow badge_db on Twitch"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2 2 6v14h5v3h3l3-3h4l5-5V2H4zm16 12-3 3h-5l-3 3v-3H6V4h14v10zm-4-7h-2v5h2V7zm-5 0H9v5h2V7z"/></svg>Follow</a>
   <span class="sp"></span>
   <span class="sb-alerts">New badge alerts on <a href="https://x.com/BadgeDatabase" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 3h3l-7 8 8 10h-6l-4.7-6.2L5.5 21h-3l7.5-8.6L2.5 3h6l4.3 5.7z"/></svg> @BadgeDatabase</a> and right here on the site</span>
   <button class="btn" id="btnPlayer"><span class="lg">Load stream &amp; chat</span><span class="sm">Watch live</span></button>
