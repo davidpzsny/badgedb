@@ -238,6 +238,36 @@
   .ctx{font-size:14.5px;color:var(--text);opacity:.9;line-height:1.6}
   @media (max-width:880px){.bp-grid{grid-template-columns:1fr}}
 
+  /* ================= admin ================= */
+  .adm-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .adm-status{font-size:13px;color:var(--muted);font-weight:600}
+  .adm-status.ok{color:var(--mint)}.adm-status.err{color:var(--red)}.adm-status.dirty{color:var(--amber)}
+  .adm-tabs{margin:6px 0 16px}
+  .adm-ev{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden}
+  .adm-ev.needs{border-color:rgba(251,191,36,.45)}
+  .adm-ev > summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:14px 16px}
+  .adm-ev > summary::-webkit-details-marker{display:none}
+  .adm-ev > summary .imgs{display:flex}.adm-ev > summary .imgs img{width:32px;height:32px;object-fit:contain;margin-left:-6px;background:var(--panel-2);border-radius:8px;padding:2px}
+  .adm-ev > summary .imgs img:first-child{margin-left:0}
+  .adm-ev > summary b{font-size:15px}.adm-ev > summary small{display:block;color:var(--muted);font-size:12.5px;font-weight:600}
+  .adm-ev > summary .pill{margin-left:auto}
+  .adm-form{padding:4px 16px 16px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .adm-form label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:700;color:var(--muted)}
+  .adm-form label.full{grid-column:1/-1}
+  .adm-form input,.adm-form select,.adm-form textarea{background:var(--bg);border:1px solid var(--line-2);border-radius:9px;color:var(--text);font:inherit;font-size:14px;font-weight:500;padding:9px 11px;outline:0}
+  .adm-form input:focus,.adm-form select:focus,.adm-form textarea:focus{border-color:var(--purple)}
+  .adm-form .hint{font-weight:500;color:var(--dim);font-size:11.5px}
+  .adm-badges{grid-column:1/-1;display:flex;flex-direction:column;gap:8px}
+  .adm-b{display:grid;grid-template-columns:40px 1fr 2fr 120px 32px;gap:8px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px}
+  .adm-b img{width:36px;height:36px;object-fit:contain}
+  .adm-b .nm{font-weight:700;font-size:13px}.adm-b .ds{grid-column:2/-1;font-size:11.5px;color:var(--dim)}
+  .adm-b button{color:var(--muted);font-size:18px}.adm-b button:hover{color:var(--red)}
+  .adm-row{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .adm-login{max-width:640px}
+  .adm-login ol{padding-left:20px;color:var(--muted);font-size:14px;display:flex;flex-direction:column;gap:6px;margin:10px 0 14px}
+  .adm-login ol b{color:var(--text)}
+  @media (max-width:880px){.adm-form{grid-template-columns:1fr}.adm-b{grid-template-columns:36px 1fr 32px}.adm-b input,.adm-b select{grid-column:2/-1}}
+
   /* ================= connect / setup ================= */
   .connect{display:flex;gap:18px;align-items:center;background:linear-gradient(135deg,rgba(139,92,246,.16),rgba(139,92,246,.03) 60%),var(--panel);border:1px solid rgba(139,92,246,.35);border-radius:var(--r);padding:18px 20px;margin-top:8px;flex-wrap:wrap;box-shadow:var(--shadow)}
   .connect .txt{flex:1;min-width:240px;font-size:14px;color:var(--muted)}
@@ -463,6 +493,14 @@
       <div id="badgePage"></div>
     </section>
 
+    <!-- ADMIN -->
+    <section data-page="admin" hidden>
+      <div class="crumbs"><a href="#home">Home</a><span>/</span>Admin</div>
+      <div class="page-head"><div><h1>Event editor</h1><p class="lead">Add dates, objectives and categories. Saving publishes to the site within about a minute.</p></div>
+        <div class="adm-actions" id="admTop"></div></div>
+      <div id="admBody"></div>
+    </section>
+
     <!-- LEGAL -->
     <section data-page="privacy" hidden>
       <div class="crumbs"><a href="#home">Home</a><span>/</span>Privacy Policy</div>
@@ -477,7 +515,8 @@
 
     <footer>
       Data from the public Twitch API. BadgeDB is not affiliated with Twitch Interactive, Inc. Badge images © their respective owners.<br>
-      <a href="#privacy">Privacy Policy</a> · <a href="#terms">Terms of Service</a> · <a href="https://twitch.tv/badge_db" target="_blank" rel="noopener">twitch.tv/badge_db</a>
+      <a href="#privacy">Privacy Policy</a> · <a href="#terms">Terms of Service</a> · <a href="https://twitch.tv/badge_db" target="_blank" rel="noopener">twitch.tv/badge_db</a> · <a href="#admin">Admin</a>
+      <div id="dataAge" style="margin-top:4px"></div>
     </footer>
   </main>
 </div>
@@ -508,6 +547,7 @@ const CONFIG = {
     reddit:  "",
   },
   clientId: "",
+  repo: "davidpzsny/badgedb",        // used by the #admin page to save events.json
 };
 
 /* =====================================================================
@@ -517,7 +557,7 @@ const CONFIG = {
    ===================================================================== */
 const cdn = id => id ? `https://static-cdn.jtvnw.net/badges/v1/${id}/3` : "";
 const SUB = "Subscribe (Tier 1) or gift a Tier 1 sub in the category.";
-let EVENTS = [{"id": "control-resonant", "name": "CONTROL Resonant Launch", "category": "CONTROL Resonant", "start": "2026-09-22T14:00:00Z", "end": "2026-10-13T13:59:00Z", "badges": [{"name": "Don't Eat The Mold", "img": "f1617a53-9e8f-4bd4-b440-ab44f6f8f650", "how": "Watch 60 minutes in the category.", "cost": "free"}, {"name": "The Inverted Man", "img": "755022bc-26e1-47a4-8d6f-961224713355", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "alien-isolation", "name": "Alien: Isolation", "category": "Alien: Isolation", "start": "", "end": "", "badges": [{"name": "SEEGSON Synthetics", "img": "4709f62b-9cd9-4759-8953-c096527401c7", "how": "Watch in the category (exact time not announced yet).", "cost": "free"}, {"name": "Sevastopol Station", "img": "a6a681a9-3253-42de-b09a-7bda7c05c342", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "dnd-dungeon-masters", "name": "D&D: World of Warcraft (Dungeon Masters)", "category": "Dungeons & Dragons", "start": "", "end": "", "badges": [{"name": "d20", "img": "263a5bf1-c1ea-4f26-8bf8-db42ea2ebc7c", "how": "Watch in the category (exact time not announced yet).", "cost": "free"}, {"name": "Ampersand", "img": "b17f6b68-4a2d-4d2a-9967-aa8ff26012a0", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "atlus-2026", "name": "ATLUS 2026 Celebration", "category": "Persona 3 Reload", "start": "", "end": "", "note": "Each badge belongs to a different ATLUS game category (Persona 3 Reload, Persona 4, Persona 5, Metaphor).", "badges": [{"name": "Koromaru", "img": "d08bb5f3-7638-45c6-919a-9f2eb4ef505e", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the Persona 3 Reload category.", "cost": "paid"}, {"name": "Teddie", "img": "80786dcb-bf5e-4069-ab13-32b4fa436c51", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}, {"name": "Morgana", "img": "a0c09111-b247-4b40-88a2-7ef1cfc60f65", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}, {"name": "Nahobiho", "img": "adc8a831-4884-471b-9723-aad8bf3e05b8", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "homo-tenta", "name": "Homo Tenta", "category": "Unknown", "start": "", "end": "", "badges": [{"name": "Homo Tenta", "img": "3ec6f155-ebc7-4624-89d9-ead63122dc52", "how": "This badge was earned by subscribing to a streamer in the Metaphor: ReFantazio category during the 2026 ATLUS celebration!", "cost": "na"}]}, {"id": "blue-creeper-boss", "name": "TGS 2026: Blue Creeper Boss", "category": "Minecraft", "start": "2026-09-17T18:00:00Z", "end": "2026-09-22T06:58:00Z", "note": "Short window — only on Minecraft streams that have the reward enabled. Receiving a gifted sub or using Prime does not count.", "badges": [{"name": "Blue Creeper Boss", "img": "e349e84d-1d91-4086-afda-e0c946717878", "how": "Subscribe (Tier 1) or gift a Tier 1 sub to a streamer live in the Minecraft category.", "cost": "paid"}]}, {"id": "ultramarine", "name": "Space Marine II 2nd Anniversary", "category": "Warhammer 40,000: Space Marine II", "start": "", "end": "", "badges": [{"name": "Ultramarine", "img": "12cb6b16-063b-4fcf-b312-c5c8f01e49ac", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "clipped-that", "name": "Clipped That", "category": "Twitch", "start": "2026-09-01T00:00:00Z", "end": "2026-09-15T23:59:00Z", "badges": [{"name": "Clipped That", "img": "", "how": "Download a clip of your stream and share it to social by Sep 15.", "cost": "free"}]}, {"id": "onimusha", "name": "Onimusha: Way of the Sword", "category": "Onimusha: Way of the Sword", "start": "2026-09-04T04:00:00Z", "end": "2026-09-18T03:59:00Z", "badges": [{"name": "Onimusha Armament", "img": "379bfc94-8276-4e9e-9a34-615e10c55baf", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "lego-harley", "name": "LEGO Batman: Harley", "category": "LEGO Batman: Legacy of the Dark Knight", "start": "2026-09-01T07:00:00Z", "end": "2026-09-20T06:59:00Z", "badges": [{"name": "Harley Mayhem", "img": "1d235db6-09cc-458f-9805-be2efc178e54", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "resonance", "name": "Resonance: A Plague Tale Legacy", "category": "Resonance: A Plague Tale Legacy", "start": "2026-08-26T16:00:00Z", "end": "2026-09-23T15:59:00Z", "badges": [{"name": "Resonance Minotaur", "img": "63cf6329-f34c-449e-8f70-fafa1eb1de9e", "how": "Watch 60 minutes in the category.", "cost": "free"}]}, {"id": "blizzcon", "name": "BlizzCon 2026", "category": "Diablo IV", "start": "2026-09-11T17:00:00Z", "end": "2026-09-26T16:59:00Z", "badges": [{"name": "Diablo", "img": "12e66b34-5748-4eb0-8cf1-63d01e925b4f", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "lego-joker", "name": "LEGO Batman: Joker", "category": "LEGO Batman: Legacy of the Dark Knight", "start": "2026-09-12T07:00:00Z", "end": "2026-09-28T06:59:00Z", "badges": [{"name": "Joker Mayhem", "img": "7973c062-7a4f-41de-9a20-77d4b2edc56a", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "elden-q1", "name": "Questline 1: Path of the Tarnished", "category": "ELDEN RING", "start": "2026-09-01T07:00:00Z", "end": "2026-09-29T06:59:00Z", "badges": [{"name": "Sorcerer Rogier", "img": "3d6ad3b0-0a0f-43ae-a969-c5215d8d5a06", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "solasta", "name": "Solasta II", "category": "Solasta II", "start": "2026-09-08T10:30:00Z", "end": "2026-09-29T06:59:00Z", "badges": [{"name": "Solasta II Multiplayer", "img": "e8430418-13e9-4325-b2ad-85664d2a4ddd", "how": "Watch 30 minutes in the category.", "cost": "free"}]}, {"id": "nopixel", "name": "nopixel V", "category": "Grand Theft Auto V", "start": "2026-09-08T04:00:00Z", "end": "2026-09-30T03:59:00Z", "badges": [{"name": "nopixel V Launch", "img": "6a34b65f-93f6-4ebd-8f75-898bdaff79e8", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "wardogs", "name": "WARDOGS", "category": "WARDOGS", "start": "2026-09-03T18:00:00Z", "end": "2026-09-30T17:59:00Z", "badges": [{"name": "WARDOG", "img": "a00140ee-7c25-4cd1-95d9-54b9603f1f80", "how": "Watch 30 minutes in the category.", "cost": "free"}, {"name": "WARLORD", "img": "233322a6-0c31-43e7-acfa-f10e732e87da", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "dawnwalker", "name": "The Blood of Dawnwalker Launch", "category": "The Blood of Dawnwalker", "start": "2026-09-03T00:00:00Z", "end": "2026-09-30T23:58:00Z", "badges": [{"name": "Launch", "img": "1c04ddd1-6baa-4e5c-a685-976c621d5114", "how": "Watch 60 minutes in the category.", "cost": "free"}, {"name": "Supporter", "img": "63076299-4910-4594-a05c-60899d32c765", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "pokemon", "name": "Pokémon First Partners Collection", "category": "20 eligible Pokémon categories", "start": "2026-08-24T17:00:00Z", "end": "2026-10-01T07:00:00Z", "note": "Unlock the starters before Oct 1 — otherwise you can't get their evolution badges later.", "badges": [{"name": "Pichu", "img": "20f214cf-36b0-4b42-8992-3b769bcb0461", "how": "Watch 20 minutes a day for 3 days.", "cost": "free"}, {"name": "Bulbasaur", "img": "68072d07-8648-4066-9694-3f9fb594eb3d", "how": "Sub / gift sub, or watch 20 min a day for 3 days (1 in 3 chance).", "cost": "free"}, {"name": "Charmander", "img": "afe60f97-56d1-493d-a55c-2f1cec7aca7c", "how": "Sub / gift sub, or watch 20 min a day for 3 days (1 in 3 chance).", "cost": "free"}, {"name": "Squirtle", "img": "6e19714e-571f-4737-bc8b-865ebfb3e2c7", "how": "Sub / gift sub, or watch 20 min a day for 3 days (1 in 3 chance).", "cost": "free"}]}, {"id": "mouseathon", "name": "Mouseathon", "category": "Any · channel: ironmouse", "start": "2026-09-01T08:00:00Z", "end": "2026-10-01T07:00:00Z", "badges": [{"name": "Mouseathon", "img": "8bce8f4e-f53a-4922-b715-35167b0fae7b", "how": "Watch ironmouse for 15 minutes.", "cost": "free"}]}, {"id": "subtember", "name": "SUBtember 2026", "category": "Any", "start": "2026-08-28T17:00:00Z", "end": "2026-10-01T17:00:00Z", "badges": [{"name": "SUBtember 2026", "img": "6ae639f0-a06d-40a9-ad16-7b7e7c18a323", "how": "Subscribe, gift a sub, or cheer a single Bit anywhere.", "cost": "paid"}]}, {"id": "twitchcon-sd", "name": "TwitchCon 2026 San Diego", "category": "TwitchCon", "start": "2026-07-22T17:00:00Z", "end": "2026-11-15T23:59:00Z", "badges": [{"name": "BeachBall", "img": "b3f69c97-a9a7-4360-bb9e-485ec8db72bb", "how": "Buy a 1-day TwitchCon ticket.", "cost": "paid"}, {"name": "Taco", "img": "aea5244a-3fb5-48f9-a17c-a377760df226", "how": "Buy a 3-day TwitchCon ticket.", "cost": "paid"}]}, {"id": "wolverine", "name": "Marvel's Wolverine", "category": "Marvel's Wolverine", "start": "2026-09-14T14:00:00Z", "end": "2026-09-28T13:59:00Z", "badges": [{"name": "Marvel's Wolverine", "img": "55090800-82e4-4d31-8b3c-f9feb5e25557", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "elden-q2", "name": "Questline 2: Path of the Cardinal Sin", "category": "ELDEN RING", "start": "2026-10-01T00:00:00Z", "end": "2026-10-28T23:59:00Z", "badges": [{"name": "Festering Bloody Finger", "img": "", "how": "Details not announced yet.", "cost": "na"}]}, {"id": "ffxiv", "name": "Final Fantasy XIV Fan Festival 2026 JP", "category": "Final Fantasy XIV", "start": "2026-10-30T00:00:00Z", "end": "2026-11-01T23:59:00Z", "badges": [{"name": "Alpha Chat", "img": "1826cb5f-32a9-409a-9829-f6f47ea68239", "how": "Watch any creator in the FFXIV category for 60 minutes during Fan Fest.", "cost": "free"}, {"name": "Quest Complete Chat", "img": "e7d696ad-4479-4e44-bceb-5643f80bef38", "how": "Watch the Fan Fest on /finalfantasyxiv for 60 minutes.", "cost": "free"}]}, {"id": "elden-q3", "name": "Questline 3: Path of the Elden Lord", "category": "ELDEN RING", "start": "2026-11-02T00:00:00Z", "end": "2026-11-28T23:59:00Z", "badges": [{"name": "Warrior Jar Alexander", "img": "", "how": "Details not announced yet.", "cost": "na"}]}, {"id": "elden-q4", "name": "Questline 4: Path of Shadows", "category": "ELDEN RING", "start": "2026-12-01T00:00:00Z", "end": "2026-12-28T23:59:00Z", "badges": [{"name": "St. Trina", "img": "", "how": "Details not announced yet.", "cost": "na"}]}, {"id": "twitchcon-berlin", "name": "TwitchCon 2027 Berlin", "category": "TwitchCon", "start": "2027-05-22T00:00:00Z", "end": "2027-05-23T23:59:00Z", "badges": [{"name": "TwitchCon Berlin badges", "img": "", "how": "TwitchCon always ships its own badges — expected again this year.", "cost": "na"}]}, {"id": "pokemon-evo", "name": "Pokémon evolution badges", "category": "Pokémon", "start": "", "end": "", "badges": [{"name": "Evolutions (up to 8)", "img": "", "how": "Requires the four starter badges unlocked before Oct 1. Details later.", "cost": "na"}]}, {"id": "wasteland", "name": "Wasteland Circuit", "category": "Rainbow Six Siege", "start": "", "end": "", "badges": [{"name": "DRON-E", "img": "70e9e169-1fbf-4279-b23c-a714ccb0c9ef", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "dragonwilds", "name": "RuneScape: Dragonwilds", "category": "RuneScape: Dragonwilds", "start": "", "end": "", "badges": [{"name": "Dragonwilds Eye", "img": "a5b43a31-4534-4f9e-875b-b9f0d1be8f73", "how": "Watch 30 minutes in the category.", "cost": "free"}]}, {"id": "payday3", "name": "PAYDAY 3", "category": "PAYDAY 3", "start": "", "end": "", "badges": [{"name": "Chains", "img": "909fa1c7-8f4c-41c4-9910-ee936f7236d7", "how": "Watch 30 minutes.", "cost": "free"}, {"name": "Hoxton", "img": "bce13ab6-e9ae-4d9a-bf52-8ea7ba3ce8c4", "how": "Watch 60 minutes.", "cost": "free"}, {"name": "Wolf", "img": "714081b8-aded-46d7-a6c3-14b2d79f19be", "how": "Watch 90 minutes.", "cost": "free"}, {"name": "Dallas", "img": "a5ba44a9-2ccd-4b69-b5b8-9e28f1c887e7", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "wsci", "name": "2026 World Star Challengers Invitational", "category": "Unknown", "start": "", "end": "", "badges": [{"name": "WSCI 2026", "img": "e61d79be-7d9d-4de2-8571-41f00bf2081a", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}];
+let EVENTS = [{"id": "ace-combat-8-nugget", "name": "ACE COMBAT 8 Nugget", "category": "Unknown", "start": "", "end": "", "badges": [{"name": "ACE COMBAT 8 Nugget", "img": "8468fb6c-1d33-4482-85ef-fa1898288ee2", "how": "This badge was earned by subscribing or gifting a sub to a streamer in the ACE COMBAT 8 category during the game's launch!", "cost": "na"}]}, {"id": "yellow-party-hat", "name": "Yellow Party Hat", "category": "Unknown", "start": "", "end": "", "badges": [{"name": "Yellow Party Hat", "img": "6325b96b-0187-4a60-90d0-8bb45efa3fff", "how": "This badge was awarded to people who viewed the official 2026 RuneFest livestream for one hour. It was added to promote the RuneScape Franchise's RuneFest event.", "cost": "na"}]}, {"id": "runescape-shrimp", "name": "RuneScape Shrimp", "category": "Unknown", "start": "", "end": "", "badges": [{"name": "RuneScape Shrimp", "img": "aed4a5ae-3e02-40c6-92bc-dfb8d33576f5", "how": "This badge was awarded to people who viewed any eligible channel co-streaming RuneFest 2026 in the Old School RuneScape category for one hour. It was added to promote the RuneScape Franchise's RuneFest event.", "cost": "na"}]}, {"id": "big-walk", "name": "Big Walk", "category": "Unknown", "start": "", "end": "", "badges": [{"name": "Big Walk", "img": "3de5a89b-533b-483a-8db2-036f9f13b9bd", "how": "This badge was earned by subscribing or gifting a sub to a streamer in the Big Walk category.", "cost": "na"}]}, {"id": "clipped-that-2", "name": "Clipped That", "category": "Unknown", "start": "", "end": "", "badges": [{"name": "Clipped That", "img": "5b648ccf-dc37-4233-a96e-c6e5d693a0ae", "how": "This limited-time badge was earned by a DJ Program creator who clipped an epic mid-set moment and downloaded + shared it to social.", "cost": "na"}]}, {"id": "rematch-blue-lock", "name": "Rematch Blue Lock", "category": "Unknown", "start": "", "end": "", "badges": [{"name": "Rematch Blue Lock", "img": "13afe621-edd4-48b6-a09b-453a2dee52e9", "how": "This badge was earned by watching a streamer in the Rematch category for 30 minutes", "cost": "na"}]}, {"id": "control-resonant", "name": "CONTROL Resonant Launch", "category": "CONTROL Resonant", "start": "2026-09-22T14:00:00Z", "end": "2026-10-13T13:59:00Z", "badges": [{"name": "Don't Eat The Mold", "img": "f1617a53-9e8f-4bd4-b440-ab44f6f8f650", "how": "Watch 60 minutes in the category.", "cost": "free"}, {"name": "The Inverted Man", "img": "755022bc-26e1-47a4-8d6f-961224713355", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "alien-isolation", "name": "Alien: Isolation", "category": "Alien: Isolation", "start": "", "end": "", "badges": [{"name": "SEEGSON Synthetics", "img": "4709f62b-9cd9-4759-8953-c096527401c7", "how": "Watch in the category (exact time not announced yet).", "cost": "free"}, {"name": "Sevastopol Station", "img": "a6a681a9-3253-42de-b09a-7bda7c05c342", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "dnd-dungeon-masters", "name": "D&D: World of Warcraft (Dungeon Masters)", "category": "Dungeons & Dragons", "start": "", "end": "", "badges": [{"name": "d20", "img": "263a5bf1-c1ea-4f26-8bf8-db42ea2ebc7c", "how": "Watch in the category (exact time not announced yet).", "cost": "free"}, {"name": "Ampersand", "img": "b17f6b68-4a2d-4d2a-9967-aa8ff26012a0", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "atlus-2026", "name": "ATLUS 2026 Celebration", "category": "Persona 3 Reload", "start": "", "end": "", "note": "Each badge belongs to a different ATLUS game category (Persona 3 Reload, Persona 4, Persona 5, Metaphor).", "badges": [{"name": "Koromaru", "img": "d08bb5f3-7638-45c6-919a-9f2eb4ef505e", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the Persona 3 Reload category.", "cost": "paid"}, {"name": "Teddie", "img": "80786dcb-bf5e-4069-ab13-32b4fa436c51", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}, {"name": "Morgana", "img": "a0c09111-b247-4b40-88a2-7ef1cfc60f65", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}, {"name": "Nahobiho", "img": "adc8a831-4884-471b-9723-aad8bf3e05b8", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "homo-tenta", "name": "Homo Tenta", "category": "Unknown", "start": "", "end": "", "badges": [{"name": "Homo Tenta", "img": "3ec6f155-ebc7-4624-89d9-ead63122dc52", "how": "This badge was earned by subscribing to a streamer in the Metaphor: ReFantazio category during the 2026 ATLUS celebration!", "cost": "na"}]}, {"id": "blue-creeper-boss", "name": "TGS 2026: Blue Creeper Boss", "category": "Minecraft", "start": "2026-09-17T18:00:00Z", "end": "2026-09-22T06:58:00Z", "note": "Short window — only on Minecraft streams that have the reward enabled. Receiving a gifted sub or using Prime does not count.", "badges": [{"name": "Blue Creeper Boss", "img": "e349e84d-1d91-4086-afda-e0c946717878", "how": "Subscribe (Tier 1) or gift a Tier 1 sub to a streamer live in the Minecraft category.", "cost": "paid"}]}, {"id": "ultramarine", "name": "Space Marine II 2nd Anniversary", "category": "Warhammer 40,000: Space Marine II", "start": "", "end": "", "badges": [{"name": "Ultramarine", "img": "12cb6b16-063b-4fcf-b312-c5c8f01e49ac", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "clipped-that", "name": "Clipped That", "category": "Twitch", "start": "2026-09-01T00:00:00Z", "end": "2026-09-15T23:59:00Z", "badges": [{"name": "Clipped That", "img": "", "how": "Download a clip of your stream and share it to social by Sep 15.", "cost": "free"}]}, {"id": "onimusha", "name": "Onimusha: Way of the Sword", "category": "Onimusha: Way of the Sword", "start": "2026-09-04T04:00:00Z", "end": "2026-09-18T03:59:00Z", "badges": [{"name": "Onimusha Armament", "img": "379bfc94-8276-4e9e-9a34-615e10c55baf", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "lego-harley", "name": "LEGO Batman: Harley", "category": "LEGO Batman: Legacy of the Dark Knight", "start": "2026-09-01T07:00:00Z", "end": "2026-09-20T06:59:00Z", "badges": [{"name": "Harley Mayhem", "img": "1d235db6-09cc-458f-9805-be2efc178e54", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "resonance", "name": "Resonance: A Plague Tale Legacy", "category": "Resonance: A Plague Tale Legacy", "start": "2026-08-26T16:00:00Z", "end": "2026-09-23T15:59:00Z", "badges": [{"name": "Resonance Minotaur", "img": "63cf6329-f34c-449e-8f70-fafa1eb1de9e", "how": "Watch 60 minutes in the category.", "cost": "free"}]}, {"id": "blizzcon", "name": "BlizzCon 2026", "category": "Diablo IV", "start": "2026-09-11T17:00:00Z", "end": "2026-09-26T16:59:00Z", "badges": [{"name": "Diablo", "img": "12e66b34-5748-4eb0-8cf1-63d01e925b4f", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "lego-joker", "name": "LEGO Batman: Joker", "category": "LEGO Batman: Legacy of the Dark Knight", "start": "2026-09-12T07:00:00Z", "end": "2026-09-28T06:59:00Z", "badges": [{"name": "Joker Mayhem", "img": "7973c062-7a4f-41de-9a20-77d4b2edc56a", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "elden-q1", "name": "Questline 1: Path of the Tarnished", "category": "ELDEN RING", "start": "2026-09-01T07:00:00Z", "end": "2026-09-29T06:59:00Z", "badges": [{"name": "Sorcerer Rogier", "img": "3d6ad3b0-0a0f-43ae-a969-c5215d8d5a06", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "solasta", "name": "Solasta II", "category": "Solasta II", "start": "2026-09-08T10:30:00Z", "end": "2026-09-29T06:59:00Z", "badges": [{"name": "Solasta II Multiplayer", "img": "e8430418-13e9-4325-b2ad-85664d2a4ddd", "how": "Watch 30 minutes in the category.", "cost": "free"}]}, {"id": "nopixel", "name": "nopixel V", "category": "Grand Theft Auto V", "start": "2026-09-08T04:00:00Z", "end": "2026-09-30T03:59:00Z", "badges": [{"name": "nopixel V Launch", "img": "6a34b65f-93f6-4ebd-8f75-898bdaff79e8", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "wardogs", "name": "WARDOGS", "category": "WARDOGS", "start": "2026-09-03T18:00:00Z", "end": "2026-09-30T17:59:00Z", "badges": [{"name": "WARDOG", "img": "a00140ee-7c25-4cd1-95d9-54b9603f1f80", "how": "Watch 30 minutes in the category.", "cost": "free"}, {"name": "WARLORD", "img": "233322a6-0c31-43e7-acfa-f10e732e87da", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "dawnwalker", "name": "The Blood of Dawnwalker Launch", "category": "The Blood of Dawnwalker", "start": "2026-09-03T00:00:00Z", "end": "2026-09-30T23:58:00Z", "badges": [{"name": "Launch", "img": "1c04ddd1-6baa-4e5c-a685-976c621d5114", "how": "Watch 60 minutes in the category.", "cost": "free"}, {"name": "Supporter", "img": "63076299-4910-4594-a05c-60899d32c765", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "pokemon", "name": "Pokémon First Partners Collection", "category": "20 eligible Pokémon categories", "start": "2026-08-24T17:00:00Z", "end": "2026-10-01T07:00:00Z", "note": "Unlock the starters before Oct 1 — otherwise you can't get their evolution badges later.", "badges": [{"name": "Pichu", "img": "20f214cf-36b0-4b42-8992-3b769bcb0461", "how": "Watch 20 minutes a day for 3 days.", "cost": "free"}, {"name": "Bulbasaur", "img": "68072d07-8648-4066-9694-3f9fb594eb3d", "how": "Sub / gift sub, or watch 20 min a day for 3 days (1 in 3 chance).", "cost": "free"}, {"name": "Charmander", "img": "afe60f97-56d1-493d-a55c-2f1cec7aca7c", "how": "Sub / gift sub, or watch 20 min a day for 3 days (1 in 3 chance).", "cost": "free"}, {"name": "Squirtle", "img": "6e19714e-571f-4737-bc8b-865ebfb3e2c7", "how": "Sub / gift sub, or watch 20 min a day for 3 days (1 in 3 chance).", "cost": "free"}]}, {"id": "mouseathon", "name": "Mouseathon", "category": "Any · channel: ironmouse", "start": "2026-09-01T08:00:00Z", "end": "2026-10-01T07:00:00Z", "badges": [{"name": "Mouseathon", "img": "8bce8f4e-f53a-4922-b715-35167b0fae7b", "how": "Watch ironmouse for 15 minutes.", "cost": "free"}]}, {"id": "subtember", "name": "SUBtember 2026", "category": "Any", "start": "2026-08-28T17:00:00Z", "end": "2026-10-01T17:00:00Z", "badges": [{"name": "SUBtember 2026", "img": "6ae639f0-a06d-40a9-ad16-7b7e7c18a323", "how": "Subscribe, gift a sub, or cheer a single Bit anywhere.", "cost": "paid"}]}, {"id": "twitchcon-sd", "name": "TwitchCon 2026 San Diego", "category": "TwitchCon", "start": "2026-07-22T17:00:00Z", "end": "2026-11-15T23:59:00Z", "badges": [{"name": "BeachBall", "img": "b3f69c97-a9a7-4360-bb9e-485ec8db72bb", "how": "Buy a 1-day TwitchCon ticket.", "cost": "paid"}, {"name": "Taco", "img": "aea5244a-3fb5-48f9-a17c-a377760df226", "how": "Buy a 3-day TwitchCon ticket.", "cost": "paid"}]}, {"id": "wolverine", "name": "Marvel's Wolverine", "category": "Marvel's Wolverine", "start": "2026-09-14T14:00:00Z", "end": "2026-09-28T13:59:00Z", "badges": [{"name": "Marvel's Wolverine", "img": "55090800-82e4-4d31-8b3c-f9feb5e25557", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "elden-q2", "name": "Questline 2: Path of the Cardinal Sin", "category": "ELDEN RING", "start": "2026-10-01T00:00:00Z", "end": "2026-10-28T23:59:00Z", "badges": [{"name": "Festering Bloody Finger", "img": "", "how": "Details not announced yet.", "cost": "na"}]}, {"id": "ffxiv", "name": "Final Fantasy XIV Fan Festival 2026 JP", "category": "Final Fantasy XIV", "start": "2026-10-30T00:00:00Z", "end": "2026-11-01T23:59:00Z", "badges": [{"name": "Alpha Chat", "img": "1826cb5f-32a9-409a-9829-f6f47ea68239", "how": "Watch any creator in the FFXIV category for 60 minutes during Fan Fest.", "cost": "free"}, {"name": "Quest Complete Chat", "img": "e7d696ad-4479-4e44-bceb-5643f80bef38", "how": "Watch the Fan Fest on /finalfantasyxiv for 60 minutes.", "cost": "free"}]}, {"id": "elden-q3", "name": "Questline 3: Path of the Elden Lord", "category": "ELDEN RING", "start": "2026-11-02T00:00:00Z", "end": "2026-11-28T23:59:00Z", "badges": [{"name": "Warrior Jar Alexander", "img": "", "how": "Details not announced yet.", "cost": "na"}]}, {"id": "elden-q4", "name": "Questline 4: Path of Shadows", "category": "ELDEN RING", "start": "2026-12-01T00:00:00Z", "end": "2026-12-28T23:59:00Z", "badges": [{"name": "St. Trina", "img": "", "how": "Details not announced yet.", "cost": "na"}]}, {"id": "twitchcon-berlin", "name": "TwitchCon 2027 Berlin", "category": "TwitchCon", "start": "2027-05-22T00:00:00Z", "end": "2027-05-23T23:59:00Z", "badges": [{"name": "TwitchCon Berlin badges", "img": "", "how": "TwitchCon always ships its own badges — expected again this year.", "cost": "na"}]}, {"id": "pokemon-evo", "name": "Pokémon evolution badges", "category": "Pokémon", "start": "", "end": "", "badges": [{"name": "Evolutions (up to 8)", "img": "", "how": "Requires the four starter badges unlocked before Oct 1. Details later.", "cost": "na"}]}, {"id": "wasteland", "name": "Wasteland Circuit", "category": "Rainbow Six Siege", "start": "", "end": "", "badges": [{"name": "DRON-E", "img": "70e9e169-1fbf-4279-b23c-a714ccb0c9ef", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "dragonwilds", "name": "RuneScape: Dragonwilds", "category": "RuneScape: Dragonwilds", "start": "", "end": "", "badges": [{"name": "Dragonwilds Eye", "img": "a5b43a31-4534-4f9e-875b-b9f0d1be8f73", "how": "Watch 30 minutes in the category.", "cost": "free"}]}, {"id": "payday3", "name": "PAYDAY 3", "category": "PAYDAY 3", "start": "", "end": "", "badges": [{"name": "Chains", "img": "909fa1c7-8f4c-41c4-9910-ee936f7236d7", "how": "Watch 30 minutes.", "cost": "free"}, {"name": "Hoxton", "img": "bce13ab6-e9ae-4d9a-bf52-8ea7ba3ce8c4", "how": "Watch 60 minutes.", "cost": "free"}, {"name": "Wolf", "img": "714081b8-aded-46d7-a6c3-14b2d79f19be", "how": "Watch 90 minutes.", "cost": "free"}, {"name": "Dallas", "img": "a5ba44a9-2ccd-4b69-b5b8-9e28f1c887e7", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "wsci", "name": "2026 World Star Challengers Invitational", "category": "Unknown", "start": "", "end": "", "badges": [{"name": "WSCI 2026", "img": "e61d79be-7d9d-4de2-8571-41f00bf2081a", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}];
 
 /* =====================================================================
    BADGES — snapshot of every Twitch global badge set.
@@ -557,7 +597,7 @@ function normalize(rows){
     const vs = [...rs].sort((a,b)=>a[0].localeCompare(b[0],undefined,{numeric:true}));  // natural order (cheer 1, 100, 1000…)
     const dated = rs.map(x=>x[2]).filter(Boolean);
     return { set:key, name:p[0], img:cdn(p[1]), imgId:p[1], added:p[2] || (dated.length && dated.length===rs.length ? dated.sort()[0] : ""),
-             free:rs.some(x=>x[3]===1), users:Math.max(...rs.map(x=>x[4]||0)),
+             free:rs.some(x=>x[3]===1), users:Math.max(...rs.map(x=>x[4]||0)), how:p[6]||"",
              versions: vs.map((x,i)=>({ id:String(i+1), title:x[0], img:cdn(x[1]) })) };
   });
 }
@@ -571,9 +611,10 @@ const isFile = location.protocol === "file:";
 const redirectUri = () => location.origin + location.pathname;
 
 /* ---------- routing ---------- */
-const ROUTES = ["home","timeline","global","channel","privacy","terms"];
+const ROUTES = ["home","timeline","global","channel","privacy","terms","admin"];
 function route(){
   let h = location.hash.replace('#','') || "home";
+  if(h==="admin"){ renderAdmin(); if(ADM.token && !ADM.events.length) admLoad(); }
   if(h.startsWith("badge/")){ renderBadgePage(decodeURIComponent(h.slice(6))); h = "badge"; }
   else if(h.startsWith("channel-badge/")){ renderChannelBadgePage(decodeURIComponent(h.slice(14))); h = "badge"; }
   else if(!ROUTES.includes(h)) h = "home";
@@ -776,7 +817,7 @@ function renderBadgePage(set){
   const ev = EV_BY_IMG[vid] || EV_BY_IMG[b.imgId]; const st = ev ? status(ev.ev) : null;
   const cat = ev ? ev.ev.category.split(" · ")[0] : "";
   const chan = ev && /channel:\s*(\S+)/i.exec(ev.ev.category)?.[1];
-  const twitchDesc = b.how && b.how.toLowerCase()!==b.name.toLowerCase() ? b.how : "";
+  const twitchDesc = (b.how && b.how.toLowerCase()!==b.name.toLowerCase() ? b.how : "") || (ev && ev.b.desc) || "";
   const desc = twitchDesc || (ev ? `This badge is earned during the ${ev.ev.name} event: ${ev.b.how}` : "Twitch does not provide a description for this badge.");
   const context = ev ? (ev.ev.note || `This badge was added to promote ${ev.ev.name}${cat && !/any|unknown|twitch/i.test(cat) ? ` in the ${cat} category` : ""} on Twitch.`) : "";
   const cd = st==="live" ? `<div class="bp-cd" data-cd="${ev.ev.end}">${countdown(ev.ev.end)}<small>until it ends</small></div>` : st==="soon" ? `<div class="bp-cd" data-cd="${ev.ev.start}">${countdown(ev.ev.start)}<small>until it starts</small></div>` : "";
@@ -852,6 +893,142 @@ function renderChannelBadgePage(imgId){
       </div>
     </div>`;
 }
+
+/* ---------- admin: edit events.json through the GitHub API ---------- */
+const ADM = { token:"", sha:"", events:[], dirty:false, filter:"needs", status:"" };
+try{ ADM.token = localStorage.getItem("badgedb_gh_token") || ""; }catch(_){}
+const b64encode = str => { const bytes = new TextEncoder().encode(str); let bin=""; for(let i=0;i<bytes.length;i+=0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i,i+0x8000)); return btoa(bin); };
+const b64decode = b64 => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\n/g,"")), c=>c.charCodeAt(0)));
+async function gh(path, opts={}){
+  const r = await fetch(`https://api.github.com/repos/${CONFIG.repo}/${path}`, { ...opts, headers:{ "Accept":"application/vnd.github+json", "Authorization":`Bearer ${ADM.token}`, ...(opts.headers||{}) } });
+  if(!r.ok){ const t = await r.text(); const e = new Error(`GitHub ${r.status}`); e.status=r.status; e.body=t; throw e; }
+  return r.json();
+}
+const toLocalInput = iso => { if(!iso) return ""; const d=new Date(iso); if(isNaN(d)) return ""; return new Date(d - d.getTimezoneOffset()*60000).toISOString().slice(0,16); };
+const fromLocalInput = v => v ? new Date(v).toISOString().replace(/\.\d{3}Z$/,"Z") : "";
+function admSetStatus(msg, cls=""){ ADM.status = msg; const el=$('#admStatus'); if(el){ el.textContent=msg; el.className='adm-status '+cls; } }
+function admMarkDirty(){ ADM.dirty=true; admSetStatus("Unsaved changes","dirty"); }
+
+async function admLoad(){
+  admSetStatus("Loading…");
+  try{
+    const f = await gh("contents/events.json?ref=main");
+    ADM.sha = f.sha; ADM.events = JSON.parse(b64decode(f.content)); ADM.dirty=false;
+    admSetStatus(`Loaded ${ADM.events.length} events`, "ok"); renderAdmin();
+  }catch(e){
+    if(e.status===401||e.status===403||e.status===404){ admSetStatus("Token rejected — check it has Contents: Read and write on this repo.","err"); }
+    else admSetStatus("Could not load: "+e.message,"err");
+  }
+}
+async function admSave(){
+  admSetStatus("Saving…");
+  try{
+    const body = { message:"Update events via admin", content:b64encode(JSON.stringify(ADM.events,null,1)), sha:ADM.sha, branch:"main" };
+    const r = await gh("contents/events.json", { method:"PUT", body:JSON.stringify(body) });
+    ADM.sha = r.content.sha; ADM.dirty=false;
+    EVENTS = JSON.parse(JSON.stringify(ADM.events)); indexEvents(); renderEvents(); renderTimeline(); renderHome();
+    admSetStatus("Saved — the public site updates in about a minute","ok");
+  }catch(e){
+    if(e.status===409) admSetStatus("The bot changed events.json meanwhile. Click Reload, then redo your edit.","err");
+    else admSetStatus("Save failed: "+e.message,"err");
+  }
+}
+function admNeeds(ev){ return !ev.start || ev.badges.some(b=>b.cost==="na" || is_ph(b.how)) || !ev.category || ev.category==="Unknown"; }
+const is_ph = h => { h=(h||"").trim().toLowerCase(); return !h || h==="objective not announced yet." || h==="objective not confirmed yet." || h.startsWith("watch in the category (exact time"); };
+
+function renderAdmin(){
+  const top=$('#admTop'), body=$('#admBody');
+  if(!ADM.token){
+    top.innerHTML="";
+    body.innerHTML = `<div class="card2 adm-login"><h3>Sign in with a GitHub token</h3>
+      <p class="ctx">The editor saves straight into your repository, so it needs a key that can write only this one repo. It is stored in this browser only.</p>
+      <ol>
+        <li>Open <b>github.com/settings/personal-access-tokens/new</b> (Fine-grained token).</li>
+        <li>Token name: <b>BadgeDB admin</b>, Expiration: as long as you like.</li>
+        <li>Repository access: <b>Only select repositories</b> → <b>${esc(CONFIG.repo)}</b>.</li>
+        <li>Permissions → Repository permissions → <b>Contents: Read and write</b>.</li>
+        <li><b>Generate token</b>, copy it and paste it below.</li>
+      </ol>
+      <div class="adm-row"><label class="search" style="flex:1;min-width:260px"><input id="admTok" type="password" placeholder="github_pat_…" autocomplete="off"></label><button class="btn" id="admLogin">Sign in</button></div>
+      <p class="adm-status" id="admStatus">${esc(ADM.status)}</p></div>`;
+    return;
+  }
+  top.innerHTML = `<span class="adm-status" id="admStatus">${esc(ADM.status)}</span>
+    <button class="btn ghost" id="admReload">Reload</button><button class="btn ghost" id="admNew">+ New event</button><button class="btn" id="admSave">Save changes</button>
+    <button class="btn ghost" id="admLogout" title="Forget token on this device">Sign out</button>`;
+  if(!ADM.events.length){ body.innerHTML = `<div class="empty">Loading events…</div>`; return; }
+  const list = ADM.events.map((ev,i)=>({ev,i})).filter(({ev})=> ADM.filter==="all" ? true : ADM.filter==="needs" ? admNeeds(ev) : ["live","soon"].includes(status(ev)));
+  const covered = new Set(ADM.events.flatMap(e=>e.badges.map(b=>b.img)));
+  const spare = globalBadges.filter(b=>!covered.has(b.imgId) && b.added && (Date.now()-Date.parse(b.added)) < 90*864e5);
+  const counts = { needs: ADM.events.filter(admNeeds).length, active: ADM.events.filter(e=>["live","soon"].includes(status(e))).length, all: ADM.events.length };
+  body.innerHTML = `
+    <div class="seg adm-tabs" id="admFilter">
+      <button data-f="needs" class="${ADM.filter==='needs'?'on':''}">Needs info (${counts.needs})</button>
+      <button data-f="active" class="${ADM.filter==='active'?'on':''}">Active &amp; upcoming (${counts.active})</button>
+      <button data-f="all" class="${ADM.filter==='all'?'on':''}">All (${counts.all})</button>
+    </div>
+    ${list.length ? list.map(({ev,i})=>admEventCard(ev,i,spare)).join('') : `<div class="empty">Nothing here — every event has its info filled in.</div>`}`;
+}
+function admEventCard(ev,i,spare){
+  const st = status(ev), needs = admNeeds(ev);
+  const pill = st==="live"?'<span class="pill live">Active</span>':st==="soon"?'<span class="pill soon">Upcoming</span>':st==="ended"?'<span class="pill na">Ended</span>':'<span class="pill na">No dates</span>';
+  const utc = iso => iso ? new Date(iso).toUTCString().replace(" GMT"," UTC").slice(5,22)+" UTC" : "";
+  return `<details class="adm-ev ${needs?'needs':''}" data-i="${i}" ${needs && ADM.filter==='needs'?'open':''}>
+    <summary><span class="imgs">${ev.badges.slice(0,4).map(b=>`<img src="${esc(cdn(b.img))}" alt="">`).join('')}</span>
+      <span><b>${esc(ev.name)}</b><small>${esc(ev.category||'Unknown category')} · ${ev.badges.length} badge${ev.badges.length>1?'s':''}${ev.start?` · ${fmt(ev.start)} – ${fmt(ev.end)}`:''}</small></span>${pill}</summary>
+    <div class="adm-form">
+      <label>Event name<input data-k="name" value="${esc(ev.name)}"></label>
+      <label>Twitch category<input data-k="category" value="${esc(ev.category||'')}" placeholder="e.g. Minecraft"></label>
+      <label>Starts <span class="hint">your local time${ev.start?` · ${utc(ev.start)}`:''}</span><input type="datetime-local" data-k="start" value="${toLocalInput(ev.start)}"></label>
+      <label>Ends <span class="hint">your local time${ev.end?` · ${utc(ev.end)}`:''}</span><input type="datetime-local" data-k="end" value="${toLocalInput(ev.end)}"></label>
+      <label>Only on channel <span class="hint">optional, for single-channel events</span><input data-k="channel" value="${esc(ev.channel||'')}" placeholder="e.g. ironmouse"></label>
+      <label>Note <span class="hint">optional, shown as a highlighted hint</span><input data-k="note" value="${esc(ev.note||'')}"></label>
+      <div class="adm-badges">${ev.badges.map((b,j)=>`
+        <div class="adm-b" data-j="${j}"><img src="${esc(cdn(b.img))}" alt="">
+          <span class="nm">${esc(b.name)}</span>
+          <input data-bk="how" value="${esc(b.how||'')}" placeholder="How to get it, e.g. Watch 60 minutes in the category.">
+          <select data-bk="cost"><option value="free" ${b.cost==='free'?'selected':''}>Free</option><option value="paid" ${b.cost==='paid'?'selected':''}>Sub / paid</option><option value="na" ${(!b.cost||b.cost==='na')?'selected':''}>Unknown</option></select>
+          <button data-rmb="${j}" title="Remove badge from this event">×</button>
+          ${b.desc?`<span class="ds">Twitch: ${esc(b.desc)}</span>`:''}
+        </div>`).join('')}</div>
+      <div class="adm-row">
+        ${spare.length?`<select data-addb><option value="">+ Add a recent badge to this event…</option>${spare.map(s=>`<option value="${esc(s.imgId)}">${esc(s.name)} (${fmt(s.added)})</option>`).join('')}</select>`:''}
+        <span style="flex:1"></span><button class="btn ghost" data-del="${i}">Delete event</button>
+      </div>
+    </div></details>`;
+}
+function admFromBadge(img){ const g = globalBadges.find(b=>b.imgId===img); return g ? { name:g.name, img:g.imgId, how:g.how||"Objective not announced yet.", cost:g.free?"free":"na" } : null; }
+
+document.addEventListener('input', e=>{
+  const card = e.target.closest('.adm-ev'); if(!card) return;
+  const ev = ADM.events[+card.dataset.i];
+  if(e.target.dataset.k){ const k=e.target.dataset.k, v=e.target.value.trim();
+    if(k==="start"||k==="end") ev[k]=fromLocalInput(e.target.value); else if(v || k==="name" || k==="category") ev[k]=e.target.value; else delete ev[k];
+    admMarkDirty(); }
+  if(e.target.dataset.bk){ const j=+e.target.closest('.adm-b').dataset.j; ev.badges[j][e.target.dataset.bk]=e.target.value; admMarkDirty(); }
+});
+document.addEventListener('change', e=>{
+  if(e.target.matches('[data-bk="cost"]')){ const card=e.target.closest('.adm-ev'); ADM.events[+card.dataset.i].badges[+e.target.closest('.adm-b').dataset.j].cost=e.target.value; admMarkDirty(); }
+  if(e.target.matches('[data-addb]') && e.target.value){ const card=e.target.closest('.adm-ev'); const nb=admFromBadge(e.target.value);
+    if(nb){ ADM.events[+card.dataset.i].badges.push(nb); admMarkDirty(); renderAdmin(); document.querySelector(`.adm-ev[data-i="${card.dataset.i}"]`)?.setAttribute('open',''); } }
+});
+document.addEventListener('click', e=>{
+  if(e.target.id==='admLogin'){ const t=$('#admTok').value.trim(); if(!t) return; ADM.token=t; try{localStorage.setItem("badgedb_gh_token",t);}catch(_){} renderAdmin(); admLoad(); return; }
+  if(e.target.id==='admLogout'){ ADM.token=""; ADM.events=[]; try{localStorage.removeItem("badgedb_gh_token");}catch(_){} admSetStatus(""); renderAdmin(); return; }
+  if(e.target.id==='admReload'){ if(!ADM.dirty || confirm("Discard unsaved changes?")) admLoad(); return; }
+  if(e.target.id==='admSave'){ admSave(); return; }
+  if(e.target.id==='admNew'){ ADM.events.unshift({id:"event-"+Date.now().toString(36),name:"New event",category:"",start:"",end:"",badges:[]}); ADM.filter="all"; admMarkDirty(); renderAdmin(); document.querySelector('.adm-ev[data-i="0"]')?.setAttribute('open',''); return; }
+  const f=e.target.closest('#admFilter button'); if(f){ ADM.filter=f.dataset.f; renderAdmin(); return; }
+  const rm=e.target.closest('[data-rmb]'); if(rm){ e.preventDefault(); const card=rm.closest('.adm-ev'); ADM.events[+card.dataset.i].badges.splice(+rm.dataset.rmb,1); admMarkDirty(); renderAdmin(); document.querySelector(`.adm-ev[data-i="${card.dataset.i}"]`)?.setAttribute('open',''); return; }
+  const del=e.target.closest('[data-del]'); if(del){ if(confirm("Delete this event from the timeline? (The badges stay in the archive.)")){ ADM.events.splice(+del.dataset.del,1); admMarkDirty(); renderAdmin(); } return; }
+});
+window.addEventListener('beforeunload', e=>{ if(ADM.dirty){ e.preventDefault(); e.returnValue=""; } });
+
+/* ---------- "data updated" line in the footer ---------- */
+if(!isFile) fetch(`https://api.github.com/repos/${CONFIG.repo}/commits?per_page=1`).then(r=>r.ok?r.json():null).then(c=>{
+  if(!c||!c[0]) return; const t=Date.parse(c[0].commit.committer.date); const m=Math.round((Date.now()-t)/60000);
+  $('#dataAge').textContent = `Data last updated ${m<1?'just now':m<60?m+' min ago':Math.round(m/60)+' h ago'}.`;
+}).catch(()=>{});
 
 /* ---------- stream bar ---------- */
 function togglePlayer(){
