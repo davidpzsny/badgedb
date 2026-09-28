@@ -2,7 +2,7 @@
  {
   "id": "ace-combat-8-nugget",
   "name": "ACE COMBAT 8 Nugget",
-  "category": "Unknown",
+  "category": "ACE COMBAT 8",
   "start": "",
   "end": "",
   "badges": [
@@ -10,7 +10,8 @@
     "name": "ACE COMBAT 8 Nugget",
     "img": "8468fb6c-1d33-4482-85ef-fa1898288ee2",
     "how": "This badge was earned by subscribing or gifting a sub to a streamer in the ACE COMBAT 8 category during the game's launch!",
-    "cost": "na"
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the ACE COMBAT 8 category during the game's launch!"
    }
   ]
  },
@@ -25,14 +26,15 @@
     "name": "Yellow Party Hat",
     "img": "6325b96b-0187-4a60-90d0-8bb45efa3fff",
     "how": "This badge was awarded to people who viewed the official 2026 RuneFest livestream for one hour. It was added to promote the RuneScape Franchise's RuneFest event.",
-    "cost": "na"
+    "cost": "na",
+    "desc": "This badge was awarded to people who viewed the official 2026 RuneFest livestream for one hour. It was added to promote the RuneScape Franchise's RuneFest event."
    }
   ]
  },
  {
   "id": "runescape-shrimp",
   "name": "RuneScape Shrimp",
-  "category": "Unknown",
+  "category": "Old School RuneScape",
   "start": "",
   "end": "",
   "badges": [
@@ -40,14 +42,15 @@
     "name": "RuneScape Shrimp",
     "img": "aed4a5ae-3e02-40c6-92bc-dfb8d33576f5",
     "how": "This badge was awarded to people who viewed any eligible channel co-streaming RuneFest 2026 in the Old School RuneScape category for one hour. It was added to promote the RuneScape Franchise's RuneFest event.",
-    "cost": "na"
+    "cost": "na",
+    "desc": "This badge was awarded to people who viewed any eligible channel co-streaming RuneFest 2026 in the Old School RuneScape category for one hour. It was added to promote the RuneScape Franchise's RuneFest event."
    }
   ]
  },
  {
   "id": "big-walk",
   "name": "Big Walk",
-  "category": "Unknown",
+  "category": "Big Walk",
   "start": "2026-09-25T07:00:00Z",
   "end": "2026-10-04T06:58:00Z",
   "badges": [
@@ -55,7 +58,8 @@
     "name": "Big Walk",
     "img": "3de5a89b-533b-483a-8db2-036f9f13b9bd",
     "how": "This badge was earned by subscribing or gifting a sub to a streamer in the Big Walk category.",
-    "cost": "na"
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Big Walk category."
    }
   ]
  },
@@ -70,7 +74,8 @@
     "name": "Clipped That",
     "img": "5b648ccf-dc37-4233-a96e-c6e5d693a0ae",
     "how": "This limited-time badge was earned by a DJ Program creator who clipped an epic mid-set moment and downloaded + shared it to social.",
-    "cost": "na"
+    "cost": "na",
+    "desc": "This limited-time badge was earned by a DJ Program creator who clipped an epic mid-set moment and downloaded + shared it to social."
    }
   ]
  },
@@ -85,7 +90,8 @@
     "name": "Rematch Blue Lock",
     "img": "13afe621-edd4-48b6-a09b-453a2dee52e9",
     "how": "This badge was earned by watching a streamer in the Rematch category for 30 minutes",
-    "cost": "na"
+    "cost": "free",
+    "desc": "This badge was earned by watching a streamer in the Rematch category for 30 minutes"
    }
   ]
  },
@@ -100,13 +106,15 @@
     "name": "Don't Eat The Mold",
     "img": "f1617a53-9e8f-4bd4-b440-ab44f6f8f650",
     "how": "Watch 60 minutes in the category.",
-    "cost": "free"
+    "cost": "free",
+    "desc": "This badge was earned by watching a streamer in the CONTROL Resonant category for 1 hour"
    },
    {
     "name": "The Inverted Man",
     "img": "755022bc-26e1-47a4-8d6f-961224713355",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the CONTROL Resonant category during the game launch"
    }
   ]
  },
@@ -120,14 +128,16 @@
    {
     "name": "SEEGSON Synthetics",
     "img": "4709f62b-9cd9-4759-8953-c096527401c7",
-    "how": "Watch in the category (exact time not announced yet).",
-    "cost": "free"
+    "how": "Watch 30 minutes.",
+    "cost": "free",
+    "desc": "This badge was earned by watching the Alien Isolation category for 30 minutes"
    },
    {
     "name": "Sevastopol Station",
     "img": "a6a681a9-3253-42de-b09a-7bda7c05c342",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Alien Isolation category"
    }
   ]
  },
@@ -141,14 +151,16 @@
    {
     "name": "d20",
     "img": "263a5bf1-c1ea-4f26-8bf8-db42ea2ebc7c",
-    "how": "Watch in the category (exact time not announced yet).",
-    "cost": "free"
+    "how": "Watch a stream.",
+    "cost": "free",
+    "desc": "This badge was earned by watching Dungeon Masters on Twitch."
    },
    {
     "name": "Ampersand",
     "img": "b17f6b68-4a2d-4d2a-9967-aa8ff26012a0",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing to a streamer in the Dungeons & Dragons category."
    }
   ]
  },
@@ -164,32 +176,36 @@
     "name": "Koromaru",
     "img": "d08bb5f3-7638-45c6-919a-9f2eb4ef505e",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the Persona 3 Reload category.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing to a streamer in the Persona 3 Reload category during the 2026 ATLUS celebration!"
    },
    {
     "name": "Teddie",
     "img": "80786dcb-bf5e-4069-ab13-32b4fa436c51",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing to a streamer in the Persona 4 Golden category during the 2026 ATLUS celebration!"
    },
    {
     "name": "Morgana",
     "img": "a0c09111-b247-4b40-88a2-7ef1cfc60f65",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing to a streamer in the Persona 5 Royal category during the 2026 ATLUS celebration!"
    },
    {
     "name": "Nahobiho",
     "img": "adc8a831-4884-471b-9723-aad8bf3e05b8",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing to a streamer in the Shin Megami Tensei V: Vengeance category during the 2026 ATLUS celebration!"
    }
   ]
  },
  {
   "id": "homo-tenta",
   "name": "Homo Tenta",
-  "category": "Unknown",
+  "category": "Metaphor: ReFantazio",
   "start": "2026-09-24T16:00:00Z",
   "end": "2026-10-11T06:58:00Z",
   "badges": [
@@ -197,7 +213,8 @@
     "name": "Homo Tenta",
     "img": "3ec6f155-ebc7-4624-89d9-ead63122dc52",
     "how": "This badge was earned by subscribing to a streamer in the Metaphor: ReFantazio category during the 2026 ATLUS celebration!",
-    "cost": "na"
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing to a streamer in the Metaphor: ReFantazio category during the 2026 ATLUS celebration!"
    }
   ]
  },
@@ -213,7 +230,8 @@
     "name": "Blue Creeper Boss",
     "img": "e349e84d-1d91-4086-afda-e0c946717878",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub to a streamer live in the Minecraft category.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing to a streamer in the Minecraft category during TGS 2026!"
    }
   ]
  },
@@ -228,7 +246,8 @@
     "name": "Ultramarine",
     "img": "12cb6b16-063b-4fcf-b312-c5c8f01e49ac",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Space Marine 2 category during the anniversary campaign!"
    }
   ]
  },
@@ -258,7 +277,8 @@
     "name": "Onimusha Armament",
     "img": "379bfc94-8276-4e9e-9a34-615e10c55baf",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Onimusha: Way of the Sword category during the game launch!"
    }
   ]
  },
@@ -273,7 +293,8 @@
     "name": "Harley Mayhem",
     "img": "1d235db6-09cc-458f-9805-be2efc178e54",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a LEGO® Batman™: Legacy of the Dark Knight streamer!"
    }
   ]
  },
@@ -288,7 +309,8 @@
     "name": "Resonance Minotaur",
     "img": "63cf6329-f34c-449e-8f70-fafa1eb1de9e",
     "how": "Watch 60 minutes in the category.",
-    "cost": "free"
+    "cost": "free",
+    "desc": "This badge was earned by watching Resonance: A Plague Tale Legacy for 60 min"
    }
   ]
  },
@@ -303,7 +325,8 @@
     "name": "Diablo",
     "img": "12e66b34-5748-4eb0-8cf1-63d01e925b4f",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a Diablo streamer during BlizzCon 2026!"
    }
   ]
  },
@@ -318,7 +341,8 @@
     "name": "Joker Mayhem",
     "img": "7973c062-7a4f-41de-9a20-77d4b2edc56a",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a LEGO® Batman™: Legacy of the Dark Knight streamer!"
    }
   ]
  },
@@ -333,7 +357,8 @@
     "name": "Sorcerer Rogier",
     "img": "3d6ad3b0-0a0f-43ae-a969-c5215d8d5a06",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the ELDEN RING category."
    }
   ]
  },
@@ -348,7 +373,8 @@
     "name": "Solasta II Multiplayer",
     "img": "e8430418-13e9-4325-b2ad-85664d2a4ddd",
     "how": "Watch 30 minutes in the category.",
-    "cost": "free"
+    "cost": "free",
+    "desc": "This badge was earned by watching the Solasta II category for 30 minutes!"
    }
   ]
  },
@@ -363,7 +389,8 @@
     "name": "nopixel V Launch",
     "img": "6a34b65f-93f6-4ebd-8f75-898bdaff79e8",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing to a GTAV streamer during the nopixel V Launch!"
    }
   ]
  },
@@ -378,13 +405,15 @@
     "name": "WARDOG",
     "img": "a00140ee-7c25-4cd1-95d9-54b9603f1f80",
     "how": "Watch 30 minutes in the category.",
-    "cost": "free"
+    "cost": "free",
+    "desc": "This badge was earned by watching WARDOGS for 30 minutes"
    },
    {
     "name": "WARLORD",
     "img": "233322a6-0c31-43e7-acfa-f10e732e87da",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the WARDOGS category during the Beta/Early Access period"
    }
   ]
  },
@@ -399,13 +428,15 @@
     "name": "Launch",
     "img": "1c04ddd1-6baa-4e5c-a685-976c621d5114",
     "how": "Watch 60 minutes in the category.",
-    "cost": "free"
+    "cost": "free",
+    "desc": "This badge was earned by watching a streamer in The Blood of Dawnwalker category for 1 hour"
    },
    {
     "name": "Supporter",
     "img": "63076299-4910-4594-a05c-60899d32c765",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in The Blood of Dawnwalker category"
    }
   ]
  },
@@ -421,25 +452,29 @@
     "name": "Pichu",
     "img": "20f214cf-36b0-4b42-8992-3b769bcb0461",
     "how": "Watch 20 minutes a day for 3 days.",
-    "cost": "free"
+    "cost": "free",
+    "desc": "This badge was earned during the Pokémon First Partners Collection campaign."
    },
    {
     "name": "Bulbasaur",
     "img": "68072d07-8648-4066-9694-3f9fb594eb3d",
     "how": "Sub / gift sub, or watch 20 min a day for 3 days (1 in 3 chance).",
-    "cost": "free"
+    "cost": "free",
+    "desc": "This badge was earned during the Pokémon First Partners Collection campaign."
    },
    {
     "name": "Charmander",
     "img": "afe60f97-56d1-493d-a55c-2f1cec7aca7c",
     "how": "Sub / gift sub, or watch 20 min a day for 3 days (1 in 3 chance).",
-    "cost": "free"
+    "cost": "free",
+    "desc": "This badge was earned during the Pokémon First Partners Collection campaign."
    },
    {
     "name": "Squirtle",
     "img": "6e19714e-571f-4737-bc8b-865ebfb3e2c7",
     "how": "Sub / gift sub, or watch 20 min a day for 3 days (1 in 3 chance).",
-    "cost": "free"
+    "cost": "free",
+    "desc": "This badge was earned during the Pokémon First Partners Collection campaign."
    }
   ]
  },
@@ -454,7 +489,8 @@
     "name": "Mouseathon",
     "img": "8bce8f4e-f53a-4922-b715-35167b0fae7b",
     "how": "Watch ironmouse for 15 minutes.",
-    "cost": "free"
+    "cost": "free",
+    "desc": "This badge was earned by watching Ironmouse's 2026 Subathon!"
    }
   ]
  },
@@ -469,7 +505,8 @@
     "name": "SUBtember 2026",
     "img": "6ae639f0-a06d-40a9-ad16-7b7e7c18a323",
     "how": "Subscribe, gift a sub, or cheer a single Bit anywhere.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "Badge given to users who sub, gift, or use bits during SUBtember 2026."
    }
   ]
  },
@@ -484,13 +521,15 @@
     "name": "BeachBall",
     "img": "b3f69c97-a9a7-4360-bb9e-485ec8db72bb",
     "how": "Buy a 1-day TwitchCon ticket.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "This badge is given to anyone who purchased a 1-day ticket to TwitchCon San Diego 2026."
    },
    {
     "name": "Taco",
     "img": "aea5244a-3fb5-48f9-a17c-a377760df226",
     "how": "Buy a 3-day TwitchCon ticket.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "This badge is given to anyone who purchased a 3-day ticket to TwitchCon San Diego 2026."
    }
   ]
  },
@@ -505,7 +544,8 @@
     "name": "Marvel's Wolverine",
     "img": "55090800-82e4-4d31-8b3c-f9feb5e25557",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Marvel's Wolverine category during the game launch."
    }
   ]
  },
@@ -535,13 +575,15 @@
     "name": "Alpha Chat",
     "img": "1826cb5f-32a9-409a-9829-f6f47ea68239",
     "how": "Watch any creator in the FFXIV category for 60 minutes during Fan Fest.",
-    "cost": "free"
+    "cost": "free",
+    "desc": "This badge was earned by watching a creator in the Final Fantasy 14 category for 60 minutes during the Fan Fest 2026 - JP"
    },
    {
     "name": "Quest Complete Chat",
     "img": "e7d696ad-4479-4e44-bceb-5643f80bef38",
     "how": "Watch the Fan Fest on /finalfantasyxiv for 60 minutes.",
-    "cost": "free"
+    "cost": "free",
+    "desc": "This badge was earned by watching the Fan Fest 2026 for 60 minutes on /finalfantasyxiv"
    }
   ]
  },
@@ -616,7 +658,8 @@
     "name": "DRON-E",
     "img": "70e9e169-1fbf-4279-b23c-a714ccb0c9ef",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Rainbow Six Siege category during Wasteland Circuit."
    }
   ]
  },
@@ -631,7 +674,8 @@
     "name": "Dragonwilds Eye",
     "img": "a5b43a31-4534-4f9e-875b-b9f0d1be8f73",
     "how": "Watch 30 minutes in the category.",
-    "cost": "free"
+    "cost": "free",
+    "desc": "This badge was earned by watching 30 minutes of RuneScape: Dragonwilds category"
    }
   ]
  },
@@ -646,25 +690,29 @@
     "name": "Chains",
     "img": "909fa1c7-8f4c-41c4-9910-ee936f7236d7",
     "how": "Watch 30 minutes.",
-    "cost": "free"
+    "cost": "free",
+    "desc": "This badge was earned by watching a streamer in the PAYDAY 3 category for 30 minutes"
    },
    {
     "name": "Hoxton",
     "img": "bce13ab6-e9ae-4d9a-bf52-8ea7ba3ce8c4",
     "how": "Watch 60 minutes.",
-    "cost": "free"
+    "cost": "free",
+    "desc": "This badge was earned by watching a streamer in the PAYDAY 3 category for 60 minutes"
    },
    {
     "name": "Wolf",
     "img": "714081b8-aded-46d7-a6c3-14b2d79f19be",
     "how": "Watch 90 minutes.",
-    "cost": "free"
+    "cost": "free",
+    "desc": "This badge was earned by watching a streamer in the PAYDAY 3 category for 90 minutes"
    },
    {
     "name": "Dallas",
     "img": "a5ba44a9-2ccd-4b69-b5b8-9e28f1c887e7",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the PAYDAY 3 category"
    }
   ]
  },
@@ -679,7 +727,8 @@
     "name": "WSCI 2026",
     "img": "e61d79be-7d9d-4de2-8571-41f00bf2081a",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid"
+    "cost": "paid",
+    "desc": "This badge was earned by supporting the 2026 World Star Challengers Invitational!"
    }
   ]
  }
