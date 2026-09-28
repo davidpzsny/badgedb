@@ -45,31 +45,92 @@ def twitch_global_badges():
                         "desc": v.get("description", "")})
     return out
 
-# ---------- events.json: one entry per badge set so it shows on the timeline ----------
-def slugify(t):
-    import re as _re
-    return _re.sub(r"[^a-z0-9]+", "-", t.lower()).strip("-")[:48] or "badge"
+# ---------- events.json: timeline entries, kept in sync with Twitch's own badge descriptions ----------
+PLACEHOLDER_HOW = {"", "objective not announced yet.", "objective not confirmed yet."}
+def is_placeholder_how(h):
+    h = (h or "").strip().lower()
+    return h in PLACEHOLDER_HOW or h.startswith("watch in the category (exact time")
 
-def add_events(new_sets):
-    """Create a timeline entry for each newly discovered badge set.
-    start/end stay empty -> the site lists it under 'Date not announced'.
-    Fill in the dates by editing events.json in the repo (or on the web UI)."""
-    try: events = json.load(open(EV_DB, encoding="utf-8"))
-    except Exception: events = []
+def slugify(t):
+    return re.sub(r"[^a-z0-9]+", "-", t.lower()).strip("-")[:48] or "badge"
+
+def parse_desc(desc):
+    """Turn Twitch's badge description into structured info.
+    e.g. 'This badge was earned by watching a streamer in the CONTROL Resonant category for 1 hour'
+         -> {category: 'CONTROL Resonant', cost: 'free', how: 'Watch 60 minutes in the category.'}"""
+    d = (desc or "").strip(); low = d.lower(); out = {}
+    if not d: return out
+    m = re.search(r"in the (.+?) category", d, re.I)
+    if m: out["category"] = m.group(1).strip()
+    mins = None
+    m = re.search(r"for (\d+)\s*(hours?|minutes?|mins?)", low)
+    if m: mins = int(m.group(1)) * (60 if m.group(2).startswith("hour") else 1)
+    elif re.search(r"for (an|one) hour", low): mins = 60
+    where = " in the category" if "category" in out else ""
+    if re.search(r"subscrib|gift", low):
+        out["cost"] = "paid"; out["how"] = f"Subscribe (Tier 1) or gift a Tier 1 sub{where}."
+    elif "watch" in low:
+        out["cost"] = "free"; out["how"] = (f"Watch {mins} minutes{where}." if mins else f"Watch a stream{where}.")
+    elif re.search(r"cheer|bits", low):
+        out["cost"] = "paid"; out["how"] = "Cheer Bits in a participating channel."
+    m = re.search(r"(?:on|watching|to)\s+([A-Za-z0-9_]{3,25})(?:'s)?\s+channel", d)
+    if m: out["channel"] = m.group(1)
+    return out
+
+def load_events():
+    try: return json.load(open(EV_DB, encoding="utf-8"))
+    except Exception: return []
+
+def save_events(events):
+    json.dump(events, open(EV_DB, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+
+def sync_events(desc_by_img, new_sets):
+    """1) Fill placeholder fields of existing events from Twitch descriptions (never overwrites manual edits).
+       2) Put newly discovered badge sets on the timeline, grouped by category / merged into a matching open event."""
+    events = load_events(); changed = 0
+    for ev in events:
+        for b in ev.get("badges", []):
+            desc = desc_by_img.get(b.get("img") or "")
+            if not desc: continue
+            info = parse_desc(desc)
+            if desc != b.get("desc"): b["desc"] = desc; changed += 1
+            if info.get("how") and is_placeholder_how(b.get("how")): b["how"] = info["how"]; changed += 1
+            if info.get("cost") and b.get("cost") in (None, "", "na"): b["cost"] = info["cost"]; changed += 1
+            if info.get("category") and ev.get("category") in (None, "", "Unknown"):
+                ev["category"] = info["category"]; changed += 1
+            if info.get("channel") and not ev.get("channel"): ev["channel"] = info["channel"]; changed += 1
+
     known_imgs = {b.get("img") for e in events for b in e.get("badges", [])}
-    by_id = {e["id"] for e in events}
+    ids = {e["id"] for e in events}
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    def open_event_for(cat):
+        for e in events:
+            if (e.get("category") or "").lower() != cat.lower(): continue
+            if e.get("end") and e["end"] < now: continue          # already over
+            return e
+        return None
     added = 0
     for b in new_sets:
         if b["img"] in known_imgs: continue
-        eid = slugify(b["set"] or b["title"])
-        while eid in by_id: eid += "-2"
-        by_id.add(eid); known_imgs.add(b["img"]); added += 1
-        events.insert(0, {"id": eid, "name": b["title"], "category": "Unknown", "start": "", "end": "",
-                          "badges": [{"name": b["title"], "img": b["img"],
-                                      "how": b.get("desc") or "Objective not announced yet.", "cost": "na"}]})
-    if added:
-        json.dump(events, open(EV_DB, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-        print(f"events.json: {added} new timeline entries (dates still need filling in)")
+        info = parse_desc(b.get("desc"))
+        badge = {"name": b["title"], "img": b["img"], "how": info.get("how") or "Objective not announced yet.",
+                 "cost": info.get("cost") or "na"}
+        if b.get("desc"): badge["desc"] = b["desc"]
+        cat = info.get("category")
+        target = open_event_for(cat) if cat else None
+        if target:
+            target["badges"].append(badge)
+        else:
+            eid = slugify(cat or b["set"] or b["title"])
+            while eid in ids: eid += "-2"
+            ids.add(eid)
+            ev = {"id": eid, "name": cat or b["title"], "category": cat or "Unknown", "start": "", "end": "", "badges": [badge]}
+            if info.get("channel"): ev["channel"] = info["channel"]
+            events.insert(0, ev)
+        known_imgs.add(b["img"]); added += 1
+    if changed or added:
+        save_events(events)
+        print(f"events.json: {added} new badge(s) on the timeline, {changed} field(s) filled from Twitch descriptions")
 
 # ---------- channel campaign badges (sub / watch / ranking) ----------
 EV_DB = os.path.join(ROOT, "events.json")
@@ -224,12 +285,23 @@ def post_to_discord(badge):
     print("posted to Discord")
 
 # ---------- main ----------
-# badges.json rows: [title, img, added, free, users, set_id]
+# badges.json rows: [title, img, added, free, users, set_id, description]
 def main():
     rows = json.load(open(DB, encoding="utf-8"))
     live = twitch_global_badges()
     img_to_set = {b["img"]: b["set"] for b in live}
+    by_img = {b["img"]: b for b in live}
     changed = False
+
+    # 0) Twitch sometimes fills in or edits a badge's title/description days later — pick that up every run
+    updated = 0
+    for r in rows:
+        while len(r) < 7: r.append("")
+        lb = by_img.get(r[1])
+        if not lb: continue
+        if lb.get("desc") and lb["desc"] != r[6]: r[6] = lb["desc"]; updated += 1
+        if lb.get("title") and lb["title"] != r[0] and not is_junk(lb): r[0] = lb["title"]; updated += 1
+    if updated: changed = True; print(f"refreshed {updated} title/description field(s) from Twitch")
 
     # 1) make sure every existing row knows its set id (older rows had no 6th field)
     for r in rows:
@@ -273,13 +345,13 @@ def main():
     #    versions of a brand-new set get today's date
     for b in new_versions:
         added = set_added.get(b["set"], "") if b["set"] in known_sets else today
-        rows.insert(0, [b["title"], b["img"], added, 0, 0, b["set"]]); changed = True
+        rows.insert(0, [b["title"], b["img"], added, 0, 0, b["set"], b.get("desc", "")]); changed = True
 
     if changed:
         json.dump(rows, open(DB, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
         print("badges.json updated")
 
-    add_events(new_sets)
+    sync_events({b["img"]: b.get("desc", "") for b in live}, new_sets)
 
     try: crawl_channel_badges(app_token())
     except Exception as e: print("channel crawl failed:", e)
