@@ -434,25 +434,8 @@
       <div class="faq">
         <details><summary>What are Twitch global badges?</summary><p>Global badges appear next to your username and can be equipped across every channel on Twitch, unlike subscriber and Bits badges which belong to a single channel.</p></details>
         <details><summary>How do I get notified when new global badges are added?</summary><p>Follow <a href="https://twitch.tv/badge_db" target="_blank" rel="noopener">twitch.tv/badge_db</a> — new global badges are announced there as soon as they show up.</p></details>
-        <details><summary>Where does the data come from?</summary><p>Badge images and titles come from the public Twitch API. User counts are community estimates and may lag behind.</p></details>
-        <details><summary>Can I load the live list from Twitch instead?</summary><p>Yes — connect your Twitch account below and the list refreshes straight from Twitch, including every badge version.</p></details>
+        <details><summary>Where does the data come from?</summary><p>Badge images, titles and descriptions come from the public Twitch API and are refreshed automatically every 15 minutes.</p></details>
       </div>
-      <div class="connect" id="connectBox">
-        <div class="txt"><b>Refresh from Twitch</b><span id="connectMsg">The built-in list is a snapshot. Connect Twitch to pull the live list with every version.</span></div>
-        <button class="btn" id="btnConnect"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2 2 6v14h5v3h3l3-3h4l5-5V2H4zm16 12-3 3h-5l-3 3v-3H6V4h14v10zm-4-7h-2v5h2V7zm-5 0H9v5h2V7z"/></svg>Connect Twitch</button>
-      </div>
-      <div class="warn" id="fileWarn" hidden>You opened this page as a local file. Twitch sign-in only works over http(s) — run <code>python -m http.server 8080</code> in this folder and open <code>http://localhost:8080</code>, or host it on GitHub Pages.</div>
-      <details class="setup" id="setup">
-        <summary>One-time setup for Twitch connection (2 minutes)</summary>
-        <ol>
-          <li>Go to <b>dev.twitch.tv/console</b> → Applications → <b>Register Your Application</b>.</li>
-          <li>Name: anything (e.g. BadgeDB). Category: <b>Website Integration</b>. Client type: <b>Public</b>.</li>
-          <li>OAuth Redirect URLs: add <b id="redirectHint"></b> (must match exactly).</li>
-          <li>Save, copy the <b>Client ID</b> and paste it here:</li>
-        </ol>
-        <div class="row"><label class="search"><input id="clientIdInput" placeholder="Client ID" autocomplete="off" spellcheck="false"></label><button class="btn ghost" id="btnSaveId">Save</button><button class="btn ghost" id="btnCopyRedirect">Copy redirect URL</button></div>
-      </details>
-      <div class="note" id="globalNote"></div>
 
       <div class="toolbar">
         <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="qG" type="search" placeholder="Search badges…" autocomplete="off"></label>
@@ -477,14 +460,6 @@
       <div class="blist" id="gridChannel"></div>
       <div class="more-wrap" id="cMore"></div>
 
-      <h2>Look up any channel</h2>
-      <p class="sec-sub">Load a channel's own subscriber, Bits and campaign badges straight from Twitch (needs the Twitch connection from the Global Badges page).</p>
-      <div class="connect">
-        <label class="search" style="flex:1;min-width:220px"><input id="chanInput" placeholder="badge_db" autocomplete="off"></label>
-        <button class="btn" id="btnChan">Load badges</button>
-      </div>
-      <div class="note" id="chanNote"></div>
-      <div class="blist" id="gridLookup" style="margin-top:14px"></div>
     </section>
 
     <!-- BADGE DETAIL -->
@@ -741,46 +716,11 @@ function renderChannel(){
   $('#chCount').textContent = channelBadges.length ? `${list.length} of ${channelBadges.length} campaign badges from ${new Set(channelBadges.map(b=>b.login)).size} channels` : '';
   $('#cMore').innerHTML = list.length>cShown ? `<button class="btn ghost" id="btnCMore">Show ${Math.min(90,list.length-cShown)} more</button>` : '';
   $('#cChannel').textContent = channelBadges.length || '';
-  $('#gridLookup').innerHTML = lookupBadges.map(b=>badgeRow(b,'channel')).join('');
 }
 function renderAll(){ renderHome(); renderEvents(); renderTimeline(); renderGlobal(); renderChannel(); }
 
-/* ---------- Twitch API (implicit OAuth, browser only) ---------- */
-function connect(){
-  if(isFile){ $('#fileWarn').hidden=false; $('#setup').open=true; return; }
-  if(!CONFIG.clientId){ $('#setup').open=true; $('#clientIdInput').focus(); $('#globalNote').className='note err'; $('#globalNote').textContent='Paste your Twitch Client ID first (setup steps above).'; return; }
-  location.href = `https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=${encodeURIComponent(CONFIG.clientId)}&redirect_uri=${encodeURIComponent(redirectUri())}&scope=`;
-}
-function saveClientId(){ const v=$('#clientIdInput').value.trim(); CONFIG.clientId=v; try{localStorage.setItem("badgedb_client_id",v);}catch(_){} toast(v?'Client ID saved — now click Connect Twitch':'Client ID cleared'); }
-async function helix(path){ const r=await fetch("https://api.twitch.tv/helix/"+path,{headers:{"Client-Id":CONFIG.clientId,"Authorization":"Bearer "+token}}); if(!r.ok) throw new Error(`Twitch API ${r.status}`); return (await r.json()).data; }
+/* ---------- Twitch API helpers (used by the channel badge drawer) ---------- */
 const prettify = s => s.replace(/[-_]/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
-const imgId = u => (u.match(/badges\/v1\/([0-9a-f-]+)\//)||[])[1] || "";
-function mapSets(data){ return data.map(set=>({ set:set.set_id, name:set.versions[0].title||prettify(set.set_id), how:set.versions[0].description||"", img:set.versions[0].image_url_4x, imgId:imgId(set.versions[0].image_url_4x), versions:set.versions.map(v=>({id:v.id,title:v.title,img:v.image_url_4x})) })); }
-async function loadGlobal(){
-  $('#btnConnect').disabled=true; $('#btnConnect').textContent="Loading…";
-  try{
-    const live = mapSets(await helix("chat/badges/global"));
-    const snap = Object.fromEntries(globalBadges.map(b=>[b.imgId,b]));
-    globalBadges = live.map(b=>{ const s=snap[b.imgId]||{}; return {...b, added:s.added||"", free:!!s.free, users:s.users||0}; });
-    $('#connectMsg').textContent=`Live list loaded: ${globalBadges.length} sets straight from Twitch.`; $('#btnConnect').textContent="Connected"; $('#globalNote').textContent="";
-    renderAll(); toast(`${globalBadges.length} global badge sets loaded`); history.replaceState(null,"","#global");
-    if(!lookupBadges.length) loadChannel(CONFIG.channel);
-  }catch(e){ $('#globalNote').className='note err'; $('#globalNote').textContent="Couldn't load badges: "+e.message; $('#btnConnect').disabled=false; $('#btnConnect').textContent="Connect Twitch"; }
-}
-async function loadChannel(login){
-  if(!token){ $('#chanNote').className='note err'; $('#chanNote').textContent="Connect Twitch on the Global Badges page first."; return; }
-  $('#chanNote').className='note'; $('#chanNote').textContent=`Loading ${login}…`;
-  try{ const u=(await helix("users?login="+encodeURIComponent(login)))[0]; if(!u) throw new Error("channel not found");
-    lookupBadges = mapSets(await helix("chat/badges?broadcaster_id="+u.id)); $('#chanNote').textContent=`${u.display_name} · ${lookupBadges.length} badge sets`; $('#chanInput').value=u.login; renderChannel();
-  }catch(e){ $('#chanNote').className='note err'; $('#chanNote').textContent="Couldn't load: "+e.message; }
-}
-(function handleOAuth(){
-  const hash = new URLSearchParams(location.hash.slice(1));
-  if(hash.get("access_token")){ token=hash.get("access_token"); location.hash="#global"; loadGlobal(); }
-  else if(hash.get("error")){ $('#globalNote').className='note err'; $('#globalNote').textContent="Twitch sign-in failed: "+(hash.get("error_description")||hash.get("error")).replace(/\+/g,' ')+". Check that the redirect URL in your Twitch app matches exactly."; location.hash="#global"; }
-  $('#redirectHint').textContent = isFile ? "http://localhost:8080  (after you serve the folder)" : redirectUri();
-  $('#clientIdInput').value = CONFIG.clientId; if(isFile) $('#fileWarn').hidden=false;
-})();
 
 /* ---------- drawer ---------- */
 function open(html){ $('#drawerBody').innerHTML=html; $('#drawer').classList.add('open'); $('#scrim').classList.add('show'); $('#drawer').setAttribute('aria-hidden','false'); $('#closeDrawer').focus(); }
@@ -1055,11 +995,6 @@ $('#qEv').addEventListener('input',e=>{evQuery=e.target.value.trim().toLowerCase
 $('#qG').addEventListener('input',e=>{gQuery=e.target.value.trim().toLowerCase();gShown=90;renderGlobal();});
 $('#qC').addEventListener('input',e=>{cQuery=e.target.value.trim().toLowerCase();cShown=90;renderChannel();});
 $('#scrim').addEventListener('click',closeDrawer); $('#closeDrawer').addEventListener('click',closeDrawer);
-$('#btnConnect').addEventListener('click',connect); $('#btnSaveId').addEventListener('click',saveClientId);
-$('#clientIdInput').addEventListener('keydown',e=>{if(e.key==='Enter')saveClientId();});
-$('#btnCopyRedirect').addEventListener('click',()=>navigator.clipboard?.writeText(isFile?"http://localhost:8080":redirectUri()).then(()=>toast('Copied')));
-$('#btnChan').addEventListener('click',()=>loadChannel($('#chanInput').value.trim()||CONFIG.channel));
-$('#chanInput').addEventListener('keydown',e=>{if(e.key==='Enter')$('#btnChan').click();});
 $('#btnPlayer').addEventListener('click',togglePlayer); $('#btnPlayerX').addEventListener('click',togglePlayer);
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDrawer(); });
 
