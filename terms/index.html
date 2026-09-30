@@ -49,6 +49,8 @@
       <h6>Twitch</h6>
       <a href="/badges/" data-route="global"><img src="https://static-cdn.jtvnw.net/badges/v1/bd444ec6-8f34-4bf9-91f4-af1e3428d80f/3" alt="">Global Badges <span class="count" id="cGlobal"></span></a>
       <a href="/channel/" data-route="channel"><img src="https://static-cdn.jtvnw.net/badges/v1/5d9f2208-5dd8-11e7-8513-2ff4adfae661/3" alt="">Channel Badges <span class="count" id="cChannel"></span></a>
+      <a href="/emotes/" data-route="emotes"><img src="https://static-cdn.jtvnw.net/emoticons/v2/25/default/dark/2.0" alt="">Global Emotes <span class="count" id="cEmotes"></span></a>
+      <a href="/popularity/" data-route="popularity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Badge Popularity</a>
     </nav>
     <nav class="nav group" aria-label="Legal">
       <h6>Legal</h6>
@@ -163,6 +165,49 @@
     <section data-page="badge" hidden>
       <a class="back" href="/badges/">← All Twitch Global Badges</a>
       <div id="badgePage"></div>
+    </section>
+
+    <!-- GLOBAL EMOTES -->
+    <section data-page="emotes" hidden>
+      <div class="crumbs"><a href="/">Home</a><span>/</span>Twitch<span>/</span>Global Emotes</div>
+      <div class="page-head"><div><h1>Twitch Global Emotes</h1><p class="lead">Every emote anyone can use in any Twitch chat — new ones are picked up automatically within 15 minutes.</p></div></div>
+      <div class="toolbar">
+        <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="qE" type="search" placeholder="Search emotes…" autocomplete="off"></label>
+        <div class="seg" id="eSort"><span class="lbl">Sort</span><button data-v="added" class="on">Newest</button><button data-v="oldest">Oldest</button><button data-v="name">A–Z</button></div>
+        <div class="seg" id="eFilter"><span class="lbl">Show</span><button data-v="all" class="on">All</button><button data-v="year">Added this year</button><button data-v="6m">Last 6 months</button><button data-v="animated">Animated</button><button data-v="retired">Removed</button></div>
+      </div>
+      <div class="count-line" id="eCount"></div>
+      <div class="egrid" id="gridEmotes"></div>
+      <div class="more-wrap" id="eMore"></div>
+      <h2>FAQ</h2>
+      <div class="faq">
+        <details><summary>What are Twitch global emotes?</summary><p>Global emotes are the emotes every Twitch user can use in any chat, without subscribing to anyone — classics like Kappa and LUL, plus limited-time emotes Twitch adds for events, game launches and campaigns.</p></details>
+        <details><summary>How do I get a Twitch global emote?</summary><p>You don't need to do anything: global emotes are available to everyone automatically. Type the name in any chat or pick it from the emote menu. Limited-time emotes disappear again when their event ends — those are listed under <b>Removed</b>.</p></details>
+        <details><summary>How do I get notified about new emotes?</summary><p>The list is checked against Twitch every 15 minutes. Follow <a href="https://x.com/BadgeDatabase" target="_blank" rel="noopener">@BadgeDatabase on X</a> or join the <a href="https://discord.gg/QkuRDXcZH5" target="_blank" rel="noopener">Discord</a> to hear about new badges and emotes.</p></details>
+        <details><summary>Why do some emotes have no “added” date?</summary><p>Twitch doesn't publish when an emote was added. Badge Database records the date the first time it sees a new emote, so emotes that already existed before tracking started have no date.</p></details>
+      </div>
+    </section>
+
+    <!-- BADGE POPULARITY -->
+    <section data-page="popularity" hidden>
+      <div class="crumbs"><a href="/">Home</a><span>/</span>Twitch<span>/</span>Badge Popularity</div>
+      <div class="page-head"><div><h1>Badge Popularity</h1><p class="lead">Which Twitch badges people actually use — every global badge ranked by the number of users seen wearing it.</p></div></div>
+      <div class="pop-stats" id="popStats"></div>
+      <div class="toolbar">
+        <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="qP" type="search" placeholder="Search badges…" autocomplete="off"></label>
+        <div class="seg" id="pFilter"><span class="lbl">Show</span><button data-v="all" class="on">All</button><button data-v="event">Event badges</button><button data-v="2026">Added in 2026</button></div>
+      </div>
+      <div class="pop-list" id="popList"></div>
+      <div class="more-wrap" id="pMore"></div>
+      <h2>FAQ</h2>
+      <div class="faq">
+        <details><summary>Where does the data come from?</summary><p>From the public API of <a href="https://potat.app" target="_blank" rel="noopener">PotatBotat</a>, a popular Twitch chatbot that is present in a very large number of channels. It is the only publicly available source of badge usage data.</p></details>
+        <details><summary>How are users counted?</summary><p>A user is counted for a badge when the bot has seen them chatting with that badge displayed. Someone who owns a badge but never displays it, or only chats in channels without the bot, is not counted.</p></details>
+        <details><summary>How accurate are the numbers?</summary><p>They are a sample, not an exact total: real numbers are higher. Because every badge is measured the same way, the ranking is a reliable picture of which badges are used most.</p></details>
+        <details><summary>Why can't I find some badges here?</summary><p>Badges nobody has been seen wearing yet — very new, very rare or staff-only badges — have no count and are not ranked. They are still listed under <a href="/badges/">Global Badges</a>.</p></details>
+        <details><summary>How often is this updated?</summary><p>Once a day. The date of the last update is shown at the top of the page.</p></details>
+      </div>
+      <p class="pop-note">User counts come from <a href="https://potat.app" target="_blank" rel="noopener">PotatBotat</a>: a user is counted once they have been seen with the badge in a chat the bot is in. People who own a badge but never display it are not counted, so real numbers are higher. Updated daily.</p>
     </section>
 
     <!-- FAQ -->
@@ -318,7 +363,7 @@
           </div>
         </div>
         <nav class="sf-col" aria-label="Explore"><h6>Explore</h6>
-          <a href="/timeline/">Timeline</a><a href="/badges/">Global Badges</a><a href="/channel/">Channel Badges</a><a href="/faq/">FAQ</a>
+          <a href="/timeline/">Timeline</a><a href="/badges/">Global Badges</a><a href="/channel/">Channel Badges</a><a href="/emotes/">Global Emotes</a><a href="/popularity/">Badge Popularity</a><a href="/faq/">FAQ</a>
         </nav>
         <nav class="sf-col" aria-label="Community"><h6>Community</h6>
           <a href="https://twitch.tv/badge_db" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2 2 6v14h5v3h3l3-3h4l5-5V2H4zm16 12-3 3h-5l-3 3v-3H6V4h14v10zm-4-7h-2v5h2V7zm-5 0H9v5h2V7z"/></svg>24/7 Stream</a>
