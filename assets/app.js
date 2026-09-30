@@ -306,19 +306,32 @@ function tick(){ $$('[data-cd]').forEach(el=>el.textContent=countdown(el.dataset
 
 /* ---------- global badges page ---------- */
 let gQuery="", gSort="added", gDir="desc", gFilter="all", gShown=90;
+function badgeState(b){
+  const ev = EV_BY_IMG[b.imgId] || (b.versions||[]).map(v => EV_BY_IMG[(v.img.match(/badges\/v1\/([0-9a-f-]+)\//)||[])[1]]).find(Boolean);
+  if(!ev) return null;
+  const st = status(ev.ev);
+  if(st === "live") return (Date.parse(ev.ev.end) - Date.now() < 48*36e5) ? "ending" : "live";
+  if(st === "tba") return isStale(ev.ev) ? "ended" : "tba";
+  return st;                                   // "soon" | "ended"
+}
+const STATE_PILL = { live:'<span class="pill live">Active</span>', ending:'<span class="pill ending">Ends soon</span>',
+  soon:'<span class="pill soon">Upcoming</span>', tba:'<span class="pill tba">Date not announced</span>', ended:'<span class="pill ended">Ended</span>' };
 function badgeRow(b, type){
-  const ev = EV_BY_IMG[b.imgId]; const st = ev ? status(ev.ev) : null;
+  const bs = badgeState(b);
   const meta = type==='global'
     ? [ b.added?`Added ${fmt(b.added)}`:'', b.users?`${num(b.users)} users`:'' ].filter(Boolean).join(' · ')
     : (b.versions.length>1 ? `${b.versions.length} versions` : 'Details');
   const tag = type==='global' ? `a href="/badges/${encodeURIComponent(b.set)}/"` : 'button';
-  return `<${tag} class="brow" data-badge="${esc(b.set)}" data-type="${type}">${tile(b)}<span class="t"><span class="n">${esc(b.name)}</span><span class="m">${b.free?'<span class="pill free">Free</span>':''}${st==="live"?'<span class="pill live">Active</span>':st==="soon"?'<span class="pill soon">Upcoming</span>':''}<span>${meta}</span></span></span></${type==='global'?'a':'button'}>`;
+  return `<${tag} class="brow" data-badge="${esc(b.set)}" data-type="${type}">${tile(b)}<span class="t"><span class="n">${esc(b.name)}</span><span class="m">${b.free?'<span class="pill free">Free</span>':''}${bs?STATE_PILL[bs]:''}<span>${meta}</span></span></span></${type==='global'?'a':'button'}>`;
 }
 function renderGlobal(){
   let list = globalBadges.filter(b => !gQuery || (b.name+" "+b.set).toLowerCase().includes(gQuery));
   if(gFilter==="free") list = list.filter(b=>b.free);
   if(gFilter==="paid") list = list.filter(b=>!b.free);
-  if(gFilter==="active") list = list.filter(b=>EV_BY_IMG[b.imgId] && status(EV_BY_IMG[b.imgId].ev)==="live");
+  if(gFilter==="active") list = list.filter(b=>["live","ending"].includes(badgeState(b)));
+  if(gFilter==="ending") list = list.filter(b=>badgeState(b)==="ending");
+  if(gFilter==="upcoming") list = list.filter(b=>badgeState(b)==="soon");
+  if(gFilter==="tba") list = list.filter(b=>badgeState(b)==="tba");
   const cmp = {added:(a,b)=>(a.added||"").localeCompare(b.added||""), users:(a,b)=>a.users-b.users, title:(a,b)=>a.name.localeCompare(b.name)}[gSort];
   list = [...list].sort(cmp); if(gDir==="desc") list.reverse();
   if(gSort==="added"){ const dated=list.filter(b=>b.added), undated=list.filter(b=>!b.added); list=[...dated,...undated]; }
