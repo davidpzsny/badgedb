@@ -367,11 +367,15 @@ function renderEmotes(){
   if(eFilter === "year") list = list.filter(e => (e[2] || "").startsWith(yr));
   if(eFilter === "6m") list = list.filter(e => (e[2] || "") >= halfYear);
   if(eQuery) list = list.filter(e => e[1].toLowerCase().includes(eQuery));
-  const newest = (a, b) => (b[2] || "").localeCompare(a[2] || "");
+  // Twitch doesn't publish emote dates. Tracked emotes use their first-seen date; the rest keep Twitch's own
+  // list order, which is chronological (emotes.json stores it oldest → newest).
+  const pos = e => EMOTES.indexOf(e);
+  const newest = (a, b) => (b[2] || "").localeCompare(a[2] || "") || pos(b) - pos(a);
+  const oldest = (a, b) => (a[2] || "0000").localeCompare(b[2] || "0000") || pos(a) - pos(b);
   list = [...list].sort(eSort === "name" ? (a, b) => a[1].localeCompare(b[1])
-                      : eSort === "oldest" ? (a, b) => (a[2] || "9999").localeCompare(b[2] || "9999") || a[1].localeCompare(b[1])
+                      : eSort === "oldest" ? oldest
                       : eFilter === "retired" ? (a, b) => (b[5] || "").localeCompare(a[5] || "") || newest(a, b) : newest);
-  $('#eCount').textContent = E_READY ? `${list.length} of ${live.length} global emotes` : '';
+  $('#eCount').textContent = E_READY ? `${list.length} of ${live.length} global emotes · checked against Twitch every 15 minutes` : '';
   grid.innerHTML = list.length ? list.slice(0, eShown).map(e => `<button class="emo ${e[4]===0?'retired':''}" data-emote="${esc(e[0])}">
       <span class="pic"><img src="${emoteUrl(e[0])}" alt="${esc(e[1])}" loading="lazy"></span><b>${esc(e[1])}</b>
       <small>${e[3]===1?'<span class="pill anim">Animated</span>':''}${e[2]?`Added ${fmt(e[2])}`:''}${e[4]===0&&e[5]?`<span class="rm">Removed ${fmt(e[5])}</span>`:''}</small></button>`).join('')
