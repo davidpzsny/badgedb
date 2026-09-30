@@ -247,8 +247,8 @@ def main():
     changed += write("timeline/index.html", timeline_page(events, by_img, now))
     changed += write("channel/index.html", channel_page(load("channel-badges.json", [])))
     changed += write("faq/index.html", faq_page())
-    changed += write("privacy/index.html", page("/privacy/", "Privacy Policy | Badge Database", "Badge Database privacy policy.", "privacy"))
-    changed += write("terms/index.html", page("/terms/", "Terms of Service | Badge Database", "Badge Database terms of service.", "terms"))
+    changed += write("privacy/index.html", page("/privacy/", "Privacy Policy | Badge Database", "How Badge Database handles personal data: no accounts, no tracking cookies, which third-party services are used, and your rights under the GDPR.", "privacy"))
+    changed += write("terms/index.html", page("/terms/", "Terms of Service | Badge Database", "Terms of Service for Badge Database, an independent fan project not affiliated with Twitch: accuracy of badge information, acceptable use and liability.", "terms"))
     changed += write("404.html", page("/404.html", "Badge Database", "Every Twitch badge and when to get it.", "home", noindex=True))
     urls = [("/", now[:10], "hourly", "1.0"), ("/timeline/", now[:10], "hourly", "0.9"), ("/badges/", now[:10], "daily", "0.9"),
             ("/channel/", now[:10], "daily", "0.8"), ("/faq/", None, "monthly", "0.5")]
