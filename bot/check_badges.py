@@ -49,7 +49,7 @@ def twitch_global_badges():
 PLACEHOLDER_HOW = {"", "objective not announced yet.", "objective not confirmed yet."}
 def is_placeholder_how(h):
     h = (h or "").strip().lower()
-    return h in PLACEHOLDER_HOW or h.startswith("watch in the category (exact time")
+    return h in PLACEHOLDER_HOW or h.startswith("watch in the category (exact time") or h.startswith("this badge was")
 
 def slugify(t):
     return re.sub(r"[^a-z0-9]+", "-", t.lower()).strip("-")[:48] or "badge"
@@ -131,6 +131,124 @@ def sync_events(desc_by_img, new_sets):
     if changed or added:
         save_events(events)
         print(f"events.json: {added} new badge(s) on the timeline, {changed} field(s) filled from Twitch descriptions")
+
+
+# ---------- Twitch reward campaigns: dates, category, objective ----------
+# The official Helix API has no start/end dates for badge rewards. twitch.tv itself loads them
+# (Drops & Rewards page) from its internal GraphQL API — unofficial, may change without notice.
+# Everything here is best-effort: if it fails, the rest of the bot keeps working.
+GQL_CLIENT_ID = os.environ.get("TWITCH_GQL_CLIENT_ID") or "kimne78kx3ncx6brgo4mv6wki5h1ko"
+GQL_HASH = os.environ.get("TWITCH_GQL_HASH") or "5a4da2ab3d5b47c9f9ce864e727b2cb346af1e3ea8b897fe8f704a97ff017619"
+REWARD_QUERY = """query BadgeDBRewardCampaigns {
+  rewardCampaignsAvailableToUser {
+    id name brand startsAt endsAt status summary instructions externalURL aboutURL isSitewide
+    game { id name displayName }
+    unlockRequirements { subsGoal minuteWatchedGoal }
+    rewards { id name earnableUntil bannerImage { image1xURL } thumbnailImage { image1xURL } }
+  }
+}"""
+
+def fetch_reward_campaigns():
+    headers = {"Client-Id": GQL_CLIENT_ID, "Content-Type": "text/plain;charset=UTF-8",
+               "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128 Safari/537.36"}
+    attempts = [
+        {"operationName": "BadgeDBRewardCampaigns", "query": REWARD_QUERY, "variables": {}},
+        {"operationName": "ViewerDropsDashboard", "variables": {"fetchRewardCampaigns": True},
+         "extensions": {"persistedQuery": {"version": 1, "sha256Hash": GQL_HASH}}},
+    ]
+    for body in attempts:
+        try:
+            r = requests.post("https://gql.twitch.tv/gql", json=body, headers=headers, timeout=30)
+            j = r.json()
+            if isinstance(j, list): j = j[0] if j else {}
+            camps = ((j or {}).get("data") or {}).get("rewardCampaignsAvailableToUser")
+            if camps is not None:
+                print(f"twitch campaigns: {len(camps)} found via {body['operationName']}")
+                for c in camps[:40]:
+                    print(f"   - {c.get('name')} | {c.get('startsAt')} -> {c.get('endsAt')} | rewards: {[x.get('name') for x in c.get('rewards') or []]}")
+                return camps
+            print(f"twitch campaigns: {body['operationName']} gave no data -> {str((j or {}).get('errors') or j)[:300]}")
+        except Exception as e:
+            print(f"twitch campaigns: {body['operationName']} failed -> {e}")
+    return []
+
+def _norm(t): return re.sub(r"[^a-z0-9]+", "", (t or "").lower())
+
+def _iso(t):
+    if not t: return ""
+    try: return datetime.datetime.fromisoformat(t.replace("Z", "+00:00")).astimezone(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    except Exception: return ""
+
+def _how_from(c):
+    req = c.get("unlockRequirements") or {}
+    where = " in the category" if (c.get("game") and not c.get("isSitewide")) else ""
+    subs, mins = req.get("subsGoal") or 0, req.get("minuteWatchedGoal") or 0
+    if subs:
+        return ("paid", f"Subscribe (Tier 1) or gift a Tier 1 sub{where}." if subs == 1 else f"Subscribe or gift {subs} subs{where}.")
+    if mins:
+        return ("free", f"Watch {mins} minutes{where}.")
+    return (None, None)
+
+def apply_campaigns(rows):
+    """Match Twitch reward campaigns to our badges and fill dates/objective/category.
+    Fields you edited in the admin page are marked *_src='manual' and are never overwritten."""
+    camps = fetch_reward_campaigns()
+    if not camps: return
+    events = load_events()
+    title_of = {r[1]: r[0] for r in rows}
+    by_title = {}
+    for r in rows: by_title.setdefault(_norm(r[0]), r[1])
+    ev_of = {}
+    for ev in events:
+        for b in ev.get("badges", []):
+            if b.get("img"): ev_of[b["img"]] = ev
+    ids = {e["id"] for e in events}
+    matched = changed = created = 0
+    for c in camps:
+        imgs = []
+        for rw in c.get("rewards") or []:
+            urls = " ".join(filter(None, [(rw.get("thumbnailImage") or {}).get("image1xURL"), (rw.get("bannerImage") or {}).get("image1xURL")]))
+            hit = next((u for u in re.findall(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", urls) if u in title_of), None)
+            if not hit:
+                n = _norm(rw.get("name"))
+                hit = by_title.get(n) or next((img for t, img in by_title.items() if len(t) >= 5 and (t == n or (len(n) >= 5 and (t in n or n in t)))), None)
+            if hit and hit not in imgs: imgs.append(hit)
+        if not imgs: continue
+        matched += 1
+        start, end = _iso(c.get("startsAt")), _iso(c.get("endsAt"))
+        cat = ((c.get("game") or {}).get("displayName") or "").strip()
+        cost, how = _how_from(c)
+        ev = next((ev_of[i] for i in imgs if i in ev_of), None)
+        if not ev:
+            eid = slugify(c.get("name") or cat or title_of[imgs[0]])
+            while eid in ids: eid += "-2"
+            ids.add(eid); created += 1
+            ev = {"id": eid, "name": c.get("name") or title_of[imgs[0]], "name_src": "twitch", "category": cat or "Unknown", "start": "", "end": "", "badges": []}
+            events.insert(0, ev)
+        before = json.dumps(ev, sort_keys=True)
+        # dates: fill when empty, keep following Twitch unless you set them by hand
+        if start and end and (not ev.get("start") or ev.get("dates_src") == "twitch"):
+            ev["start"], ev["end"], ev["dates_src"] = start, end, "twitch"
+        ev["twitch_campaign"] = c.get("id")
+        if cat and ev.get("category") in (None, "", "Unknown"): ev["category"] = cat
+        if c.get("name") and ev.get("name_src") != "manual":
+            generic = {_norm(ev.get("category")), _norm("Unknown")} | {_norm(title_of.get(i, "")) for i in imgs}
+            if _norm(ev.get("name")) in generic or ev.get("name_src") == "twitch":
+                ev["name"], ev["name_src"] = c["name"], "twitch"
+        if c.get("summary") and ev.get("about_src") != "manual": ev["about"] = c["summary"].strip()
+        have = {b.get("img") for b in ev["badges"]}
+        for img in imgs:
+            if img not in have:
+                ev["badges"].append({"name": title_of[img], "img": img, "how": "Objective not announced yet.", "cost": "na"}); ev_of[img] = ev
+        for b in ev["badges"]:
+            if b.get("img") not in imgs: continue
+            if how and (is_placeholder_how(b.get("how")) or b.get("how_src") == "twitch") and b.get("how_src") != "manual":
+                b["how"], b["how_src"] = how, "twitch"
+            if cost and (b.get("cost") in (None, "", "na") or b.get("how_src") == "twitch"): b["cost"] = cost
+        if json.dumps(ev, sort_keys=True) != before: changed += 1
+    if changed or created:
+        save_events(events)
+    print(f"twitch campaigns: {matched} matched our badges, {changed} event(s) updated, {created} created")
 
 # ---------- channel campaign badges (sub / watch / ranking) ----------
 EV_DB = os.path.join(ROOT, "events.json")
@@ -352,6 +470,8 @@ def main():
         print("badges.json updated")
 
     sync_events({b["img"]: b.get("desc", "") for b in live}, new_sets)
+    try: apply_campaigns(rows)
+    except Exception as e: print("twitch campaigns: skipped ->", e)
 
     try: crawl_channel_badges(app_token())
     except Exception as e: print("channel crawl failed:", e)
