@@ -74,6 +74,23 @@ def is_stale(ev, by_img, now):
     if not added: return False
     return (datetime.date.fromisoformat(now[:10]) - datetime.date.fromisoformat(added[0])).days > STALE_DAYS
 
+def desc_info(d):
+    """Twitch's own badge description -> objective / category / cost (same rules as the site)."""
+    d = (d or "").strip(); out = {}
+    if not d: return out
+    m = re.search(r"in the (.+?) category", d, re.I)
+    if m: out["category"] = m.group(1).strip()
+    low = d.lower()
+    if re.search(r"subscrib|gift(ed|ing)? (a )?sub", low): out["cost"] = "paid"
+    elif re.search(r"watch|view|tun(e|ing) in", low): out["cost"] = "free"
+    obj = re.sub(r"^this (limited[- ]time )?(chat )?badge (was|is|will be|can be) (earned|awarded|given|granted|unlocked|obtained)( to (people|users|viewers|everyone|twitch users))?( who| by| for| to| when)?\s*", "", d, flags=re.I)
+    obj = re.sub(r"\s*(It|This badge) was (added|created|made) to (promote|celebrate).*$", "", obj, flags=re.I).strip()
+    if obj and obj != d:
+        obj = obj[0].upper() + obj[1:]
+        if obj[-1] not in ".!?": obj += "."
+        out["objective"] = obj
+    return out
+
 def slug_ok(s): return re.fullmatch(r"[A-Za-z0-9._~-]+", s or "") is not None
 
 # ---------------------------------------------------------------- page shell
@@ -151,10 +168,12 @@ def brow(s, state=None):
 # ---------------------------------------------------------------- pages
 def badge_page(s, ev, evb, related, now, stale=False):
     st = status(ev, now)
-    cost = (evb or {}).get("cost") or ("free" if s["free"] else "")
+    info = desc_info(s["desc"])
+    cost = (evb or {}).get("cost") or ("free" if s["free"] else "") or ("" if ev else info.get("cost", ""))
     how = (evb or {}).get("how") or ""
+    if not how or how.lower().startswith("objective not"): how = info.get("objective", "") if not ev or not how else how
     desc_text = s["desc"] or how or "A Twitch global badge."
-    cat = ev.get("category") if ev and ev.get("category") not in (None, "", "Unknown") else ""
+    cat = ev.get("category") if ev and ev.get("category") not in (None, "", "Unknown") else ("" if ev else info.get("category", ""))
     when = f"Available {day(ev['start'])} – {day(ev['end'])}." if ev and ev.get("start") else ""
     meta = f"{s['name']} is a Twitch global badge. {how or desc_text} {when}".strip()
     meta = (meta[:157] + "…") if len(meta) > 158 else meta
@@ -174,10 +193,13 @@ def badge_page(s, ev, evb, related, now, stale=False):
     if s["users"]: details.append(("Users", f'{s["users"]:,}'))
     details.append(("Cost", {"free": "Free", "paid": "Paid (subscription / gift sub)"}.get(cost, "—")))
     cat_link = f'<a href="https://www.twitch.tv/directory/category/{e(re.sub(r"[^a-z0-9]+", "-", cat.lower()).strip("-"))}?filter=drops" target="_blank" rel="noopener">{e(cat)}</a>' if cat else "—"
-    avail = [("Status", ("Ended (dates were never announced)" if stale else {"live": "Active", "soon": "Upcoming", "ended": "Ended", "tba": "Date not announced"}[st]) if ev else "Unknown / not a timed event"),
+    eventish = bool(info.get("objective") or info.get("category"))
+    avail = [("Status", ("Ended (dates were never announced)" if stale else {"live": "Active", "soon": "Upcoming", "ended": "Ended", "tba": "Date not announced"}[st]) if ev
+                        else ("Ended — exact dates weren't recorded" if eventish else "Not a timed event")),
              ("Objective", e(how) if how else "—"), ("Category", cat_link),
              ("Channels", f'<a href="https://twitch.tv/{e(ev["channel"])}" target="_blank" rel="noopener">{e(ev["channel"])}</a>' if ev and ev.get("channel") else "Any"),
-             ("Started", utc(ev["start"]) if ev and ev.get("start") else "—"), ("Ends", utc(ev["end"]) if ev and ev.get("end") else "—")]
+             ("Started", utc(ev["start"]) if ev and ev.get("start") else ("Not recorded" if not ev and eventish else "—")),
+             ("Ends", utc(ev["end"]) if ev and ev.get("end") else ("Not recorded" if not ev and eventish else "—"))]
     dl = lambda rows: '<dl class="kv2">' + "".join(f"<dt>{k}</dt><dd>{v}</dd>" for k, v in rows) + "</dl>"
     context = (ev or {}).get("about") or (ev or {}).get("note") or (
         f'This badge was added to promote {ev["name"]}{" in the " + cat + " category" if cat else ""} on Twitch.' if ev else "No additional context yet. Follow twitch.tv/badge_db for updates.")

@@ -500,6 +500,48 @@ def post_to_x(badge, image_bytes):
         print("media upload failed, posting text only:", e)
     resp = client.create_tweet(text=text, media_ids=media_ids)
     print("posted to X:", resp.data)
+    return (resp.data or {}).get("id")
+
+# ---------- X: reply with the badge's page link once it is live ----------
+POSTS_DB = os.path.join(ROOT, "posts.json")        # {set_id: {"tweet": id, "title": ..., "posted": iso, "replied": bool}}
+X_LINK_REPLY = (os.environ.get("X_LINK_REPLY") or "1").strip().lower() not in ("0", "false", "no", "off")
+def remember_post(badge, tweet_id):
+    if not tweet_id: return
+    posts = load_json(POSTS_DB, {})
+    posts[badge["set"]] = {"tweet": str(tweet_id), "title": badge["title"],
+                           "posted": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"), "replied": False}
+    json.dump(posts, open(POSTS_DB, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+
+def reply_with_links(max_per_run=3):
+    """Next runs after a post: as soon as /badges/<set>/ is online, reply to the post with that link."""
+    if not X_LINK_REPLY or DRY_RUN: return
+    posts = load_json(POSTS_DB, {})
+    site = (os.environ.get("SITE_URL") or "https://badgedatabase.com").rstrip("/")
+    now = datetime.datetime.now(datetime.timezone.utc)
+    pending = [(k, v) for k, v in posts.items() if not v.get("replied") and v.get("tweet")]
+    if not pending: return
+    import tweepy
+    client = tweepy.Client(consumer_key=os.environ["X_API_KEY"], consumer_secret=os.environ["X_API_SECRET"],
+                           access_token=os.environ["X_ACCESS_TOKEN"], access_token_secret=os.environ["X_ACCESS_SECRET"])
+    done = 0
+    for set_id, v in pending:
+        if done >= max_per_run: break
+        if (now - datetime.datetime.fromisoformat(v["posted"])).total_seconds() > 3 * 86400:
+            v["replied"] = "skipped (too old)"; continue
+        url = f"{site}/badges/{set_id}/"
+        try:
+            live = requests.get(url, timeout=20).status_code == 200
+        except Exception:
+            live = False
+        if not live:
+            print(f"x link reply: {url} not online yet, will retry"); continue
+        try:
+            client.create_tweet(text=f"How to get {v['title']} and when it's available: {url}", in_reply_to_tweet_id=v["tweet"])
+            v["replied"] = True; done += 1
+            print(f"x link reply: posted for {set_id}")
+        except Exception as e:
+            print(f"x link reply failed for {set_id}:", e)
+    json.dump(posts, open(POSTS_DB, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
 # ---------- Discord (free) ----------
 def post_to_discord(badge):
@@ -567,7 +609,7 @@ def main():
         else:
             try:
                 img = requests.get(b["url"], timeout=30).content
-                post_to_x(b, img); post_to_discord(b)
+                remember_post(b, post_to_x(b, img)); post_to_discord(b)
             except Exception as e:
                 print("posting failed:", e)
         posted += 1
@@ -585,6 +627,9 @@ def main():
     sync_events({b["img"]: b.get("desc", "") for b in live}, new_sets)
     try: apply_campaigns(rows)
     except Exception as e: print("twitch campaigns: skipped ->", e)
+
+    try: reply_with_links()
+    except Exception as e: print("x link reply: skipped ->", e)
 
     try: update_popularity(live)
     except Exception as e: print("popularity: skipped ->", e)
