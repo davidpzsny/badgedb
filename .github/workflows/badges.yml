@@ -42,5 +42,8 @@ jobs:
         run: |
           git config user.name "badgedb-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add badges.json events.json channel-badges.json channels-state.json badges timeline channel faq privacy terms assets sitemap.xml robots.txt 404.html
+          for f in badges.json events.json channel-badges.json channels-state.json emotes.json popularity.json \
+                   badges timeline channel emotes popularity faq privacy terms assets sitemap.xml robots.txt 404.html; do
+            if [ -e "$f" ]; then git add "$f"; fi
+          done
           git diff --cached --quiet || (git commit -m "Update badges $(date -u +%F)" && git pull --rebase && git push)
