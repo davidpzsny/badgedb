@@ -77,7 +77,24 @@ def is_stale(ev, by_img, now):
 def slug_ok(s): return re.fullmatch(r"[A-Za-z0-9._~-]+", s or "") is not None
 
 # ---------------------------------------------------------------- page shell
-TEMPLATE = open(os.path.join(ROOT, "index.html"), encoding="utf-8").read()
+import hashlib
+def _asset_version():
+    """Short content hash of app.css + app.js: changes whenever they change, so browsers never use a stale copy."""
+    h = hashlib.sha1()
+    for f in ("assets/app.css", "assets/app.js"):
+        try: h.update(open(os.path.join(ROOT, f), "rb").read())
+        except Exception: pass
+    return h.hexdigest()[:10]
+ASSET_V = _asset_version()
+def _versioned(html_text):
+    return re.sub(r'(/assets/app\.(?:css|js))(\?v=[0-9a-f]*)?"', lambda m: f'{m.group(1)}?v={ASSET_V}"', html_text)
+
+# keep the homepage (index.html) pointing at the current asset version too
+_idx_path = os.path.join(ROOT, "index.html")
+_idx = open(_idx_path, encoding="utf-8").read()
+if _versioned(_idx) != _idx:
+    open(_idx_path, "w", encoding="utf-8").write(_versioned(_idx))
+TEMPLATE = open(_idx_path, encoding="utf-8").read()
 
 def _meta(h, attr, key, value):
     pat = re.compile(r'(<meta\s+' + attr + r'="' + re.escape(key) + r'"\s+content=")[^"]*(")')

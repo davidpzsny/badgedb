@@ -366,7 +366,7 @@ def crawl_channel_badges(token):
 # ---------- global emotes (official Helix API) ----------
 EMOTES_DB = os.path.join(ROOT, "emotes.json")      # rows: [id, name, first_seen, animated(0/1), active(0/1), removed_date]
 def sync_emotes(token):
-    data = helix_get(token, "/chat/emotes/global").get("data", [])
+    data = helix_get(token, "chat/emotes/global")          # helix_get already returns the "data" list
     if not data:
         print("global emotes: none returned"); return
     first_run = not os.path.exists(EMOTES_DB)
