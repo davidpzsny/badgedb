@@ -363,6 +363,82 @@ def crawl_channel_badges(token):
     json.dump(state, open(CH_STATE, "w", encoding="utf-8"), separators=(",", ":"))
     print(f"channel badges: checked {min(len(due), CH_PER_RUN)} channels, {added} new campaign badges, {len(db)} total")
 
+# ---------- global emotes (official Helix API) ----------
+EMOTES_DB = os.path.join(ROOT, "emotes.json")      # rows: [id, name, first_seen, animated(0/1), active(0/1), removed_date]
+def sync_emotes(token):
+    data = helix_get(token, "/chat/emotes/global").get("data", [])
+    if not data:
+        print("global emotes: none returned"); return
+    first_run = not os.path.exists(EMOTES_DB)
+    rows = load_json(EMOTES_DB, [])
+    by_id = {r[0]: r for r in rows}
+    today = datetime.date.today().isoformat()
+    live_ids, new = set(), []
+    for e in data:
+        eid = e.get("id"); live_ids.add(eid)
+        animated = 1 if "animated" in (e.get("format") or []) else 0
+        if eid in by_id:
+            r = by_id[eid]
+            while len(r) < 6: r.append("")
+            r[1], r[3], r[4], r[5] = e.get("name", r[1]), animated, 1, ""
+        else:
+            r = [eid, e.get("name", ""), "" if first_run else today, animated, 1, ""]
+            rows.insert(0, r); by_id[eid] = r
+            if not first_run: new.append(r[1])
+    removed = []
+    for r in rows:
+        while len(r) < 6: r.append("")
+        if r[0] not in live_ids and r[4] != 0:     # removed from the global set: keep it in the archive with the date
+            r[4], r[5] = 0, today; removed.append(r[1])
+    before = open(EMOTES_DB, encoding="utf-8").read() if os.path.exists(EMOTES_DB) else ""
+    out = json.dumps(rows, ensure_ascii=False, separators=(",", ":"))
+    if out != before:
+        open(EMOTES_DB, "w", encoding="utf-8").write(out)
+    print(f"global emotes: {len(data)} live, {len(new)} new, {len(removed)} removed" + (f" -> new: {', '.join(new[:10])}" if new else "")
+          + (f" -> removed: {', '.join(removed[:10])}" if removed else "") + (" (first run: baseline saved)" if first_run else ""))
+
+# ---------- badge popularity (public PotatBotat API, updated once a day) ----------
+POP_DB = os.path.join(ROOT, "popularity.json")      # {"updated": "YYYY-MM-DD", "source": ..., "counts": {set_id: users}}
+POTAT_URL = "https://api.potat.app/twitch/badges"
+def update_popularity(live):
+    pop = load_json(POP_DB, {})
+    today = datetime.date.today().isoformat()
+    if pop.get("updated") == today:
+        return
+    try:
+        r = requests.get(POTAT_URL, timeout=40, headers={"User-Agent": "BadgeDatabase (badgedatabase.com)"})
+        j = r.json()
+    except Exception as e:
+        print("popularity: request failed ->", e); return
+    if isinstance(j, list): items = j
+    elif isinstance(j, dict): items = next((j[k] for k in ("data", "badges", "results") if k in j), j)
+    else: items = []
+    if isinstance(items, dict):                      # {set_id: {...}} or {set_id: count}
+        items = [dict(v, badge=k) if isinstance(v, dict) else {"badge": k, "user_count": v} for k, v in items.items()]
+    if not items:
+        print(f"popularity: unexpected response -> {str(j)[:300]}"); return
+    print(f"popularity: {len(items)} rows from potat.app, sample keys: {sorted(items[0].keys()) if isinstance(items[0], dict) else type(items[0]).__name__}")
+    sets = {b["set"] for b in live}
+    by_title = {_norm(b["title"]): b["set"] for b in live}
+    by_img = {b["img"]: b["set"] for b in live}
+    counts = {}
+    for it in items:
+        if not isinstance(it, dict): continue
+        n = next((it[k] for k in ("user_count", "userCount", "users", "count", "total", "amount") if isinstance(it.get(k), (int, float))), None)
+        if n is None: continue
+        sid = next((str(it[k]) for k in ("badge", "set_id", "setId", "setID", "set", "id") if it.get(k) and str(it[k]) in sets), None)
+        if not sid:
+            blob = " ".join(str(v) for v in it.values())
+            sid = next((by_img[u] for u in re.findall(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", blob) if u in by_img), None)
+        if not sid:
+            sid = by_title.get(_norm(it.get("title") or it.get("name") or ""))
+        if sid: counts[sid] = max(counts.get(sid, 0), int(n))    # multi-version sets: the largest version
+    if not counts:
+        print(f"popularity: could not match any badge -> first row {str(items[0])[:300]}"); return
+    json.dump({"updated": today, "source": "PotatBotat (potat.app)", "counts": dict(sorted(counts.items(), key=lambda kv: -kv[1]))},
+              open(POP_DB, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+    print(f"popularity: {len(counts)} badge sets updated (top: {max(counts, key=counts.get)} {max(counts.values()):,})")
+
 # ---------- post image (1200x675 card) ----------
 def make_card(badge_png_bytes, title, subtitle=""):
     from PIL import Image, ImageDraw, ImageFont, ImageFilter
@@ -510,8 +586,17 @@ def main():
     try: apply_campaigns(rows)
     except Exception as e: print("twitch campaigns: skipped ->", e)
 
-    try: crawl_channel_badges(app_token())
-    except Exception as e: print("channel crawl failed:", e)
+    try: update_popularity(live)
+    except Exception as e: print("popularity: skipped ->", e)
+
+    tok = None
+    try: tok = app_token()
+    except Exception as e: print("app token failed:", e)
+    if tok:
+        try: sync_emotes(tok)
+        except Exception as e: print("global emotes: skipped ->", e)
+        try: crawl_channel_badges(tok)
+        except Exception as e: print("channel crawl failed:", e)
 
 if __name__ == "__main__":
     main()

@@ -228,6 +228,35 @@ def channel_page(rows):
                                   '<div class="blist" id="gridChannel"></div>': f'<div class="blist" id="gridChannel">{items}</div>'},
                 jsonld=[crumbs_ld(("Home", "/"), ("Channel Badges", None))])
 
+EMOTE = "https://static-cdn.jtvnw.net/emoticons/v2/{}/default/dark/2.0"
+def emotes_page(rows):
+    live = [r for r in rows if len(r) >= 5 and r[4] != 0]
+    live.sort(key=lambda r: (r[2] or "", r[1].lower()), reverse=True)
+    items = "".join(f'<button class="emo" data-emote="{e(r[0])}"><span class="pic"><img src="{EMOTE.format(e(r[0]))}" alt="{e(r[1])}" loading="lazy"></span><b>{e(r[1])}</b>'
+                    f'<small>{"<span class=\"pill anim\">Animated</span>" if r[3] == 1 else ""}{"Added " + day(r[2]) if r[2] else ""}</small></button>' for r in live)
+    return page("/emotes/", f"All {len(live)} Twitch Global Emotes – Full List | Badge Database",
+                f"Browse all {len(live)} Twitch global emotes that anyone can use in any chat, including animated ones and the newest additions. Updated automatically.",
+                "emotes", fills={'<div class="count-line" id="eCount"></div>': f'<div class="count-line" id="eCount">{len(live)} global emotes</div>',
+                                 '<div class="egrid" id="gridEmotes"></div>': f'<div class="egrid" id="gridEmotes">{items}</div>'},
+                jsonld=[crumbs_ld(("Home", "/"), ("Global Emotes", None))])
+
+def popularity_page(sets, pop):
+    ranked = sorted([s for s in sets if s["users"] > 0], key=lambda s: -s["users"])
+    if not ranked:
+        return page("/popularity/", "Twitch Badge Popularity | Badge Database", "Which Twitch badges people use most.", "popularity")
+    total, top = sum(s["users"] for s in ranked), ranked[0]
+    comp = lambda n: (f"{n/1e6:.1f}".rstrip("0").rstrip(".") + "M") if n >= 1e6 else (f"{round(n/1e3)}K" if n >= 1e4 else f"{n:,}")
+    rows = "".join(f'<a class="prow{" top" if i < 3 else ""}" href="/badges/{e(s["set"])}/"><span class="rank">{i+1}</span><img src="{CDN.format(s["img"])}" alt="" loading="lazy">'
+                   f'<span><span class="nm">{e(s["name"])}</span><span class="bar"><i style="width:{max(0.6, s["users"]/top["users"]*100):.2f}%"></i></span></span>'
+                   f'<span class="num">{s["users"]:,}<small>{s["users"]/total*100:.{1 if s["users"]/total >= .01 else 2}f}%</small></span></a>' for i, s in enumerate(ranked))
+    stats = (f'<div><b>{len(ranked)}</b><span>badges ranked</span></div><div><b>{comp(total)}</b><span>badge users counted</span></div>'
+             f'<div><b>{e(top["name"])}</b><span>most used · {comp(top["users"])} users{" · updated " + day(pop["updated"]) if pop.get("updated") else ""}</span></div>')
+    return page("/popularity/", "Twitch Badge Popularity – Most Used Badges Ranked | Badge Database",
+                f"Every Twitch global badge ranked by how many users wear it. {top['name']} leads with {top['users']:,} users. Updated daily.",
+                "popularity", fills={'<div class="pop-stats" id="popStats"></div>': f'<div class="pop-stats" id="popStats">{stats}</div>',
+                                     '<div class="pop-list" id="popList"></div>': f'<div class="pop-list" id="popList">{rows}</div>'},
+                jsonld=[crumbs_ld(("Home", "/"), ("Badge Popularity", None))])
+
 def faq_page():
     qa = re.findall(r'<details(?: open)?><summary>(.*?)</summary><div class="a">(.*?)</div></details>', TEMPLATE, flags=re.S)
     strip = lambda s: html.unescape(re.sub(r"<[^>]+>", "", s))
@@ -241,6 +270,9 @@ def faq_page():
 def main():
     now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     sets = [s for s in build_sets() if slug_ok(s["set"])]
+    pop = load("popularity.json", {})
+    if pop.get("counts"):
+        for s in sets: s["users"] = pop["counts"].get(s["set"], 0)
     sets.sort(key=lambda s: (s["added"] or "0000", s["name"]), reverse=True)
     events = load("events.json", [])
     by_img, ev_of = {}, {}
@@ -264,12 +296,14 @@ def main():
     changed += write("badges/index.html", global_page(sets, ev_of, by_img, now))
     changed += write("timeline/index.html", timeline_page(events, by_img, now))
     changed += write("channel/index.html", channel_page(load("channel-badges.json", [])))
+    changed += write("emotes/index.html", emotes_page(load("emotes.json", [])))
+    changed += write("popularity/index.html", popularity_page(sets, pop))
     changed += write("faq/index.html", faq_page())
     changed += write("privacy/index.html", page("/privacy/", "Privacy Policy | Badge Database", "How Badge Database handles personal data: no accounts, no tracking cookies, which third-party services are used, and your rights under the GDPR.", "privacy"))
     changed += write("terms/index.html", page("/terms/", "Terms of Service | Badge Database", "Terms of Service for Badge Database, an independent fan project not affiliated with Twitch: accuracy of badge information, acceptable use and liability.", "terms"))
     changed += write("404.html", page("/404.html", "Badge Database", "Every Twitch badge and when to get it.", "home", noindex=True))
     urls = [("/", now[:10], "hourly", "1.0"), ("/timeline/", now[:10], "hourly", "0.9"), ("/badges/", now[:10], "daily", "0.9"),
-            ("/channel/", now[:10], "daily", "0.8"), ("/faq/", None, "monthly", "0.5")]
+            ("/channel/", now[:10], "daily", "0.8"), ("/emotes/", now[:10], "daily", "0.8"), ("/popularity/", now[:10], "daily", "0.8"), ("/faq/", None, "monthly", "0.5")]
     urls += [(f"/badges/{s['set']}/", s["added"] or None, "weekly", "0.7") for s in sets]
     sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for u, lm, cf, pr in urls:
