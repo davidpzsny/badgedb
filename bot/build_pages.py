@@ -111,13 +111,22 @@ def crumbs_ld(*items):
     return {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
         {"@type": "ListItem", "position": i + 1, "name": n, **({"item": SITE + h} if h else {})} for i, (n, h) in enumerate(items)]}
 
+PILL = {"live": '<span class="pill live">Active</span>', "ending": '<span class="pill ending">Ends soon</span>',
+        "soon": '<span class="pill soon">Upcoming</span>', "tba": '<span class="pill tba">Date not announced</span>', "ended": '<span class="pill ended">Ended</span>'}
+def state_of(ev, by_img, now):
+    if not ev: return None
+    st = status(ev, now)
+    if st == "live":
+        left = datetime.datetime.fromisoformat(ev["end"].replace("Z", "+00:00")) - datetime.datetime.fromisoformat(now.replace("Z", "+00:00"))
+        return "ending" if left.total_seconds() < 48 * 3600 else "live"
+    if st == "tba": return "ended" if is_stale(ev, by_img, now) else "tba"
+    return st
+
 def tile(img, alt=""):
     return f'<span class="tile"><img src="{CDN.format(img)}" alt="{e(alt)}" loading="lazy"></span>' if img else '<span class="tile"><span class="ph">?</span></span>'
 
-def brow(s, ev=None, now=""):
-    st = status(ev, now) if ev else None
-    pills = ('<span class="pill free">Free</span>' if s["free"] else "") + \
-            ('<span class="pill live">Active</span>' if st == "live" else '<span class="pill soon">Upcoming</span>' if st == "soon" else "")
+def brow(s, state=None):
+    pills = ('<span class="pill free">Free</span>' if s["free"] else "") + (PILL.get(state, "") if state else "")
     meta = " · ".join(x for x in [f"Added {day(s['added'])}" if s["added"] else "", f"{s['users']:,} users" if s["users"] else ""] if x)
     return (f'<a class="brow" href="/badges/{e(s["set"])}/" data-badge="{e(s["set"])}" data-type="global">{tile(s["img"], s["name"])}'
             f'<span class="t"><span class="n">{e(s["name"])}</span><span class="m">{pills}<span>{meta}</span></span></span></a>')
@@ -173,8 +182,8 @@ def badge_page(s, ev, evb, related, now, stale=False):
                 fills={'<div id="badgePage"></div>': f'<div id="badgePage">{body}</div>'},
                 jsonld=[crumbs_ld(("Home", "/"), ("Global Badges", "/badges/"), (s["name"], None)), ld_page], image=CDN.format(s["img"]))
 
-def global_page(sets, ev_of, now):
-    rows = "".join(brow(s, ev_of.get(s["img"], (None,))[0], now) for s in sets)
+def global_page(sets, ev_of, by_img, now):
+    rows = "".join(brow(s, state_of(ev_of.get(s["img"], (None,))[0], by_img, now)) for s in sets)
     return page("/badges/", f"All {len(sets)} Twitch Global Badges – Full List | Badge Database",
                 f"The complete list of all {len(sets)} Twitch global badges with images, how to get each one, and when it is available. Updated automatically.",
                 "global", fills={'<div class="count-line" id="gCount"></div>': f'<div class="count-line" id="gCount">{len(sets)} badge sets</div>',
@@ -252,7 +261,7 @@ def main():
         else:
             related = [r for r in recent if r["set"] != s["set"]][:6]
         changed += write(f"badges/{s['set']}/index.html", badge_page(s, ev, evb, related, now, stale=is_stale(ev, by_img, now)))
-    changed += write("badges/index.html", global_page(sets, ev_of, now))
+    changed += write("badges/index.html", global_page(sets, ev_of, by_img, now))
     changed += write("timeline/index.html", timeline_page(events, by_img, now))
     changed += write("channel/index.html", channel_page(load("channel-badges.json", [])))
     changed += write("faq/index.html", faq_page())
