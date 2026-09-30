@@ -124,7 +124,7 @@ function renderHome(){
   $('#socials').innerHTML = defs.map(([n,u,c,svg])=>`<a class="social" style="--c:${c}" href="${esc(u)}" target="_blank" rel="noopener"><span class="ic" ${n==='X'?'style="color:#111"':''}>${svg}</span><span><b>${n}</b><small>${esc(u.replace(/^https?:\/\/(www\.)?/,''))}</small></span><span class="go">↗</span></a>`).join('');
 
   const live = EVENTS.filter(e=>status(e)==="live");
-  const soon = allEvents().filter(e=>["soon","tba"].includes(status(e)));
+  const soon = allEvents().filter(e=>["soon","tba"].includes(status(e)) && !isStale(e));
   $('#sLive').textContent = live.reduce((n,e)=>n+e.badges.length,0);
   $('#sSoon').textContent = soon.length;
   $('#sFree').textContent = live.reduce((n,e)=>n+e.badges.filter(b=>b.cost==="free").length,0);
@@ -161,9 +161,15 @@ function eventCard(ev, st){
   return `<button class="ev ${st}" data-ev="${ev.id}"><span class="top">${imgs}<span><span class="title">${esc(ev.name)}</span><span class="cat">${esc(ev.category)}${ev.badges.length>1?` · ${ev.badges.length} badges`:''}</span></span></span><span class="obj">${esc(ev.badges[0].how)}${ev.badges.length>1?' …':''}</span>${st==="live"?`<span class="bar ${urgent?'urgent':''}"><i style="width:${progress(ev).toFixed(1)}%"></i></span>`:''}<span class="foot">${foot}<span class="pill ${cost}">${{free:"Free",paid:"Sub / paid",na:"TBA"}[cost]}</span></span></button>`;
 }
 // badges in the archive that no event covers yet — so nothing is ever missing from the timeline
+const STALE_DAYS = 21;
+function evAdded(ev){
+  const ds = ev.badges.map(b => (globalBadges.find(g => g.imgId === b.img || g.versions.some(v => v.img.includes(b.img))) || {}).added).filter(Boolean).sort();
+  return ds[0] ? Date.parse(ds[0]) : null;
+}
+function isStale(ev){ if(ev.start) return false; const a = evAdded(ev); return !!a && (Date.now() - a) > STALE_DAYS*864e5; }
 function orphanEvents(){
   const seen = new Set(Object.keys(EV_BY_IMG));
-  return globalBadges.filter(b => !seen.has(b.imgId) && b.added && (Date.now() - Date.parse(b.added)) < 45*864e5)
+  return globalBadges.filter(b => !seen.has(b.imgId) && b.added && (Date.now() - Date.parse(b.added)) < STALE_DAYS*864e5)
     .map(b => ({ id:"orphan-"+b.set, name:b.name, category:"Unknown", start:"", end:"",
                  badges:[{ name:b.name, img:b.imgId, how:b.how || "Objective not confirmed yet.", cost: b.free ? "free" : "na" }] }));
 }
@@ -175,9 +181,11 @@ function renderEvents(){
     if(evQuery && !hay.includes(evQuery)) return;
     if(evFilter==="free" && !ev.badges.some(b=>b.cost==="free")) return;
     if(evFilter==="paid" && !ev.badges.some(b=>b.cost==="paid")) return;
+    if(isStale(ev)) return;               // undated for 3+ weeks: treat as over, keep it off the timeline
     buckets[status(ev)].push(ev);
   });
   buckets.live.sort((a,b)=>Date.parse(a.end)-Date.parse(b.end)); buckets.soon.sort((a,b)=>Date.parse(a.start)-Date.parse(b.start)); buckets.ended.sort((a,b)=>Date.parse(b.end)-Date.parse(a.end));
+  buckets.ended = buckets.ended.filter(ev => Date.now() - Date.parse(ev.end) <= 3*864e5).slice(0, 6);
   for(const k of Object.keys(buckets)){ const K=k[0].toUpperCase()+k.slice(1); $('#ev'+K).innerHTML = buckets[k].length?buckets[k].map(ev=>eventCard(ev,k)).join(''):`<div class="empty">${evQuery?'No events match your search.':READY?'Nothing here right now.':'Loading…'}</div>`; $('#n'+K).textContent = buckets[k].length||''; }
 }
 const DAY=864e5, COLW=46;
@@ -216,7 +224,7 @@ function leftText(r){
 }
 function renderCalendar(id){
   const el=document.getElementById(id); if(!el) return; const st=CAL[id];
-  const [a0,a1]=calRange(st), n=st.span, now=Date.now(), rows=calRows(a0,a1);
+  const [a0,a1]=calRange(st), n=st.span, now=Date.now(), rows=calRows(a0,a1).filter(r => id!=='calHome' || r.st!=='ended');
   const compact = window.matchMedia('(max-width:640px)').matches;
   const cols = compact && n===28 ? 4 : n;                           // phones: 4 week columns instead of 28 day columns
   const days=Array.from({length:cols},(_,i)=>{ const step = cols===n ? DAY : 7*DAY, d=new Date(a0+i*step);
@@ -232,7 +240,7 @@ function renderCalendar(id){
     const icon = r.b.img ? `<img src="${esc(cdn(r.b.img))}" alt="" loading="lazy">` : `<span class="ph">?</span>`;
     const label = `<span class="nm">${esc(nm)}</span><span class="lft">${leftText(r)}</span>`;
     const inLabel = w < (n===7 ? 30 : 12) ? `<span class="nm">${esc(nm)}</span>` : label;
-    const bar = `<button class="cal-bar ${r.b.cost||'na'} ${r.st==='soon'?'soon':''} ${r.s<a0?'cut-l':''} ${r.e>a1?'cut-r':''}"
+    const bar = `<button class="cal-bar ${r.b.cost||'na'} ${r.st==='soon'?'soon':''} ${r.st==='ended'?'ended':''} ${r.s<a0?'cut-l':''} ${r.e>a1?'cut-r':''}"
       style="left:${left}%;width:${narrow?`max(${w}%,34px)`:w+'%'}" data-k="${k}" ${set?`data-set="${esc(set)}"`:`data-ev="${esc(r.ev.id)}"`}>${icon}${narrow?'':inLabel}</button>`;
     // short bars: put the name next to the bar instead of inside it (or before it, near the right edge)
     const out = !narrow ? '' : (left + w > 70
@@ -240,7 +248,7 @@ function renderCalendar(id){
       : `<span class="cal-out" style="left:calc(${left}% + max(${w}%, 34px) + 4px)">${label}</span>`);
     const pctL=(s-a0)/(a1-a0)*100, pctW=Math.max((e-s)/(a1-a0)*100,1.5), urgent=r.st==="live" && r.e-now<48*36e5;
     const nowTick = now>=a0 && now<a1 ? `<span class="nowt" style="left:${(now-a0)/(a1-a0)*100}%"></span>` : '';
-    const mrow = `<button class="cal-m ${r.b.cost||'na'} ${r.st==='soon'?'soon':''}" data-k="${k}" ${set?`data-set="${esc(set)}"`:`data-ev="${esc(r.ev.id)}"`}>
+    const mrow = `<button class="cal-m ${r.b.cost||'na'} ${r.st==='soon'?'soon':''} ${r.st==='ended'?'ended':''}" data-k="${k}" ${set?`data-set="${esc(set)}"`:`data-ev="${esc(r.ev.id)}"`}>
       <span class="cal-mtop">${icon}<span class="nm">${esc(nm)}</span><span class="lft ${urgent?'urgent':''}">${leftText(r)}</span></span>
       <span class="cal-mtrack"><i style="left:${pctL}%;width:${Math.min(pctW,100-pctL)}%"></i>${nowTick}</span></button>`;
     return compact ? mrow : `<div class="cal-row">${bar}${out}</div>`;
@@ -402,7 +410,7 @@ function renderBadgePage(set){
       <div class="card2"><h3>Availability</h3>
         ${cd}
         <dl class="kv2">
-          <dt>Status</dt><dd>${st?{live:"Active",soon:"Upcoming",ended:"Ended",tba:"Date not announced"}[st]:"Unknown / not a timed event"}</dd>
+          <dt>Status</dt><dd>${st?(st==="tba"&&isStale(ev.ev)?"Ended (dates were never announced)":{live:"Active",soon:"Upcoming",ended:"Ended",tba:"Date not announced"}[st]):"Unknown / not a timed event"}</dd>
           <dt>Objective</dt><dd>${ev?esc(ev.b.how):"—"}</dd>
           <dt>Category</dt><dd>${cat && !/any|unknown|twitch/i.test(cat)?`<a href="${catUrl(cat)}?filter=drops" target="_blank" rel="noopener">${esc(cat)}</a>`:esc(cat||"—")}</dd>
           <dt>Channels</dt><dd>${chan?`<a href="https://twitch.tv/${esc(chan)}" target="_blank" rel="noopener">${esc(chan)}</a>`:"Any"}</dd>
@@ -489,7 +497,7 @@ async function admSave(){
     else admSetStatus("Save failed: "+e.message,"err");
   }
 }
-function admNeeds(ev){ return !ev.start || ev.badges.some(b=>b.cost==="na" || is_ph(b.how)) || !ev.category || ev.category==="Unknown"; }
+function admNeeds(ev){ if(isStale(ev)) return false; return !ev.start || ev.badges.some(b=>b.cost==="na" || is_ph(b.how)) || !ev.category || ev.category==="Unknown"; }
 const is_ph = h => { h=(h||"").trim().toLowerCase(); return !h || h==="objective not announced yet." || h==="objective not confirmed yet." || h.startsWith("watch in the category (exact time"); };
 
 function renderAdmin(){
