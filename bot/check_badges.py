@@ -400,44 +400,64 @@ def sync_emotes(token):
 # ---------- badge popularity (public PotatBotat API, updated once a day) ----------
 POP_DB = os.path.join(ROOT, "popularity.json")      # {"updated": "YYYY-MM-DD", "source": ..., "counts": {set_id: users}}
 POTAT_URL = "https://api.potat.app/twitch/badges"
+def _find_list(j, depth=0):
+    """First list of dicts anywhere in the response (handles {data:[...]}, {data:{badges:[...]}} etc.)."""
+    if isinstance(j, list): return j
+    if isinstance(j, dict) and depth < 4:
+        for k in ("data", "badges", "results", "items"):
+            if k in j:
+                r = _find_list(j[k], depth + 1)
+                if r: return r
+        # {set_id: count} or {set_id: {...}} — checked before diving into the values
+        if len(j) > 1 and all(isinstance(v, (int, float, dict)) and not isinstance(v, bool) for v in j.values()):
+            return [dict(v, badge=k) if isinstance(v, dict) else {"badge": k, "user_count": v} for k, v in j.items()]
+        for v in j.values():
+            r = _find_list(v, depth + 1)
+            if r and isinstance(r[0], dict): return r
+    return []
+
 def update_popularity(live):
     pop = load_json(POP_DB, {})
     today = datetime.date.today().isoformat()
     if pop.get("updated") == today:
         return
     try:
-        r = requests.get(POTAT_URL, timeout=40, headers={"User-Agent": "BadgeDatabase (badgedatabase.com)"})
+        r = requests.get(POTAT_URL, timeout=40, headers={"User-Agent": "BadgeDatabase (badgedatabase.com)", "Accept": "application/json"})
+        print(f"popularity: potat.app answered HTTP {r.status_code}, {len(r.content)} bytes")
         j = r.json()
     except Exception as e:
         print("popularity: request failed ->", e); return
-    if isinstance(j, list): items = j
-    elif isinstance(j, dict): items = next((j[k] for k in ("data", "badges", "results") if k in j), j)
-    else: items = []
-    if isinstance(items, dict):                      # {set_id: {...}} or {set_id: count}
-        items = [dict(v, badge=k) if isinstance(v, dict) else {"badge": k, "user_count": v} for k, v in items.items()]
+    items = _find_list(j)
     if not items:
-        print(f"popularity: unexpected response -> {str(j)[:300]}"); return
-    print(f"popularity: {len(items)} rows from potat.app, sample keys: {sorted(items[0].keys()) if isinstance(items[0], dict) else type(items[0]).__name__}")
+        print(f"popularity: unexpected response -> {str(j)[:400]}"); return
+    print(f"popularity: {len(items)} rows, first row: {str(items[0])[:300]}")
     sets = {b["set"] for b in live}
     by_title = {_norm(b["title"]): b["set"] for b in live}
     by_img = {b["img"]: b["set"] for b in live}
+    uuid_re = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
     counts = {}
     for it in items:
         if not isinstance(it, dict): continue
-        n = next((it[k] for k in ("user_count", "userCount", "users", "count", "total", "amount") if isinstance(it.get(k), (int, float))), None)
+        flat = dict(it)
+        for k, v in it.items():                                  # one level of nesting, e.g. {"badge": {"set_id": ..}}
+            if isinstance(v, dict): flat.update({f"{k}_{kk}": vv for kk, vv in v.items()})
+        nums = [(k, v) for k, v in flat.items() if isinstance(v, (int, float)) and not isinstance(v, bool)]
+        pref = [v for k, v in nums if re.search(r"user|count|total|amount|seen", k, re.I)]
+        n = pref[0] if pref else (max(v for k, v in nums) if nums else None)
         if n is None: continue
-        sid = next((str(it[k]) for k in ("badge", "set_id", "setId", "setID", "set", "id") if it.get(k) and str(it[k]) in sets), None)
+        strs = [str(v) for v in flat.values() if isinstance(v, str)]
+        sid = next((v for v in strs if v in sets), None)
         if not sid:
-            blob = " ".join(str(v) for v in it.values())
-            sid = next((by_img[u] for u in re.findall(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", blob) if u in by_img), None)
+            sid = next((by_img[u] for v in strs for u in uuid_re.findall(v) if u in by_img), None)
         if not sid:
-            sid = by_title.get(_norm(it.get("title") or it.get("name") or ""))
+            sid = next((by_title[_norm(v)] for v in strs if _norm(v) in by_title), None)
         if sid: counts[sid] = max(counts.get(sid, 0), int(n))    # multi-version sets: the largest version
     if not counts:
         print(f"popularity: could not match any badge -> first row {str(items[0])[:300]}"); return
     json.dump({"updated": today, "source": "PotatBotat (potat.app)", "counts": dict(sorted(counts.items(), key=lambda kv: -kv[1]))},
               open(POP_DB, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
-    print(f"popularity: {len(counts)} badge sets updated (top: {max(counts, key=counts.get)} {max(counts.values()):,})")
+    top = max(counts, key=counts.get)
+    print(f"popularity: {len(counts)} badge sets updated (top: {top} {counts[top]:,})")
 
 # ---------- post image (1200x675 card) ----------
 def make_card(badge_png_bytes, title, subtitle=""):
