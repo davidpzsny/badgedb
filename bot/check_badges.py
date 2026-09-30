@@ -138,6 +138,7 @@ def sync_events(desc_by_img, new_sets):
 # (Drops & Rewards page) from its internal GraphQL API — unofficial, may change without notice.
 # Everything here is best-effort: if it fails, the rest of the bot keeps working.
 GQL_CLIENT_ID = os.environ.get("TWITCH_GQL_CLIENT_ID") or "kimne78kx3ncx6brgo4mv6wki5h1ko"
+GQL_OAUTH = (os.environ.get("TWITCH_GQL_OAUTH") or "").strip().removeprefix("OAuth ").strip()
 GQL_HASH = os.environ.get("TWITCH_GQL_HASH") or "5a4da2ab3d5b47c9f9ce864e727b2cb346af1e3ea8b897fe8f704a97ff017619"
 REWARD_QUERY = """query BadgeDBRewardCampaigns {
   rewardCampaignsAvailableToUser {
@@ -149,7 +150,10 @@ REWARD_QUERY = """query BadgeDBRewardCampaigns {
 }"""
 
 def fetch_reward_campaigns():
-    headers = {"Client-Id": GQL_CLIENT_ID, "Content-Type": "text/plain;charset=UTF-8",
+    if not GQL_OAUTH:
+        print("twitch campaigns: skipped — add the TWITCH_GQL_OAUTH secret (a Twitch login token) to enable automatic dates")
+        return []
+    headers = {"Client-Id": GQL_CLIENT_ID, "Authorization": f"OAuth {GQL_OAUTH}", "Content-Type": "text/plain;charset=UTF-8",
                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128 Safari/537.36"}
     attempts = [
         {"operationName": "BadgeDBRewardCampaigns", "query": REWARD_QUERY, "variables": {}},
@@ -167,7 +171,11 @@ def fetch_reward_campaigns():
                 for c in camps[:40]:
                     print(f"   - {c.get('name')} | {c.get('startsAt')} -> {c.get('endsAt')} | rewards: {[x.get('name') for x in c.get('rewards') or []]}")
                 return camps
-            print(f"twitch campaigns: {body['operationName']} gave no data -> {str((j or {}).get('errors') or j)[:300]}")
+            err = str((j or {}).get('errors') or j)
+            print(f"twitch campaigns: {body['operationName']} gave no data -> {err[:300]}")
+            if "unauthenticated" in err.lower() or "401" in err:
+                print("twitch campaigns: the TWITCH_GQL_OAUTH token was rejected — it may have expired (log out = token invalid). Copy a fresh auth-token.")
+                return []
         except Exception as e:
             print(f"twitch campaigns: {body['operationName']} failed -> {e}")
     return []
@@ -276,7 +284,7 @@ def crawl_channel_badges(token):
     db = load_json(CH_DB, [])                 # rows: [title, img, first_seen, channel_login, channel_display, set_id, type]
     state = load_json(CH_STATE, {})           # login -> {"id":..., "checked": iso}
     known = {r[1] for r in db}
-    now = datetime.datetime.utcnow(); now_iso = now.isoformat(timespec="seconds")
+    now = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None); now_iso = now.isoformat(timespec="seconds")
 
     # candidates: manual list + top live streams
     wanted = {}
