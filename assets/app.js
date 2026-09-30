@@ -448,6 +448,17 @@ function openBadge(set,type){
 
 /* ---------- badge detail page ---------- */
 let bpVersion = 0, bpTheme = "dark";
+/* Twitch's badge description ("This badge was earned by watching a ZEvent25 stream") -> objective, category, cost */
+function descInfo(d){
+  d = (d || "").trim(); const out = {}; if(!d) return out;
+  const m = d.match(/in the (.+?) category/i); if(m) out.category = m[1].trim();
+  const low = d.toLowerCase();
+  if(/subscrib|gift(ed|ing)? (a )?sub/.test(low)) out.cost = "paid"; else if(/watch|view|tun(e|ing) in/.test(low)) out.cost = "free";
+  let obj = d.replace(/^this (limited[- ]time )?(chat )?badge (was|is|will be|can be) (earned|awarded|given|granted|unlocked|obtained)( to (people|users|viewers|everyone|twitch users))?( who| by| for| to| when)?\s*/i, "")
+             .replace(/\s*(It|This badge) was (added|created|made) to (promote|celebrate).*$/i, "").trim();
+  if(obj && obj !== d){ obj = obj.charAt(0).toUpperCase() + obj.slice(1); if(!/[.!?]$/.test(obj)) obj += "."; out.objective = obj; }
+  return out;
+}
 let bpLastSet = null;
 function renderBadgePage(set){
   if(set !== bpLastSet){ bpVersion = 0; bpLastSet = set; }
@@ -457,7 +468,8 @@ function renderBadgePage(set){
   if(bpVersion >= b.versions.length) bpVersion = 0;
   const v = b.versions[bpVersion]; const vid = v.img.match(/badges\/v1\/([0-9a-f-]+)\//)?.[1] || b.imgId;
   const ev = EV_BY_IMG[vid] || EV_BY_IMG[b.imgId]; const st = ev ? status(ev.ev) : null;
-  const cat = ev ? ev.ev.category.split(" · ")[0] : "";
+  const info = descInfo(b.how || (ev && ev.b.desc) || "");
+  const cat = ev ? ev.ev.category.split(" · ")[0] : (info.category || "");
   const chan = ev && /channel:\s*(\S+)/i.exec(ev.ev.category)?.[1];
   const twitchDesc = (b.how && b.how.toLowerCase()!==b.name.toLowerCase() ? b.how : "") || (ev && ev.b.desc) || "";
   const desc = twitchDesc || (ev ? `This badge is earned during the ${ev.ev.name} event: ${ev.b.how}` : "Twitch does not provide a description for this badge.");
@@ -482,18 +494,19 @@ function renderBadgePage(set){
           <dt>Version ID</dt><dd><code>${esc(String(bpVersion+1))}</code>${b.versions.length>1?` of ${b.versions.length}`:''}</dd>
           ${b.added?`<dt>Added</dt><dd>${fmt(b.added)}</dd>`:''}
           ${b.users?`<dt>Users</dt><dd>${num(b.users)}</dd>`:''}
-          <dt>Cost</dt><dd>${b.free?'Free':(ev&&ev.b.cost==='paid')?'Paid (subscription / gift sub)':'—'}</dd>
+          <dt>Cost</dt><dd>${b.free||(ev&&ev.b.cost==='free')||(!ev&&info.cost==='free')?'Free':(ev&&ev.b.cost==='paid')||(!ev&&info.cost==='paid')?'Paid (subscription / gift sub)':'—'}</dd>
         </dl>
       </div>
       <div class="card2"><h3>Availability</h3>
         ${cd}
         <dl class="kv2">
-          <dt>Status</dt><dd>${st?(st==="tba"&&isStale(ev.ev)?"Ended (dates were never announced)":{live:"Active",soon:"Upcoming",ended:"Ended",tba:"Date not announced"}[st]):"Unknown / not a timed event"}</dd>
-          <dt>Objective</dt><dd>${ev?esc(ev.b.how):"—"}</dd>
+          <dt>Status</dt><dd>${st?(st==="tba"&&isStale(ev.ev)?"Ended (dates were never announced)":{live:"Active",soon:"Upcoming",ended:"Ended",tba:"Date not announced"}[st])
+                                  :(info.objective||info.category)?"Ended — exact dates weren't recorded":"Not a timed event"}</dd>
+          <dt>Objective</dt><dd>${ev&&ev.b.how&&!/^objective not/i.test(ev.b.how)?esc(ev.b.how):esc(info.objective||"—")}</dd>
           <dt>Category</dt><dd>${cat && !/any|unknown|twitch/i.test(cat)?`<a href="${catUrl(cat)}?filter=drops" target="_blank" rel="noopener">${esc(cat)}</a>`:esc(cat||"—")}</dd>
           <dt>Channels</dt><dd>${chan?`<a href="https://twitch.tv/${esc(chan)}" target="_blank" rel="noopener">${esc(chan)}</a>`:"Any"}</dd>
-          <dt>Started</dt><dd>${ev?fmtFull(ev.ev.start):"—"}</dd>
-          <dt>Ends</dt><dd>${ev?fmtFull(ev.ev.end):"—"}</dd>
+          <dt>Started</dt><dd>${ev&&ev.ev.start?fmtFull(ev.ev.start):(info.objective||info.category)&&!ev?"Not recorded":"—"}</dd>
+          <dt>Ends</dt><dd>${ev&&ev.ev.end?fmtFull(ev.ev.end):(info.objective||info.category)&&!ev?"Not recorded":"—"}</dd>
         </dl>
         ${ev?`<div class="actions" style="margin-top:16px;display:flex;gap:8px"><button class="btn" data-ev="${ev.ev.id}">Open event</button></div>`:''}
       </div>
@@ -601,7 +614,7 @@ function renderAdmin(){
   if(!ADM.events.length){ body.innerHTML = `<div class="empty">Loading events…</div>`; return; }
   const list = ADM.events.map((ev,i)=>({ev,i})).filter(({ev})=> ADM.filter==="all" ? true : ADM.filter==="needs" ? admNeeds(ev) : ["live","soon"].includes(status(ev)));
   const covered = new Set(ADM.events.flatMap(e=>e.badges.map(b=>b.img)));
-  const spare = globalBadges.filter(b=>!covered.has(b.imgId) && b.added && (Date.now()-Date.parse(b.added)) < 90*864e5);
+  const spare = globalBadges.filter(b=>!covered.has(b.imgId)).sort((a,b)=>(b.added||'').localeCompare(a.added||'') || a.name.localeCompare(b.name));
   const counts = { needs: ADM.events.filter(admNeeds).length, active: ADM.events.filter(e=>["live","soon"].includes(status(e))).length, all: ADM.events.length };
   body.innerHTML = `
     <div class="seg adm-tabs" id="admFilter">
@@ -634,7 +647,7 @@ function admEventCard(ev,i,spare){
           ${b.desc?`<span class="ds">Twitch: ${esc(b.desc)}</span>`:''}
         </div>`).join('')}</div>
       <div class="adm-row">
-        ${spare.length?`<select data-addb><option value="">+ Add a recent badge to this event…</option>${spare.map(s=>`<option value="${esc(s.imgId)}">${esc(s.name)} (${fmt(s.added)})</option>`).join('')}</select>`:''}
+        ${spare.length?`<select data-addb><option value="">+ Add a badge to this event (newest first)…</option>${spare.map(s=>`<option value="${esc(s.imgId)}">${esc(s.name)}${s.added?` (${fmt(s.added)})`:''}</option>`).join('')}</select>`:''}
         <span style="flex:1"></span><button class="btn ghost" data-del="${i}">Delete event</button>
       </div>
     </div></details>`;
