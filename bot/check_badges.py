@@ -180,56 +180,6 @@ def fetch_reward_campaigns():
             print(f"twitch campaigns: {body['operationName']} failed -> {e}")
     return []
 
-# Badges earned by watching / subscribing in a category are Twitch *Drops* (Drops & Rewards page, "Drops" tab).
-DROPS_LIST_Q = """query BadgeDBDropsList { currentUser { id login dropCampaigns { id name status startAt endAt game { displayName } } } }"""
-DROP_DETAIL_Q = """query BadgeDBDrop($uid: ID!, $cid: ID!) { user(id: $uid) { dropCampaign(id: $cid) {
-  id name startAt endAt game { displayName }
-  timeBasedDrops { name requiredMinutesWatched requiredSubs startAt endAt
-    benefitEdges { benefit { name imageAssetURL distributionType } } } } } }"""
-
-def _gql(body):
-    headers = {"Client-Id": GQL_CLIENT_ID, "Authorization": f"OAuth {GQL_OAUTH}", "Content-Type": "text/plain;charset=UTF-8",
-               "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128 Safari/537.36"}
-    return requests.post("https://gql.twitch.tv/gql", json=body, headers=headers, timeout=40).json()
-
-def fetch_drop_badges():
-    """Returns drops shaped like reward campaigns, so apply_campaigns() can match them the same way."""
-    if not GQL_OAUTH: return []
-    try:
-        j = _gql({"operationName": "BadgeDBDropsList", "query": DROPS_LIST_Q, "variables": {}})
-        me = ((j or {}).get("data") or {}).get("currentUser") or {}
-        camps = me.get("dropCampaigns")
-        if camps is None:
-            print(f"twitch drops: no data -> {str((j or {}).get('errors') or j)[:300]}"); return []
-        uid = me.get("id")
-        live = [c for c in camps if (c.get("status") or "").upper() in ("ACTIVE", "UPCOMING")]
-        print(f"twitch drops: {len(camps)} drop campaigns ({len(live)} active/upcoming)")
-        out, badge_names, errors = [], [], 0
-        for i in range(0, len(live), 25):
-            batch = [{"operationName": "BadgeDBDrop", "query": DROP_DETAIL_Q, "variables": {"uid": uid, "cid": c["id"]}} for c in live[i:i+25]]
-            res = _gql(batch)
-            res = res if isinstance(res, list) else [res]
-            for r in res:
-                d = (((r or {}).get("data") or {}).get("user") or {}).get("dropCampaign")
-                if not d:
-                    errors += 1
-                    if errors == 1: print(f"twitch drops: detail error -> {str((r or {}).get('errors') or r)[:300]}")
-                    continue
-                for tb in d.get("timeBasedDrops") or []:
-                    bens = [(e.get("benefit") or {}) for e in tb.get("benefitEdges") or []]
-                    for b in bens:
-                        if "BADGE" in (b.get("distributionType") or "").upper(): badge_names.append(f"{b.get('name')} ({d.get('name')})")
-                    out.append({"id": d.get("id"), "name": d.get("name"),
-                                "startsAt": tb.get("startAt") or d.get("startAt"), "endsAt": tb.get("endAt") or d.get("endAt"),
-                                "isSitewide": False, "game": d.get("game") or {},
-                                "unlockRequirements": {"subsGoal": tb.get("requiredSubs") or 0, "minuteWatchedGoal": tb.get("requiredMinutesWatched") or 0},
-                                "rewards": [{"name": b.get("name"), "thumbnailImage": {"image1xURL": b.get("imageAssetURL")}} for b in bens]})
-        print(f"twitch drops: {len(badge_names)} badge reward(s) in active/upcoming drops" + (f", {errors} detail error(s)" if errors else ""))
-        for n in badge_names[:40]: print(f"   - {n}")
-        return out
-    except Exception as e:
-        print("twitch drops: failed ->", e); return []
-
 def _norm(t): return re.sub(r"[^a-z0-9]+", "", (t or "").lower())
 
 def _iso(t):
@@ -250,7 +200,7 @@ def _how_from(c):
 def apply_campaigns(rows):
     """Match Twitch reward campaigns to our badges and fill dates/objective/category.
     Fields you edited in the admin page are marked *_src='manual' and are never overwritten."""
-    camps = fetch_reward_campaigns() + fetch_drop_badges()
+    camps = fetch_reward_campaigns()
     if not camps: return
     events = load_events()
     title_of = {r[1]: r[0] for r in rows}
@@ -304,9 +254,38 @@ def apply_campaigns(rows):
                 b["how"], b["how_src"] = how, "twitch"
             if cost and (b.get("cost") in (None, "", "na") or b.get("how_src") == "twitch"): b["cost"] = cost
         if json.dumps(ev, sort_keys=True) != before: changed += 1
+    # Second pass: events still without Twitch dates, matched to a reward campaign by category or event name.
+    # Only dates are taken over (the rewards themselves are in-game items, not the badge).
+    by_event = {}
+    for c in camps:
+        g, n = _norm((c.get("game") or {}).get("displayName")), _norm(c.get("name"))
+        s_, e_ = _iso(c.get("startsAt")), _iso(c.get("endsAt"))
+        if not (s_ and e_): continue
+        for ev in events:
+            if ev.get("dates_src") == "manual" or (ev.get("start") and ev.get("dates_src") != "twitch"): continue
+            cat, nm = _norm(ev.get("category")), _norm(ev.get("name"))
+            # same category = identical, or one is a clear prefix of the other ("CONTROL Resonant" vs "CONTROL Resonant: Deluxe"),
+            # but not a short family name ("Pokémon" must not match "Pokémon Legends: Z-A")
+            same_cat = bool(g and cat and cat != _norm("Unknown") and (g == cat or ((g.startswith(cat) or cat.startswith(g)) and min(len(g), len(cat)) / max(len(g), len(cat)) >= 0.7)))
+            same_name = n and nm and len(n) >= 6 and (n in nm or nm in n)
+            if same_cat or same_name:
+                by_event.setdefault(ev["id"], []).append((s_, e_, c.get("id")))
+    by_id = {ev["id"]: ev for ev in events}
+    cat_filled = 0
+    for eid, wins in by_event.items():
+        ev = by_id[eid]
+        # several campaigns can match (e.g. one per reward); take the most common window, earliest end on ties
+        counts = {}
+        for w in wins: counts[(w[0], w[1])] = counts.get((w[0], w[1]), 0) + 1
+        (s_, e_), _ = sorted(counts.items(), key=lambda kv: (-kv[1], kv[0][1]))[0]
+        if ev.get("start") != s_ or ev.get("end") != e_:
+            ev["start"], ev["end"], ev["dates_src"] = s_, e_, "twitch"
+            ev["twitch_campaign"] = next(w[2] for w in wins if (w[0], w[1]) == (s_, e_))
+            cat_filled += 1
+    changed += cat_filled
     if changed or created:
         save_events(events)
-    print(f"twitch campaigns: {matched} matched our badges, {changed} event(s) updated, {created} created")
+    print(f"twitch campaigns: {matched} matched our badges by reward, {cat_filled} event(s) dated by category/name, {created} created")
 
 # ---------- channel campaign badges (sub / watch / ranking) ----------
 EV_DB = os.path.join(ROOT, "events.json")
