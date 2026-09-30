@@ -521,3 +521,15 @@
     .cal-mtrack .nowt{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--text);border-radius:1px}
   }
 
+
+  /* ================= legal pages ================= */
+  .legal{max-width:820px;margin-top:8px;font-size:15px;line-height:1.7;color:var(--muted)}
+  .legal h2{font-size:19px;color:var(--text);margin:34px 0 10px;scroll-margin-top:80px}
+  .legal p{margin:0 0 12px}
+  .legal ul{margin:0 0 14px;padding-left:22px;display:flex;flex-direction:column;gap:6px}
+  .legal b{color:var(--text)}
+  .legal a{color:var(--purple-2);font-weight:600}.legal a:hover{text-decoration:underline}
+  .legal-toc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 20px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:6px;font-size:14px}
+  .legal-toc b{grid-column:1/-1;font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--dim)}
+  .legal-toc a{color:var(--muted);font-weight:600}.legal-toc a:hover{color:var(--text);text-decoration:none}
+  @media (max-width:640px){.legal-toc{grid-template-columns:1fr}.legal{font-size:14.5px}}
