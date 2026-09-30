@@ -248,7 +248,9 @@ def channel_page(rows):
 EMOTE = "https://static-cdn.jtvnw.net/emoticons/v2/{}/default/dark/2.0"
 def emotes_page(rows):
     live = [r for r in rows if len(r) >= 5 and r[4] != 0]
-    live.sort(key=lambda r: (r[2] or "", r[1].lower()), reverse=True)
+    # tracked emotes by first-seen date; the rest by Twitch's own (chronological) list order
+    order = {r[0]: i for i, r in enumerate(rows)}
+    live.sort(key=lambda r: (r[2] or "", order.get(r[0], 0)), reverse=True)
     items = "".join(f'<button class="emo" data-emote="{e(r[0])}"><span class="pic"><img src="{EMOTE.format(e(r[0]))}" alt="{e(r[1])}" loading="lazy"></span><b>{e(r[1])}</b>'
                     f'<small>{"<span class=\"pill anim\">Animated</span>" if r[3] == 1 else ""}{"Added " + day(r[2]) if r[2] else ""}</small></button>' for r in live)
     return page("/emotes/", f"All {len(live)} Twitch Global Emotes – Full List | Badge Database",

@@ -383,7 +383,7 @@ def sync_emotes(token):
             r[1], r[3], r[4], r[5] = e.get("name", r[1]), animated, 1, ""
         else:
             r = [eid, e.get("name", ""), "" if first_run else today, animated, 1, ""]
-            rows.insert(0, r); by_id[eid] = r
+            rows.append(r); by_id[eid] = r            # file stays oldest → newest, like Twitch's own list
             if not first_run: new.append(r[1])
     removed = []
     for r in rows:
