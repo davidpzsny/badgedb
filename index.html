@@ -3,11 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BadgeDB — Twitch Global Badge Tracker</title>
-<meta name="description" content="Track every Twitch global badge: what is active now, what is upcoming, and exactly when each badge starts and ends.">
-<meta property="og:title" content="BadgeDB — Twitch Global Badge Tracker">
-<meta property="og:description" content="Track every Twitch global badge: what is active now, what is upcoming, and exactly when each badge starts and ends.">
-<meta property="og:image" content="logo.png">
+<title>Badge Database – Every Twitch Badge &amp; When to Get It</title>
+<meta name="description" content="Track every Twitch global badge: what you can earn right now, what is coming next, how to get each badge and exactly when it ends. Live countdowns, updated automatically.">
+<link rel="canonical" href="https://badgedatabase.com/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Badge Database">
+<meta property="og:title" content="Badge Database – Every Twitch Badge &amp; When to Get It">
+<meta property="og:description" content="Live countdowns for every Twitch badge you can earn right now, upcoming drops and the full global badge archive.">
+<meta property="og:url" content="https://badgedatabase.com/">
+<meta property="og:image" content="https://badgedatabase.com/og-image.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@BadgeDatabase">
+<meta name="twitter:title" content="Badge Database – Every Twitch Badge &amp; When to Get It">
+<meta name="twitter:description" content="Live countdowns for every Twitch badge you can earn right now, upcoming drops and the full global badge archive.">
+<meta name="twitter:image" content="https://badgedatabase.com/og-image.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[
+ {"@type":"WebSite","@id":"https://badgedatabase.com/#website","name":"Badge Database","alternateName":"BadgeDB","url":"https://badgedatabase.com/","inLanguage":"en"},
+ {"@type":"Organization","@id":"https://badgedatabase.com/#org","name":"Badge Database","url":"https://badgedatabase.com/","logo":"https://badgedatabase.com/icon-512.png",
+  "sameAs":["https://x.com/BadgeDatabase","https://twitch.tv/badge_db","https://discord.gg/QkuRDXcZH5"]}]}</script>
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
@@ -158,6 +173,7 @@
 
   /* ================= badge list ================= */
   .blist{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+  a.brow,a.rc{color:inherit}
   .brow{display:flex;gap:12px;align-items:center;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;text-align:left;width:100%;box-shadow:var(--shadow);transition:transform .18s,border-color .18s,background .18s}
   .brow:hover{transform:translateY(-2px);border-color:var(--line-2);background:var(--panel-2)}
   .tile{width:56px;height:56px;border-radius:12px;background:radial-gradient(circle at 30% 30%,#252433,#16151E);border:1px solid var(--line);display:grid;place-items:center;flex:none;overflow:hidden}
@@ -830,6 +846,11 @@ function route(){
   else if(h.startsWith("channel-badge/")){ renderChannelBadgePage(decodeURIComponent(h.slice(14))); h = "badge"; }
   else if(!ROUTES.includes(h)) h = "home";
   $$('[data-page]').forEach(s => s.hidden = s.dataset.page !== h);
+  const TITLES = {home:"Badge Database – Every Twitch Badge & When to Get It", timeline:"Timeline – Twitch Badges Available Now | Badge Database",
+    global:"All Twitch Global Badges | Badge Database", channel:"Twitch Channel Badges | Badge Database", faq:"FAQ – Twitch Badges | Badge Database",
+    privacy:"Privacy Policy | Badge Database", terms:"Terms of Service | Badge Database", admin:"Admin | Badge Database"};
+  if(h==="badge"){ const bb=globalBadges.find(x=>location.hash.includes(encodeURIComponent(x.set))||location.hash.endsWith('/'+x.set)); document.title=(bb?bb.name+" – Twitch Badge":"Badge")+" | Badge Database"; }
+  else document.title = TITLES[h] || TITLES.home;
   $$('.nav a').forEach(a => a.classList.toggle('on', a.dataset.route === h));
   closeDrawer(); window.scrollTo({top:0});
 }
@@ -861,7 +882,7 @@ function renderHome(){
 
   // recently added badges from the archive
   const recent = [...globalBadges].filter(b=>b.added).sort((a,b)=>b.added.localeCompare(a.added)).slice(0,8);
-  $('#recent').innerHTML = recent.map(b=>`<button class="rc" data-badge="${esc(b.set)}" data-type="global">${tile(b)}<span class="n">${esc(b.name)}</span><span class="d">${fmt(b.added)}</span></button>`).join('');
+  $('#recent').innerHTML = recent.map(b=>`<a class="rc" href="/badges/${encodeURIComponent(b.set)}/" data-badge="${esc(b.set)}" data-type="global">${tile(b)}<span class="n">${esc(b.name)}</span><span class="d">${fmt(b.added)}</span></a>`).join('');
 
   const strip = list => list.slice(0,6).map(b=>`<img src="${esc(b.img)}" alt="" loading="lazy">`).join('') + (list.length>6?`<span class="more">+${list.length-6}</span>`:'');
   const evBadges = live.flatMap(e=>e.badges.filter(b=>b.img).map(b=>({img:cdn(b.img)})));
@@ -1052,7 +1073,8 @@ function badgeRow(b, type){
   const meta = type==='global'
     ? [ b.added?`Added ${fmt(b.added)}`:'', b.users?`${num(b.users)} users`:'' ].filter(Boolean).join(' · ')
     : (b.versions.length>1 ? `${b.versions.length} versions` : 'Details');
-  return `<button class="brow" data-badge="${esc(b.set)}" data-type="${type}">${tile(b)}<span class="t"><span class="n">${esc(b.name)}</span><span class="m">${b.free?'<span class="pill free">Free</span>':''}${st==="live"?'<span class="pill live">Active</span>':st==="soon"?'<span class="pill soon">Upcoming</span>':''}<span>${meta}</span></span></span></button>`;
+  const tag = type==='global' ? `a href="/badges/${encodeURIComponent(b.set)}/"` : 'button';
+  return `<${tag} class="brow" data-badge="${esc(b.set)}" data-type="${type}">${tile(b)}<span class="t"><span class="n">${esc(b.name)}</span><span class="m">${b.free?'<span class="pill free">Free</span>':''}${st==="live"?'<span class="pill live">Active</span>':st==="soon"?'<span class="pill soon">Upcoming</span>':''}<span>${meta}</span></span></span></${type==='global'?'a':'button'}>`;
 }
 function renderGlobal(){
   let list = globalBadges.filter(b => !gQuery || (b.name+" "+b.set).toLowerCase().includes(gQuery));
@@ -1121,7 +1143,7 @@ function renderBadgePage(set){
   const chan = ev && /channel:\s*(\S+)/i.exec(ev.ev.category)?.[1];
   const twitchDesc = (b.how && b.how.toLowerCase()!==b.name.toLowerCase() ? b.how : "") || (ev && ev.b.desc) || "";
   const desc = twitchDesc || (ev ? `This badge is earned during the ${ev.ev.name} event: ${ev.b.how}` : "Twitch does not provide a description for this badge.");
-  const context = ev ? (ev.ev.note || `This badge was added to promote ${ev.ev.name}${cat && !/any|unknown|twitch/i.test(cat) ? ` in the ${cat} category` : ""} on Twitch.`) : "";
+  const context = ev ? (ev.ev.about || ev.ev.note || `This badge was added to promote ${ev.ev.name}${cat && !/any|unknown|twitch/i.test(cat) ? ` in the ${cat} category` : ""} on Twitch.`) : "";
   const cd = st==="live" ? `<div class="bp-cd" data-cd="${ev.ev.end}">${countdown(ev.ev.end)}<small>until it ends</small></div>` : st==="soon" ? `<div class="bp-cd" data-cd="${ev.ev.start}">${countdown(ev.ev.start)}<small>until it starts</small></div>` : "";
   const bg = bpTheme==="dark" ? "#18181b" : "#f7f7f8";
   box.innerHTML = `
@@ -1281,7 +1303,7 @@ function admEventCard(ev,i,spare){
     <div class="adm-form">
       <label>Event name<input data-k="name" value="${esc(ev.name)}"></label>
       <label>Twitch category<input data-k="category" value="${esc(ev.category||'')}" placeholder="e.g. Minecraft"></label>
-      <label>Starts <span class="hint">your local time${ev.start?` · ${utc(ev.start)}`:''}</span><input type="datetime-local" data-k="start" value="${toLocalInput(ev.start)}"></label>
+      <label>Starts <span class="hint">your local time${ev.start?` · ${utc(ev.start)}`:''}${ev.dates_src==='twitch'?' · auto from Twitch':ev.dates_src==='manual'?' · set by you':''}</span><input type="datetime-local" data-k="start" value="${toLocalInput(ev.start)}"></label>
       <label>Ends <span class="hint">your local time${ev.end?` · ${utc(ev.end)}`:''}</span><input type="datetime-local" data-k="end" value="${toLocalInput(ev.end)}"></label>
       <label>Only on channel <span class="hint">optional, for single-channel events</span><input data-k="channel" value="${esc(ev.channel||'')}" placeholder="e.g. ironmouse"></label>
       <label>Note <span class="hint">optional, shown as a highlighted hint</span><input data-k="note" value="${esc(ev.note||'')}"></label>
@@ -1305,9 +1327,11 @@ document.addEventListener('input', e=>{
   const card = e.target.closest('.adm-ev'); if(!card) return;
   const ev = ADM.events[+card.dataset.i];
   if(e.target.dataset.k){ const k=e.target.dataset.k, v=e.target.value.trim();
-    if(k==="start"||k==="end") ev[k]=fromLocalInput(e.target.value); else if(v || k==="name" || k==="category") ev[k]=e.target.value; else delete ev[k];
+    if(k==="start"||k==="end"){ ev[k]=fromLocalInput(e.target.value); ev.dates_src="manual"; }
+    else if(v || k==="name" || k==="category") ev[k]=e.target.value; else delete ev[k];
+    if(k==="name") ev.name_src="manual";
     admMarkDirty(); }
-  if(e.target.dataset.bk){ const j=+e.target.closest('.adm-b').dataset.j; ev.badges[j][e.target.dataset.bk]=e.target.value; admMarkDirty(); }
+  if(e.target.dataset.bk){ const j=+e.target.closest('.adm-b').dataset.j; ev.badges[j][e.target.dataset.bk]=e.target.value; if(e.target.dataset.bk==="how") ev.badges[j].how_src="manual"; admMarkDirty(); }
 });
 document.addEventListener('change', e=>{
   if(e.target.matches('[data-bk="cost"]')){ const card=e.target.closest('.adm-ev'); ADM.events[+card.dataset.i].badges[+e.target.closest('.adm-b').dataset.j].cost=e.target.value; admMarkDirty(); }
@@ -1350,7 +1374,7 @@ document.addEventListener('click', e => {
   const cb=e.target.closest('[data-cbadge]'); if(cb){ location.hash='#channel-badge/'+cb.dataset.cbadge; return; }
   const ev=e.target.closest('[data-ev]'); if(ev){ openEvent(ev.dataset.ev); return; }
   const oe=e.target.closest('[data-openev]'); if(oe){ openEvent(oe.dataset.openev); return; }
-  const bd=e.target.closest('[data-badge]'); if(bd){ if(bd.dataset.type==='global'){ bpVersion=0; location.hash='#badge/'+encodeURIComponent(bd.dataset.badge); } else openBadge(bd.dataset.badge,bd.dataset.type); return; }
+  const bd=e.target.closest('[data-badge]'); if(bd){ if(bd.tagName==='A' && (e.ctrlKey||e.metaKey||e.shiftKey||e.button===1)) return; e.preventDefault(); if(bd.dataset.type==='global'){ bpVersion=0; location.hash='#badge/'+encodeURIComponent(bd.dataset.badge); } else openBadge(bd.dataset.badge,bd.dataset.type); return; }
   const cp=e.target.closest('[data-copy]'); if(cp){ navigator.clipboard?.writeText(cp.dataset.copy).then(()=>toast('Copied')); return; }
 });
 $('#qEv').addEventListener('input',e=>{evQuery=e.target.value.trim().toLowerCase();renderEvents();});

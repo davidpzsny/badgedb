@@ -3,8 +3,8 @@
   "id": "witcher-3",
   "name": "Witcher 3",
   "category": "Witcher 3",
-  "start": "",
-  "end": "",
+  "start": "2026-09-29T10:00:00Z",
+  "end": "2026-10-27T09:59:00Z",
   "badges": [
    {
     "name": "Wolf Medallion",
@@ -13,23 +13,25 @@
     "cost": "paid",
     "desc": "This badge was earned by subscribing or gifting a sub to a streamer in The Witcher 3 category during launch of The Witcher 3: Wild Hunt – Remastered"
    }
-  ]
+  ],
+  "dates_src": "twitch"
  },
  {
   "id": "ace-combat-8-nugget",
   "name": "ACE COMBAT 8 Nugget",
   "category": "ACE COMBAT 8",
-  "start": "",
-  "end": "",
+  "start": "2026-09-28T22:00:00Z",
+  "end": "2026-10-26T06:59:00Z",
   "badges": [
    {
     "name": "ACE COMBAT 8 Nugget",
     "img": "8468fb6c-1d33-4482-85ef-fa1898288ee2",
-    "how": "This badge was earned by subscribing or gifting a sub to a streamer in the ACE COMBAT 8 category during the game's launch!",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
     "cost": "paid",
     "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the ACE COMBAT 8 category during the game's launch!"
    }
-  ]
+  ],
+  "dates_src": "twitch"
  },
  {
   "id": "yellow-party-hat",
@@ -73,7 +75,7 @@
    {
     "name": "Big Walk",
     "img": "3de5a89b-533b-483a-8db2-036f9f13b9bd",
-    "how": "This badge was earned by subscribing or gifting a sub to a streamer in the Big Walk category.",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
     "cost": "paid",
     "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Big Walk category."
    }
@@ -105,7 +107,7 @@
    {
     "name": "Rematch Blue Lock",
     "img": "13afe621-edd4-48b6-a09b-453a2dee52e9",
-    "how": "This badge was earned by watching a streamer in the Rematch category for 30 minutes",
+    "how": "Watch a stream in the category.",
     "cost": "free",
     "desc": "This badge was earned by watching a streamer in the Rematch category for 30 minutes"
    }
@@ -228,7 +230,7 @@
    {
     "name": "Homo Tenta",
     "img": "3ec6f155-ebc7-4624-89d9-ead63122dc52",
-    "how": "This badge was earned by subscribing to a streamer in the Metaphor: ReFantazio category during the 2026 ATLUS celebration!",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
     "cost": "paid",
     "desc": "This badge was earned by subscribing to a streamer in the Metaphor: ReFantazio category during the 2026 ATLUS celebration!"
    }
