@@ -21,9 +21,12 @@ The site is static (GitHub Pages). A bot in GitHub Actions runs **every 15 minut
    fills in the category, the objective (e.g. "Watch 60 minutes") and whether it's free or paid.
 3. **Checks Twitch reward campaigns.** If a campaign runs in the same category as an event without
    dates, the bot takes over its start and end date.
-4. **Collects channel campaign badges** (sub / watch / top-supporter) from the top live channels
+4. **Tracks global emotes** (official Helix API) — new emotes get a "first seen" date.
+5. **Refreshes badge popularity** once a day from the public [PotatBotat](https://potat.app) API
+   (users seen wearing each badge in chats the bot is in).
+6. **Collects channel campaign badges** (sub / watch / top-supporter) from the top live channels
    and from `channels.txt`.
-5. **Builds the pages**: one real URL per badge, plus the list, timeline, channel, FAQ pages,
+7. **Builds the pages**: one real URL per badge, plus the list, timeline, channel, FAQ pages,
    `sitemap.xml` and `robots.txt`.
 
 Anything you set by hand in the admin page is never overwritten by the bot.
@@ -40,6 +43,8 @@ Anything you set by hand in the admin page is never overwritten by the bot.
 | One badge | `/badges/<set-id>/` — e.g. `/badges/wolf-medallion/` |
 | Channel badges | `/channel/` |
 | One channel badge | `/channel/<image-id>/` |
+| Global emotes | `/emotes/` |
+| Badge popularity ranking | `/popularity/` |
 | FAQ | `/faq/` |
 | Event editor (admin) | `/admin/` |
 
@@ -57,10 +62,12 @@ assets/app.js           all site logic (routing, calendar, admin, …)
 badges.json             global badges            ← written by the bot
 events.json             timeline events + dates  ← written by the bot and the admin page
 channel-badges.json     channel campaign badges  ← written by the bot
+emotes.json             global emotes            ← written by the bot
+popularity.json         badge user counts        ← written by the bot (daily)
 channels-state.json     bot bookkeeping          ← written by the bot
 channels.txt            extra channels the bot should always check (one per line)
 
-badges/ timeline/ channel/ faq/ privacy/ terms/ 404.html sitemap.xml robots.txt
+badges/ timeline/ channel/ emotes/ popularity/ faq/ privacy/ terms/ 404.html sitemap.xml robots.txt
                         generated pages          ← written by the bot, don't edit
 
 bot/check_badges.py     the bot: Twitch checks, X posts, events, channel badges
