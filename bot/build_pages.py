@@ -66,6 +66,14 @@ def build_sets():
                      "versions": [{"title": x[0], "img": x[1]} for x in vs]})
     return sets
 
+STALE_DAYS = 21
+def is_stale(ev, by_img, now):
+    """An event without dates whose badges have been on Twitch for 3+ weeks has almost certainly ended."""
+    if not ev or ev.get("start"): return False
+    added = sorted(by_img[b["img"]]["added"] for b in ev.get("badges", []) if b.get("img") in by_img and by_img[b["img"]]["added"])
+    if not added: return False
+    return (datetime.date.fromisoformat(now[:10]) - datetime.date.fromisoformat(added[0])).days > STALE_DAYS
+
 def slug_ok(s): return re.fullmatch(r"[A-Za-z0-9._~-]+", s or "") is not None
 
 # ---------------------------------------------------------------- page shell
@@ -115,7 +123,7 @@ def brow(s, ev=None, now=""):
             f'<span class="t"><span class="n">{e(s["name"])}</span><span class="m">{pills}<span>{meta}</span></span></span></a>')
 
 # ---------------------------------------------------------------- pages
-def badge_page(s, ev, evb, related, now):
+def badge_page(s, ev, evb, related, now, stale=False):
     st = status(ev, now)
     cost = (evb or {}).get("cost") or ("free" if s["free"] else "")
     how = (evb or {}).get("how") or ""
@@ -140,7 +148,7 @@ def badge_page(s, ev, evb, related, now):
     if s["users"]: details.append(("Users", f'{s["users"]:,}'))
     details.append(("Cost", {"free": "Free", "paid": "Paid (subscription / gift sub)"}.get(cost, "—")))
     cat_link = f'<a href="https://www.twitch.tv/directory/category/{e(re.sub(r"[^a-z0-9]+", "-", cat.lower()).strip("-"))}?filter=drops" target="_blank" rel="noopener">{e(cat)}</a>' if cat else "—"
-    avail = [("Status", {"live": "Active", "soon": "Upcoming", "ended": "Ended", "tba": "Date not announced"}[st] if ev else "Unknown / not a timed event"),
+    avail = [("Status", ("Ended (dates were never announced)" if stale else {"live": "Active", "soon": "Upcoming", "ended": "Ended", "tba": "Date not announced"}[st]) if ev else "Unknown / not a timed event"),
              ("Objective", e(how) if how else "—"), ("Category", cat_link),
              ("Channels", f'<a href="https://twitch.tv/{e(ev["channel"])}" target="_blank" rel="noopener">{e(ev["channel"])}</a>' if ev and ev.get("channel") else "Any"),
              ("Started", utc(ev["start"]) if ev and ev.get("start") else "—"), ("Ends", utc(ev["end"]) if ev and ev.get("end") else "—")]
@@ -186,6 +194,7 @@ def timeline_page(events, by_img, now):
     groups = {"live": [], "soon": [], "tba": []}
     for ev in events:
         st = status(ev, now)
+        if st == "tba" and is_stale(ev, by_img, now): continue
         if st in groups:
             for b in ev.get("badges", []): groups[st].append((ev, b))
     groups["live"].sort(key=lambda x: x[0]["end"]); groups["soon"].sort(key=lambda x: x[0]["start"])
@@ -242,7 +251,7 @@ def main():
             related = [by_img[b["img"]] for b in ev["badges"] if b.get("img") in by_img and by_img[b["img"]]["set"] != s["set"]]
         else:
             related = [r for r in recent if r["set"] != s["set"]][:6]
-        changed += write(f"badges/{s['set']}/index.html", badge_page(s, ev, evb, related, now))
+        changed += write(f"badges/{s['set']}/index.html", badge_page(s, ev, evb, related, now, stale=is_stale(ev, by_img, now)))
     changed += write("badges/index.html", global_page(sets, ev_of, now))
     changed += write("timeline/index.html", timeline_page(events, by_img, now))
     changed += write("channel/index.html", channel_page(load("channel-badges.json", [])))
