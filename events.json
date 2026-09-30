@@ -83,19 +83,22 @@
  },
  {
   "id": "clipped-that-2",
-  "name": "Clipped That",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
+  "name": "DJ Program Clips launch",
+  "category": "DJs",
+  "start": "2026-09-01T16:00:00Z",
+  "end": "2026-09-15T06:59:00Z",
   "badges": [
    {
     "name": "Clipped That",
     "img": "5b648ccf-dc37-4233-a96e-c6e5d693a0ae",
-    "how": "This limited-time badge was earned by a DJ Program creator who clipped an epic mid-set moment and downloaded + shared it to social.",
-    "cost": "na",
-    "desc": "This limited-time badge was earned by a DJ Program creator who clipped an epic mid-set moment and downloaded + shared it to social."
+    "how": "DJ Program creators only: go live, clip a moment from your own set, then download and share it to social.",
+    "cost": "free",
+    "desc": "This limited-time badge was earned by a DJ Program creator who clipped an epic mid-set moment and downloaded + shared it to social.",
+    "how_src": "manual"
    }
-  ]
+  ],
+  "dates_src": "manual",
+  "name_src": "manual"
  },
  {
   "id": "rematch-blue-lock",
@@ -266,21 +269,6 @@
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
     "cost": "paid",
     "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Space Marine 2 category during the anniversary campaign!"
-   }
-  ]
- },
- {
-  "id": "clipped-that",
-  "name": "Clipped That",
-  "category": "Twitch",
-  "start": "2026-09-01T00:00:00Z",
-  "end": "2026-09-15T23:59:00Z",
-  "badges": [
-   {
-    "name": "Clipped That",
-    "img": "",
-    "how": "Download a clip of your stream and share it to social by Sep 15.",
-    "cost": "free"
    }
   ]
  },
