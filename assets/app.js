@@ -77,7 +77,7 @@ const isFile = location.protocol === "file:";
 const redirectUri = () => location.origin + location.pathname;
 
 /* ---------- routing (real URLs, no #) ---------- */
-const PATHS = {"/":"home","/timeline/":"timeline","/badges/":"global","/channel/":"channel","/faq/":"faq","/privacy/":"privacy","/terms/":"terms","/admin/":"admin"};
+const PATHS = {"/":"home","/timeline/":"timeline","/badges/":"global","/channel/":"channel","/emotes/":"emotes","/popularity/":"popularity","/faq/":"faq","/privacy/":"privacy","/terms/":"terms","/admin/":"admin"};
 const LEGACY = {home:"/",timeline:"/timeline/",global:"/badges/",channel:"/channel/",faq:"/faq/",privacy:"/privacy/",terms:"/terms/",admin:"/admin/"};
 function pathKey(){ let p = location.pathname.replace(/index\.html$/,''); if(!p.endsWith('/')) p += '/'; return p; }
 // old #links keep working: /#global -> /badges/, /#badge/x -> /badges/x/
@@ -94,7 +94,7 @@ function route(){
   if(!h) h = "home";
   if(h==="admin"){ renderAdmin(); if(ADM.token && !ADM.events.length) admLoad(); }
   $$('[data-page]').forEach(s => s.hidden = s.dataset.page !== h);
-  const TITLES = {home:"Badge Database – Every Twitch Badge & When to Get It", timeline:"Timeline – Twitch Badges Available Now | Badge Database",
+  const TITLES = {emotes:"Twitch Global Emotes – Full List | Badge Database", popularity:"Twitch Badge Popularity – Most Used Badges | Badge Database", home:"Badge Database – Every Twitch Badge & When to Get It", timeline:"Timeline – Twitch Badges Available Now | Badge Database",
     global:"All Twitch Global Badges | Badge Database", channel:"Twitch Channel Badges | Badge Database", faq:"FAQ – Twitch Badges | Badge Database",
     privacy:"Privacy Policy | Badge Database", terms:"Terms of Service | Badge Database", admin:"Admin | Badge Database"};
   if(h==="badge"){ const bb = set && globalBadges.find(x=>x.set===set); if(bb) document.title = bb.name+" – Twitch Badge | Badge Database"; }
@@ -352,7 +352,68 @@ function renderChannel(){
   $('#cMore').innerHTML = list.length>cShown ? `<button class="btn ghost" id="btnCMore">Show ${Math.min(90,list.length-cShown)} more</button>` : '';
   $('#cChannel').textContent = channelBadges.length || '';
 }
-function renderAll(){ renderHome(); renderEvents(); renderTimeline(); renderGlobal(); renderChannel(); }
+function renderAll(){ renderHome(); renderEvents(); renderTimeline(); renderGlobal(); renderChannel(); renderEmotes(); renderPopularity(); }
+
+/* ---------- global emotes ---------- */
+let EMOTES = [], E_READY = false, eQuery = "", eSort = "added", eFilter = "all", eShown = 120;
+const emoteUrl = (id, scale = "2.0", theme = "dark") => `https://static-cdn.jtvnw.net/emoticons/v2/${encodeURIComponent(id)}/default/${theme}/${scale}`;
+function renderEmotes(){
+  const grid = $('#gridEmotes'); if(!grid) return;
+  const live = EMOTES.filter(e => e[4] !== 0);
+  $('#cEmotes').textContent = live.length || '';
+  let list = eFilter === "retired" ? EMOTES.filter(e => e[4] === 0) : live;
+  const yr = String(new Date().getFullYear()), halfYear = new Date(Date.now() - 182*864e5).toISOString().slice(0,10);
+  if(eFilter === "animated") list = list.filter(e => e[3] === 1);
+  if(eFilter === "year") list = list.filter(e => (e[2] || "").startsWith(yr));
+  if(eFilter === "6m") list = list.filter(e => (e[2] || "") >= halfYear);
+  if(eQuery) list = list.filter(e => e[1].toLowerCase().includes(eQuery));
+  const newest = (a, b) => (b[2] || "").localeCompare(a[2] || "");
+  list = [...list].sort(eSort === "name" ? (a, b) => a[1].localeCompare(b[1])
+                      : eSort === "oldest" ? (a, b) => (a[2] || "9999").localeCompare(b[2] || "9999") || a[1].localeCompare(b[1])
+                      : eFilter === "retired" ? (a, b) => (b[5] || "").localeCompare(a[5] || "") || newest(a, b) : newest);
+  $('#eCount').textContent = E_READY ? `${list.length} of ${live.length} global emotes` : '';
+  grid.innerHTML = list.length ? list.slice(0, eShown).map(e => `<button class="emo ${e[4]===0?'retired':''}" data-emote="${esc(e[0])}">
+      <span class="pic"><img src="${emoteUrl(e[0])}" alt="${esc(e[1])}" loading="lazy"></span><b>${esc(e[1])}</b>
+      <small>${e[3]===1?'<span class="pill anim">Animated</span>':''}${e[2]?`Added ${fmt(e[2])}`:''}${e[4]===0&&e[5]?`<span class="rm">Removed ${fmt(e[5])}</span>`:''}</small></button>`).join('')
+    : `<div class="empty">${E_READY ? 'No emotes match.' : 'Loading…'}</div>`;
+  $('#eMore').innerHTML = list.length > eShown ? `<button class="btn ghost" id="btnEMore">Show ${Math.min(120, list.length - eShown)} more</button>` : '';
+}
+function openEmote(id){
+  const e = EMOTES.find(x => x[0] === id); if(!e) return;
+  const sizes = t => [["1.0","1x"],["2.0","2x"],["3.0","4x"]].map(([sc,l]) => `<a href="${emoteUrl(e[0],sc,t)}" target="_blank" rel="noopener"><img src="${emoteUrl(e[0],sc,t)}" alt="">${l}</a>`).join('');
+  open(`<h2 style="margin:0 0 4px">${esc(e[1])}</h2><p class="ctx" style="margin-bottom:16px">Twitch global emote${e[4]===0?' (no longer in the global set)':''}</p>
+    <h3>Dark</h3><div class="emote-sizes">${sizes('dark')}</div><h3 style="margin-top:14px">Light</h3><div class="emote-sizes light">${sizes('light')}</div>
+    <dl class="kv" style="margin-top:18px"><dt>Name</dt><dd><code>${esc(e[1])}</code></dd><dt>Emote ID</dt><dd><code>${esc(e[0])}</code></dd>
+    <dt>Type</dt><dd>${e[3]===1?'Animated':'Static'}</dd><dt>First seen</dt><dd>${e[2]?fmt(e[2]):'Before tracking started'}</dd>${e[4]===0?`<dt>Removed</dt><dd>${e[5]?fmt(e[5]):'Yes'}</dd>`:''}</dl>
+    <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap"><button class="btn" data-copy="${esc(e[1])}">Copy name</button><a class="btn ghost" href="${emoteUrl(e[0],'3.0')}" target="_blank" rel="noopener">Open image</a></div>`);
+}
+
+/* ---------- badge popularity ---------- */
+let POP = null, pQuery = "", pFilter = "all", pShown = 100;
+const compact = n => n >= 1e6 ? (n/1e6).toFixed(n >= 1e7 ? 1 : 2).replace(/\.?0+$/,'') + 'M' : n >= 1e4 ? Math.round(n/1e3) + 'K' : num(n);
+function applyPopularity(){
+  if(!POP || !POP.counts) return;
+  globalBadges.forEach(b => { b.users = POP.counts[b.set] || 0; });   // one consistent source; old snapshot numbers are dropped
+}
+function renderPopularity(){
+  const box = $('#popList'); if(!box) return;
+  const ranked = globalBadges.filter(b => b.users > 0).sort((a, b) => b.users - a.users);
+  ranked.forEach((b, i) => b._rank = i + 1);
+  if(!ranked.length){ box.innerHTML = `<div class="empty">${READY ? 'No usage data yet — it is refreshed once a day.' : 'Loading…'}</div>`; $('#popStats').innerHTML=''; return; }
+  const total = ranked.reduce((n, b) => n + b.users, 0), top = ranked[0], max = top.users;
+  $('#popStats').innerHTML = `<div><b>${ranked.length}</b><span>badges ranked</span></div><div><b>${compact(total)}</b><span>badge users counted</span></div>
+    <div><b>${esc(top.name)}</b><span>most used · ${compact(top.users)} users${POP && POP.updated ? ` · updated ${fmt(POP.updated)}` : ''}</span></div>`;
+  let list = ranked;
+  if(pFilter === "event") list = list.filter(b => EV_BY_IMG[b.imgId]);
+  if(pFilter === "2026") list = list.filter(b => (b.added || "").startsWith("2026"));
+  if(pQuery) list = list.filter(b => b.name.toLowerCase().includes(pQuery));
+  box.innerHTML = list.length ? list.slice(0, pShown).map(b => `<a class="prow ${b._rank<=3?'top':''}" href="/badges/${encodeURIComponent(b.set)}/">
+      <span class="rank">${b._rank}</span><img src="${esc(b.img)}" alt="" loading="lazy">
+      <span><span class="nm">${esc(b.name)}</span><span class="bar"><i style="width:${Math.max(0.6, b.users/max*100).toFixed(2)}%"></i></span></span>
+      <span class="num">${num(b.users)}<small>${(b.users/total*100).toFixed(b.users/total>=.01?1:2)}%</small></span></a>`).join('')
+    : `<div class="empty">No badges match.</div>`;
+  $('#pMore').innerHTML = list.length > pShown ? `<button class="btn ghost" id="btnPMore">Show ${Math.min(100, list.length - pShown)} more</button>` : '';
+}
 
 /* ---------- Twitch API helpers (used by the channel badge drawer) ---------- */
 const prettify = s => s.replace(/[-_]/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
@@ -621,9 +682,12 @@ function togglePlayer(){
 /* ---------- wiring ---------- */
 document.addEventListener('click', e => {
   const seg=e.target.closest('.seg button'); if(seg){ const id=seg.parentElement.id; seg.parentElement.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===seg)); const v=seg.dataset.v;
-    if(id==='evFilter') evFilter=v; if(id==='gSort') gSort=v; if(id==='gDir') gDir=v; if(id==='gFilter') gFilter=v; if(id==='cFilter') cFilter=v; gShown=90; renderEvents(); renderGlobal(); renderChannel(); return; }
+    if(id==='evFilter') evFilter=v; if(id==='gSort') gSort=v; if(id==='gDir') gDir=v; if(id==='gFilter') gFilter=v; if(id==='cFilter') cFilter=v; if(id==='eSort') eSort=v; if(id==='eFilter') eFilter=v; if(id==='pFilter') pFilter=v; eShown=120; pShown=100; renderEmotes(); renderPopularity(); gShown=90; renderEvents(); renderGlobal(); renderChannel(); return; }
   if(e.target.id==='btnMore'){ gShown+=90; renderGlobal(); return; }
   if(e.target.id==='btnCMore'){ cShown+=90; renderChannel(); return; }
+  if(e.target.id==='btnEMore'){ eShown+=120; renderEmotes(); return; }
+  if(e.target.id==='btnPMore'){ pShown+=100; renderPopularity(); return; }
+  const em=e.target.closest('[data-emote]'); if(em){ openEmote(em.dataset.emote); return; }
   const cb=e.target.closest('[data-cbadge]'); if(cb){ navigate('/channel/'+cb.dataset.cbadge+'/'); return; }
   const ev=e.target.closest('[data-ev]'); if(ev){ openEvent(ev.dataset.ev); return; }
   const oe=e.target.closest('[data-openev]'); if(oe){ openEvent(oe.dataset.openev); return; }
@@ -633,6 +697,8 @@ document.addEventListener('click', e => {
 $('#qEv').addEventListener('input',e=>{evQuery=e.target.value.trim().toLowerCase();renderEvents();});
 $('#qG').addEventListener('input',e=>{gQuery=e.target.value.trim().toLowerCase();gShown=90;renderGlobal();});
 $('#qC').addEventListener('input',e=>{cQuery=e.target.value.trim().toLowerCase();cShown=90;renderChannel();});
+$('#qE').addEventListener('input',e=>{eQuery=e.target.value.trim().toLowerCase();eShown=120;renderEmotes();});
+$('#qP').addEventListener('input',e=>{pQuery=e.target.value.trim().toLowerCase();pShown=100;renderPopularity();});
 $('#scrim').addEventListener('click',closeDrawer); $('#closeDrawer').addEventListener('click',closeDrawer);
 $('#btnPlayer').addEventListener('click',togglePlayer); $('#btnPlayerX').addEventListener('click',togglePlayer);
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDrawer(); });
@@ -641,11 +707,14 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDrawer(); });
 if(!document.body.dataset.ssr) renderAll();
 route(); setInterval(tick,1000);
 const getJSON = u => fetch(u, {cache:'no-store'}).then(r => r.ok ? r.json() : null);
-Promise.allSettled([getJSON('/badges.json'), getJSON('/events.json')]).then(([b, e]) => {
+Promise.allSettled([getJSON('/badges.json'), getJSON('/events.json'), getJSON('/popularity.json')]).then(([b, e, pp]) => {
+  if(pp.status === 'fulfilled' && pp.value && pp.value.counts) POP = pp.value;
   if(b.status === 'fulfilled' && Array.isArray(b.value) && b.value.length) globalBadges = normalize(b.value);
   if(e.status === 'fulfilled' && Array.isArray(e.value) && e.value.length){ EVENTS = e.value; indexEvents(); }
+  applyPopularity();
   READY = true; renderAll(); route();
 });
+getJSON('/emotes.json').then(rows => { if(Array.isArray(rows)) EMOTES = rows; E_READY = true; renderEmotes(); }).catch(() => { E_READY = true; renderEmotes(); });
 getJSON('/channel-badges.json').then(rows => {
   if(!Array.isArray(rows)) return;
   channelBadges = normChannel(rows); CH_READY = true; renderChannel();
