@@ -23,563 +23,40 @@
  {"@type":"WebSite","@id":"https://badgedatabase.com/#website","name":"Badge Database","alternateName":"BadgeDB","url":"https://badgedatabase.com/","inLanguage":"en"},
  {"@type":"Organization","@id":"https://badgedatabase.com/#org","name":"Badge Database","url":"https://badgedatabase.com/","logo":"https://badgedatabase.com/icon-512.png",
   "sameAs":["https://x.com/BadgeDatabase","https://twitch.tv/badge_db","https://discord.gg/QkuRDXcZH5"]}]}</script>
-<link rel="icon" href="favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="manifest" href="site.webmanifest">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#0C0B11">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#0C0B11; --bg-2:#111017; --panel:#16151E; --panel-2:#1D1C27; --line:rgba(255,255,255,.07); --line-2:rgba(255,255,255,.14);
-    --text:#F4F3F8; --muted:#9490A8; --dim:#5F5D70;
-    --purple:#8B5CF6; --purple-2:#A78BFA; --purple-glow:rgba(139,92,246,.35);
-    --mint:#34D399; --amber:#FBBF24; --red:#F87171;
-    --font:'Manrope',ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-    --r:16px; --r-sm:10px; --shadow:0 1px 0 rgba(255,255,255,.04) inset,0 12px 30px -18px rgba(0,0,0,.8);
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased;font-size:15px}
-  a{color:inherit;text-decoration:none}
-  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
-  img{display:block}
-  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;background:var(--panel-2);padding:2px 6px;border-radius:6px;color:var(--purple-2)}
-  :focus-visible{outline:2px solid var(--purple-2);outline-offset:2px;border-radius:6px}
-  [hidden]{display:none!important}
-  ::selection{background:var(--purple);color:#fff}
-  .skip{position:absolute;left:-999px}.skip:focus{left:12px;top:12px;background:var(--purple);color:#fff;padding:8px 12px;border-radius:8px;z-index:99}
-
-  /* ================= shell ================= */
-  .app{display:grid;grid-template-columns:264px minmax(0,1fr);min-height:100vh}
-  .side{background:var(--bg-2);border-right:1px solid var(--line);padding:20px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:22px;overflow-y:auto}
-  .brand{display:flex;align-items:center;gap:12px;padding:2px 6px}
-  .brand img{width:40px;height:40px;border-radius:11px;box-shadow:0 0 0 1px var(--line-2),0 8px 24px -8px var(--purple-glow)}
-  .brand b{font-weight:800;font-size:20px;letter-spacing:-.02em;display:block;line-height:1.1}
-  .brand small{color:var(--muted);font-size:12px;font-weight:600}
-  .group{display:flex;flex-direction:column;gap:2px}
-  .group h6{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);padding:4px 12px 6px}
-  .nav a{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:var(--r-sm);color:var(--muted);font-weight:600;font-size:14.5px;white-space:nowrap;transition:background .15s,color .15s}
-  .nav a svg{width:18px;height:18px;flex:none;opacity:.8}
-  .nav a img{width:22px;height:22px;flex:none;border-radius:5px}
-  .nav a:hover{background:var(--panel);color:var(--text)}
-  .nav a.on{background:linear-gradient(90deg,rgba(139,92,246,.22),rgba(139,92,246,.06));color:var(--text);box-shadow:inset 3px 0 0 var(--purple)}
-  .nav a.on svg{opacity:1;color:var(--purple-2)}
-  .nav .count{margin-left:auto;font-size:11.5px;font-weight:700;color:var(--muted);background:rgba(255,255,255,.05);padding:2px 8px;border-radius:999px}
-  .side-foot{margin-top:auto}
-  .watch{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:linear-gradient(135deg,rgba(139,92,246,.22),rgba(139,92,246,.05)),var(--panel);border:1px solid rgba(139,92,246,.35);transition:transform .15s,border-color .15s}
-  .watch:hover{transform:translateY(-1px);border-color:var(--purple)}
-  .watch img{width:46px;height:46px;border-radius:12px}
-  .watch b{display:block;font-size:14px}.watch small{color:var(--muted);font-size:12px}
-  .side-social{display:grid;grid-template-columns:1fr;gap:6px;margin-top:8px}
-  .side-social a{display:flex;align-items:center;justify-content:flex-start;gap:10px;padding:9px 14px;border-radius:11px;font-size:12.5px;font-weight:700;border:1px solid var(--line);background:var(--panel);transition:transform .15s,border-color .15s,background .15s;white-space:nowrap;overflow:hidden}
-  .side-social a span{overflow:hidden;text-overflow:ellipsis}
-  .side-social svg{width:16px;height:16px;flex:none}
-  .side-social .dc{color:#c9ccff}.side-social .dc:hover{background:rgba(88,101,242,.18);border-color:#5865F2;transform:translateY(-1px)}
-  .side-social .xx{color:var(--text)}.side-social .xx:hover{background:rgba(255,255,255,.07);border-color:var(--line-2);transform:translateY(-1px)}
-
-  main{padding:0 40px 120px;max-width:1180px;width:100%;justify-self:center;position:relative;z-index:0}
-  main::before{content:"";position:absolute;top:-80px;left:50%;width:900px;height:420px;transform:translateX(-50%);background:radial-gradient(ellipse at center,rgba(139,92,246,.14),transparent 65%);pointer-events:none;z-index:-1}
-  .crumbs{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--muted);padding:22px 0 0;font-weight:600}
-  .crumbs a:hover{color:var(--text)}.crumbs span{color:var(--dim)}
-  .page-head{padding:16px 0 10px;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
-  h1{font-size:36px;font-weight:800;letter-spacing:-.035em;line-height:1.05}
-  .lead{color:var(--muted);max-width:60ch;margin-top:10px;font-size:16px}
-  h2{font-size:22px;font-weight:800;letter-spacing:-.02em;margin:40px 0 14px}
-  h3{font-size:16px;font-weight:700}
-  .sec-sub{font-size:14px;color:var(--muted);margin:-8px 0 16px}
-  .btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:11px;background:var(--purple);color:#fff;font-weight:700;font-size:14px;transition:.15s;box-shadow:0 6px 20px -8px var(--purple-glow);white-space:nowrap}
-  .btn:hover{filter:brightness(1.12);transform:translateY(-1px)} .btn:disabled{opacity:.6;cursor:default;transform:none}
-  .btn.ghost{background:var(--panel-2);color:var(--text);border:1px solid var(--line-2);box-shadow:none}
-  .btn svg{width:16px;height:16px}
-
-  /* ================= home ================= */
-  .hero2{display:grid;grid-template-columns:1.05fr .95fr;gap:36px;align-items:center;padding:44px 0 8px}
-  .brandrow{display:flex;align-items:center;gap:20px;margin-bottom:26px}
-  .biglogo{width:104px;height:104px;border-radius:26px;box-shadow:0 0 0 1px var(--line-2),0 24px 50px -22px var(--purple-glow)}
-  .wm{display:flex;flex-direction:column;line-height:.95;font-weight:800;letter-spacing:-.04em;font-size:46px}
-  .wm span:last-child{color:var(--purple-2)}
-  .hero2-h{font-size:34px;font-weight:800;letter-spacing:-.04em;line-height:1.02}
-  .hero2 .lead{font-size:17px;max-width:52ch;margin-top:18px}
-  .hero2 .lead b{color:var(--text)}
-  .hero2-cta{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}
-  .hero2-stats{display:flex;gap:28px;margin-top:30px;padding-top:22px;border-top:1px solid var(--line)}
-  .hero2-stats b{display:block;font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
-  .hero2-stats span{font-size:12.5px;color:var(--muted);font-weight:600}
-  .hero2-stats div:nth-child(1) b{color:var(--mint)}.hero2-stats div:nth-child(2) b{color:var(--amber)}.hero2-stats div:nth-child(3) b{color:var(--purple-2)}
-  .stream-card{background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow),0 40px 80px -40px var(--purple-glow);overflow:hidden}
-  .sc-head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);font-size:14px}
-  .sc-head .ch{color:var(--muted);font-size:12.5px;font-weight:600}
-  .sc-head a{margin-left:auto;font-size:12.5px;color:var(--muted);font-weight:700}.sc-head a:hover{color:var(--text)}
-  .sc-body{aspect-ratio:16/9;background:#000;position:relative}
-  .sc-body iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-  .sc-off{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--muted);font-size:13px;background:radial-gradient(circle at 50% 40%,rgba(139,92,246,.25),transparent 60%),#0a0a0e;text-align:center;padding:20px}
-  .sc-off img{width:64px;height:64px;border-radius:16px;opacity:.9}
-  .sc-foot{display:flex;align-items:center;gap:12px;padding:12px 16px;font-size:12.5px;color:var(--muted)}
-  .sc-foot .btn{margin-left:auto;padding:8px 14px;font-size:13px}
-  .live-panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;margin-top:26px}
-  .lp-grid{display:grid;grid-template-columns:1fr 1fr}
-  .lp-grid .lp:nth-child(odd){border-right:1px solid var(--line)}
-  .lp-head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line);font-size:14px}
-  .lp-head a{margin-left:auto;font-size:12.5px;color:var(--muted);font-weight:700}.lp-head a:hover{color:var(--text)}
-  .lp{display:flex;align-items:center;gap:12px;padding:11px 16px;width:100%;text-align:left;border-bottom:1px solid var(--line);transition:background .15s}
-  .lp:hover{background:var(--panel-2)}
-  .lp .tile{width:44px;height:44px;border-radius:11px}.lp .tile img{width:30px;height:30px}
-  .lp .t{flex:1;min-width:0}.lp .n{display:block;font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .lp .o{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .lp .cd2{font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
-  .lp .cd2 small{display:block;font-size:10.5px;color:var(--muted);font-weight:700}
-  .lp .cd2.urgent{color:var(--amber)}
-  .intro{max-width:70ch;font-size:16px;color:var(--muted);line-height:1.65}.intro b{color:var(--text)}
-  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-  .social{display:flex;align-items:center;gap:14px;padding:16px;background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);transition:transform .15s,border-color .15s;position:relative;overflow:hidden}
-  .social::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--c)}
-  .social:hover{transform:translateY(-2px);border-color:var(--line-2)}
-  .social .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;flex:none;color:#fff;background:var(--c)}
-  .social .ic svg{width:22px;height:22px;fill:currentColor}
-  .social b{display:block;font-size:15px;letter-spacing:.06em}.social small{color:var(--muted);font-size:12.5px;word-break:break-all}
-  .social .go{margin-left:auto;color:var(--dim);font-weight:800}
-  .recent{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}
-  @media (max-width:1100px){.recent{grid-template-columns:repeat(4,1fr)}}
-  .rc{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;text-align:center;box-shadow:var(--shadow);transition:transform .15s,border-color .15s}
-  .rc:hover{transform:translateY(-2px);border-color:var(--line-2)}
-  .rc .tile{width:100%;height:76px;border-radius:10px}.rc .tile img{width:48px;height:48px}
-  .rc .n{font-size:12.5px;font-weight:700;line-height:1.25;width:100%;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.5em}
-  .rc .d{font-size:11px;color:var(--muted);font-weight:600}
-  .tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
-  .tool{display:flex;flex-direction:column;gap:10px;padding:18px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);transition:transform .18s,border-color .18s;position:relative}
-  .tool:hover{transform:translateY(-2px);border-color:var(--purple)}
-  .tool h3{font-size:17px}.tool p{color:var(--muted);font-size:13.5px}
-  .tool .strip{display:flex;gap:6px;margin-top:6px}
-  .tool .strip img{width:34px;height:34px;object-fit:contain;background:var(--panel-2);border-radius:8px;padding:3px}
-  .tool .strip .more{width:34px;height:34px;border-radius:8px;background:var(--panel-2);display:grid;place-items:center;font-size:11px;font-weight:800;color:var(--muted)}
-  .tool .arrow{position:absolute;right:16px;top:16px;color:var(--dim);font-weight:800;font-size:18px}
-
-  /* ================= toolbar ================= */
-  .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0 18px;position:sticky;top:0;padding:14px 0 10px;background:linear-gradient(var(--bg) 85%,transparent);z-index:5}
-  .search{flex:1;min-width:200px;display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0 14px;height:42px;transition:border-color .15s,box-shadow .15s}
-  .search:focus-within{border-color:var(--purple);box-shadow:0 0 0 3px rgba(139,92,246,.18)}
-  .search input{flex:1;background:none;border:0;color:var(--text);font:inherit;outline:0;min-width:0}
-  .search input::placeholder{color:var(--dim)}
-  .search svg{width:17px;height:17px;color:var(--muted);flex:none}
-  .seg{display:flex;gap:3px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:3px}
-  .seg button{padding:7px 12px;border-radius:9px;color:var(--muted);font-weight:600;font-size:13px;transition:.15s;white-space:nowrap}
-  .seg button:hover{color:var(--text)}
-  .seg button.on{background:var(--panel-2);color:var(--text);box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 2px 8px -2px rgba(0,0,0,.6)}
-  .seg .lbl{padding:7px 4px 7px 10px;font-size:12px;color:var(--dim);font-weight:700}
-  .count-line{font-size:14px;color:var(--muted);font-weight:600;margin:0 0 12px}
-
-  /* ================= badge list ================= */
-  .blist{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
-  a.brow,a.rc{color:inherit}
-  .brow{display:flex;gap:12px;align-items:center;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;text-align:left;width:100%;box-shadow:var(--shadow);transition:transform .18s,border-color .18s,background .18s}
-  .brow:hover{transform:translateY(-2px);border-color:var(--line-2);background:var(--panel-2)}
-  .tile{width:56px;height:56px;border-radius:12px;background:radial-gradient(circle at 30% 30%,#252433,#16151E);border:1px solid var(--line);display:grid;place-items:center;flex:none;overflow:hidden}
-  .tile img{width:38px;height:38px;object-fit:contain}
-  .ph{width:100%;height:100%;display:grid;place-items:center;color:var(--dim);font-weight:800;font-size:11px;letter-spacing:.06em}
-  .brow .t{min-width:0;flex:1}
-  .brow .n{font-weight:700;font-size:14px;line-height:1.25;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .brow .m{font-size:12px;color:var(--muted);margin-top:3px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .pill{font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:999px;letter-spacing:.02em;white-space:nowrap}
-  .pill.free{background:rgba(52,211,153,.14);color:var(--mint)} .pill.paid{background:rgba(139,92,246,.2);color:var(--purple-2)} .pill.na{background:rgba(255,255,255,.06);color:var(--muted)} .pill.live{background:rgba(52,211,153,.14);color:var(--mint)} .pill.soon{background:rgba(251,191,36,.14);color:var(--amber)}
-  .more-wrap{display:flex;justify-content:center;margin-top:18px}
-  .pill.sub{background:rgba(139,92,246,.2);color:var(--purple-2)}.pill.watch{background:rgba(52,211,153,.14);color:var(--mint)}.pill.ranking{background:rgba(251,191,36,.14);color:var(--amber)}.pill.other{background:rgba(255,255,255,.06);color:var(--muted)}
-  .brow .ch{color:var(--purple-2);font-weight:700}
-  .faq{display:flex;flex-direction:column;gap:6px;margin-bottom:22px}
-  .faq details{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0 16px}
-  .faq summary{cursor:pointer;font-weight:700;font-size:14px;padding:12px 0;list-style:none;display:flex;align-items:center;gap:10px}
-  .faq summary::before{content:"";width:6px;height:6px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:.15s;margin:0 4px}
-  .faq details[open] summary::before{transform:rotate(45deg)}
-  .faq p{color:var(--muted);font-size:14px;padding:0 0 14px 20px}
-
-  /* ================= timeline ================= */
-  .tl{margin-top:10px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
-  .tl-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line)}
-  .tl-head b{font-size:15px;font-weight:700}.tl-head span{font-size:12.5px;color:var(--muted);font-weight:600}
-  .tl-scroll{overflow-x:auto;overscroll-behavior-x:contain}
-  .tl-grid{position:relative;min-width:max-content;padding:0 0 14px}
-  .tl-days{display:flex;position:sticky;top:0;background:var(--panel);z-index:2;border-bottom:1px solid var(--line)}
-  .tl-day{width:var(--cw);flex:none;text-align:center;font-size:11px;color:var(--dim);font-weight:700;padding:10px 0 8px;border-left:1px solid var(--line)}
-  .tl-day b{display:block;font-size:13px;color:var(--muted);font-weight:800}
-  .tl-day.today,.tl-day.today b{color:var(--purple-2)}
-  .tl-day.wk{background:rgba(255,255,255,.015)}
-  .tl-rows{position:relative;background-image:linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:var(--cw) 100%}
-  .tl-row{height:38px;position:relative}
-  .tl-bar{position:absolute;top:5px;height:28px;border-radius:8px;display:flex;align-items:center;padding:0 8px 0 4px;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;border:1px solid transparent;transition:filter .15s;cursor:pointer;color:var(--text)}
-  .tl-bar:hover{filter:brightness(1.25)}
-  .tl-bar.live{background:rgba(52,211,153,.16);border-color:rgba(52,211,153,.35)}
-  .tl-bar.soon{background:rgba(251,191,36,.14);border-color:rgba(251,191,36,.32)}
-  .tl-bar .lbl{display:flex;align-items:center;gap:7px;position:sticky;left:6px}
-  .tl-bar .tl-tile{display:contents}
-  .tl-bar img{width:20px;height:20px;object-fit:contain;flex:none;border-radius:4px}
-  .tl-bar .ph{width:20px;height:20px;font-size:9px;border-radius:4px;background:rgba(255,255,255,.08);flex:none}
-  .tl-bar .arrow{color:var(--muted);font-weight:600;margin-left:4px}
-  .tl-now{position:absolute;top:0;bottom:0;width:2px;background:var(--purple);z-index:1;pointer-events:none;box-shadow:0 0 12px var(--purple-glow)}
-  .tl-now::before{content:"now";position:absolute;top:-1px;left:6px;font-size:10px;font-weight:800;color:var(--purple-2);letter-spacing:.04em}
-  .sec{font-size:15px;font-weight:700;color:var(--muted);margin:34px 0 12px;display:flex;align-items:center;gap:12px}
-  .sec::after{content:"";flex:1;height:1px;background:var(--line)}
-  .sec .n{font-size:12px;font-weight:700;color:var(--dim);background:var(--panel);border:1px solid var(--line);padding:1px 8px;border-radius:999px}
-  .sec .dot{width:8px;height:8px;border-radius:50%}
-  .events{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px}
-  .ev{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px 16px 14px;text-align:left;width:100%;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow);transition:transform .18s,border-color .18s,background .18s;overflow:hidden}
-  .ev:hover{transform:translateY(-2px);border-color:var(--line-2);background:var(--panel-2)}
-  .ev.live::before,.ev.soon::before{content:"";position:absolute;inset:0 0 auto 0;height:2px}
-  .ev.live::before{background:linear-gradient(90deg,var(--mint),transparent 70%)}
-  .ev.soon::before{background:linear-gradient(90deg,var(--amber),transparent 70%)}
-  .ev .top{display:flex;gap:12px;align-items:center}
-  .ev .tile{width:60px;height:60px;border-radius:14px}.ev .tile img{width:42px;height:42px}
-  .tile.multi{background:none;border:0;width:auto;display:flex}
-  .tile.multi .tile{width:46px;height:46px;border-radius:12px;margin-left:-10px}.tile.multi .tile:first-child{margin-left:0}.tile.multi .tile img{width:30px;height:30px}
-  .ev .title{display:block;font-weight:700;font-size:15.5px;line-height:1.25}
-  .ev .cat{display:block;color:var(--muted);font-size:13px;margin-top:2px}
-  .ev .obj{font-size:13.5px;color:var(--text);opacity:.85;line-height:1.5}
-  .bar{height:4px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden}
-  .bar i{display:block;height:100%;border-radius:99px;background:var(--mint)}.bar.urgent i{background:var(--amber)}
-  .ev .foot{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
-  .ev .foot .lbl{color:var(--muted);font-weight:600}.ev .foot .urgent{color:var(--amber)}.ev .foot .pill{margin-left:auto}
-  .st{width:8px;height:8px;border-radius:50%;flex:none}
-  .st.live{background:var(--mint);box-shadow:0 0 0 3px rgba(52,211,153,.18)}.st.soon{background:var(--amber)}.st.ended{background:var(--dim)}.st.tba{background:var(--line-2)}
-  .empty{color:var(--muted);padding:38px 18px;text-align:center;background:var(--panel);border:1px dashed var(--line-2);border-radius:var(--r);font-size:14px}
-
-  /* ================= badge page ================= */
-  .back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-weight:700;font-size:13.5px;margin-top:22px}.back:hover{color:var(--text)}
-  .bp-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px}
-  .card2{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:20px}
-  .card2 h3{font-size:16px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:10px}
-  .sizes{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap}
-  .sizes a{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-weight:700}
-  .sizes .box{display:grid;place-items:center;border-radius:12px;border:1px solid var(--line);background:var(--bp-bg,#18181b);padding:14px}
-  .sizes img{image-rendering:auto;display:block}
-  .seg.mini{margin-left:auto}.seg.mini button{padding:4px 10px;font-size:12px}
-  .kv2{display:grid;grid-template-columns:130px 1fr;gap:10px 14px;font-size:14px}
-  .kv2 dt{color:var(--muted);font-weight:600}.kv2 dd{word-break:break-word}
-  .kv2 dd a{color:var(--purple-2);font-weight:700}
-  .vers{display:flex;gap:10px;flex-wrap:wrap}
-  .vers a{display:flex;flex-direction:column;align-items:center;gap:6px;width:92px;padding:10px 6px;border-radius:12px;border:1px solid var(--line);background:var(--bg);font-size:11.5px;color:var(--muted);text-align:center;font-weight:600}
-  .vers a.on{border-color:var(--purple);color:var(--text)}
-  .vers img{width:40px;height:40px;object-fit:contain}
-  .bp-cd{font-size:30px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1;margin:6px 0 14px}
-  .bp-cd small{display:block;font-size:12px;color:var(--muted);font-weight:600;margin-top:6px;letter-spacing:0}
-  .ctx{font-size:14.5px;color:var(--text);opacity:.9;line-height:1.6}
-  @media (max-width:880px){.bp-grid{grid-template-columns:1fr}}
-
-  /* ================= badge calendar (BadgeBase-style) ================= */
-  .cal{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;margin-top:26px}
-  .cal-head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
-  .cal-head h3{font-size:17px;font-weight:800;letter-spacing:-.01em;margin-right:auto;display:flex;align-items:center;gap:10px}
-  .cal-range{font-size:13px;color:var(--muted);font-weight:700;font-variant-numeric:tabular-nums}
-  .cal-nav{display:flex;gap:4px}
-  .cal-nav button{min-width:34px;height:34px;border-radius:9px;background:var(--panel-2);border:1px solid var(--line);color:var(--text);font-weight:800;padding:0 10px}
-  .cal-nav button:hover{border-color:var(--line-2)}
-  .cal-nav .today{font-size:12.5px}
-  .cal-scroll{overflow-x:auto;overscroll-behavior-x:contain}
-  .cal-inner{min-width:760px;position:relative}
-  .cal-days{display:grid;grid-template-columns:repeat(var(--n),1fr);border-bottom:1px solid var(--line)}
-  .cal-day{padding:9px 0 8px;text-align:center;font-size:11px;font-weight:700;color:var(--dim);border-left:1px solid var(--line);text-transform:uppercase;letter-spacing:.04em}
-  .cal-day:first-child{border-left:0}
-  .cal-day b{display:block;font-size:14px;color:var(--muted);letter-spacing:0;text-transform:none;margin-top:1px}
-  .cal-day.today{color:var(--purple-2);background:rgba(139,92,246,.08)}.cal-day.today b{color:var(--text)}
-  .cal-day.wk{background:rgba(255,255,255,.012)}
-  .cal-body{position:relative;padding:8px 0 10px;background-image:linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:calc(100% / var(--n)) 100%;min-height:120px}
-  .cal-row{position:relative;height:38px}
-  .cal-out{position:absolute;top:4px;height:30px;display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;white-space:nowrap;color:var(--text);padding-left:8px;pointer-events:none}
-  .cal-out .lft{font-size:11px;color:var(--muted);font-weight:700}
-  .cal-bar .ph{width:26px;height:26px;flex:none;border-radius:6px;background:rgba(0,0,0,.25);display:grid;place-items:center;font-size:9px;color:var(--muted)}
-  .cal-more{display:flex;justify-content:center;padding:4px 0 12px}
-  .cal-bar{position:absolute;top:4px;height:30px;border-radius:10px;display:flex;align-items:center;gap:8px;padding:0 10px 0 4px;font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;color:var(--text);border:1px solid transparent;transition:filter .15s;text-align:left}
-  .cal-bar:hover{filter:brightness(1.25);z-index:2}
-  .cal-bar.free{background:linear-gradient(90deg,rgba(52,211,153,.30),rgba(52,211,153,.10));border-color:rgba(52,211,153,.42)}
-  .cal-bar.paid{background:linear-gradient(90deg,rgba(139,92,246,.36),rgba(139,92,246,.12));border-color:rgba(139,92,246,.52)}
-  .cal-bar.na{background:linear-gradient(90deg,rgba(255,255,255,.12),rgba(255,255,255,.04));border-color:var(--line-2)}
-  .cal-bar.soon{opacity:.75;border-style:dashed}
-  .cal-bar.cut-l{border-top-left-radius:0;border-bottom-left-radius:0;border-left-width:0}
-  .cal-bar.cut-r{border-top-right-radius:0;border-bottom-right-radius:0;border-right-width:0}
-  .cal-bar img{width:26px;height:26px;object-fit:contain;flex:none;border-radius:6px;background:rgba(0,0,0,.25);padding:1px}
-  .cal-bar .nm{overflow:hidden;text-overflow:ellipsis}
-  .cal-bar .lft{margin-left:auto;font-size:11px;font-weight:700;color:var(--muted);padding-left:8px;font-variant-numeric:tabular-nums}
-  .cal-now{position:absolute;top:0;bottom:0;width:2px;background:var(--purple);box-shadow:0 0 12px var(--purple-glow);z-index:3;pointer-events:none}
-  .cal-now::before{content:"";position:absolute;top:-4px;left:-4px;width:10px;height:10px;border-radius:50%;background:var(--purple)}
-  .cal-empty{padding:34px 16px;text-align:center;color:var(--muted);font-size:14px}
-  .cal-foot{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:10px 16px 12px;border-top:1px solid var(--line);font-size:12px;color:var(--dim)}
-  .cal-foot i{display:inline-block;width:12px;height:12px;border-radius:4px;vertical-align:-2px;margin-right:5px}
-  .cal-foot .sp{margin-left:auto}
-  #calTip{position:fixed;z-index:40;pointer-events:none;background:var(--bg-2);border:1px solid var(--line-2);border-radius:12px;padding:10px 12px;font-size:12.5px;box-shadow:0 20px 40px -12px rgba(0,0,0,.8);max-width:300px;opacity:0;transition:opacity .12s}
-  #calTip.show{opacity:1}
-  #calTip b{display:block;font-size:14px;margin-bottom:2px}
-  #calTip .r{display:flex;justify-content:space-between;gap:14px;color:var(--muted);margin-top:3px}
-  #calTip .r span:last-child{color:var(--text);font-weight:700}
-
-  /* ================= FAQ page ================= */
-  .faq-page{display:flex;flex-direction:column;gap:8px;max-width:860px;margin-top:6px}
-  .faq-page details{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:0 18px;box-shadow:var(--shadow)}
-  .faq-page details[open]{border-color:var(--line-2)}
-  .faq-page summary{cursor:pointer;font-weight:700;font-size:15px;padding:16px 0;list-style:none;display:flex;align-items:center;gap:12px}
-  .faq-page summary::-webkit-details-marker{display:none}
-  .faq-page summary::after{content:"+";margin-left:auto;font-size:20px;color:var(--muted);font-weight:600;transition:transform .15s}
-  .faq-page details[open] summary::after{transform:rotate(45deg)}
-  .faq-page .a{color:var(--muted);font-size:14.5px;line-height:1.65;padding:0 0 16px}
-  .faq-page .a b{color:var(--text)}.faq-page .a a{color:var(--purple-2);font-weight:700}
-  .faq-cat{font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);margin:22px 0 4px}
-
-  /* ================= admin ================= */
-  .adm-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .adm-status{font-size:13px;color:var(--muted);font-weight:600}
-  .adm-status.ok{color:var(--mint)}.adm-status.err{color:var(--red)}.adm-status.dirty{color:var(--amber)}
-  .adm-tabs{margin:6px 0 16px}
-  .adm-ev{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden}
-  .adm-ev.needs{border-color:rgba(251,191,36,.45)}
-  .adm-ev > summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:14px 16px}
-  .adm-ev > summary::-webkit-details-marker{display:none}
-  .adm-ev > summary .imgs{display:flex}.adm-ev > summary .imgs img{width:32px;height:32px;object-fit:contain;margin-left:-6px;background:var(--panel-2);border-radius:8px;padding:2px}
-  .adm-ev > summary .imgs img:first-child{margin-left:0}
-  .adm-ev > summary b{font-size:15px}.adm-ev > summary small{display:block;color:var(--muted);font-size:12.5px;font-weight:600}
-  .adm-ev > summary .pill{margin-left:auto}
-  .adm-form{padding:4px 16px 16px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .adm-form label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:700;color:var(--muted)}
-  .adm-form label.full{grid-column:1/-1}
-  .adm-form input,.adm-form select,.adm-form textarea{background:var(--bg);border:1px solid var(--line-2);border-radius:9px;color:var(--text);font:inherit;font-size:14px;font-weight:500;padding:9px 11px;outline:0}
-  .adm-form input:focus,.adm-form select:focus,.adm-form textarea:focus{border-color:var(--purple)}
-  .adm-form .hint{font-weight:500;color:var(--dim);font-size:11.5px}
-  .adm-badges{grid-column:1/-1;display:flex;flex-direction:column;gap:8px}
-  .adm-b{display:grid;grid-template-columns:40px 1fr 2fr 120px 32px;gap:8px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px}
-  .adm-b img{width:36px;height:36px;object-fit:contain}
-  .adm-b .nm{font-weight:700;font-size:13px}.adm-b .ds{grid-column:2/-1;font-size:11.5px;color:var(--dim)}
-  .adm-b button{color:var(--muted);font-size:18px}.adm-b button:hover{color:var(--red)}
-  .adm-row{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-  .adm-login{max-width:640px}
-  .adm-login ol{padding-left:20px;color:var(--muted);font-size:14px;display:flex;flex-direction:column;gap:6px;margin:10px 0 14px}
-  .adm-login ol b{color:var(--text)}
-  @media (max-width:880px){.adm-form{grid-template-columns:1fr}.adm-b{grid-template-columns:36px 1fr 32px}.adm-b input,.adm-b select{grid-column:2/-1}}
-
-  /* ================= connect / setup ================= */
-  .connect{display:flex;gap:18px;align-items:center;background:linear-gradient(135deg,rgba(139,92,246,.16),rgba(139,92,246,.03) 60%),var(--panel);border:1px solid rgba(139,92,246,.35);border-radius:var(--r);padding:18px 20px;margin-top:8px;flex-wrap:wrap;box-shadow:var(--shadow)}
-  .connect .txt{flex:1;min-width:240px;font-size:14px;color:var(--muted)}
-  .connect .txt b{color:var(--text);display:block;margin-bottom:3px;font-size:15px}
-  .setup{margin-top:12px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:6px 18px}
-  .setup summary{cursor:pointer;font-weight:700;font-size:14px;padding:10px 0;list-style:none;display:flex;align-items:center;gap:8px}
-  .setup summary::before{content:"";width:6px;height:6px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:.15s;margin:0 4px}
-  .setup[open] summary::before{transform:rotate(45deg)}
-  .setup ol{padding:4px 0 14px 20px;font-size:14px;color:var(--muted);display:flex;flex-direction:column;gap:8px}
-  .setup ol b{color:var(--text)}
-  .setup .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding-bottom:14px}
-  .setup .row .search{flex:1;min-width:220px;height:40px}
-  .warn{font-size:13px;color:var(--amber);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:10px;padding:10px 12px;margin-top:12px}
-  .note{font-size:13px;color:var(--muted);margin-top:10px}.note.err{color:var(--red)}
-
-  /* ================= footer + stream bar ================= */
-  .site-foot{margin-top:72px;padding-top:36px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted)}
-  .sf-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:32px}
-  .sf-logo{display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:17px;letter-spacing:-.02em;color:var(--text)}
-  .sf-logo img{width:32px;height:32px;border-radius:8px}
-  .sf-logo em{font-style:normal;color:var(--purple-2)}
-  .sf-brand p{margin-top:12px;max-width:34ch;line-height:1.6;font-size:13.5px}
-  .sf-social{display:flex;gap:8px;margin-top:16px}
-  .sf-social a{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:var(--panel);border:1px solid var(--line);color:var(--muted);transition:color .15s,border-color .15s,background .15s,transform .15s}
-  .sf-social svg{width:18px;height:18px}
-  .sf-social a:hover{transform:translateY(-2px);color:#fff}
-  .sf-social .tw:hover{background:#9146FF;border-color:#9146FF}
-  .sf-social .dc:hover{background:#5865F2;border-color:#5865F2}
-  .sf-social .xx:hover{background:#000;border-color:var(--line-2)}
-  .sf-col{display:flex;flex-direction:column;gap:10px}
-  .sf-col h6{font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:2px}
-  .sf-col a{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-weight:600;width:fit-content;transition:color .15s}
-  .sf-col a:hover{color:var(--text)}
-  .sf-col a svg{width:15px;height:15px;opacity:.8}
-  .sf-bottom{display:flex;justify-content:space-between;align-items:center;gap:12px 24px;flex-wrap:wrap;margin-top:32px;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:var(--dim)}
-  .sf-meta{display:flex;gap:14px;align-items:center}
-  .sf-meta a{color:var(--dim)}.sf-meta a:hover{color:var(--muted)}
-  .streambar{position:fixed;left:264px;right:0;bottom:0;z-index:8;background:rgba(17,16,23,.92);backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:10px 24px}
-  .live-dot{width:8px;height:8px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 3px rgba(52,211,153,.2);animation:pulse 2s infinite}
-  @keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(52,211,153,.2)}50%{box-shadow:0 0 0 6px rgba(52,211,153,.08)}}
-  .streambar b{font-size:14px}.streambar span{font-size:13px;color:var(--muted)}
-  .streambar .sp{flex:1}
-  .streambar .btn span{color:inherit;font-size:inherit}
-  .streambar .sb-follow svg{width:15px;height:15px;color:#a970ff}
-  .streambar .sb-sub{padding-left:10px;margin-left:2px;border-left:1px solid var(--line-2)}
-  .streambar .sb-alerts{display:flex;align-items:center;gap:6px;margin-right:6px}
-  .streambar .sb-alerts a{display:inline-flex;align-items:center;gap:5px;color:var(--text);font-weight:700;padding:4px 9px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid var(--line)}
-  .streambar .sb-alerts a:hover{border-color:var(--line-2);background:rgba(255,255,255,.1)}
-  .streambar .sb-alerts svg{width:13px;height:13px}
-  @media (max-width:1100px){.streambar .sb-alerts{display:none}}
-  .streambar .btn{padding:8px 14px;font-size:13px}
-  .player{position:fixed;right:24px;bottom:64px;width:min(440px,calc(100vw - 48px));background:var(--bg-2);border:1px solid var(--line-2);border-radius:14px;overflow:hidden;box-shadow:0 30px 60px -20px rgba(0,0,0,.9);z-index:9}
-  .player iframe{display:block;width:100%;height:248px;border:0}
-  .player .ph2{padding:22px;font-size:14px;color:var(--muted);text-align:center}
-  .player .x{position:absolute;top:6px;right:6px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:16px;z-index:2}
-
-  /* ================= drawer ================= */
-  .drawer{position:fixed;inset:0 0 0 auto;width:min(460px,100%);background:var(--bg-2);border-left:1px solid var(--line);transform:translateX(100%);transition:transform .25s cubic-bezier(.2,.8,.2,1);padding:28px;overflow:auto;z-index:20;box-shadow:-30px 0 60px -30px rgba(0,0,0,.8)}
-  .drawer.open{transform:none}
-  .scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .25s;z-index:10}
-  .scrim.show{opacity:1;pointer-events:auto}
-  .drawer .close{position:absolute;top:18px;right:18px;width:36px;height:36px;border-radius:50%;background:var(--panel-2);border:1px solid var(--line);font-size:20px;line-height:1}
-  .drawer .hero-img{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
-  .drawer .hero-img .tile{width:96px;height:96px;border-radius:22px}.drawer .hero-img .tile img{width:64px;height:64px}
-  .drawer h3{font-size:24px;font-weight:800;letter-spacing:-.025em;line-height:1.15;padding-right:44px}
-  .drawer .sub{color:var(--muted);font-size:14px;margin-top:6px}
-  .drawer .cd{font-size:34px;font-weight:800;letter-spacing:-.03em;margin-top:22px;font-variant-numeric:tabular-nums;line-height:1}
-  .drawer .cd small{display:block;font-size:12px;color:var(--muted);font-weight:600;margin-top:6px}
-  .drawer .kv{display:grid;grid-template-columns:110px 1fr;gap:10px 14px;margin-top:22px;font-size:14px;padding-top:20px;border-top:1px solid var(--line)}
-  .drawer .kv dt{color:var(--muted);font-weight:600}.drawer .kv dd{word-break:break-word}
-  .drawer .badgelist{display:flex;flex-direction:column;gap:8px;margin-top:20px}
-  .drawer .badgelist>div{display:flex;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:13px}
-  .drawer .badgelist .tile{width:40px;height:40px;border-radius:10px}.drawer .badgelist .tile img{width:28px;height:28px}
-  .drawer .badgelist b{display:block;font-size:13.5px}.drawer .badgelist span span{color:var(--muted)}
-  .drawer .actions{display:flex;gap:8px;margin-top:22px;flex-wrap:wrap}
-  .drawer .hint{font-size:13px;color:var(--amber);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:10px;padding:10px 12px;margin-top:18px}
-  .versions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
-  .versions .v{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;color:var(--muted);font-weight:600}
-  .versions .v .tile{width:44px;height:44px;border-radius:10px}.versions .v .tile img{width:30px;height:30px}
-  .toast{position:fixed;left:50%;bottom:70px;transform:translateX(-50%) translateY(16px);background:var(--text);color:var(--bg);padding:10px 18px;border-radius:10px;font-weight:700;font-size:14px;opacity:0;transition:.2s;z-index:30;pointer-events:none}
-  .toast.show{opacity:1;transform:translateX(-50%)}
-  @media (prefers-reduced-motion:reduce){.drawer,.scrim,.toast,.ev,.brow,.btn,.tool,.social,.watch{transition:none}}
-
-  /* ================= mobile ================= */
-  .menu-btn{display:none}
-  .side-menu{display:contents}
-  .btn .sm{display:none}
-  .cal-m{display:none}
-  @media (max-width:880px){
-    html,body{overflow-x:hidden}
-    .app{grid-template-columns:minmax(0,1fr)}
-    main{min-width:0;padding:0 16px calc(96px + env(safe-area-inset-bottom))}
-    main::before{width:100%}
-
-    /* header bar + slide-down menu */
-    .side{position:sticky;top:0;height:60px;flex-direction:row;align-items:center;justify-content:space-between;gap:10px;padding:0 14px;border-right:0;border-bottom:1px solid var(--line);z-index:30;overflow:visible;background:#111017;backdrop-filter:none}
-    .brand{padding:0;gap:10px}.brand img{width:36px;height:36px;border-radius:10px}
-    .brand b{font-size:17px}.brand small{display:none}
-    .menu-btn{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:var(--panel);border:1px solid var(--line);color:var(--text)}
-    .menu-btn svg{width:22px;height:22px}.menu-btn path{transition:transform .2s,opacity .2s;transform-origin:12px 12px}
-    .side.open .menu-btn .l1{transform:translateY(5px) rotate(45deg)}.side.open .menu-btn .l2{opacity:0}.side.open .menu-btn .l3{transform:translateY(-5px) rotate(-45deg)}
-    .side-menu{display:none;position:fixed;top:60px;left:0;right:0;bottom:0;background:var(--bg-2);padding:14px 16px calc(24px + env(safe-area-inset-bottom));overflow-y:auto;flex-direction:column;gap:18px;z-index:29}
-    .side.open .side-menu{display:flex;animation:menuIn .18s ease-out}
-    @keyframes menuIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
-    .side-menu .group{flex-direction:column;gap:2px}
-    .side-menu .group h6{display:block}
-    .side-menu .nav a{padding:12px 14px;font-size:16px}
-    .side-menu .nav a svg,.side-menu .nav a img{width:20px;height:20px}
-    .side-menu .nav .count{display:inline-block}
-    .side-menu .side-foot{display:block;margin-top:6px}
-    body.menu-open{overflow:hidden}
-
-    /* type + hero */
-    h1{font-size:28px}.lead{font-size:15px}h2{font-size:20px;margin:32px 0 12px}
-    .crumbs{padding-top:16px}
-    .hero2{grid-template-columns:minmax(0,1fr);gap:22px;padding:22px 0 4px}
-    .brandrow{gap:14px;margin-bottom:18px}.biglogo{width:64px;height:64px;border-radius:16px}.wm{font-size:30px}
-    .hero2-h{font-size:25px}.hero2 .lead{font-size:15px;margin-top:12px}
-    .hero2-cta{margin-top:20px}.hero2-cta .btn{flex:1;justify-content:center}
-    .hero2-stats{justify-content:space-between;gap:10px;margin-top:22px;padding-top:18px}
-    .hero2-stats b{font-size:24px}
-    .stream-card{border-radius:16px}
-    .sc-head .ch{display:none}
-    .sc-foot{flex-wrap:wrap}
-
-    /* home sections */
-    .cards{grid-template-columns:minmax(0,1fr)}
-    .recent{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-    .rc{padding:10px 6px}.rc .tile{height:60px}.rc .tile img{width:38px;height:38px}.rc .n{font-size:11.5px}
-    .tools{grid-template-columns:minmax(0,1fr)}
-
-    /* lists: 2-column tile grid instead of long rows */
-    .toolbar{position:static;padding:8px 0 4px;gap:8px}
-    .toolbar .search{flex:1 1 100%;min-width:0}
-    .seg{flex-wrap:nowrap;overflow-x:auto;max-width:100%;scrollbar-width:none}.seg::-webkit-scrollbar{display:none}
-    .seg button{padding:7px 10px;font-size:12.5px}
-    .blist{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-    .brow{flex-direction:column;align-items:stretch;text-align:center;gap:8px;padding:10px}
-    .brow .tile{width:100%;height:72px;border-radius:10px}.brow .tile img{width:44px;height:44px}
-    .brow .n{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;font-size:13px;min-height:2.5em}
-    .brow .m{justify-content:center;font-size:11px;gap:4px}
-    .brow:hover{transform:none}
-    .events{grid-template-columns:minmax(0,1fr)}
-    .ev:hover{transform:none}
-    .faq{margin-bottom:14px}
-
-    /* badge page */
-    .page-head{padding-top:12px}
-    .card2{padding:16px}
-    .kv2{grid-template-columns:96px minmax(0,1fr);font-size:13.5px}
-    .sizes{gap:10px}
-    .vers a{width:calc(33.33% - 7px)}
-    .card2 .actions .btn{flex:1;justify-content:center}
-
-    /* bottom bar + player */
-    .streambar{left:0;padding:8px 12px calc(8px + env(safe-area-inset-bottom));gap:8px}
-    .streambar .sb-sub,.streambar .sb-alerts{display:none}
-    .streambar b{font-size:13px}
-    .streambar .btn{padding:8px 12px;font-size:12.5px}
-    .btn .lg{display:none}.btn .sm{display:inline}
-    .player{left:8px;right:8px;width:auto;bottom:calc(62px + env(safe-area-inset-bottom))}
-    .player iframe{height:200px}
-    .drawer{width:100%;padding:22px 18px}
-    .site-foot{margin-top:52px;padding-top:28px}
-    .sf-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 16px}
-    .sf-brand{grid-column:1/-1}
-    .sf-bottom{flex-direction:column;align-items:flex-start;margin-top:26px}
-
-    /* calendar: phone layout */
-    .cal{border-radius:16px;margin-top:22px}
-    .cal-head{padding:12px}
-    .cal-head{gap:8px}
-    .cal-head h3{width:100%;font-size:16px;margin:0;gap:8px}
-    .cal-head h3 .pill{margin-left:auto}
-    .cal-head .seg.mini{margin-left:0}
-    .cal-range{width:100%;font-size:12px;margin-top:-4px}
-    .cal-nav{margin-left:auto}
-    .cal-nav button{min-width:32px;height:32px}
-    .cal-foot{font-size:11px;gap:10px}.cal-foot .sp{margin-left:0}
-  }
-  @media (max-width:640px){
-    .cal-scroll{overflow:visible}
-    .cal-inner{min-width:0!important}
-    .cal-day{font-size:10px;padding:7px 0 6px;letter-spacing:0}
-    .cal-day b{font-size:12px}
-    .cal-body{padding:4px 0 8px;background-size:calc(100% / var(--g)) 100%}
-    .cal-row,.cal-bar,.cal-out,.cal-now{display:none}
-    .cal-m{display:block;width:100%;text-align:left;padding:7px 0 8px;border-bottom:1px solid var(--line)}
-    .cal-m:last-of-type{border-bottom:0}
-    .cal-mtop{display:flex;align-items:center;gap:9px;padding:0 12px}
-    .cal-mtop img,.cal-mtop .ph{width:28px;height:28px;border-radius:7px;flex:none;object-fit:contain;background:rgba(255,255,255,.05)}
-    .cal-mtop .nm{font-weight:700;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
-    .cal-mtop .lft{font-size:11.5px;font-weight:700;color:var(--muted);white-space:nowrap}
-    .cal-mtop .lft.urgent{color:var(--amber)}
-    .cal-mtrack{position:relative;display:block;height:6px;margin-top:7px;background:rgba(255,255,255,.05)}
-    .cal-mtrack i{position:absolute;top:0;bottom:0;border-radius:3px}
-    .cal-m.free .cal-mtrack i{background:var(--mint)}.cal-m.paid .cal-mtrack i{background:var(--purple)}.cal-m.na .cal-mtrack i{background:var(--muted)}
-    .cal-m.soon .cal-mtrack i{opacity:.45}
-    .cal-mtrack .nowt{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--text);border-radius:1px}
-  }
-
-</style>
+<link rel="stylesheet" href="/assets/app.css">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <div class="app">
   <aside class="side">
-    <a class="brand" href="#home"><img src="logo-192.png" alt="BadgeDB"><span><b>BadgeDB</b><small>Twitch badge tracker</small></span></a>
+    <a class="brand" href="/"><img src="/logo-192.png" alt="BadgeDB"><span><b>BadgeDB</b><small>Twitch badge tracker</small></span></a>
     <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path class="l1" d="M4 7h16"/><path class="l2" d="M4 12h16"/><path class="l3" d="M4 17h16"/></svg></button>
     <div class="side-menu" id="sideMenu">
     <nav class="nav group" aria-label="Main">
-      <a href="#home" data-route="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>Home</a>
-      <a href="#timeline" data-route="timeline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Timeline <span class="count" id="cEvents"></span></a>
-      <a href="#faq" data-route="faq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .8-1 1.5V14M12 17.5v.01"/></svg>FAQ</a>
+      <a href="/" data-route="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>Home</a>
+      <a href="/timeline/" data-route="timeline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Timeline <span class="count" id="cEvents"></span></a>
+      <a href="/faq/" data-route="faq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .8-1 1.5V14M12 17.5v.01"/></svg>FAQ</a>
     </nav>
     <nav class="nav group" aria-label="Twitch">
       <h6>Twitch</h6>
-      <a href="#global" data-route="global"><img src="https://static-cdn.jtvnw.net/badges/v1/bd444ec6-8f34-4bf9-91f4-af1e3428d80f/3" alt="">Global Badges <span class="count" id="cGlobal"></span></a>
-      <a href="#channel" data-route="channel"><img src="https://static-cdn.jtvnw.net/badges/v1/5d9f2208-5dd8-11e7-8513-2ff4adfae661/3" alt="">Channel Badges <span class="count" id="cChannel"></span></a>
+      <a href="/badges/" data-route="global"><img src="https://static-cdn.jtvnw.net/badges/v1/bd444ec6-8f34-4bf9-91f4-af1e3428d80f/3" alt="">Global Badges <span class="count" id="cGlobal"></span></a>
+      <a href="/channel/" data-route="channel"><img src="https://static-cdn.jtvnw.net/badges/v1/5d9f2208-5dd8-11e7-8513-2ff4adfae661/3" alt="">Channel Badges <span class="count" id="cChannel"></span></a>
     </nav>
     <nav class="nav group" aria-label="Legal">
       <h6>Legal</h6>
-      <a href="#privacy" data-route="privacy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6l7-3z"/></svg>Privacy Policy</a>
-      <a href="#terms" data-route="terms"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l5 5v13H6z"/><path d="M14 3v6h6M9 13h7M9 17h7"/></svg>Terms of Service</a>
+      <a href="/privacy/" data-route="privacy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6l7-3z"/></svg>Privacy Policy</a>
+      <a href="/terms/" data-route="terms"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l5 5v13H6z"/><path d="M14 3v6h6M9 13h7M9 17h7"/></svg>Terms of Service</a>
     </nav>
     <div class="side-foot">
-      <a class="watch" href="https://twitch.tv/badge_db" target="_blank" rel="noopener"><img src="logo-192.png" alt=""><span><b>Watch on Twitch</b><small>twitch.tv/badge_db</small></span></a>
+      <a class="watch" href="https://twitch.tv/badge_db" target="_blank" rel="noopener"><img src="/logo-192.png" alt=""><span><b>Watch on Twitch</b><small>twitch.tv/badge_db</small></span></a>
       <div class="side-social">
         <a class="dc" href="https://discord.gg/QkuRDXcZH5" target="_blank" rel="noopener" title="Join the Discord"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.5 5.5A16 16 0 0 0 15.6 4l-.5 1a15 15 0 0 0-6.2 0l-.5-1a16 16 0 0 0-3.9 1.5C2 9.3 1.3 13 1.6 16.6A16 16 0 0 0 6.5 19l1-1.6a10 10 0 0 1-1.6-.8l.4-.3a11.5 11.5 0 0 0 11.4 0l.4.3-1.6.8 1 1.6a16 16 0 0 0 4.9-2.4c.4-4.2-.7-7.8-2.9-11.1zM8.7 14.4c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2zm6.6 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2z"/></svg><span>Join the Discord</span></a>
         <a class="xx" href="https://x.com/BadgeDatabase" target="_blank" rel="noopener" title="Follow @BadgeDatabase on X"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 3h3l-7 8 8 10h-6l-4.7-6.2L5.5 21h-3l7.5-8.6L2.5 3h6l4.3 5.7z"/></svg><span>Follow @BadgeDatabase</span></a>
@@ -594,12 +71,12 @@
       <div class="hero2">
         <div class="hero2-l">
           <div class="brandrow">
-            <img class="biglogo" src="logo.png" alt="Badge Database logo">
+            <img class="biglogo" src="/logo.png" alt="Badge Database logo">
             <div class="wm"><span>Badge</span><span>Database</span></div>
           </div>
           <h1 class="hero2-h">Every Twitch badge.<br>Exactly when to get it.</h1>
           <p class="lead">Live countdowns for active badge drops, upcoming events before they start, and the complete global badge archive — <b id="hArchive">370</b> sets and counting.</p>
-          <div class="hero2-cta"><a class="btn" href="#timeline">View timeline</a><a class="btn ghost" href="#global">Browse all badges</a></div>
+          <div class="hero2-cta"><a class="btn" href="/timeline/">View timeline</a><a class="btn ghost" href="/badges/">Browse all badges</a></div>
           <div class="hero2-stats">
             <div><b id="sLive">0</b><span>active now</span></div>
             <div><b id="sSoon">0</b><span>upcoming</span></div>
@@ -634,7 +111,7 @@
 
     <!-- TIMELINE -->
     <section data-page="timeline" hidden>
-      <div class="crumbs"><a href="#home">Home</a><span>/</span>Timeline</div>
+      <div class="crumbs"><a href="/">Home</a><span>/</span>Timeline</div>
       <div class="page-head"><div><h1>Timeline</h1><p class="lead">Current and upcoming Twitch badge events with exact start and end times.</p></div></div>
       <div class="toolbar">
         <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="qEv" type="search" placeholder="Search events, games, objectives…" autocomplete="off"></label>
@@ -649,7 +126,7 @@
 
     <!-- GLOBAL -->
     <section data-page="global" hidden>
-      <div class="crumbs"><a href="#home">Home</a><span>/</span>Twitch<span>/</span>Global Badges</div>
+      <div class="crumbs"><a href="/">Home</a><span>/</span>Twitch<span>/</span>Global Badges</div>
       <div class="page-head"><div><h1>Twitch Global Badges</h1><p class="lead">Browse every Twitch global badge set. Search and sort by date added, user count and title.</p></div></div>
       <div class="faq">
         <details><summary>What are Twitch global badges?</summary><p>Global badges appear next to your username and can be equipped across every channel on Twitch, unlike subscriber and Bits badges which belong to a single channel.</p></details>
@@ -670,7 +147,7 @@
 
     <!-- CHANNEL -->
     <section data-page="channel" hidden>
-      <div class="crumbs"><a href="#home">Home</a><span>/</span>Twitch<span>/</span>Channel Badges</div>
+      <div class="crumbs"><a href="/">Home</a><span>/</span>Twitch<span>/</span>Channel Badges</div>
       <div class="page-head"><div><h1>Twitch Channel Badges</h1><p class="lead">Campaign badges streamers hand out for subscribing, watching or being a top supporter — collected automatically from live channels.</p></div></div>
       <div class="toolbar">
         <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="qC" type="search" placeholder="Search badge or channel…" autocomplete="off"></label>
@@ -684,20 +161,20 @@
 
     <!-- BADGE DETAIL -->
     <section data-page="badge" hidden>
-      <a class="back" href="#global">← All Twitch Global Badges</a>
+      <a class="back" href="/badges/">← All Twitch Global Badges</a>
       <div id="badgePage"></div>
     </section>
 
     <!-- FAQ -->
     <section data-page="faq" hidden>
-      <div class="crumbs"><a href="#home">Home</a><span>/</span>FAQ</div>
+      <div class="crumbs"><a href="/">Home</a><span>/</span>FAQ</div>
       <div class="page-head"><div><h1>Frequently asked questions</h1><p class="lead">Everything about Twitch badges and how Badge Database tracks them.</p></div></div>
-      <div class="faq-page" id="faqList"></div>
+      <div class="faq-page" id="faqList" data-done="1"><div class="faq-cat">Badges</div><details open><summary>What are Twitch global badges?</summary><div class="a">Global badges are small icons next to your name in chat that look the same in <b>every</b> channel — unlike subscriber and Bits badges, which each streamer designs for their own channel. Most new ones are limited-time rewards tied to a game launch, an event or a campaign.</div></details><details><summary>How do I get a badge?</summary><div class="a">Open the badge on the <a href='/timeline/'>Timeline</a> and check its objective. It is usually one of two things: <b>watch</b> a stream in a specific category for a set time (free), or <b>subscribe / gift a sub</b> to a streamer in that category (paid). The badge is only awarded while the event is running.</div></details><details><summary>Does a gifted sub or Prime count?</summary><div class="a">For sub-based badges you normally have to <b>buy</b> a Tier 1 subscription or a Tier 1 gift sub yourself. Receiving a gifted sub usually does not count, and Prime subs are often excluded too. When a badge has its own rule, it is written on its page.</div></details><details><summary>I completed the objective but I don't have the badge. What now?</summary><div class="a">Twitch can take a while to grant it — often a few minutes, sometimes up to a day. Make sure the stream was in the right category and had the reward enabled, and that you watched with the tab active and not muted. If it still hasn't arrived after 24 hours, contact Twitch Support.</div></details><details><summary>How do I equip a badge?</summary><div class="a">In any chat, click your name (or the chat settings icon) → <b>Chat Identity</b> → pick the badge under Global Badges. Only one global badge can be shown at a time.</div></details><details><summary>Can I lose a badge?</summary><div class="a">No. Once a badge is in your collection, it stays there even after the event ends. You can only get it again if Twitch reruns the event.</div></details><details><summary>What are channel badges?</summary><div class="a">Newer campaign badges that a single streamer hands out — for subscribing, watching for a while or being a top supporter during their campaign. They are listed under <a href='/channel/'>Channel Badges</a>.</div></details><div class="faq-cat">Timeline & dates</div><details><summary>Why does a badge say “Date not announced”?</summary><div class="a">Twitch adds the badge to its system before the event starts, but does not publish the dates anywhere machine-readable. As soon as the dates are known, we add them and the badge moves to <b>Coming up</b> or <b>Active</b> automatically.</div></details><details><summary>What time zone are the dates in?</summary><div class="a">Everything on the site is shown in <b>your own local time</b>, taken from your browser. The exact UTC time is visible on each badge page.</div></details><details><summary>Why is a badge “Active” but I can't find it anywhere?</summary><div class="a">Many badges only count on streams that are in the right category <b>and</b> have the reward switched on. Open the category from the badge page — Twitch's drops filter shows the participating streams.</div></details><div class="faq-cat">About Badge Database</div><details><summary>Where does the data come from?</summary><div class="a">Badge images, titles and descriptions come from the public Twitch API and are checked every 15 minutes. Dates and objectives are added from official announcements.</div></details><details><summary>How do I get notified about new badges?</summary><div class="a">Every new global badge is posted on <a href='https://x.com/BadgeDatabase' target='_blank' rel='noopener'>@BadgeDatabase on X</a> the moment it appears, and it shows up here on the site at the same time. The <a href='https://twitch.tv/badge_db' target='_blank' rel='noopener'>24/7 stream</a> shows live countdowns, and the <a href='https://discord.gg/QkuRDXcZH5' target='_blank' rel='noopener'>Discord</a> is the place to ask questions and chat about badges.</div></details><details><summary>Is Badge Database affiliated with Twitch?</summary><div class="a">No. Badge Database is an independent fan project and is not affiliated with or endorsed by Twitch Interactive, Inc.</div></details><details><summary>I found a mistake — how do I report it?</summary><div class="a">Message us on <a href='https://discord.gg/QkuRDXcZH5' target='_blank' rel='noopener'>Discord</a> or <a href='https://x.com/BadgeDatabase' target='_blank' rel='noopener'>X</a> with the badge name and the correct info, and we'll fix it.</div></details></div>
     </section>
 
     <!-- ADMIN -->
     <section data-page="admin" hidden>
-      <div class="crumbs"><a href="#home">Home</a><span>/</span>Admin</div>
+      <div class="crumbs"><a href="/">Home</a><span>/</span>Admin</div>
       <div class="page-head"><div><h1>Event editor</h1><p class="lead">Add dates, objectives and categories. Saving publishes to the site within about a minute.</p></div>
         <div class="adm-actions" id="admTop"></div></div>
       <div id="admBody"></div>
@@ -705,12 +182,12 @@
 
     <!-- LEGAL -->
     <section data-page="privacy" hidden>
-      <div class="crumbs"><a href="#home">Home</a><span>/</span>Privacy Policy</div>
+      <div class="crumbs"><a href="/">Home</a><span>/</span>Privacy Policy</div>
       <div class="page-head"><div><h1>Privacy Policy</h1></div></div>
       <p class="intro">BadgeDB does not collect personal data. If you connect your Twitch account, the access token stays in your browser and is used only to request badge data from Twitch; it is never sent anywhere else. Badge images are loaded directly from Twitch's CDN.</p>
     </section>
     <section data-page="terms" hidden>
-      <div class="crumbs"><a href="#home">Home</a><span>/</span>Terms of Service</div>
+      <div class="crumbs"><a href="/">Home</a><span>/</span>Terms of Service</div>
       <div class="page-head"><div><h1>Terms of Service</h1></div></div>
       <p class="intro">BadgeDB is a fan project provided as-is, without warranty. Event dates and objectives are collected by hand and can change without notice — always double-check on Twitch before spending money. BadgeDB is not affiliated with Twitch Interactive, Inc.</p>
     </section>
@@ -718,7 +195,7 @@
     <footer class="site-foot">
       <div class="sf-grid">
         <div class="sf-brand">
-          <a class="sf-logo" href="#home"><img src="favicon-32.png" srcset="icon-192.png 2x" alt=""><span>Badge <em>Database</em></span></a>
+          <a class="sf-logo" href="/"><img src="/favicon-32.png" srcset="/icon-192.png 2x" alt=""><span>Badge <em>Database</em></span></a>
           <p>Every Twitch badge, exactly when to get it. Live countdowns, upcoming drops and the full global archive.</p>
           <div class="sf-social">
             <a class="tw" href="https://twitch.tv/badge_db" target="_blank" rel="noopener" aria-label="Twitch"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2 2 6v14h5v3h3l3-3h4l5-5V2H4zm16 12-3 3h-5l-3 3v-3H6V4h14v10zm-4-7h-2v5h2V7zm-5 0H9v5h2V7z"/></svg></a>
@@ -727,7 +204,7 @@
           </div>
         </div>
         <nav class="sf-col" aria-label="Explore"><h6>Explore</h6>
-          <a href="#timeline">Timeline</a><a href="#global">Global Badges</a><a href="#channel">Channel Badges</a><a href="#faq">FAQ</a>
+          <a href="/timeline/">Timeline</a><a href="/badges/">Global Badges</a><a href="/channel/">Channel Badges</a><a href="/faq/">FAQ</a>
         </nav>
         <nav class="sf-col" aria-label="Community"><h6>Community</h6>
           <a href="https://twitch.tv/badge_db" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2 2 6v14h5v3h3l3-3h4l5-5V2H4zm16 12-3 3h-5l-3 3v-3H6V4h14v10zm-4-7h-2v5h2V7zm-5 0H9v5h2V7z"/></svg>24/7 Stream</a>
@@ -735,12 +212,12 @@
           <a href="https://x.com/BadgeDatabase" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 3h3l-7 8 8 10h-6l-4.7-6.2L5.5 21h-3l7.5-8.6L2.5 3h6l4.3 5.7z"/></svg>X / Twitter</a>
         </nav>
         <nav class="sf-col" aria-label="Legal"><h6>Legal</h6>
-          <a href="#privacy">Privacy Policy</a><a href="#terms">Terms of Service</a>
+          <a href="/privacy/">Privacy Policy</a><a href="/terms/">Terms of Service</a>
         </nav>
       </div>
       <div class="sf-bottom">
         <span>© 2026 Badge Database · Not affiliated with Twitch Interactive, Inc. Badge images © their respective owners.</span>
-        <span class="sf-meta"><span id="dataAge"></span><a href="#admin">Admin</a></span>
+        <span class="sf-meta"><span id="dataAge"></span><a href="/admin/">Admin</a></span>
       </div>
     </footer>
   </main>
@@ -759,646 +236,6 @@
 <aside class="drawer" id="drawer" aria-hidden="true" role="dialog"><button class="close" id="closeDrawer" aria-label="Close">×</button><div id="drawerBody"></div></aside>
 <div class="toast" id="toast"></div>
 
-<script>
-/* =====================================================================
-   CONFIG — links shown on the home page. Leave a URL empty to hide it.
-   Twitch Client ID is only needed for "Connect Twitch" (see setup panel).
-   ===================================================================== */
-const CONFIG = {
-  channel: "badge_db",
-  socials: {
-    twitch:  "https://twitch.tv/badge_db",
-    x:       "https://x.com/BadgeDatabase",
-    discord: "https://discord.gg/QkuRDXcZH5",
-    reddit:  "",
-  },
-  clientId: "",
-  repo: "davidpzsny/badgedb",        // used by the #admin page to save events.json
-};
-
-/* =====================================================================
-   EVENTS — edit when a new drop is announced.
-   img = Twitch CDN id (between /badges/v1/ and /3). start/end UTC ISO.
-   cost: "free" | "paid" | "na"
-   ===================================================================== */
-const cdn = id => id ? `https://static-cdn.jtvnw.net/badges/v1/${id}/3` : "";
-const SUB = "Subscribe (Tier 1) or gift a Tier 1 sub in the category.";
-let EVENTS = [{"id": "ace-combat-8-nugget", "name": "ACE COMBAT 8 Nugget", "category": "Unknown", "start": "", "end": "", "badges": [{"name": "ACE COMBAT 8 Nugget", "img": "8468fb6c-1d33-4482-85ef-fa1898288ee2", "how": "This badge was earned by subscribing or gifting a sub to a streamer in the ACE COMBAT 8 category during the game's launch!", "cost": "na"}]}, {"id": "yellow-party-hat", "name": "Yellow Party Hat", "category": "Unknown", "start": "", "end": "", "badges": [{"name": "Yellow Party Hat", "img": "6325b96b-0187-4a60-90d0-8bb45efa3fff", "how": "This badge was awarded to people who viewed the official 2026 RuneFest livestream for one hour. It was added to promote the RuneScape Franchise's RuneFest event.", "cost": "na"}]}, {"id": "runescape-shrimp", "name": "RuneScape Shrimp", "category": "Unknown", "start": "", "end": "", "badges": [{"name": "RuneScape Shrimp", "img": "aed4a5ae-3e02-40c6-92bc-dfb8d33576f5", "how": "This badge was awarded to people who viewed any eligible channel co-streaming RuneFest 2026 in the Old School RuneScape category for one hour. It was added to promote the RuneScape Franchise's RuneFest event.", "cost": "na"}]}, {"id": "big-walk", "name": "Big Walk", "category": "Unknown", "start": "2026-09-25T07:00:00Z", "end": "2026-10-04T06:58:00Z", "badges": [{"name": "Big Walk", "img": "3de5a89b-533b-483a-8db2-036f9f13b9bd", "how": "This badge was earned by subscribing or gifting a sub to a streamer in the Big Walk category.", "cost": "na"}]}, {"id": "clipped-that-2", "name": "Clipped That", "category": "Unknown", "start": "", "end": "", "badges": [{"name": "Clipped That", "img": "5b648ccf-dc37-4233-a96e-c6e5d693a0ae", "how": "This limited-time badge was earned by a DJ Program creator who clipped an epic mid-set moment and downloaded + shared it to social.", "cost": "na"}]}, {"id": "rematch-blue-lock", "name": "Rematch Blue Lock", "category": "REMATCH", "start": "2026-09-23T23:01:00Z", "end": "2026-10-22T10:58:00Z", "badges": [{"name": "Rematch Blue Lock", "img": "13afe621-edd4-48b6-a09b-453a2dee52e9", "how": "This badge was earned by watching a streamer in the Rematch category for 30 minutes", "cost": "na"}]}, {"id": "control-resonant", "name": "CONTROL Resonant Launch", "category": "CONTROL Resonant", "start": "2026-09-22T14:00:00Z", "end": "2026-10-13T13:59:00Z", "badges": [{"name": "Don't Eat The Mold", "img": "f1617a53-9e8f-4bd4-b440-ab44f6f8f650", "how": "Watch 60 minutes in the category.", "cost": "free"}, {"name": "The Inverted Man", "img": "755022bc-26e1-47a4-8d6f-961224713355", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "alien-isolation", "name": "Alien: Isolation", "category": "Alien: Isolation", "start": "", "end": "", "badges": [{"name": "SEEGSON Synthetics", "img": "4709f62b-9cd9-4759-8953-c096527401c7", "how": "Watch in the category (exact time not announced yet).", "cost": "free"}, {"name": "Sevastopol Station", "img": "a6a681a9-3253-42de-b09a-7bda7c05c342", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "dnd-dungeon-masters", "name": "D&D: World of Warcraft (Dungeon Masters)", "category": "Dungeons & Dragons", "start": "2026-09-24T01:15:00Z", "end": "2026-10-21T06:58:00Z", "badges": [{"name": "d20", "img": "263a5bf1-c1ea-4f26-8bf8-db42ea2ebc7c", "how": "Watch in the category (exact time not announced yet).", "cost": "free"}, {"name": "Ampersand", "img": "b17f6b68-4a2d-4d2a-9967-aa8ff26012a0", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "atlus-2026", "name": "ATLUS 2026 Celebration", "category": "Persona 3 Reload", "start": "2026-09-24T16:00:00Z", "end": "2026-10-11T06:58:00Z", "note": "Each badge belongs to a different ATLUS game category (Persona 3 Reload, Persona 4, Persona 5, Metaphor).", "badges": [{"name": "Koromaru", "img": "d08bb5f3-7638-45c6-919a-9f2eb4ef505e", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the Persona 3 Reload category.", "cost": "paid"}, {"name": "Teddie", "img": "80786dcb-bf5e-4069-ab13-32b4fa436c51", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}, {"name": "Morgana", "img": "a0c09111-b247-4b40-88a2-7ef1cfc60f65", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}, {"name": "Nahobiho", "img": "adc8a831-4884-471b-9723-aad8bf3e05b8", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "homo-tenta", "name": "Homo Tenta", "category": "Unknown", "start": "2026-09-24T16:00:00Z", "end": "2026-10-11T06:58:00Z", "badges": [{"name": "Homo Tenta", "img": "3ec6f155-ebc7-4624-89d9-ead63122dc52", "how": "This badge was earned by subscribing to a streamer in the Metaphor: ReFantazio category during the 2026 ATLUS celebration!", "cost": "na"}]}, {"id": "blue-creeper-boss", "name": "TGS 2026: Blue Creeper Boss", "category": "Minecraft", "start": "2026-09-17T18:00:00Z", "end": "2026-09-22T06:58:00Z", "note": "Short window — only on Minecraft streams that have the reward enabled. Receiving a gifted sub or using Prime does not count.", "badges": [{"name": "Blue Creeper Boss", "img": "e349e84d-1d91-4086-afda-e0c946717878", "how": "Subscribe (Tier 1) or gift a Tier 1 sub to a streamer live in the Minecraft category.", "cost": "paid"}]}, {"id": "ultramarine", "name": "Space Marine II 2nd Anniversary", "category": "Warhammer 40,000: Space Marine II", "start": "", "end": "", "badges": [{"name": "Ultramarine", "img": "12cb6b16-063b-4fcf-b312-c5c8f01e49ac", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "clipped-that", "name": "Clipped That", "category": "Twitch", "start": "2026-09-01T00:00:00Z", "end": "2026-09-15T23:59:00Z", "badges": [{"name": "Clipped That", "img": "", "how": "Download a clip of your stream and share it to social by Sep 15.", "cost": "free"}]}, {"id": "onimusha", "name": "Onimusha: Way of the Sword", "category": "Onimusha: Way of the Sword", "start": "2026-09-04T04:00:00Z", "end": "2026-09-18T03:59:00Z", "badges": [{"name": "Onimusha Armament", "img": "379bfc94-8276-4e9e-9a34-615e10c55baf", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "lego-harley", "name": "LEGO Batman: Harley", "category": "LEGO Batman: Legacy of the Dark Knight", "start": "2026-09-01T07:00:00Z", "end": "2026-09-20T06:59:00Z", "badges": [{"name": "Harley Mayhem", "img": "1d235db6-09cc-458f-9805-be2efc178e54", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "resonance", "name": "Resonance: A Plague Tale Legacy", "category": "Resonance: A Plague Tale Legacy", "start": "2026-08-26T16:00:00Z", "end": "2026-09-23T15:59:00Z", "badges": [{"name": "Resonance Minotaur", "img": "63cf6329-f34c-449e-8f70-fafa1eb1de9e", "how": "Watch 60 minutes in the category.", "cost": "free"}]}, {"id": "blizzcon", "name": "BlizzCon 2026", "category": "Diablo IV", "start": "2026-09-11T17:00:00Z", "end": "2026-09-26T16:59:00Z", "badges": [{"name": "Diablo", "img": "12e66b34-5748-4eb0-8cf1-63d01e925b4f", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "lego-joker", "name": "LEGO Batman: Joker", "category": "LEGO Batman: Legacy of the Dark Knight", "start": "2026-09-12T07:00:00Z", "end": "2026-09-28T06:59:00Z", "badges": [{"name": "Joker Mayhem", "img": "7973c062-7a4f-41de-9a20-77d4b2edc56a", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "elden-q1", "name": "Questline 1: Path of the Tarnished", "category": "ELDEN RING", "start": "2026-09-01T07:00:00Z", "end": "2026-09-29T06:59:00Z", "badges": [{"name": "Sorcerer Rogier", "img": "3d6ad3b0-0a0f-43ae-a969-c5215d8d5a06", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "solasta", "name": "Solasta II", "category": "Solasta II", "start": "2026-09-08T10:30:00Z", "end": "2026-09-29T06:59:00Z", "badges": [{"name": "Solasta II Multiplayer", "img": "e8430418-13e9-4325-b2ad-85664d2a4ddd", "how": "Watch 30 minutes in the category.", "cost": "free"}]}, {"id": "nopixel", "name": "nopixel V", "category": "Grand Theft Auto V", "start": "2026-09-08T04:00:00Z", "end": "2026-09-30T03:59:00Z", "badges": [{"name": "nopixel V Launch", "img": "6a34b65f-93f6-4ebd-8f75-898bdaff79e8", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "wardogs", "name": "WARDOGS", "category": "WARDOGS", "start": "2026-09-03T18:00:00Z", "end": "2026-09-30T17:59:00Z", "badges": [{"name": "WARDOG", "img": "a00140ee-7c25-4cd1-95d9-54b9603f1f80", "how": "Watch 30 minutes in the category.", "cost": "free"}, {"name": "WARLORD", "img": "233322a6-0c31-43e7-acfa-f10e732e87da", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "dawnwalker", "name": "The Blood of Dawnwalker Launch", "category": "The Blood of Dawnwalker", "start": "2026-09-03T00:00:00Z", "end": "2026-09-30T23:58:00Z", "badges": [{"name": "Launch", "img": "1c04ddd1-6baa-4e5c-a685-976c621d5114", "how": "Watch 60 minutes in the category.", "cost": "free"}, {"name": "Supporter", "img": "63076299-4910-4594-a05c-60899d32c765", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "pokemon", "name": "Pokémon First Partners Collection", "category": "20 eligible Pokémon categories", "start": "2026-08-24T17:00:00Z", "end": "2026-10-01T07:00:00Z", "note": "Unlock the starters before Oct 1 — otherwise you can't get their evolution badges later.", "badges": [{"name": "Pichu", "img": "20f214cf-36b0-4b42-8992-3b769bcb0461", "how": "Watch 20 minutes a day for 3 days.", "cost": "free"}, {"name": "Bulbasaur", "img": "68072d07-8648-4066-9694-3f9fb594eb3d", "how": "Sub / gift sub, or watch 20 min a day for 3 days (1 in 3 chance).", "cost": "free"}, {"name": "Charmander", "img": "afe60f97-56d1-493d-a55c-2f1cec7aca7c", "how": "Sub / gift sub, or watch 20 min a day for 3 days (1 in 3 chance).", "cost": "free"}, {"name": "Squirtle", "img": "6e19714e-571f-4737-bc8b-865ebfb3e2c7", "how": "Sub / gift sub, or watch 20 min a day for 3 days (1 in 3 chance).", "cost": "free"}]}, {"id": "mouseathon", "name": "Mouseathon", "category": "Any · channel: ironmouse", "start": "2026-09-01T08:00:00Z", "end": "2026-10-01T07:00:00Z", "badges": [{"name": "Mouseathon", "img": "8bce8f4e-f53a-4922-b715-35167b0fae7b", "how": "Watch ironmouse for 15 minutes.", "cost": "free"}]}, {"id": "subtember", "name": "SUBtember 2026", "category": "Any", "start": "2026-08-28T17:00:00Z", "end": "2026-10-01T17:00:00Z", "badges": [{"name": "SUBtember 2026", "img": "6ae639f0-a06d-40a9-ad16-7b7e7c18a323", "how": "Subscribe, gift a sub, or cheer a single Bit anywhere.", "cost": "paid"}]}, {"id": "twitchcon-sd", "name": "TwitchCon 2026 San Diego", "category": "TwitchCon", "start": "2026-07-22T17:00:00Z", "end": "2026-11-15T23:59:00Z", "badges": [{"name": "BeachBall", "img": "b3f69c97-a9a7-4360-bb9e-485ec8db72bb", "how": "Buy a 1-day TwitchCon ticket.", "cost": "paid"}, {"name": "Taco", "img": "aea5244a-3fb5-48f9-a17c-a377760df226", "how": "Buy a 3-day TwitchCon ticket.", "cost": "paid"}]}, {"id": "wolverine", "name": "Marvel's Wolverine", "category": "Marvel's Wolverine", "start": "2026-09-14T14:00:00Z", "end": "2026-09-28T13:59:00Z", "badges": [{"name": "Marvel's Wolverine", "img": "55090800-82e4-4d31-8b3c-f9feb5e25557", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "elden-q2", "name": "Questline 2: Path of the Cardinal Sin", "category": "ELDEN RING", "start": "2026-10-01T00:00:00Z", "end": "2026-10-28T23:59:00Z", "badges": [{"name": "Festering Bloody Finger", "img": "", "how": "Details not announced yet.", "cost": "na"}]}, {"id": "ffxiv", "name": "Final Fantasy XIV Fan Festival 2026 JP", "category": "Final Fantasy XIV", "start": "2026-10-30T00:00:00Z", "end": "2026-11-01T23:59:00Z", "badges": [{"name": "Alpha Chat", "img": "1826cb5f-32a9-409a-9829-f6f47ea68239", "how": "Watch any creator in the FFXIV category for 60 minutes during Fan Fest.", "cost": "free"}, {"name": "Quest Complete Chat", "img": "e7d696ad-4479-4e44-bceb-5643f80bef38", "how": "Watch the Fan Fest on /finalfantasyxiv for 60 minutes.", "cost": "free"}]}, {"id": "elden-q3", "name": "Questline 3: Path of the Elden Lord", "category": "ELDEN RING", "start": "2026-11-02T00:00:00Z", "end": "2026-11-28T23:59:00Z", "badges": [{"name": "Warrior Jar Alexander", "img": "", "how": "Details not announced yet.", "cost": "na"}]}, {"id": "elden-q4", "name": "Questline 4: Path of Shadows", "category": "ELDEN RING", "start": "2026-12-01T00:00:00Z", "end": "2026-12-28T23:59:00Z", "badges": [{"name": "St. Trina", "img": "", "how": "Details not announced yet.", "cost": "na"}]}, {"id": "twitchcon-berlin", "name": "TwitchCon 2027 Berlin", "category": "TwitchCon", "start": "2027-05-22T00:00:00Z", "end": "2027-05-23T23:59:00Z", "badges": [{"name": "TwitchCon Berlin badges", "img": "", "how": "TwitchCon always ships its own badges — expected again this year.", "cost": "na"}]}, {"id": "pokemon-evo", "name": "Pokémon evolution badges", "category": "Pokémon", "start": "", "end": "", "badges": [{"name": "Evolutions (up to 8)", "img": "", "how": "Requires the four starter badges unlocked before Oct 1. Details later.", "cost": "na"}]}, {"id": "wasteland", "name": "Wasteland Circuit", "category": "Rainbow Six Siege", "start": "2026-09-23T14:00:00Z", "end": "2026-10-13T13:59:00Z", "badges": [{"name": "DRON-E", "img": "70e9e169-1fbf-4279-b23c-a714ccb0c9ef", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "dragonwilds", "name": "RuneScape: Dragonwilds", "category": "RuneScape: Dragonwilds", "start": "2026-09-15T12:00:00Z", "end": "2026-10-04T16:59:00Z", "badges": [{"name": "Dragonwilds Eye", "img": "a5b43a31-4534-4f9e-875b-b9f0d1be8f73", "how": "Watch 30 minutes in the category.", "cost": "free"}]}, {"id": "payday3", "name": "PAYDAY 3", "category": "PAYDAY 3", "start": "2026-09-24T12:00:00Z", "end": "2026-10-10T12:00:00Z", "badges": [{"name": "Chains", "img": "909fa1c7-8f4c-41c4-9910-ee936f7236d7", "how": "Watch 30 minutes.", "cost": "free"}, {"name": "Hoxton", "img": "bce13ab6-e9ae-4d9a-bf52-8ea7ba3ce8c4", "how": "Watch 60 minutes.", "cost": "free"}, {"name": "Wolf", "img": "714081b8-aded-46d7-a6c3-14b2d79f19be", "how": "Watch 90 minutes.", "cost": "free"}, {"name": "Dallas", "img": "a5ba44a9-2ccd-4b69-b5b8-9e28f1c887e7", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}, {"id": "wsci", "name": "2026 World Star Challengers Invitational", "category": "Unknown", "start": "2026-09-19T16:00:00Z", "end": "2026-10-03T03:59:00Z", "badges": [{"name": "WSCI 2026", "img": "e61d79be-7d9d-4de2-8571-41f00bf2081a", "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.", "cost": "paid"}]}];
-
-/* =====================================================================
-   BADGES — snapshot of every Twitch global badge set.
-   Format per row: [title, image id, added (YYYY-MM-DD or ""), free (1/0), users]
-   ===================================================================== */
-const BADGES = [["ACE COMBAT 8 Nugget","8468fb6c-1d33-4482-85ef-fa1898288ee2","2026-09-25",0,0,"ace-combat-8-nugget"],["Yellow Party Hat","6325b96b-0187-4a60-90d0-8bb45efa3fff","2026-09-25",0,0,"yellow-party-hat"],["RuneScape Shrimp","aed4a5ae-3e02-40c6-92bc-dfb8d33576f5","2026-09-24",0,0,"runescape-shrimp"],["Big Walk","3de5a89b-533b-483a-8db2-036f9f13b9bd","2026-09-24",0,0,"big-walk"],["Clipped That","5b648ccf-dc37-4233-a96e-c6e5d693a0ae","2026-09-23",0,0,"clipped-that"],["Rematch Blue Lock","13afe621-edd4-48b6-a09b-453a2dee52e9","2026-09-22",0,0,"rematch-blue-lock"],["The Inverted Man","755022bc-26e1-47a4-8d6f-961224713355","2026-09-21",0,0,"the-inverted-man"],["Don't Eat The Mold","f1617a53-9e8f-4bd4-b440-ab44f6f8f650","2026-09-21",0,0,"dont-eat-the-mold"],["Sevastopol Station","a6a681a9-3253-42de-b09a-7bda7c05c342","2026-09-21",0,0,"sevastopol-station"],["SEEGSON Synthetics","4709f62b-9cd9-4759-8953-c096527401c7","2026-09-21",0,0,"seegson-synthetics"],["d20","263a5bf1-c1ea-4f26-8bf8-db42ea2ebc7c","2026-09-19",0,0,"d20"],["Ampersand","b17f6b68-4a2d-4d2a-9967-aa8ff26012a0","2026-09-19",0,0,"ampersand"],["Teddie","80786dcb-bf5e-4069-ab13-32b4fa436c51","2026-09-17",0,0,"teddie"],["Nahobiho","adc8a831-4884-471b-9723-aad8bf3e05b8","2026-09-17",0,0,"nahobiho"],["Morgana","a0c09111-b247-4b40-88a2-7ef1cfc60f65","2026-09-17",0,0,"morgana"],["Koromaru","d08bb5f3-7638-45c6-919a-9f2eb4ef505e","2026-09-17",0,0,"koromaru"],["Homo Tenta","3ec6f155-ebc7-4624-89d9-ead63122dc52","2026-09-17",0,0,"homo-tenta"],["Blue Creeper Boss","e349e84d-1d91-4086-afda-e0c946717878","2026-09-17",0,0,"blue-creeper-boss"],["Ultramarine","12cb6b16-063b-4fcf-b312-c5c8f01e49ac","2026-09-16",0,0,"ultramarine"],["Horde","de8b26b6-fd28-4e6c-bc89-3d597343800d","",0,0,"warcraft"],["AutoMod","8dbdfef5-0901-457f-a644-afa77ba176e5","2025-04-10",0,0,"twitchbot"],["6-Month Subscriber","ed51a614-2c44-4a60-80b6-62908436b43a","",0,0,"subscriber"],["9-Month Subscriber","b4e6b13a-a76f-4c56-87e1-9375a7aaa610","",0,0,"subscriber"],["6-Month Subscriber","2d2485f6-d19b-4daa-8393-9493b019156b","",0,0,"subscriber"],["3-Month Subscriber","e8984705-d091-4e54-8241-e53b30a84b0e","",0,0,"subscriber"],["2-Month Subscriber","25a03e36-2bb2-4625-bd37-d6d9d406238d","",0,0,"subscriber"],["950 Gift Subs","7ce130bd-6f55-40cc-9231-e2a4cb712962","",0,0,"sub-gifter"],["900 Gift Subs","193d86f6-83e1-428c-9638-d6ca9e408166","",0,0,"sub-gifter"],["850 Gift Subs","cc924aaf-dfd4-4f3f-822a-f5a87eb24069","",0,0,"sub-gifter"],["800 Gift Subs","9c1fb96d-0579-43d7-ba94-94672eaef63a","",0,0,"sub-gifter"],["750 Gift Subs","ca17277c-53e5-422b-8bb4-7c5dcdb0ac67","",0,0,"sub-gifter"],["700 Gift Subs","4a9acdc7-30be-4dd1-9898-fc9e42b3d304","",0,0,"sub-gifter"],["650 Gift Subs","eeabf43c-8e4c-448d-9790-4c2172c57944","",0,0,"sub-gifter"],["600 Gift Subs","3ecc3aab-09bf-4823-905e-3a4647171fc1","",0,0,"sub-gifter"],["550 Gift Subs","024d2563-1794-43ed-b8dc-33df3efae900","",0,0,"sub-gifter"],["5000 Gift Subs","d775275d-fd19-4914-b63a-7928a22135c3","",0,0,"sub-gifter"],["500 Gift Subs","60e9504c-8c3d-489f-8a74-314fb195ad8d","",0,0,"sub-gifter"],["50 Gift Subs","c4a29737-e8a5-4420-917a-314a447f083e","",0,0,"sub-gifter"],["5 Gift Subs","ee113e59-c839-4472-969a-1e16d20f3962","",0,0,"sub-gifter"],["450 Gift Subs","b593d68a-f8fb-4516-a09a-18cce955402c","",0,0,"sub-gifter"],["4000 Gift Subs","efbf3c93-ecfa-4b67-8d0a-1f732fb07397","",0,0,"sub-gifter"],["400 Gift Subs","6f4cab6b-def9-4d99-ad06-90b0013b28c8","",0,0,"sub-gifter"],["350 Gift Subs","6c4783cd-0aba-4e75-a7a4-f48a70b665b0","",0,0,"sub-gifter"],["3000 Gift Subs","b18852ba-65d2-4b84-97d2-aeb6c44a0956","",0,0,"sub-gifter"],["300 Gift Subs","9e1bb24f-d238-4078-871a-ac401b76ecf2","",0,0,"sub-gifter"],["250 Gift Subs","cd479dc0-4a15-407d-891f-9fd2740bddda","",0,0,"sub-gifter"],["25 Gift Subs","052a5d41-f1cc-455c-bc7b-fe841ffaf17f","",0,0,"sub-gifter"],["2000 Gift Subs","4e8b3a32-1513-44ad-8a12-6c90232c77f9","",0,0,"sub-gifter"],["200 Gift Subs","c6b1893e-8059-4024-b93c-39c84b601732","",0,0,"sub-gifter"],["150 Gift Subs","514845ba-0fc3-4771-bce1-14d57e91e621","",0,0,"sub-gifter"],["1000 Gift Subs","bfb7399a-c632-42f7-8d5f-154610dede81","",0,0,"sub-gifter"],["100 Gift Subs","8343ada7-3451-434e-91c4-e82bdcf54460","",0,0,"sub-gifter"],["10 Gift Subs","d333288c-65d7-4c7b-b691-cdd7b3484bf8","",0,0,"sub-gifter"],["Gifter Leader 3","4c6e4497-eed9-4dd3-ac64-e0599d0a63e5","",0,0,"sub-gift-leader"],["Gifter Leader 2","0d9fe96b-97b7-4215-b5f3-5328ebad271c","",0,0,"sub-gift-leader"],["Social Media Badge","590698dd-2bc4-4401-817a-17c641f5e881","2025-09-22",0,0,"social-sharing"],["Social Media Badge","fcca0804-1da5-4d00-ab06-7677676d4d8e","2025-09-22",0,0,"social-sharing"],["beta_title1","aa960159-a7b8-417e-83c1-035e4bc2deb5","2026-09-14",0,0,"samusoffer_beta"],["Rematch Nations Cup ENG","514cce91-edf6-4c20-9676-e1ba7431926f","2026-06-04",0,0,"rematch-nations-cup-eng"],["Predicted Pink (2)","4b76d5f2-91cc-4400-adf2-908a1e6cfd1e","",0,0,"predictions"],["Predicted Pink (1)","75e27613-caf7-4585-98f1-cb7363a69a4a","",0,0,"predictions"],["Predicted Gray (2)","097a4b14-b458-47eb-91b6-fe74d3dbb3f5","",0,0,"predictions"],["Predicted Gray (1)","144f77a2-e324-4a6b-9c17-9304fa193a27","",0,0,"predictions"],["Predicted Blue (9)","fc74bd90-2b74-4f56-8e42-04d405e10fae","",0,0,"predictions"],["Predicted Blue (8)","4416dfd7-db97-44a0-98e7-40b4e250615e","",0,0,"predictions"],["Predicted Blue (7)","07cd34b2-c6a1-45f5-8d8a-131e3c8b2279","",0,0,"predictions"],["Predicted Blue (6)","46b1537e-d8b0-4c0d-8fba-a652e57b9df0","",0,0,"predictions"],["Predicted Blue (5)","88758be8-de09-479b-9383-e3bb6d9e6f06","",0,0,"predictions"],["Predicted Blue (4)","df95317d-9568-46de-a421-a8520edb9349","",0,0,"predictions"],["Predicted Blue (3)","f2ab9a19-8ef7-4f9f-bd5d-9cf4e603f845","",0,0,"predictions"],["Predicted Blue (2)","ffdda3fe-8012-4db3-981e-7a131402b057","",0,0,"predictions"],["Predicted Blue (10)","072ae906-ecf7-44f1-ac69-a5b2261d8892","",0,0,"predictions"],["Yellow Ranger","d6dca630-1ca4-48de-94e7-55ed0a24d8d1","",0,0,"power-rangers"],["White Ranger","06c85e34-477e-4939-9537-fd9978976042","",0,0,"power-rangers"],["Red Ranger","8843d2de-049f-47d5-9794-b6517903db61","",0,0,"power-rangers"],["Pink Ranger","5c58cb40-9028-4d16-af67-5bc0c18b745e","",0,0,"power-rangers"],["Green Ranger","21bbcd6d-1751-4d28-a0c3-0b72453dd823","",0,0,"power-rangers"],["Blue Ranger","1eeae8fe-5bc6-44ed-9c88-fb84d5e0df52","",0,0,"power-rangers"],["OWL All-Access Pass 2019","be87fd6d-1560-4e33-9ba4-2401b58d901f","",0,0,"overwatch-league-insider_2019B"],["OWL All-Access Pass 2019","a8ae0ccd-783d-460d-93ee-57c485c558a6","",0,0,"overwatch-league-insider_2019B"],["OWL All-Access Pass 2019","765a0dcf-2a94-43ff-9b9c-ef6c209b90cd","",0,0,"overwatch-league-insider_2019B"],["OWL All-Access Pass 2019","75f05d4b-3042-415c-8b0b-e87620a24daf","",0,0,"overwatch-league-insider_2019B"],["OWL All-Access Pass 2019","ab7fa7a7-c2d9-403f-9f33-215b29b43ce4","",0,0,"overwatch-league-insider_2019A"],["Moments Badge - Tier 9","5cb2e584-1efd-469b-ab1d-4d1b59a944e7","",0,0,"moments"],["Moments Badge - Tier 8","f22286cd-6aa3-42ce-b3fb-10f5d18c4aa0","",0,0,"moments"],["Moments Badge - Tier 7","a90a26a4-fdf7-4ac3-a782-76a413da16c1","",0,0,"moments"],["Moments Badge - Tier 6","f9e3b4e4-200e-4045-bd71-3a6b480c23ae","",0,0,"moments"],["Moments Badge - Tier 5","c8a0d95a-856e-4097-9fc0-7765300a4f58","",0,0,"moments"],["Moments Badge - Tier 4","fe5b5ddc-93e7-4aaf-9b3e-799cd41808b1","",0,0,"moments"],["Moments Badge - Tier 3","d08658d7-205f-4f75-ad44-8c6e0acd8ef6","",0,0,"moments"],["Moments Badge - Tier 20","43399796-e74c-4741-a975-56202f0af30e","",0,0,"moments"],["Moments Badge - Tier 2","fc46b10c-5b45-43fd-81ad-d5cb0de6d2f4","",0,0,"moments"],["Moments Badge - Tier 19","6100cc6f-6b4b-4a3d-a55b-a5b34edb5ea1","",0,0,"moments"],["Moments Badge - Tier 18","14057e75-080c-42da-a412-6232c6f33b68","",0,0,"moments"],["Moments Badge - Tier 17","3b08c1ee-0f77-451b-9226-b5b22d7f023c","",0,0,"moments"],["Moments Badge - Tier 16","5684d1bc-8132-4a4f-850c-18d3c5bd04f3","",0,0,"moments"],["Moments Badge - Tier 15","b241d667-280b-4183-96ae-2d0053631186","",0,0,"moments"],["Moments Badge - Tier 14","cb40eb03-1015-45ba-8793-51c66a24a3d5","",0,0,"moments"],["Moments Badge - Tier 13","35eb3395-a1d3-4170-969a-86402ecfb11a","",0,0,"moments"],["Moments Badge - Tier 12","f2c91d14-85c8-434b-a6c0-6d7930091150","",0,0,"moments"],["Moments Badge - Tier 11","7573e7a2-0f1f-4508-b833-d822567a1e03","",0,0,"moments"],["Moments Badge - Tier 10","9c13f2b6-69cd-4537-91b4-4a8bd8b6b1fd","",0,0,"moments"],["Marvel's Wolverine","55090800-82e4-4d31-8b3c-f9feb5e25557","2026-09-14",0,0,"marvels-wolverine"],["Former Hype Train Conductor","9c8d038a-3a29-45ea-96d4-5031fb1a7a81","",0,0,"hype-train"],["Creator Campaign Reward","072f22ee-9efb-486d-997c-2a5b575b4845","2026-09-14",0,0,"default-creator-campaign-reward"],["Clips Leader 3","fb838633-6ff6-46df-98b4-9e53fcff84f6","2025-04-11",0,0,"clips-leader"],["Clips Leader 2","9eddf7ab-aa46-4798-abe2-710db1043254","2025-04-11",0,0,"clips-leader"],["Blossom Badge Level 4","b00f8ff9-aeee-4c27-b974-5513f3abc91a","2026-06-18",0,0,"blossom-badge"],["Blossom Badge Level 3","75fd2129-b0d6-4290-83f6-41740d1b7825","2026-06-18",0,0,"blossom-badge"],["Blossom Badge Level 2","d045617b-c37f-4643-9170-df05222cacc3","2026-06-18",0,0,"blossom-badge"],["Bloom Badge Level 4","d52284fd-bf7a-4a94-85ad-e2f0427ec6db","2026-03-31",0,0,"bloom-badge"],["Bloom Badge Level 3","d7c40c24-02ca-4221-ae02-28402528a006","2026-03-31",0,0,"bloom-badge"],["Bloom Badge Level 2","45eea8e2-e0b3-4560-a32f-4a4cb5b0a061","2026-03-31",0,0,"bloom-badge"],["Bits Leader 3","f1d2aab6-b647-47af-965b-84909cf303aa","",0,0,"bits-leader"],["Bits Leader 2","f04baac7-9141-4456-a0e7-6301bcc34138","",0,0,"bits-leader"],["cheer 900000","088c58c6-7c38-45ba-8f73-63ef24189b84","",0,0,"bits"],["cheer 800000","5ec2ee3e-5633-4c2a-8e77-77473fe409e6","",0,0,"bits"],["cheer 75000","ce491fa4-b24f-4f3b-b6ff-44b080202792","",0,0,"bits"],["cheer 700000","a1d2a824-f216-4b9f-9642-3de8ed370957","",0,0,"bits"],["cheer 600000","4d908059-f91c-4aef-9acb-634434f4c32e","",0,0,"bits"],["cheer 5000000","3f085f85-8d15-4a03-a829-17fca7bf1bc2","",0,0,"bits"],["cheer 500000","f6932b57-6a6e-4062-a770-dfbd9f4302e5","",0,0,"bits"],["cheer 50000","62310ba7-9916-4235-9eba-40110d67f85d","",0,0,"bits"],["cheer 5000","57cd97fc-3e9e-4c6d-9d41-60147137234e","",0,0,"bits"],["cheer 4500000","736d4156-ac67-4256-a224-3e6e915436db","",0,0,"bits"],["cheer 4000000","79fe642a-87f3-40b1-892e-a341747b6e08","",0,0,"bits"],["cheer 400000","a8f393af-76e6-4aa2-9dd0-7dcc1c34f036","",0,0,"bits"],["cheer 3500000","c3d218f5-1e45-419d-9c11-033a1ae54d3a","",0,0,"bits"],["cheer 3000000","5671797f-5e9f-478c-a2b5-eb086c8928cf","",0,0,"bits"],["cheer 300000","ac13372d-2e94-41d1-ae11-ecd677f69bb6","",0,0,"bits"],["cheer 2500000","cf061daf-d571-4811-bcc2-c55c8792bc8f","",0,0,"bits"],["cheer 25000","64ca5920-c663-4bd8-bfb1-751b4caea2dd","",0,0,"bits"],["cheer 2000000","7ea89c53-1a3b-45f9-9223-d97ae19089f2","",0,0,"bits"],["cheer 200000","4a0b90c4-e4ef-407f-84fe-36b14aebdbb6","",0,0,"bits"],["cheer 1750000","183f1fd8-aaf4-450c-a413-e53f839f0f82","",0,0,"bits"],["cheer 1500000","c4eba5b4-17a7-40a1-a668-bc1972c1e24d","",0,0,"bits"],["cheer 1250000","ce217209-4615-4bf8-81e3-57d06b8b9dc7","",0,0,"bits"],["cheer 1000000","494d1c8e-c3b2-4d88-8528-baff57c9bd3f","",0,0,"bits"],["cheer 100000","96f0540f-aa63-49e1-a8b3-259ece3bd098","",0,0,"bits"],["cheer 10000","68af213b-a771-4124-b6e3-9bb6d98aa732","",0,0,"bits"],["cheer 1000","0d85a29e-79ad-4c63-a285-3acd2c66f2ba","",0,0,"bits"],["cheer 100","09d93036-e7ce-431c-9a9e-7044297133f2","",0,0,"bits"],["Joker Mayhem","7973c062-7a4f-41de-9a20-77d4b2edc56a","2026-09-12",0,0,"joker-mayhem"],["WSCI 2026","e61d79be-7d9d-4de2-8571-41f00bf2081a","2026-09-11",1,0,"wsci-2026"],["Chains","909fa1c7-8f4c-41c4-9910-ee936f7236d7","2026-09-11",1,0,"chains"],["Dallas","a5ba44a9-2ccd-4b69-b5b8-9e28f1c887e7","2026-09-11",0,0,"dallas"],["Hoxton","bce13ab6-e9ae-4d9a-bf52-8ea7ba3ce8c4","2026-09-11",1,0,"hoxton"],["Wolf","714081b8-aded-46d7-a6c3-14b2d79f19be","2026-09-11",1,0,"wolf"],["RuneScape Dragonwilds Eye","a5b43a31-4534-4f9e-875b-b9f0d1be8f73","2026-09-10",1,0,"runescape-dragonwilds-eye"],["Solasta II Multiplayer","e8430418-13e9-4325-b2ad-85664d2a4ddd","2026-09-08",1,0,"solasta-2-multiplayer"],["Volume Up","8d2a48c5-f188-4468-b165-d4771f539c24","2026-09-04",1,0,"volume-up"],["SUBtember 2026","6ae639f0-a06d-40a9-ad16-7b7e7c18a323","2026-09-04",0,0,"subtember-2026"],["nopixel V Launch","6a34b65f-93f6-4ebd-8f75-898bdaff79e8","2026-09-03",0,0,"nopixel-v-launch"],["Onimusha Armament","379bfc94-8276-4e9e-9a34-615e10c55baf","2026-09-02",0,0,"onimusha-armament"],["ZEVENT 2026","daea9c61-566f-41da-9b0a-1c520faf5c01","2026-09-02",1,0,"zevent-2026"],["WARDOG","a00140ee-7c25-4cd1-95d9-54b9603f1f80","2026-09-01",1,0,"wardog"],["WARLORD","233322a6-0c31-43e7-acfa-f10e732e87da","2026-09-01",0,0,"warlord"],["MOOtivation","9e1abb05-df79-49ee-bdb8-12869bb64f51","2026-09-01",1,0,"mootivation"],["Sorcerer Rogier ELDEN RING","3d6ad3b0-0a0f-43ae-a969-c5215d8d5a06","2026-08-31",0,0,"sorcerer-rogier-elden-ring"],["Harley Mayhem","1d235db6-09cc-458f-9805-be2efc178e54","2026-08-31",0,0,"harley-mayhem"],["Mouseathon","8bce8f4e-f53a-4922-b715-35167b0fae7b","2026-08-27",1,0,"mouseathon"],["2026 Worlds costumed Pikachu","bace09ab-0403-405a-b412-d9567738d210","2026-08-26",1,0,"2026-worlds-costumed-pikachu"],["PokémonXP costumed Pikachu","e3374139-6240-462e-b77d-d3ac00a4da23","2026-08-26",1,0,"pokemonxp-costumed-pikachu"],["Diablo","12e66b34-5748-4eb0-8cf1-63d01e925b4f","2026-08-24",0,0,"diablo"],["DRON-E","70e9e169-1fbf-4279-b23c-a714ccb0c9ef","2026-08-24",0,0,"dron-e"],["NASA Roman","c411b949-c736-4b1a-9769-d759e213923c","2026-08-24",1,0,"nasa-roman"],["Bulbasaur","68072d07-8648-4066-9694-3f9fb594eb3d","2026-08-17",0,0,"bulbasaur"],["Charmander","afe60f97-56d1-493d-a55c-2f1cec7aca7c","2026-08-17",0,0,"charmander"],["Pichu","20f214cf-36b0-4b42-8992-3b769bcb0461","2026-08-17",1,0,"pichu"],["Squirtle","6e19714e-571f-4737-bc8b-865ebfb3e2c7","2026-08-17",0,0,"squirtle"],["Resonance Minotaur","63cf6329-f34c-449e-8f70-fafa1eb1de9e","2026-08-13",1,0,"resonance-minotaur"],["The Blood of Dawnwalker Launch","1c04ddd1-6baa-4e5c-a685-976c621d5114","2026-08-13",1,0,"the-blood-of-dawnwalker-launch"],["The Blood of Dawnwalker Supporter","63076299-4910-4594-a05c-60899d32c765","2026-08-13",0,0,"the-blood-of-dawnwalker-supporter"],["League of Legends Classic","4bd0a409-4313-4f21-8a5a-00b1bdb77d73","2026-08-10",0,0,"league-of-legends-classic"],["EnchantedBigBoiBoxers","267664ac-261c-48e1-8dc3-dad180eb5146","2026-08-06",0,0,"enchantedbigboiboxers"],["PrincessDonutBrown","88264e40-69cf-4afb-8b12-3df0ba5ca460","2026-08-06",0,0,"princessdonutbrown"],["PrincessDonutPink","c70f2113-d552-44be-9f8f-40550dbe5fdd","2026-08-06",0,0,"princessdonutpink"],["Hulk","b56139ed-b483-441f-9d89-70f5d0bca1b6","2026-08-05",0,0,"hulk"],["Egg","74c777c3-715f-4c40-b991-6a36239e6ef0","2026-07-28",0,1388,"egg"],["Dead by Daylight Pride Icon","61aac75c-fb98-4f75-9fa8-4d843c5c545a","2026-07-27",0,14616,"dead-by-daylight-pride-icon"],["Spiderman","03ba20e2-11e1-481c-80d8-155e87afc724","2026-07-24",0,10224,"spiderman"],["Budz","a7c72bfa-8758-4ba6-92ad-b31edcac1267","2026-07-22",0,533,"budz"],["La Velada VI","e767e17a-252a-4047-9365-910f4f05a883","2026-07-22",1,32858,"la-velada-vi"],["EWC 2026 Co-Streamer (Bronze)","22d9f0cd-02a2-41e7-8e3c-f5b2387a3a3e","2026-07-21",1,0,"ewc-2026-co-streamer-bronze"],["EWC 2026 Co-Streamer (Diamond)","a883985f-fd23-4365-bc80-28726a8cd735","2026-07-21",1,0,"ewc-2026-co-streamer-diamond"],["EWC 2026 Co-Streamer (Gold)","933df6d6-70bb-445a-8b85-c7b39af82ffd","2026-07-21",1,0,"ewc-2026-co-streamer-gold"],["EWC 2026 Co-Streamer (Platinum)","fb93617f-b5fa-46c3-8354-6d1d3460b9d2","2026-07-21",1,0,"ewc-2026-co-streamer-platinum"],["EWC 2026 Co-Streamer (Silver)","a17b6a0f-6a06-4ca2-a153-82ebb368edab","2026-07-21",1,0,"ewc-2026-co-streamer-silver"],["EWC 2026 Co-Streamer (Ultraviolet)","548010ef-5b5b-497c-82dc-61fbb52738b5","2026-07-21",0,0,"ewc-2026-co-streamer-ultraviolet"],["SAND","b732ba75-3f73-4ce9-b0d0-5bbe1fa3be7e","2026-07-16",0,615,"sand"],["Meccha Chameleon","97f7f702-fde1-48a2-8992-ae0711e06819","2026-07-16",0,2074,"meccha-chameleon"],["Dreamers","fe2c830a-81d6-4915-b77d-f779bcfa121b","2026-07-15",1,5571,"dreamers"],["TwitchCon 2026 - San Diego - BeachBall","b3f69c97-a9a7-4360-bb9e-485ec8db72bb","2026-07-15",0,243,"twitchcon-2026---san-diego---beachball"],["TwitchCon 2026 - San Diego - Taco","aea5244a-3fb5-48f9-a17c-a377760df226","2026-07-15",0,559,"twitchcon-2026---san-diego---taco"],["Hotline","31d7dfb0-2687-486c-a3f4-b86d1e307fa5","2026-07-14",0,753,"hotline"],["Team Instinct","53dd634e-9efd-46a9-9e5b-0d9da7262171","2026-07-13",0,448,"team-instinct"],["Team Mystic","b927a7fe-13e4-4e00-9dd0-c060eb7b9ab1","2026-07-11",0,646,"team-mystic"],["Team Valor","8837af43-de4b-488b-b3f0-d6117b365196","2026-07-10",0,677,"team-valor"],["Dream Beyond","2cbd5102-928f-4e99-819a-e38511752918","2026-07-09",0,457,"dream-beyond"],["Jubilee","9722b4f6-c818-4f7c-8cc3-c22c70d00c53","2026-07-09",0,18623,"jubilee"],["Meltan","bf3cca10-6aec-4143-96ce-c41d15feebf8","2026-07-08",0,1995,"meltan"],["Ayane","471b7cc9-875f-445b-86f6-8009cee27843","2026-07-08",0,683,"ayane"],["Killer Inn","0900e6b7-23bf-4c64-b5c7-abfd7e9704e7","2026-07-08",0,93,"killer-inn"],["Perlica","c81d6782-6f5a-4c63-a00b-f041ac2cdcda","2026-07-08",0,5668,"perlica"],["Relink Fabicon","fda40ef0-dbad-47ed-8293-789babaead05","2026-07-08",0,874,"relink-fabicon"],["Mint","835ca28b-5b99-4729-9c88-3dcd772b84f5","2026-07-08",0,6450,"mint"],["Cool Cattiva","e3d90ca4-f274-431f-bcc0-c0f8963e6624","2026-07-08",0,13837,"cool-cattiva"],["EWC 2026 (Bronze)","40b8d131-61f0-4ae6-9f65-65a23b27c139","2026-07-07",1,20760,"ewc-2026-bronze"],["EWC 2026 (Diamond)","cb874239-c790-4f58-93c2-319254d61d18","2026-07-07",1,96008,"ewc-2026-diamond"],["EWC 2026 (Gold)","aa891ef7-b24b-49ff-ae08-13819621fc4b","2026-07-07",1,46547,"ewc-2026-gold"],["EWC 2026 (Platinum)","ccd6c0c5-7854-4bc1-b196-ad13e097f2da","2026-07-07",1,44410,"ewc-2026-platinum"],["EWC 2026 (Silver)","b58c52e5-ed3c-41e4-9cda-90b26aa1dbcb","2026-07-07",1,18698,"ewc-2026-silver"],["EWC 2026 (Ultraviolet)","a3f5d70f-268f-498d-b0cc-db51bdf355a2","2026-07-07",0,11628,"ewc-2026-ultraviolet"],["Grey Zone Warfare","7e1936c6-4e73-4aa5-8bd6-e5ae5ab8fcd5","2026-06-25",0,1226,"grey-zone-warfare"],["MSI 2026","8c36a423-f3f0-49c2-a886-ecec931b05cb","2026-06-25",0,2697,"msi-2026"],["Evo Las Vegas 2026","6838631a-037c-4dc3-b0f5-1cc15367bd53","2026-06-25",0,1458,"evo-las-vegas-2026"],["DOA6LR Kasumi","709a8b0c-cdf3-4a49-9f93-911376a1cb2e","2026-06-24",0,612,"doa6lr-kasumi"],["Detroit Android Triangle","69bf153a-cfa9-4290-9d00-6b1edc4dbe43","2026-06-19",1,10992,"detroit-android-triangle"],["Detroit Blue LED","b3cc4258-07e4-4b3b-b37f-a9c9268853fb","2026-06-19",0,2169,"detroit-blue-led"],["Blossom Badge Level 1","c255cb27-7e04-4be1-9dee-434e85523638","2026-06-18",1,233806,"blossom-badge"],["Two Point Museum","5008ac34-9165-4fc2-a87c-f7f2526c0509","2026-06-16",0,192,"two-point-museum"],["Two Point Pickle","42c77849-e591-48dc-84e4-556438f7c5c2","2026-06-16",1,13322,"two-point-pickle"],["Assassin's Creed Black Flag Resynced","393bfb62-dca0-4133-9a63-eb53b031b404","2026-06-10",0,12311,"assassins-creed-black-flag-resynced"],["Dead by Daylight Icon","4f1be82e-d29e-4898-a4c7-29b3ce6ce807","2026-06-10",0,25177,"dead-by-daylight-icon"],["Dead by Daylight x Jason Universe","f54d7865-e97d-4e1a-8392-788ccbcd1199","2026-06-10",0,19562,"dead-by-daylight-x-jason-universe"],["YOU GOT THIS","b1e71597-54d4-497e-9e2a-f63b01f4dc82","2026-06-10",1,3046,"you-got-this"],["Football Fest 2026","2b195857-8531-4487-a998-62fb9dbbe0e5","2026-06-08",1,128993,"football-fest-2026"],["RuneScape Dragon Dagger","0a4afdfc-7b58-4674-beb4-631766208b6d","2026-06-05",1,19716,"runescape-dragon-dagger"],["RuneScape Skull","7f382386-e3ce-4c3d-8c23-464851415321","2026-06-05",0,11027,"runescape-skull"],["Rematch Brazil","7ec48e22-597f-4900-81e9-a6daa817e78f","2026-06-04",0,33,"rematch-brazil"],["Rematch England","34f1ef71-41e7-440e-9f7e-ed3a56ff8bcc","2026-06-04",0,127,"rematch-england"],["Rematch France","0c2bf01c-5f83-459c-804c-484d42bf278a","2026-06-04",0,52,"rematch-france"],["Rematch Nations Cup","a0ee40aa-d779-4f2e-bfe4-850d10bf8eae","2026-06-04",1,5460,"rematch-nations-cup"],["Rematch US","8d7a5df0-b8ae-4192-bc5f-d4c443406238","2026-06-04",0,75,"rematch-us"],["Mod Founder","b1d1da41-5616-42a5-b1fa-132753d29f8a","2026-05-29",1,6455,"mod-founder"],["Wholesome Direct 2026","76c44199-6ad5-4bde-a1c7-65f13adf07d6","2026-05-26",1,26766,"wholesome-direct-2026"],["Bubsy 4D!","0652a149-9fc6-4a9b-82c4-31793c0e384a","2026-05-22",1,17664,"bubsy-4d"],["Alterra Corporation","18d8ad18-788e-4b47-9c9b-783a41c13ec3","2026-05-19",0,2629,"alterra-corporation"],["RoadToTwitchCon26","03eeb136-3249-49cc-b45a-569edea04907","2026-05-15",1,5639,"road-to-twitchcon-26"],["LEGO® Batman™: Legacy of the Dark Knight","4d54795e-5f6c-4b5b-9a30-0d78e6d0d67b","2026-05-15",0,25259,"lego-batman-legacy-of-the-dark-knight"],["007 Gun Barrel","6ae7ce40-99e6-4d83-8487-f8b990bf5f32","2026-05-15",0,13047,"007-gun-barrel"],["Skulls 10th Anniversary","682bdd23-f49d-4c5b-bd82-2c00a65ea22a","2026-05-15",0,1592,"skulls-10th-anniversary"],["Civ VII - Test of Time","eae24f68-7b45-4cf0-8854-d3e419006238","2026-05-14",0,209,"civ-vii---test-of-time"],["BrawlhallAwoo","a3e4f5e7-a6c9-4458-b8c4-f83a0f725566","2026-05-14",0,2341,"brawlhallawoo"],["Waterslug","7c98905d-49ed-44f0-886e-ab6983268db6","2026-05-13",0,19251,"waterslug"],["Hime","20098028-701d-49c5-a5b6-22763ce23dd9","2026-05-11",1,3188,"hime"],["Yuzu","bc590afa-de5e-4202-96ff-fe4bdff3e04e","2026-05-11",1,7745,"yuzu"],["CRASH","c194a433-5fb4-4f57-a5e7-64ff9f02bf24","2026-05-06",1,2,"crash"],["Went Outside","544b6594-e11e-4230-8d42-d81c84002524","2026-05-06",1,218022,"went-outside"],["SpeeDons 6","00fff6f2-8ac0-4001-b736-c02654756697","2026-05-05",1,27260,"speedons-6"],["Unicorn Tachanka","dc23d5e0-b9ec-4729-9d53-ca1a8328add0","2026-05-01",0,13646,"unicorn-tachanka"],["Final Fantasy XIV Fan Festival 2026 NA - Main Scenario Quest","4629468f-897e-4466-8599-d828cf079cdc","2026-04-24",1,20148,"final-fantasy-xiv-fan-festival-2026-na---main-scenario-quest-"],["Final Fantasy XIV Fan Festival 2026 NA - Fat Cat","dd9eae59-5dfd-499d-9cb2-f9e4440ef622","2026-04-24",1,100420,"final-fantasy-xiv-fan-festival-2026-na---fat-cat"],["Invincible VS","5bec611b-d8a1-4da4-9218-341e8e46d847","2026-04-23",0,2107,"invincible-vs"],["Final Fantasy XIV Fan Festival 2026 JP - Alpha Chat","1826cb5f-32a9-409a-9829-f6f47ea68239","2026-04-21",1,0,"final-fantasy-xiv-fan-festival-2026-jp---alpha-chat"],["Final Fantasy XIV Fan Festival 2026 JP - Quest Complete Chat","e7d696ad-4479-4e44-bceb-5643f80bef38","2026-04-21",1,0,"final-fantasy-xiv-fan-festival-2026-jp---quest-complete-chat"],["Final Fantasy XIV Fan Festival 2026 EU - Content Unlock Quest Chat","df82d637-1c58-4dd9-a439-b2518c5fbf5f","2026-04-21",1,5604,"final-fantasy-xiv-fan-festival-2026-eu---content-unlock-quest-chat"],["Final Fantasy XIV Fan Festival 2026 EU - Moogle Chat","96e02b5f-f444-48ba-889f-591c7ad18e59","2026-04-21",1,35515,"final-fantasy-xiv-fan-festival-2026-eu---moogle-chat"],["Final Fantasy XIV Fan Festival 2026 NA - Fat Cat Chat","82ff2bf7-45cf-4cfa-8eb0-253dc879c2a9","2026-04-21",1,21355,"final-fantasy-xiv-fan-festival-2026-na---fat-cat-chat"],["Final Fantasy XIV Fan Festival 2026 NA - Main Scenario Quest Chat","da897ed5-2676-4e90-a92e-fc7764bd7e45","2026-04-21",1,0,"final-fantasy-xiv-fan-festival-2026-na---main-scenario-quest-chat"],["Cryana","a7dda6c4-4994-4d8d-99f4-525f06690329","2026-04-16",0,28109,"cryana"],["Clair Obscur: Expedition 33 One Year Anniversary","44044991-46d1-436e-9ec8-d528a211f814","2026-04-16",0,9770,"clair-obscur-expedition-33-one-year-anniversary"],["Dodomogged","82b74b78-7791-46db-abe6-f8acc08dde43","2026-04-13",0,6750,"dodomogged"],["Winston Overwatch","ca9f2cd1-ab84-4e45-9192-e7074cb001ea","2026-04-13",0,59322,"winston-overwatch"],["PogChamps 6 7","60ca34ba-9fb8-40f8-a58d-4e102dd793ad","2026-04-09",0,4609,"pogchamps-6-7"],["2026 BAFTA Games Awards","44244be0-bb62-470c-bb0f-d2f6fcac2864","2026-04-08",1,10673,"2026-bafta-games-awards"],["CDawg Cyclethon 5 Badge","bc969f36-b221-487f-ab5b-8ecb3a60ded2","2026-04-03",1,34863,"cdawg-cyclethon-5-badge"],["Baby Chick","846a8d2c-b94e-4db6-8f8f-31885e3c187a","2026-04-03",0,25343,"baby-chick-chat-badge"],["Bloom Badge Level 1","6c119c4d-adb3-4199-a0cb-3e09d7bc14c3","2026-03-31",1,0,"bloom-badge"],["NASA Artemis II","52f0ea34-b35a-4bab-97a0-c7d354a27268","2026-03-30",1,241077,"nasa-artemis-ii"],["Star Force Mega Man","ce4e940c-025b-42fa-99f0-776459c511e9","2026-03-26",0,1153,"star-force-mega-man"],["PUACL2026 FINALS Charizard","0ff76959-0c05-4406-b18a-779fd6debdd6","2026-03-26",0,4307,"puacl2026-finals-charizard"],["Borderlands 4 - C4SH","42e19e2e-a07a-4446-862b-1b1567d344b8","2026-03-23",0,972,"borderlands-4---c4sh"],["Crimson Desert - Crest","2107571b-2db3-401b-b8e1-13b9e9696ea7","2026-03-17",0,8303,"crimson-desert---crest"],["First Stand 2026 Supporter","ea899f87-f7f5-4d9d-9de9-173331341199","2026-03-12",0,1525,"first-stand-2026-supporter"],["First Stand 2026 Viewer","2ae99aac-ac5b-4d69-884b-3eb20621340d","2026-03-12",1,73697,"first-stand-2026-viewer"],["QSMP2","2fa68fb9-fcdd-4795-bfab-f408e10efaef","2026-03-12",1,130537,"qsmp2"],["Rudy","309c197a-69ed-4c15-8226-a0992f1f5b68","2026-03-12",0,2222,"rudy"],["Crimson Butterfly","63243824-6d43-45cf-8d21-fe0b06ab587f","2026-03-11",0,13062,"crimson-butterfly"],["Ditto","b577304e-7dc9-49f2-bee1-68caf56a91e6","2026-03-04",0,64482,"ditto"],["Never Grave - Witch Hat","fb752b70-4eb6-45dd-8ee1-1194c38d2ac3","2026-02-27",0,841,"never-grave---witch-hat"],["TwitchCon 2026 - Europe - Row Houses","4a354d32-ca7f-4d6f-815a-f80be9c7c088","2026-02-27",0,2247,"twitchcon-2026-europe-row-houses"],["TwitchCon 2026 - Europe - Windmill","ed34b8e2-7c1c-4551-b4d7-63b44d61fb31","2026-02-27",0,2241,"twitchcon-2026-europe-windmill"],["Pokémon 30th","c4c10b31-ad76-4600-a3cc-48c875e1f7c0","2026-02-26",0,30883,"pokemon-30th-anniversary"],["Mr. Raccoon","057b7ef9-6b3d-4a9c-9f0c-ede0df1315db","2026-02-26",0,22235,"mr-raccoon"],["Toxic Zombie","ccdf9673-a0b8-4bc1-a40f-105b8b951f98","2026-02-26",0,771,"toxic-zombie"],["Marathon Silkworm","eabd1994-d054-4eb1-a740-7cce1ad4f0cb","2026-02-26",1,86101,"marathon-silkworm"],["Marathon Sub Burger","5bc8a500-12f5-42c4-86f7-a678d1f930a1","2026-02-26",0,2950,"marathon-sub-burger"],["Aang","dfc8243b-037c-4e5e-a8f3-87ad1f01850d","2026-02-25",0,1063,"aang"],["Hypershot Celestial","3ee3441d-92d4-4f00-b8b4-64cb3d97e17e","2026-02-19",1,17945,"hypershot-celestial"],["Seek's Eye","2ff5095e-8b37-489c-9a53-336bf806dca2","2026-02-17",1,19933,"seeks-eye"],["The Deer","5f026869-a186-4f98-bb11-3eb148633d85","2026-02-15",1,12506,"the-deer"],["Fischer","50488ced-e1ee-4ea4-bb44-fb60d7d396c2","2026-02-13",1,22272,"fischer"],["JasonTheWeen 7 Day Survival","f299577c-8b51-4cb1-ad7c-11faca0c32e9","2026-02-10",1,29862,"jasontheween-7-day-survival"],["Diablo 30th Anniversary","2f98d79a-c78c-4c61-ac9e-7bc544d44619","2026-02-04",0,6751,"diablo-30th-anniversary"],["BingBongLove","4ffa02fc-ae89-4557-95ca-b9fc65909bd0","2026-02-04",1,117258,"bingbonglove"],["Lost Ark Anniversary","77995962-b02e-48e3-92ab-b77a4b352fb3","2026-02-04",1,17187,"lost-ark-anniversary"],["Scampuss","1ae8da3f-04ba-4cf1-93e8-a1f90e09aa45","2026-02-04",0,3813,"scampuss"],["Yellow Noob","d87a78f5-76d9-451f-8f31-752a369e6045","2026-02-03",0,2862,"yellow-noob"],["Kodama","374ef606-cf25-475e-994b-f7d36b8acd43","2026-01-28",0,2048,"kodama"],["Bungie Foundation Ally","f5f78a03-c73e-4ae4-86d3-a3bef7ceca6f","2026-01-26",1,3973,"bungie-foundation-ally"],["Bungie Foundation Supporter","85cb4623-0dd6-4f41-b86e-765bc8ac367d","2026-01-26",0,3251,"bungie-foundation-supporter"],["Lamby","c0801fe9-3d54-49d1-801c-3c1fadde09cd","2026-01-19",0,11119,"lamby"],["Umbrella Corporation","995ff00f-c16c-4782-86ba-f2d7668dc6a2","2026-01-13",0,71621,"umbrella-corporation"],["Purple Noob","a1fb3f16-14e8-4e2b-84f8-55e2b86878c8","2025-12-15",1,55546,"purple-noob"],["Fallout Season 2 Ghoul","815334c4-3123-489b-8854-2af0f4027b00","2025-12-15",0,3121,"fallout-season-2-ghoul"],["10 years as Twitch Staff","e48bfab8-6697-4c5b-84df-e64fb0150701","2025-12-12",1,11,"10-years-as-twitch-staff"],["15 years as Twitch Staff","523802ec-086b-4dec-b441-90e28b0806d8","2025-12-12",1,0,"15-years-as-twitch-staff"],["5 years as Twitch Staff","d53671d0-0ce0-4706-905f-7fe8b122a27a","2025-12-12",1,99,"5-years-as-twitch-staff"],["Diana","38801cc6-4d01-40f6-8949-6b9f9d5334b8","2025-12-12",0,2838,"diana"],["TFT Paris Open","c5688799-c50c-4878-b451-de78f3ef6a56","2025-12-10",0,903,"tft-paris-open"],["Frog Lantern","dfc75f94-14f9-404b-b953-37eba481df37","2025-12-10",0,4130,"frog-lantern"],["Support a Streamer HO'26","fe0814c3-87f9-40cb-95b5-d1e7453f289d","2025-12-10",0,2945,"support-a-streamer-ho26-badge"],["Hunt Crosses","b1e77273-2fc0-4d36-873a-67a7c1647efe","2025-12-10",0,16177,"hunt-crosses"],["Raider Icon","5007f3e0-41d4-4bda-a605-8f72cfe8c2d4","2025-12-10",0,18933,"raider-icon-badge"],["Lead Moderator","0822047b-65e0-46f2-94a9-d1091d685d33","2025-12-08",1,0,"lead_moderator"],["Jeff the Land Shark","ad51bd4c-2621-4d7c-8580-89243002bc8b","2025-12-07",0,16846,"jeff-the-land-shark"],["The K4SEN Con 2025","6ea537aa-bb9a-4410-a330-5820b7dd8a24","2025-12-04",1,10414,"k4sen-con-2025"],["Rustmas 2025","5ec1bcd1-82fa-4c42-abf1-be5b64cb63ed","2025-12-04",0,4974,"rustmas-2025"],["RevedTV StreamAwards 2025","03cb38fd-00cc-4ed8-8d24-ce53189ee1de","2025-12-03",1,26331,"revedtv-stream-awards-2025"],["Total War Anniversary","17604bfd-aeb6-427d-bd0e-cae93bed6f36","2025-12-03",0,835,"total-war-anniversary"],["Twitch Recap 2025","48b26ab3-c9f1-4f16-b02d-fe877be389fd","2025-12-01",1,769771,"twitch-recap-2025"],["Streamer Awards Tux","d52bd174-3509-460b-80ac-4a8d5840194b","2025-12-01",1,17519,"streamer-awards-tux"],["Ugly Sweater","8eddf4ab-68f8-4ee8-a07d-9d7e8520463e","2025-12-01",1,116517,"ugly-sweater"],["Rainbow Six Siege X 10th Anniversary","00fc50e1-dea9-47a4-9db5-ff087e91dd0d","2025-11-26",0,5261,"rainbow-six-siege-x-10th-anniversary"],["DragonScimmy","da4c6554-4472-4949-b33b-e79164dbba0b","2025-11-24",0,21809,"dragonscimmy"],["Survival Cup 4","9ff55f50-2c2a-40c2-9863-158d5ac2d5fd","2025-11-18",0,0,"survival-cup-4"],["Together for Good '25 - Good Badge","192fb627-82b3-46e8-95d3-ac9feba4b1bc","2025-11-14",0,11002,"together-for-good-25---good-badge"],["Together for Good '25 - Gooder Badge","84a37e81-9d61-4c29-970e-64a32ec040c7","2025-11-14",0,755,"together-for-good-25---gooder-badge"],["Together for Good '25 - Goodest Badge","928b8033-3777-49cb-a056-230135a08a62","2025-11-14",0,2253,"together-for-good-25---goodest-badge"],["Together for Good '25 - Wicked Dub Badge","9ddae219-6674-4fbc-add9-6e4e6572ea8e","2025-11-14",0,748,"together-for-good-25---wicked-dub-badge"],["Stream For Humanity 2","c02fbad3-aa4b-46d0-93a6-661719a19f1c","2025-11-12",1,55287,"stream-for-humanity-2-2025"],["Black Ops 7 Global Launch","e225aad6-3780-4bdc-ae38-48d3ab7dc36e","2025-11-05",0,6725,"black-ops-7-global-launch"],["Arc Raiders Launch 2025","d4aa495f-a0e4-4ab4-b3eb-7c2ea573b03f","2025-10-29",0,18936,"arc-raiders-launch-2025"],["Fright Fest 2025","2ef2cd27-2210-4640-bbf8-69b5c4d9e302","2025-10-29",1,142586,"fright-fest-2025"],["Sajam Slam Badge","9fd798d6-3d67-4458-a916-9fd5d7286159","2025-10-14",0,262,"sajam-slam-badge"],["Pokémon Legends: Z-A Chikorita","f479e945-987b-423a-a901-7b1c3b3003fb","2025-10-14",0,13858,"pokemon-legends-z-a-chikorita"],["Pokémon Legends: Z-A Tepig","34799f2e-e165-42a4-ae79-1c9c06cf1d55","2025-10-14",0,5406,"pokemon-legends-z-a-tepig"],["Pokémon Legends: Z-A Totodile","0bdb6906-ba8f-4fb6-bc9e-3aca04d3d501","2025-10-14",0,16636,"pokemon-legends-z-a-totodile"],["LoL Worlds 2025","4545b0b5-c825-487e-8958-ce5512eb6f84","2025-10-10",0,9176,"lol-worlds-2025"],["The Man Without Fear","4ca893e7-6ee3-4437-acdd-071340913d3c","2025-10-09",0,8590,"the-man-without-fear"],["Battlefield 6","d7750af0-caca-47c5-b207-1af9be69ce1b","2025-10-09",0,11540,"battlefield-6"],["Low","58d48669-bfee-46e7-a83c-b65a30783400","2025-10-07",1,113032,"low"],["Alone","10ba11a2-0171-42b6-9bba-8f2f14248172","2025-10-07",0,2629,"alone"],["The Onryō's Mask","e0d21894-8d58-4266-9127-b1bd61177899","2025-09-30",0,3133,"the-onryos-mask"],["Gingko Leaf","394abbbd-cc1d-427f-bc00-bce294353448","2025-09-30",1,52347,"gingko-leaf"],["GamerDuo","be750d4d-a3b9-4116-ae75-6ee4f3294a19","2025-09-26",0,92059,"gamerduo"],["Sonic Racing","3c5a5ea0-714f-46da-b764-5e7ceba59fca","2025-09-24",0,10998,"sonic-racing-crossworlds"],["Mel","8a7c1d1d-12bb-40d9-9be8-0a4fdf0d870c","2025-09-23",0,7752,"mel"],["GP Explorer 3","1e3b6965-2224-44d1-a67a-6d186c1fb17d","2025-09-23",1,90122,"gp-explorer-3"],["Social Media Badge","d2030c7e-c400-4605-a2cf-ce32bd06af8f","2025-09-22",1,0,"social-sharing"],["Video Games Day","34a57a67-b058-45a9-b088-da681aebc83e","2025-09-16",1,46508,"video-games-day"],["VCT Paris 2025","63c91cf1-53d1-4ee9-821f-b4d6e4144e8e","2025-09-11",0,33260,"vct-paris-2025"],["Twitch Intern 2022","91ed38ea-32fe-4f14-8db1-852537d19aa5","2025-09-10",1,12,"twitch-intern-2022"],["ZEVENT25","7c39aa87-4659-4e8f-abaf-c29614cd8a29","2025-09-04",1,149001,"zevent25"],["Hornet","4dc7b047-8c59-4522-97f2-24fb63147f56","2025-09-03",0,114353,"hornet"],["SUBtember 2025","a9c01f28-179e-486d-a4c7-2277e4f6adb4","2025-09-03",0,188310,"subtember-2025"],["Gears of War Superfan Badge","18b92728-aa7a-4e24-acb5-b14ea17c8b2b","2025-08-29",1,10303,"gears-of-war-superfan-badge"],["Chaos Orb","8bebe4ce-6c15-4746-8c33-42312c250ceb","2025-08-27",0,36292,"path-of-exile-2-badge"],["Touch Grass","51f536c1-96ca-495b-bc11-150c857a6d54","2025-08-21",1,13659,"touch-grass"],["The First Descendant Badge","a56ef091-e8cd-49bd-9de9-7b342c9a7e7e","2025-08-07",0,1870,"the-first-descendant-badge"],["Evo 2025","1469e9cf-14d9-4a48-a91c-81712d027439","2025-07-31",0,1773,"evo-2025"],["La Velada V Badge","3f728095-b84d-4e7e-9eee-541ea02ddea0","2025-07-23",1,174160,"la-velada-v-badge"],["LEGENDUS","55c355cf-ddbf-4f12-8369-6554a1f78b6f","2025-06-28",1,24521,"legendus"],["League of Legends Mid Season Invitational 2025 Support a Streamer","18a0b4ba-5f62-4e94-b6f1-481731608602","2025-06-23",0,10829,"league-of-legends-mid-season-invitational-2025---grey"],["League of Legends Mid Season Invitational 2025","0a99ba23-5e1a-46b7-8ff2-efbb9a6ea54c","2025-06-23",0,1586,"league-of-legends-mid-season-invitational-2025---purple"],["Borderlands 4 Badge - Ripper","098219cb-48d8-4945-96a6-80594c7a90dd","2025-06-20",0,7691,"borderlands-4-badge---ripper"],["Borderlands 4 Badge - Vault Symbol","97eee27d-c87f-4afb-a020-04a9d04456df","2025-06-20",1,25735,"borderlands-4-badge---vault-symbol"],["Chat Bot","3ffa9565-c35b-4cad-800b-041e60659cf2","2025-06-09",1,0,"bot-badge"],["Elden Ring Nightreign Clip badge - Wylder","5d5ab328-0916-4655-90b9-78b983ca4262","2025-05-30",1,24055,"elden-ring-wylder"],["Elden Ring SuperFan badge - Recluse","5afadc6c-933b-4ede-b318-3752bbf267a9","2025-05-30",1,94909,"elden-ring-recluse"],["TwitchCon Referral Program 2025 (bleedPurple)","81952c7b-cfec-479c-a8f6-2bccc296786c","2025-05-29",0,21,"twitchcon-referral-program-2025-bleedpurple"],["TwitchCon Referral Program 2025 (Chrome Star)","d139bccf-8184-4fec-a970-cd8d81a7f51a","2025-05-29",0,1378,"twitchcon-referral-program-2025-chrome-star"],["Clips Leader 1","12f70951-efea-48c2-b42b-d5e2ea0d71f7","2025-04-11",1,0,"clips-leader"],["AutoMod","df9095f6-a8a0-4cc2-bb33-d908c0adffb8","2025-04-10",0,0,"twitchbot"],["Marathon Reveal Runner","ae1c6c62-c057-4fad-a1d4-663bf988701f","2025-04-10",0,27501,"marathon-reveal-runner"],["Gone Bananas Badge","e2ba99f4-6079-44d1-8c07-4ca6b58de61f","2025-04-01",1,190258,"gone-bananas"],["Speedons 5 Badge","81d89508-850c-45ae-b0e2-dbbe6e531b8d","2025-02-24",1,32041,"speedons-5-badge"],["Share the Love","2de71f4f-b152-4308-a426-127a4cf8003a","2025-02-14",1,419419,"share-the-love"],["TwitchCon 2025","f4d97fd0-437f-4d8d-b4d3-4b6d18e4705b","2025-02-10",0,8769,"twitchcon-2025---rotterdam"],["Twitch Recap 2024","72f2a6ac-3d9b-4406-b9e9-998b27182f61","2024-12-09",1,830139,"twitch-recap-2024"],["Clip the Halls","ce9e266a-f490-4fb2-9989-aee20036bfa5","2024-12-03",1,10060,"clip-the-halls"],["Gold Pixel Heart - Together For Good '24","52c90eac-b7ec-4e24-b500-8fceecfe91e8","",0,2869,"gold-pixel-heart---together-for-good-24"],["Purple Pixel Heart - Together For Good '24","1afb4b76-8c34-4b7b-8beb-75f7e5d2a1ab","",0,13384,"purple-pixel-heart---together-for-good-24"],["Ruby Pixel Heart - Together For Good '24","ca0aa8ce-b2a8-4582-a5de-4d5b6915dc47","2024-12-02",0,2365,"ruby-pixel-heart---together-for-good-24"],["Arcane Season 2 Premiere","1d833bde-edc7-4d23-b7b6-ad5a13296675","2024-11-07",1,192810,"arcane-season-2-premiere"],["SUBtember 2024","4149750c-9582-4515-9e22-da7d5437643b","2024-09-25",0,234936,"subtember-2024"],["ZEVENT 2024","2040d479-b815-4617-8a55-9aed027e30d0","2024-09-06",1,98098,"zevent-2024"],["Dream Con 2024","5dfbd056-8ac1-407f-bdf3-f83183fa97ae","2024-08-28",1,8755,"dreamcon-2024"],["Twitch Intern 2024","ae96ce48-e764-4232-aa48-d9abf9a5fdab","2024-08-23",1,3,"twitch-intern-2024"],["La Velada del Año IV","655dac77-0b2f-4b62-8871-6ae21f82b34e","2024-07-13",1,222255,"la-velada-iv"],["Raging Wolf Helm","3ff668be-59a3-4e3e-96af-e6b2908b3171","2024-06-20",1,1058791,"raging-wolf-helm"],["Twitch DJ","cf91bbc0-0332-413a-a7f3-e36bac08b624","2024-06-13",1,17494,"twitch-dj"],["Destiny 2: The Final Shape Streamer","b1bcaf3c-d7a2-442b-b407-03f2b8ff624d","2024-06-06",0,9149,"destiny-2-the-final-shape-streamer"],["Destiny 2: The Final Shape Raid Race","e79ee64f-31f1-4485-9c81-b93957e69f8a","2024-06-06",0,199800,"destiny-2-final-shape-raid-race"],["TwitchCon 2024 - San Diego","6575f0d1-2dc2-4f45-a13f-a1a969dcf8fa","2024-05-28",0,5795,"twitchcon-2024---san-diego"],["Minecraft 15th Anniversary Celebration","178077b2-8b86-4f8d-927c-66ed6c1b025f","2024-05-28",1,60716,"minecraft-15th-anniversary-celebration"],["Twitch Recap 2023","4d9e9812-ba9b-48a6-8690-13f3f338ee65","",1,1262551,"twitch-recap-2023"],["Gold Pixel Heart","1687873b-cf38-412c-aad3-f9a4ce17f8b6","",0,7626,"gold-pixel-heart"],["TwitchCon 2023 - Las Vegas","c90a753f-ab20-41bc-9c42-ede062485d2c","",0,6595,"twitchconNA2023"],["r/place 2023 Cake","e33e0c67-c380-4241-828a-099c46e51c66","",1,347081,"rplace-2023"],["SuperUltraCombo 2023","5864739a-5e58-4623-9450-a2c0555ef90b","",1,186044,"superultracombo-2023"],["CS:GO Week Brazil 2022","a2ea6df9-ac0a-4956-bfe9-e931f50b94fa","",1,1295,"creator-cs-go-2022"],["TwitchCon 2022 - Amsterdam","e4744003-50b7-4eb8-9b47-a7b1616a30c6","",0,7318,"twitchconEU2022"],["GlitchCon 2020","1d4b03b9-51ea-42c9-8f29-698e3c85be3d","",1,326521,"glitchcon2020"],["TwitchCon 2019 - San Diego","569c829d-c216-4f56-a191-3db257ed657c","",0,8216,"twitchconNA2019"],["TwitchCon 2019 - Berlin","590eee9e-f04d-474c-90e7-b304d9e74b32","",0,3275,"twitchconEU2019"],["OWL All-Access Pass 2019","ca980da1-3639-48a6-95a3-a03b002eb0e5","",0,19046,"overwatch-league-insider_2019A"],["OWL All-Access Pass 2019","c5860811-d714-4413-9433-d6b1c9fc803c","",0,349,"overwatch-league-insider_2019B"],["Direct Relief - Charity 2018","a539dc18-ae19-49b0-98c4-8391a594332b","",0,95008,"bits-charity"],["TwitchCon 2018 - San Jose","e68164e4-087d-4f62-81da-d3557efae3cb","",0,6783,"twitchcon2018"],["Elder Scrolls Online","18647a68-a35f-48d7-bf97-ae5deb6b277d","",0,336,"eso_1"],["Power Clipper","f38976e0-ffc9-11e7-86d6-7f98b26a9d79","",1,0,"clip-champ"],["OWL All-Access Pass 2018","34ec1979-d9bb-4706-ad15-464de814a79d","",0,7320,"overwatch-league-insider_2018B"],["TwitchCon 2017 - Long Beach","0964bed0-5c31-11e7-a90b-0739918f1d9b","",0,5792,"twitchcon2017"],["Black Ranger","9edf3e7f-62e4-40f5-86ab-7a646b10f1f0","",0,0,"power-rangers"],["Global Moderator","9384c43e-4ce7-4e94-b2a1-b93656896eba","",1,0,"global_mod"],["1979 Revolution","7833bb6e-d20d-48ff-a58d-67fe827a4f84","",0,0,"1979-revolution_1"],["2017 VGA Champ","03dca92e-dc69-11e7-ac5b-9f942d292dc7","",1,0,"vga-champ-2017"],["60 Seconds!","1e7252f9-7e80-4d3d-ae42-319f030cca99","",0,7,"60-seconds_1"],["60 Seconds!","64513f7d-21dd-4a05-a699-d73761945cf9","",0,13,"60-seconds_2"],["60 Seconds!","f4306617-0f96-476f-994e-5304f81bcc6e","",0,15,"60-seconds_3"],["Admin","9ef7e029-4cdf-4d4d-a0d5-e2b3fb2583fe","",1,0,"admin"],["Alliance","c4816339-bad4-4645-ae69-d1ab2076a6b0","",1,0,"warcraft"],["Anomaly 2","d1d1ad54-40a6-492b-882e-dcbdce5fa81e","",0,0,"anomaly-2_1"],["Anomaly Warzone Earth","858be873-fb1f-47e5-ad34-657f40d3d156","",0,11,"anomaly-warzone-earth_1"],["Anonymous Cheerer","ca3db7f7-18f5-487e-a329-cd0b538ee979","",0,1,"anonymous-cheerer"],["Artist","4300a897-03dc-4e83-8c0e-c332fee7057f","",1,0,"artist-badge"],["Axiom Verge","f209b747-45ee-42f6-8baf-ea7542633d10","",0,3,"axiom-verge_1"],["Battle Chef Brigade","24e32e67-33cd-4227-ad96-f0a7fc836107","",0,3,"battlechefbrigade_1"],["Battle Chef Brigade","ef1e96e8-a0f9-40b6-87af-2977d3c004bb","",0,12,"battlechefbrigade_2"],["Battle Chef Brigade","107ebb20-4fcd-449a-9931-cd3f81b84c70","",0,6,"battlechefbrigade_3"],["Battlerite","484ebda9-f7fa-4c67-b12b-c80582f3cc61","",0,1644,"battlerite_1"],["Bits Leader 1","8bedf8c3-7a6d-4df2-b62f-791b96a5dd31","",0,0,"bits-leader"],["Brawlhalla","bf6d6579-ab02-4f0a-9f64-a51c37040858","",0,81,"brawlhalla_1"],["Broadcaster","5527c58c-fb7d-422d-b71b-f309dcb85cc1","",1,0,"broadcaster"],["Broken Age","56885ed2-9a09-4c8e-8131-3eb9ec15af94","",0,2,"broken-age_1"],["Bubsy: The Woolies Strike Back","c8129382-1f4e-4d15-a8d2-48bdddba9b81","",0,0,"bubsy-the-woolies_1"],["cheer 1","73b5c3fb-24f9-4a82-a852-2f475b59411c","",0,0,"bits"],["CS:GO Week Brazil 2022","57b6bd6b-a1b5-4204-9e6c-eb8ed5831603","",1,143993,"chatter-cs-go-2022"],["Cuphead","4384659a-a2e3-11e7-a564-87f6b1288bab","",0,191,"cuphead_1"],["Current Hype Train Conductor","fae4086c-3190-44d4-83c8-8ef0cbe1a515","",0,0,"hype-train"],["Darkest Dungeon","52a98ddd-cc79-46a8-9fe3-30f8c719bc2d","",0,0,"darkest-dungeon_1"],["Deceit","b14fef48-4ff9-4063-abf6-579489234fe9","",0,28,"deceit_1"],["Devil May Cry HD Collection","633877d4-a91c-4c36-b75b-803f82b1352f","",0,1,"devil-may-cry-hd_1"],["Devil May Cry HD Collection","408548fe-aa74-4d53-b5e9-960103d9b865","",0,0,"devil-may-cry-hd_2"],["Devil May Cry HD Collection","df84c5bf-8d66-48e2-b9fb-c014cc9b3945","",0,0,"devil-may-cry-hd_3"],["Devil May Cry HD Collection","af836b94-8ffd-4c0a-b7d8-a92fad5e3015","",0,2,"devil-may-cry-hd_4"],["Devilian","3cb92b57-1eef-451c-ac23-4d748128b2c5","",0,0,"devilian_1"],["Duelyst","7d9c12f4-a2ac-4e88-8026-d1a330468282","",0,0,"duelyst_1"],["Duelyst","1938acd3-2d18-471d-b1af-44f2047c033c","",0,0,"duelyst_2"],["Duelyst","344c07fc-1632-47c6-9785-e62562a6b760","",0,0,"duelyst_3"],["Duelyst","39e717a8-00bc-49cc-b6d4-3ea91ee1be25","",0,0,"duelyst_4"],["Duelyst","290419b6-484a-47da-ad14-a99d6581f758","",0,0,"duelyst_5"],["Duelyst","c5e54a4b-0bf1-463a-874a-38524579aed0","",0,0,"duelyst_6"],["Duelyst","cf508179-3183-4987-97e0-56ca44babb9f","",0,0,"duelyst_7"],["Enter The Gungeon","53c9af0b-84f6-4f9d-8c80-4bc51321a37d","",0,31,"enter-the-gungeon_1"],["Extension","ea8b0f8c-aa27-11e8-ba0c-1370ffff3854","",0,0,"extension"],["Firewatch","b6bf4889-4902-49e2-9658-c0132e71c9c4","",0,91,"firewatch_1"],["Founder","511b78a9-ab37-472f-9569-457753bbe7d3","",0,0,"founder"],["Frozen Cortext","2015f087-01b5-4a01-a2bb-ecb4d6be5240","",0,0,"frozen-cortext_1"],["Frozen Synapse","d4bd464d-55ea-4238-a11d-744f034e2375","",0,0,"frozen-synapse_1"],["Game Developer","85856a4a-eb7d-4e26-a43e-d204a977ade4","",1,64,"game-developer"],["Getting Over It","8d4e178c-81ec-4c71-af68-745b40733984","",0,20,"getting-over-it_1"],["Getting Over It","bb620b42-e0e1-4373-928e-d4a732f99ccb","",0,17,"getting-over-it_2"],["Gifter Leader 1","21656088-7da2-4467-acd2-55220e1f45ad","",0,0,"sub-gift-leader"],["GLHF Pledge","3158e758-3cb4-43c5-94b3-7639810451c5","",1,561168,"glhf-pledge"],["H1Z1","fc71386c-86cd-11e7-a55d-43f591dc0c71","",0,1857,"H1Z1_1"],["Heavy Bullets","fc83b76b-f8b2-4519-9f61-6faf84eef4cd","",0,5,"heavy-bullets_1"],["Hello Neighbor","030cab2c-5d14-11e7-8d91-43a5a4306286","",0,8,"hello_neighbor_1"],["Innerspace","97532ccd-6a07-42b5-aecf-3458b6b3ebea","",0,0,"innerspace_1"],["Innerspace","fc7d6018-657a-40e4-9246-0acdc85886d1","",0,2,"innerspace_2"],["Jackbox Party Pack","0f964fc1-f439-485f-a3c0-905294ee70e8","",0,19,"jackbox-party-pack_1"],["Kingdom: New Lands","e3c2a67e-ef80-4fe3-ae41-b933cd11788a","",0,12,"kingdom-new-lands_1"],["Listening only","199a0dba-58f3-494e-a7fc-1fa0a1001fb8","",1,1288077,"no_video"],["Moderator","3267646d-33f0-4b17-b3df-f923a41db1d0","",1,0,"moderator"],["Moments Badge - Tier 1","bf370830-d79a-497b-81c6-a365b2b60dda","",1,0,"moments"],["Okhlos","dc088bd6-8965-4907-a1a2-c0ba83874a7d","",0,2,"okhlos_1"],["OWL All-Access Pass 2018","51e9e0aa-12e3-48ce-b961-421af0787dad","",0,12109,"overwatch-league-insider_1"],["Predicted Blue (1)","e33d8b46-f63b-4e67-996d-4a7dcec0ad33","",1,0,"predictions"],["Prime Gaming","bbbe0db0-a598-423e-86d0-f9fb98ca1933","",0,14527773,"premium"],["Psychonauts","a9811799-dce3-475f-8feb-3745ad12b7ea","",0,0,"psychonauts_1"],["Raiden V","441b50ae-a2e3-11e7-8a3e-6bff0c840878","",0,0,"raiden-v-directors-cut_1"],["RIFT","f939686b-2892-46a4-9f0d-5f582578173e","",0,0,"rift_1"],["Staff","d97c37bd-a6f5-4c38-8f57-4e4bef88af34","",1,0,"staff"],["Starbound","e838e742-0025-4646-9772-18a87ba99358","",0,2,"starbound_1"],["Strafe","0051508d-2d42-4e4b-a328-c86b04510ca4","",0,0,"strafe_1"],["Streamer Awards 2024","efc07d3d-46e4-4738-827b-a5bf3508983a","",1,3314,"streamer-awards-2024"],["Sub Gifter","a5ef6c17-2e5b-4d8f-9b80-2779fd722414","",0,0,"sub-gifter"],["Subscriber","5d9f2208-5dd8-11e7-8513-2ff4adfae661","",0,0,"subscriber"],["Superhot","c5a06922-83b5-40cb-885f-bcffd3cd6c68","",0,3,"superhot_1"],["The Game Awards 2023","10cf46de-61e7-4a42-807a-7898408ce352","",1,3117,"the-game-awards-2023"],["The Golden Predictor of the Game Awards 2023","c84c4dd7-9318-4e8b-9f01-1612d3f83dae","",1,90,"the-golden-predictor-of-the-game-awards-2023"],["The Surge","c9f69d89-31c8-41aa-843b-fee956dfbe23","",0,0,"the-surge_1"],["The Surge","2c4d7e95-e138-4dde-a783-7956a8ecc408","",0,0,"the-surge_2"],["The Surge","0a8fc2d4-3125-4ccb-88db-e970dfbee189","",0,0,"the-surge_3"],["This War of Mine","6a20f814-cb2c-414e-89cc-f8dd483e1785","",0,0,"this-war-of-mine_1"],["Titan Souls","092a7ce2-709c-434f-8df4-a6b075ef867d","",0,11,"titan-souls_1"],["Treasure Adventure World","59810027-2988-4b0d-b88d-fc414c751305","",0,0,"treasure-adventure-world_1"],["Turbo","bd444ec6-8f34-4bf9-91f4-af1e3428d80f","",0,785358,"turbo"],["Twitch Ambassador","2cbc339f-34f4-488a-ae51-efdf74f4e323","",1,580,"ambassador"],["Twitch Intern 2023","e239e7e0-e373-4fdf-b95e-3469aec28485","",1,15,"twitch-intern-2023"],["TwitchCon 2020 - Amsterdam","ed917c9a-1a45-4340-9c64-ca8be4348c51","",0,4866,"twitchconNA2020"],["TwitchCon 2020 - North America","ed917c9a-1a45-4340-9c64-ca8be4348c51","",0,0,"twitchconNA2020"],["TwitchCon 2022 - San Diego","344d429a-0b34-48e5-a84c-14a1b5772a3a","",0,8372,"twitchconNA2022"],["TwitchCon 2023 - Paris","a8f2084e-46b9-4bb9-ae5e-00d594aafc64","",0,3755,"twitchconEU2023"],["TwitchCon 2024 - Rotterdam","95b10c66-775c-4652-9b86-10bd3a709422","",0,3633,"twitchcon-2024---rotterdam"],["Twitchiversary Badge","ccbbedaa-f4db-4d0b-9c2a-375de7ad947c","",1,0,"user-anniversary"],["Tyranny","0c79afdf-28ce-4b0b-9e25-4f221c30bfde","",0,0,"tyranny_1"],["Verified","d12a2e27-16f6-41d0-ab77-b780518f00a3","",1,0,"partner"],["VIP","b817aba4-fad8-49e2-b88a-7cc744dfa6ec","",1,0,"vip"],["Watching without audio","aef2cd08-f29b-45a1-8c12-d44d7fd5e6f0","",1,1344103,"no_audio"]];
-
-/* ---------- helpers ---------- */
-if(location.protocol==="http:" && !/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) location.replace("https://"+location.host+location.pathname+location.hash);
-const PARENTS = () => [location.hostname, location.hostname.replace(/^www\./,''), 'www.'+location.hostname.replace(/^www\./,'')].filter((v,i,a)=>a.indexOf(v)===i).map(x=>'parent='+x).join('&');
-const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const initials = n => n.split(/\s+/).slice(0,2).map(w=>w[0]||"").join("").toUpperCase();
-const tile = b => `<span class="tile">${b.img ? `<img src="${esc(b.img)}" alt="${esc(b.name)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'ph',textContent:'${esc(initials(b.name))}'}))">` : `<span class="ph">${esc(initials(b.name))}</span>`}</span>`;
-const fmt = iso => iso ? new Date(iso).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}) : "";
-const fmtFull = iso => iso ? new Date(iso).toLocaleString(undefined,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : "Not announced";
-const num = n => n.toLocaleString();
-const toast = m => { const t=$('#toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); };
-const status = ev => { if(!ev.start) return "tba"; const n=Date.now(); if(n<Date.parse(ev.start)) return "soon"; if(n>Date.parse(ev.end)) return "ended"; return "live"; };
-function countdown(iso){ let d=Math.max(0,Date.parse(iso)-Date.now()); const days=Math.floor(d/864e5); d-=days*864e5; const h=Math.floor(d/36e5); d-=h*36e5; const m=Math.floor(d/6e4), s=Math.floor((d%6e4)/1e3); return days?`${days}d ${h}h ${m}m`:`${h}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`; }
-const evCost = ev => ev.badges.some(b=>b.cost==="free")?"free":ev.badges.some(b=>b.cost==="paid")?"paid":"na";
-
-// event lookup by image id → objective + status for the archive drawer
-let EV_BY_IMG = {};
-function indexEvents(){ EV_BY_IMG = {}; EVENTS.forEach(ev => ev.badges.forEach(b => { if(b.img) EV_BY_IMG[b.img] = {ev, b}; })); }
-indexEvents();
-
-// normalized archive rows
-// rows: [title, img, added, free, users, set?] — several rows can belong to one set (versions); group them
-const JUNK = /beta_title|_beta$|^beta$|placeholder|default-creator-campaign/i;
-function normalize(rows){
-  const groups = new Map();
-  rows = rows.filter(r => !JUNK.test(r[0]) && !JUNK.test(r[5]||""));
-  rows.forEach(r => { const key = r[5] || r[1]; if(!groups.has(key)) groups.set(key, []); groups.get(key).push(r); });
-  return [...groups.entries()].map(([key, rs]) => {
-    const p = rs[rs.length-1];                       // the bot prepends new rows, so the original set row is last
-    const vs = [...rs].sort((a,b)=>a[0].localeCompare(b[0],undefined,{numeric:true}));  // natural order (cheer 1, 100, 1000…)
-    const dated = rs.map(x=>x[2]).filter(Boolean);
-    return { set:key, name:p[0], img:cdn(p[1]), imgId:p[1], added:p[2] || (dated.length && dated.length===rs.length ? dated.sort()[0] : ""),
-             free:rs.some(x=>x[3]===1), users:Math.max(...rs.map(x=>x[4]||0)), how:p[6]||"",
-             versions: vs.map((x,i)=>({ id:String(i+1), title:x[0], img:cdn(x[1]) })) };
-  });
-}
-let globalBadges = normalize(BADGES);
-let channelBadges = [], lookupBadges = [], token = null;
-const CTYPE = {sub:"Sub badge", watch:"Watch badge", ranking:"Top supporter", other:"Campaign"};
-// channel-badges.json rows: [title, img, first_seen, login, display, set_id, type]
-const normChannel = rows => rows.map(r => ({ set:r[1], name:r[0], img:cdn(r[1]), imgId:r[1], added:r[2], login:r[3], display:r[4], setId:r[5], type:r[6], versions:[{id:"1",title:r[0],img:cdn(r[1])}] }));
-try{ CONFIG.clientId = CONFIG.clientId || localStorage.getItem("badgedb_client_id") || ""; }catch(_){}
-const isFile = location.protocol === "file:";
-const redirectUri = () => location.origin + location.pathname;
-
-/* ---------- routing ---------- */
-const ROUTES = ["home","timeline","global","channel","faq","privacy","terms","admin"];
-function route(){
-  let h = location.hash.replace('#','') || "home";
-  if(h==="admin"){ renderAdmin(); if(ADM.token && !ADM.events.length) admLoad(); }
-  if(h==="faq") renderFAQ();
-  if(h.startsWith("badge/")){ renderBadgePage(decodeURIComponent(h.slice(6))); h = "badge"; }
-  else if(h.startsWith("channel-badge/")){ renderChannelBadgePage(decodeURIComponent(h.slice(14))); h = "badge"; }
-  else if(!ROUTES.includes(h)) h = "home";
-  $$('[data-page]').forEach(s => s.hidden = s.dataset.page !== h);
-  const TITLES = {home:"Badge Database – Every Twitch Badge & When to Get It", timeline:"Timeline – Twitch Badges Available Now | Badge Database",
-    global:"All Twitch Global Badges | Badge Database", channel:"Twitch Channel Badges | Badge Database", faq:"FAQ – Twitch Badges | Badge Database",
-    privacy:"Privacy Policy | Badge Database", terms:"Terms of Service | Badge Database", admin:"Admin | Badge Database"};
-  if(h==="badge"){ const bb=globalBadges.find(x=>location.hash.includes(encodeURIComponent(x.set))||location.hash.endsWith('/'+x.set)); document.title=(bb?bb.name+" – Twitch Badge":"Badge")+" | Badge Database"; }
-  else document.title = TITLES[h] || TITLES.home;
-  $$('.nav a').forEach(a => a.classList.toggle('on', a.dataset.route === h));
-  closeDrawer(); window.scrollTo({top:0});
-}
-window.addEventListener('hashchange', route);
-
-/* ---------- home ---------- */
-function renderHome(){
-  const S = CONFIG.socials;
-  const defs = [
-    ["TWITCH",S.twitch,"#9146FF",'<svg viewBox="0 0 24 24"><path d="M4 2 2 6v14h5v3h3l3-3h4l5-5V2H4zm16 12-3 3h-5l-3 3v-3H6V4h14v10zm-4-7h-2v5h2V7zm-5 0H9v5h2V7z"/></svg>'],
-    ["DISCORD",S.discord,"#5865F2",'<svg viewBox="0 0 24 24"><path d="M19.5 5.5A16 16 0 0 0 15.6 4l-.5 1a15 15 0 0 0-6.2 0l-.5-1a16 16 0 0 0-3.9 1.5C2 9.3 1.3 13 1.6 16.6A16 16 0 0 0 6.5 19l1-1.6a10 10 0 0 1-1.6-.8l.4-.3a11.5 11.5 0 0 0 11.4 0l.4.3-1.6.8 1 1.6a16 16 0 0 0 4.9-2.4c.4-4.2-.7-7.8-2.9-11.1zM8.7 14.4c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2zm6.6 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2z"/></svg>'],
-    ["X",S.x,"#E5E7EB",'<svg viewBox="0 0 24 24"><path d="M17.5 3h3l-7 8 8 10h-6l-4.7-6.2L5.5 21h-3l7.5-8.6L2.5 3h6l4.3 5.7z"/></svg>'],
-  ].filter(d=>d[1]);
-  $('#socials').innerHTML = defs.map(([n,u,c,svg])=>`<a class="social" style="--c:${c}" href="${esc(u)}" target="_blank" rel="noopener"><span class="ic" ${n==='X'?'style="color:#111"':''}>${svg}</span><span><b>${n}</b><small>${esc(u.replace(/^https?:\/\/(www\.)?/,''))}</small></span><span class="go">↗</span></a>`).join('');
-
-  const live = EVENTS.filter(e=>status(e)==="live");
-  const soon = allEvents().filter(e=>["soon","tba"].includes(status(e)));
-  $('#sLive').textContent = live.reduce((n,e)=>n+e.badges.length,0);
-  $('#sSoon').textContent = soon.length;
-  $('#sFree').textContent = live.reduce((n,e)=>n+e.badges.filter(b=>b.cost==="free").length,0);
-  $('#cEvents').textContent = live.length; $('#cGlobal').textContent = globalBadges.length; $('#hArchive').textContent = globalBadges.length;
-
-
-  // embedded stream (Twitch only allows the player on http(s) with a matching parent)
-  if(!$('#homeStream').dataset.done){ $('#homeStream').dataset.done=1;
-    $('#homeStream').innerHTML = isFile
-      ? `<div class="sc-off"><img src="logo-192.png" alt="">The player appears here once the site is hosted (http/https).<a class="btn" href="https://twitch.tv/${CONFIG.channel}" target="_blank" rel="noopener">Watch on Twitch ↗</a></div>`
-      : `<iframe src="https://player.twitch.tv/?channel=${CONFIG.channel}&${PARENTS()}&muted=true&autoplay=true" allowfullscreen allow="autoplay; fullscreen"></iframe>`; }
-
-  // recently added badges from the archive
-  const recent = [...globalBadges].filter(b=>b.added).sort((a,b)=>b.added.localeCompare(a.added)).slice(0,8);
-  $('#recent').innerHTML = recent.map(b=>`<a class="rc" href="/badges/${encodeURIComponent(b.set)}/" data-badge="${esc(b.set)}" data-type="global">${tile(b)}<span class="n">${esc(b.name)}</span><span class="d">${fmt(b.added)}</span></a>`).join('');
-
-  const strip = list => list.slice(0,6).map(b=>`<img src="${esc(b.img)}" alt="" loading="lazy">`).join('') + (list.length>6?`<span class="more">+${list.length-6}</span>`:'');
-  const evBadges = live.flatMap(e=>e.badges.filter(b=>b.img).map(b=>({img:cdn(b.img)})));
-  $('#tools').innerHTML = `
-    <a class="tool" href="#global"><h3>Twitch Global Badges</h3><p>Badges that look the same in every channel — ${globalBadges.length} sets.</p><div class="strip">${strip(globalBadges)}</div><span class="arrow">→</span></a>
-    <a class="tool" href="#timeline"><h3>Timeline</h3><p>Current and upcoming Twitch badge events with countdowns.</p><div class="strip">${strip(evBadges)}</div><span class="arrow">→</span></a>
-    <a class="tool" href="#channel"><h3>Twitch Channel Badges</h3><p>Campaign badges from live channels — sub, watch-time and top-supporter.</p><div class="strip"><img src="${cdn('5d9f2208-5dd8-11e7-8513-2ff4adfae661')}" alt=""><img src="${cdn('73b5c3fb-24f9-4a82-a852-2f475b59411c')}" alt=""><img src="${cdn('511b78a9-ab37-472f-9569-457753bbe7d3')}" alt=""></div><span class="arrow">→</span></a>`;
-}
-
-/* ---------- timeline page ---------- */
-let evQuery = "", evFilter = "all";
-function progress(ev){ const s=Date.parse(ev.start), e=Date.parse(ev.end); return Math.min(100,Math.max(0,(Date.now()-s)/(e-s)*100)); }
-function eventCard(ev, st){
-  const target = st==="live"?ev.end:ev.start, hoursLeft = st==="live"?(Date.parse(ev.end)-Date.now())/36e5:99, urgent = hoursLeft<48, cost = evCost(ev);
-  const imgs = ev.badges.length>1 ? `<span class="tile multi">${ev.badges.slice(0,3).map(b=>tile({...b,img:cdn(b.img)})).join('')}</span>` : tile({...ev.badges[0],img:cdn(ev.badges[0].img)});
-  const foot = st==="live"?`<span class="st live"></span><span class="lbl">Ends in</span><span class="${urgent?'urgent':''}" data-cd="${target}">${countdown(target)}</span>`
-    : st==="soon"?`<span class="st soon"></span><span class="lbl">Starts in</span><span data-cd="${target}">${countdown(target)}</span>`
-    : st==="ended"?`<span class="st ended"></span><span class="lbl">Ended ${fmt(ev.end)}</span>`:`<span class="st tba"></span><span class="lbl">Dates not announced</span>`;
-  return `<button class="ev ${st}" data-ev="${ev.id}"><span class="top">${imgs}<span><span class="title">${esc(ev.name)}</span><span class="cat">${esc(ev.category)}${ev.badges.length>1?` · ${ev.badges.length} badges`:''}</span></span></span><span class="obj">${esc(ev.badges[0].how)}${ev.badges.length>1?' …':''}</span>${st==="live"?`<span class="bar ${urgent?'urgent':''}"><i style="width:${progress(ev).toFixed(1)}%"></i></span>`:''}<span class="foot">${foot}<span class="pill ${cost}">${{free:"Free",paid:"Sub / paid",na:"TBA"}[cost]}</span></span></button>`;
-}
-// badges in the archive that no event covers yet — so nothing is ever missing from the timeline
-function orphanEvents(){
-  const seen = new Set(Object.keys(EV_BY_IMG));
-  return globalBadges.filter(b => !seen.has(b.imgId) && b.added && (Date.now() - Date.parse(b.added)) < 45*864e5)
-    .map(b => ({ id:"orphan-"+b.set, name:b.name, category:"Unknown", start:"", end:"",
-                 badges:[{ name:b.name, img:b.imgId, how:b.how || "Objective not confirmed yet.", cost: b.free ? "free" : "na" }] }));
-}
-function allEvents(){ return EVENTS.concat(orphanEvents()); }
-function renderEvents(){
-  const buckets = {live:[],soon:[],tba:[],ended:[]};
-  allEvents().forEach(ev => {
-    const hay = (ev.name+" "+ev.category+" "+ev.badges.map(b=>b.name+" "+b.how).join(" ")).toLowerCase();
-    if(evQuery && !hay.includes(evQuery)) return;
-    if(evFilter==="free" && !ev.badges.some(b=>b.cost==="free")) return;
-    if(evFilter==="paid" && !ev.badges.some(b=>b.cost==="paid")) return;
-    buckets[status(ev)].push(ev);
-  });
-  buckets.live.sort((a,b)=>Date.parse(a.end)-Date.parse(b.end)); buckets.soon.sort((a,b)=>Date.parse(a.start)-Date.parse(b.start)); buckets.ended.sort((a,b)=>Date.parse(b.end)-Date.parse(a.end));
-  for(const k of Object.keys(buckets)){ const K=k[0].toUpperCase()+k.slice(1); $('#ev'+K).innerHTML = buckets[k].length?buckets[k].map(ev=>eventCard(ev,k)).join(''):`<div class="empty">${evQuery?'No events match your search.':'Nothing here right now.'}</div>`; $('#n'+K).textContent = buckets[k].length||''; }
-}
-const DAY=864e5, COLW=46;
-/* ---------- mobile menu ---------- */
-function setMenu(open){ const s=document.querySelector('.side'); s.classList.toggle('open',open); document.body.classList.toggle('menu-open',open);
-  const b=$('#menuBtn'); b.setAttribute('aria-expanded',open); b.setAttribute('aria-label',open?'Close menu':'Open menu'); }
-document.addEventListener('click', e=>{
-  if(e.target.closest('#menuBtn')){ setMenu(!document.querySelector('.side').classList.contains('open')); return; }
-  if(e.target.closest('.side-menu a')) setMenu(false);
-});
-window.addEventListener('hashchange', ()=>setMenu(false));
-document.addEventListener('keydown', e=>{ if(e.key==='Escape') setMenu(false); });
-
-/* ---------- badge calendar (one row per badge, BadgeBase-style) ---------- */
-const CAL = { calHome:{offset:0,span:7,limit:10}, calTimeline:{offset:0,span:7,limit:0} };
-function calRange(st){
-  const d=new Date(); d.setHours(0,0,0,0);
-  d.setDate(d.getDate() - ((d.getDay()+6)%7));               // Monday of the current week
-  d.setDate(d.getDate() + (st.span===7 ? st.offset*7 : st.offset*28 - 7));
-  const a0=d.getTime(); return [a0, a0 + st.span*DAY];
-}
-function calRows(a0,a1){
-  const out=[];
-  EVENTS.forEach(ev=>{ if(!ev.start||!ev.end) return; const s=Date.parse(ev.start), e=Date.parse(ev.end);
-    if(!(s<a1 && e>a0)) return;
-    ev.badges.forEach(b=>out.push({ev,b,s,e,st:status(ev)})); });
-  const rank={live:0,soon:1,ended:2};
-  return out.sort((x,y)=> rank[x.st]-rank[y.st] || (x.st==="soon" ? x.s-y.s : x.e-y.e) || x.b.name.localeCompare(y.b.name));
-}
-const fmtShort = t => new Date(t).toLocaleString(undefined,{weekday:'short',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
-function leftText(r){
-  const now=Date.now(), fmtD = ms => { const d=Math.floor(ms/DAY), hh=Math.floor(ms%DAY/36e5); return d ? `${d}d ${hh}h` : `${hh}h ${Math.floor(ms%36e5/6e4)}m`; };
-  if(r.st==="soon") return "starts in "+fmtD(r.s-now);
-  if(r.st==="live") return fmtD(r.e-now)+" left";
-  return "ended";
-}
-function renderCalendar(id){
-  const el=document.getElementById(id); if(!el) return; const st=CAL[id];
-  const [a0,a1]=calRange(st), n=st.span, now=Date.now(), rows=calRows(a0,a1);
-  const compact = window.matchMedia('(max-width:640px)').matches;
-  const cols = compact && n===28 ? 4 : n;                           // phones: 4 week columns instead of 28 day columns
-  const days=Array.from({length:cols},(_,i)=>{ const step = cols===n ? DAY : 7*DAY, d=new Date(a0+i*step);
-    const t = cols===n ? d.toDateString()===new Date().toDateString() : (now>=d.getTime() && now<d.getTime()+step);
-    if(compact) return `<div class="cal-day ${t?'today':''} ${cols===n&&[0,6].includes(d.getDay())?'wk':''}">${cols===n?d.toLocaleDateString(undefined,{weekday:'narrow'}):'Week of'}<b>${cols===n?d.getDate():d.toLocaleDateString(undefined,{month:'short',day:'numeric'})}</b></div>`;
-    return `<div class="cal-day ${t?'today':''} ${[0,6].includes(d.getDay())?'wk':''}">${d.toLocaleDateString(undefined,{weekday:'short'})}<b>${d.toLocaleDateString(undefined,{month:'short',day:'numeric'})}</b></div>`; }).join('');
-  const shown = st.limit && !st.all ? rows.slice(0, st.limit) : rows;
-  const bars=shown.map((r,k)=>{
-    const s=Math.max(r.s,a0), e=Math.min(r.e,a1);
-    const left=(s-a0)/(a1-a0)*100, width=Math.max((e-s)/(a1-a0)*100, 1.2), w=Math.min(width,100-left);
-    const narrow = w < (n===7 ? 16 : 7);
-    const g=globalBadges.find(x=>x.imgId===r.b.img)||{}, set=g.set||"", nm=g.name||r.b.name;
-    const icon = r.b.img ? `<img src="${esc(cdn(r.b.img))}" alt="" loading="lazy">` : `<span class="ph">?</span>`;
-    const label = `<span class="nm">${esc(nm)}</span><span class="lft">${leftText(r)}</span>`;
-    const inLabel = w < (n===7 ? 30 : 12) ? `<span class="nm">${esc(nm)}</span>` : label;
-    const bar = `<button class="cal-bar ${r.b.cost||'na'} ${r.st==='soon'?'soon':''} ${r.s<a0?'cut-l':''} ${r.e>a1?'cut-r':''}"
-      style="left:${left}%;width:${narrow?`max(${w}%,34px)`:w+'%'}" data-k="${k}" ${set?`data-set="${esc(set)}"`:`data-ev="${esc(r.ev.id)}"`}>${icon}${narrow?'':inLabel}</button>`;
-    // short bars: put the name next to the bar instead of inside it (or before it, near the right edge)
-    const out = !narrow ? '' : (left + w > 70
-      ? `<span class="cal-out" style="right:calc(${100-left}% + 4px);flex-direction:row-reverse;padding:0 8px 0 0">${label}</span>`
-      : `<span class="cal-out" style="left:calc(${left}% + max(${w}%, 34px) + 4px)">${label}</span>`);
-    const pctL=(s-a0)/(a1-a0)*100, pctW=Math.max((e-s)/(a1-a0)*100,1.5), urgent=r.st==="live" && r.e-now<48*36e5;
-    const nowTick = now>=a0 && now<a1 ? `<span class="nowt" style="left:${(now-a0)/(a1-a0)*100}%"></span>` : '';
-    const mrow = `<button class="cal-m ${r.b.cost||'na'} ${r.st==='soon'?'soon':''}" data-k="${k}" ${set?`data-set="${esc(set)}"`:`data-ev="${esc(r.ev.id)}"`}>
-      <span class="cal-mtop">${icon}<span class="nm">${esc(nm)}</span><span class="lft ${urgent?'urgent':''}">${leftText(r)}</span></span>
-      <span class="cal-mtrack"><i style="left:${pctL}%;width:${Math.min(pctW,100-pctL)}%"></i>${nowTick}</span></button>`;
-    return compact ? mrow : `<div class="cal-row">${bar}${out}</div>`;
-  }).join('') + (st.limit && rows.length > st.limit ? `<div class="cal-more"><button class="btn ghost" data-calall="${id}">${st.all?'Show less':`Show all ${rows.length} badges`}</button></div>` : '');
-  const nowX = now>=a0 && now<a1 ? `<div class="cal-now" style="left:${(now-a0)/(a1-a0)*100}%"></div>` : '';
-  const label = `${new Date(a0).toLocaleDateString(undefined,{month:'short',day:'numeric'})} – ${new Date(a1-1).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'})}`;
-  const liveCount = rows.filter(r=>r.st==="live").length;
-  el.innerHTML = `
-    <div class="cal-head"><h3><span class="st live"></span>${id==="calHome"?"Badges available right now":"Schedule"} <span class="pill live">${liveCount} active</span></h3>
-      <span class="cal-range">${label}</span>
-      <div class="seg mini" data-calview="${id}"><button data-span="7" class="${n===7?'on':''}">Week</button><button data-span="28" class="${n===28?'on':''}">4 weeks</button></div>
-      <div class="cal-nav" data-calnav="${id}"><button data-d="-1" aria-label="Previous">‹</button><button class="today" data-d="0">Today</button><button data-d="1" aria-label="Next">›</button></div>
-    </div>
-    <div class="cal-scroll"><div class="cal-inner" style="--n:${cols};--g:${cols};${n===28&&!compact?'min-width:1400px':''}">
-      <div class="cal-days">${days}</div>
-      <div class="cal-body">${rows.length?bars:`<div class="cal-empty">No badges with known dates in this range.</div>`}${nowX}</div>
-    </div></div>
-    <div class="cal-foot"><span><i style="background:rgba(52,211,153,.5)"></i>Free</span><span><i style="background:rgba(139,92,246,.6)"></i>Sub / paid</span><span><i style="border:1px dashed var(--line-2)"></i>Starts later</span>
-      <span class="sp">* Shown in your local time (${esc(Intl.DateTimeFormat().resolvedOptions().timeZone||'')}). Hover a badge for details, click to open it.</span></div>`;
-  el._rows = rows;
-  if(n===28 && !compact){ const sc=el.querySelector('.cal-scroll'); if(sc && now>=a0 && now<a1) sc.scrollLeft = Math.max(0,(now-a0)/(a1-a0)*sc.scrollWidth - sc.clientWidth/3); }
-}
-function renderCalendars(){ renderCalendar('calHome'); renderCalendar('calTimeline'); }
-document.addEventListener('click', e=>{
-  const nv=e.target.closest('[data-calnav] button'); if(nv){ const id=nv.parentElement.dataset.calnav, d=+nv.dataset.d; CAL[id].offset = d===0?0:CAL[id].offset+d; renderCalendar(id); return; }
-  const ca=e.target.closest('[data-calall]'); if(ca){ const id=ca.dataset.calall; CAL[id].all=!CAL[id].all; renderCalendar(id); return; }
-  const vw=e.target.closest('[data-calview] button'); if(vw){ const id=vw.parentElement.dataset.calview; CAL[id].span=+vw.dataset.span; CAL[id].offset=0; renderCalendar(id); return; }
-  const cb=e.target.closest('.cal-bar[data-set], .cal-m[data-set]'); if(cb){ hideTip(); location.hash='#badge/'+encodeURIComponent(cb.dataset.set); }
-});
-const calTip = document.createElement('div'); calTip.id='calTip'; document.body.appendChild(calTip);
-function hideTip(){ calTip.classList.remove('show'); }
-document.addEventListener('mouseover', e=>{
-  const b=e.target.closest('.cal-bar'); if(!b || window.matchMedia('(hover:none)').matches){ hideTip(); return; }
-  const cal=b.closest('.cal'), r=cal && cal._rows && cal._rows[+b.dataset.k]; if(!r) return;
-  const gt=(globalBadges.find(x=>x.imgId===r.b.img)||{}).name||r.b.name;
-  calTip.innerHTML = `<b>${esc(gt)}</b><div style="color:var(--muted)">${esc(r.ev.name)}${r.ev.category&&r.ev.category!=="Unknown"?` · ${esc(r.ev.category)}`:''}</div>
-    <div class="r"><span>Starts</span><span>${fmtShort(r.s)}</span></div><div class="r"><span>Ends</span><span>${fmtShort(r.e)}</span></div>
-    <div class="r"><span>Cost</span><span>${{free:'Free',paid:'Sub / paid',na:'Unknown'}[r.b.cost||'na']}</span></div>
-    <div class="r"><span>Status</span><span>${leftText(r)}</span></div>
-    ${r.b.how?`<div style="margin-top:6px;color:var(--text)">${esc(r.b.how)}</div>`:''}`;
-  calTip.classList.add('show');
-});
-document.addEventListener('mousemove', e=>{ if(!calTip.classList.contains('show')) return;
-  const w=calTip.offsetWidth, hh=calTip.offsetHeight; let x=e.clientX+14, y=e.clientY+14;
-  if(x+w>innerWidth-8) x=e.clientX-w-14; if(y+hh>innerHeight-8) y=e.clientY-hh-14; calTip.style.left=x+'px'; calTip.style.top=y+'px'; });
-setInterval(renderCalendars, 60000);
-window.matchMedia('(max-width:640px)').addEventListener('change', renderCalendars);
-
-/* ---------- FAQ ---------- */
-const FAQ = [
-  ["Badges", [
-    ["What are Twitch global badges?", "Global badges are small icons next to your name in chat that look the same in <b>every</b> channel — unlike subscriber and Bits badges, which each streamer designs for their own channel. Most new ones are limited-time rewards tied to a game launch, an event or a campaign."],
-    ["How do I get a badge?", "Open the badge on the <a href='#timeline'>Timeline</a> and check its objective. It is usually one of two things: <b>watch</b> a stream in a specific category for a set time (free), or <b>subscribe / gift a sub</b> to a streamer in that category (paid). The badge is only awarded while the event is running."],
-    ["Does a gifted sub or Prime count?", "For sub-based badges you normally have to <b>buy</b> a Tier 1 subscription or a Tier 1 gift sub yourself. Receiving a gifted sub usually does not count, and Prime subs are often excluded too. When a badge has its own rule, it is written on its page."],
-    ["I completed the objective but I don't have the badge. What now?", "Twitch can take a while to grant it — often a few minutes, sometimes up to a day. Make sure the stream was in the right category and had the reward enabled, and that you watched with the tab active and not muted. If it still hasn't arrived after 24 hours, contact Twitch Support."],
-    ["How do I equip a badge?", "In any chat, click your name (or the chat settings icon) → <b>Chat Identity</b> → pick the badge under Global Badges. Only one global badge can be shown at a time."],
-    ["Can I lose a badge?", "No. Once a badge is in your collection, it stays there even after the event ends. You can only get it again if Twitch reruns the event."],
-    ["What are channel badges?", "Newer campaign badges that a single streamer hands out — for subscribing, watching for a while or being a top supporter during their campaign. They are listed under <a href='#channel'>Channel Badges</a>."]
-  ]],
-  ["Timeline & dates", [
-    ["Why does a badge say “Date not announced”?", "Twitch adds the badge to its system before the event starts, but does not publish the dates anywhere machine-readable. As soon as the dates are known, we add them and the badge moves to <b>Coming up</b> or <b>Active</b> automatically."],
-    ["What time zone are the dates in?", "Everything on the site is shown in <b>your own local time</b>, taken from your browser. The exact UTC time is visible on each badge page."],
-    ["Why is a badge “Active” but I can't find it anywhere?", "Many badges only count on streams that are in the right category <b>and</b> have the reward switched on. Open the category from the badge page — Twitch's drops filter shows the participating streams."]
-  ]],
-  ["About Badge Database", [
-    ["Where does the data come from?", "Badge images, titles and descriptions come from the public Twitch API and are checked every 15 minutes. Dates and objectives are added from official announcements."],
-    ["How do I get notified about new badges?", "Every new global badge is posted on <a href='https://x.com/BadgeDatabase' target='_blank' rel='noopener'>@BadgeDatabase on X</a> the moment it appears, and it shows up here on the site at the same time. The <a href='https://twitch.tv/badge_db' target='_blank' rel='noopener'>24/7 stream</a> shows live countdowns, and the <a href='https://discord.gg/QkuRDXcZH5' target='_blank' rel='noopener'>Discord</a> is the place to ask questions and chat about badges."],
-    ["Is Badge Database affiliated with Twitch?", "No. Badge Database is an independent fan project and is not affiliated with or endorsed by Twitch Interactive, Inc."],
-    ["I found a mistake — how do I report it?", "Message us on <a href='https://discord.gg/QkuRDXcZH5' target='_blank' rel='noopener'>Discord</a> or <a href='https://x.com/BadgeDatabase' target='_blank' rel='noopener'>X</a> with the badge name and the correct info, and we'll fix it."]
-  ]]
-];
-function renderFAQ(){
-  const el=$('#faqList'); if(!el || el.dataset.done) return; el.dataset.done=1;
-  el.innerHTML = FAQ.map(([cat,qs])=>`<div class="faq-cat">${cat}</div>`+qs.map(([q,a],i)=>`<details ${cat==="Badges"&&i===0?'open':''}><summary>${q}</summary><div class="a">${a}</div></details>`).join('')).join('');
-  const ld=document.createElement('script'); ld.type='application/ld+json';
-  ld.textContent=JSON.stringify({"@context":"https://schema.org","@type":"FAQPage","mainEntity":FAQ.flatMap(([,qs])=>qs.map(([q,a])=>({"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a.replace(/<[^>]+>/g,'')}})))});
-  document.head.appendChild(ld);
-}
-
-function renderTimeline(){ renderCalendars(); }
-function tick(){ $$('[data-cd]').forEach(el=>el.textContent=countdown(el.dataset.cd)); }
-
-/* ---------- global badges page ---------- */
-let gQuery="", gSort="added", gDir="desc", gFilter="all", gShown=90;
-function badgeRow(b, type){
-  const ev = EV_BY_IMG[b.imgId]; const st = ev ? status(ev.ev) : null;
-  const meta = type==='global'
-    ? [ b.added?`Added ${fmt(b.added)}`:'', b.users?`${num(b.users)} users`:'' ].filter(Boolean).join(' · ')
-    : (b.versions.length>1 ? `${b.versions.length} versions` : 'Details');
-  const tag = type==='global' ? `a href="/badges/${encodeURIComponent(b.set)}/"` : 'button';
-  return `<${tag} class="brow" data-badge="${esc(b.set)}" data-type="${type}">${tile(b)}<span class="t"><span class="n">${esc(b.name)}</span><span class="m">${b.free?'<span class="pill free">Free</span>':''}${st==="live"?'<span class="pill live">Active</span>':st==="soon"?'<span class="pill soon">Upcoming</span>':''}<span>${meta}</span></span></span></${type==='global'?'a':'button'}>`;
-}
-function renderGlobal(){
-  let list = globalBadges.filter(b => !gQuery || (b.name+" "+b.set).toLowerCase().includes(gQuery));
-  if(gFilter==="free") list = list.filter(b=>b.free);
-  if(gFilter==="paid") list = list.filter(b=>!b.free);
-  if(gFilter==="active") list = list.filter(b=>EV_BY_IMG[b.imgId] && status(EV_BY_IMG[b.imgId].ev)==="live");
-  const cmp = {added:(a,b)=>(a.added||"").localeCompare(b.added||""), users:(a,b)=>a.users-b.users, title:(a,b)=>a.name.localeCompare(b.name)}[gSort];
-  list = [...list].sort(cmp); if(gDir==="desc") list.reverse();
-  if(gSort==="added"){ const dated=list.filter(b=>b.added), undated=list.filter(b=>!b.added); list=[...dated,...undated]; }
-  const versions = globalBadges.reduce((n,b)=>n+b.versions.length,0);
-  $('#gCount').textContent = `${list.length} of ${globalBadges.length} badge sets${versions>globalBadges.length?` (${versions} versions)`:''}`;
-  $('#gridGlobal').innerHTML = list.length ? list.slice(0,gShown).map(b=>badgeRow(b,'global')).join('') : `<div class="empty">No badges match “${esc(gQuery)}”.</div>`;
-  $('#gMore').innerHTML = list.length>gShown ? `<button class="btn ghost" id="btnMore">Show ${Math.min(90,list.length-gShown)} more</button>` : '';
-}
-let cQuery="", cFilter="all", cShown=90;
-function channelRow(b){
-  return `<button class="brow" data-cbadge="${esc(b.imgId)}">${tile(b)}<span class="t"><span class="n">${esc(b.name)}</span><span class="m"><span class="pill ${b.type}">${CTYPE[b.type]||b.type}</span><span class="ch">${esc(b.display||b.login)}</span>${b.added?`<span>· ${fmt(b.added)}</span>`:''}</span></span></button>`;
-}
-function renderChannel(){
-  let list = channelBadges.filter(b => !cQuery || (b.name+" "+b.login+" "+(b.display||"")).toLowerCase().includes(cQuery));
-  if(cFilter!=="all") list = list.filter(b=>b.type===cFilter);
-  $('#gridChannel').innerHTML = list.length ? list.slice(0,cShown).map(channelRow).join('') : `<div class="empty">${channelBadges.length?'No badges match.':'The bot is still collecting channel badges — check back soon.'}</div>`;
-  $('#chCount').textContent = channelBadges.length ? `${list.length} of ${channelBadges.length} campaign badges from ${new Set(channelBadges.map(b=>b.login)).size} channels` : '';
-  $('#cMore').innerHTML = list.length>cShown ? `<button class="btn ghost" id="btnCMore">Show ${Math.min(90,list.length-cShown)} more</button>` : '';
-  $('#cChannel').textContent = channelBadges.length || '';
-}
-function renderAll(){ renderHome(); renderEvents(); renderTimeline(); renderGlobal(); renderChannel(); }
-
-/* ---------- Twitch API helpers (used by the channel badge drawer) ---------- */
-const prettify = s => s.replace(/[-_]/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
-
-/* ---------- drawer ---------- */
-function open(html){ $('#drawerBody').innerHTML=html; $('#drawer').classList.add('open'); $('#scrim').classList.add('show'); $('#drawer').setAttribute('aria-hidden','false'); $('#closeDrawer').focus(); }
-function closeDrawer(){ $('#drawer').classList.remove('open'); $('#scrim').classList.remove('show'); $('#drawer').setAttribute('aria-hidden','true'); }
-const catUrl = c => `https://www.twitch.tv/directory/category/${encodeURIComponent(c.toLowerCase().replace(/[:'’]/g,'').replace(/\s+/g,'-'))}`;
-function openEvent(id){
-  const ev=allEvents().find(e=>e.id===id); if(!ev) return; const st=status(ev);
-  const cd = st==="live"?`<div class="cd" data-cd="${ev.end}">${countdown(ev.end)}<small>until it ends</small></div>`:st==="soon"?`<div class="cd" data-cd="${ev.start}">${countdown(ev.start)}<small>until it starts</small></div>`:"";
-  open(`<div class="hero-img">${ev.badges.map(b=>tile({...b,img:cdn(b.img)})).join('')}</div><h3>${esc(ev.name)}</h3><div class="sub">${esc(ev.category)}</div>${cd}
-    <dl class="kv"><dt>Status</dt><dd>${{live:"Active now",soon:"Upcoming",ended:"Ended",tba:"Date not announced"}[st]}</dd><dt>Starts</dt><dd>${fmtFull(ev.start)}</dd><dt>Ends</dt><dd>${fmtFull(ev.end)}</dd></dl>
-    ${ev.note?`<p class="hint">${esc(ev.note)}</p>`:''}
-    <div class="badgelist">${ev.badges.map(b=>`<div>${tile({...b,img:cdn(b.img)})}<span><b>${esc(b.name)}</b><span>${esc(b.how)}</span></span><span class="pill ${b.cost}" style="margin-left:auto;flex:none">${{free:"Free",paid:"Paid",na:"TBA"}[b.cost]}</span></div>`).join('')}</div>
-    <div class="actions">${!/any|unknown|twitch|eligible/i.test(ev.category)?`<a class="btn" target="_blank" rel="noopener" href="${catUrl(ev.category)}">Open category on Twitch</a>`:''}<button class="btn ghost" data-copy="${esc(ev.name)} — ${esc(ev.badges.map(b=>b.name+': '+b.how).join(' | '))} (${fmt(ev.start)} – ${fmt(ev.end)})">Copy summary</button></div>`);
-}
-function openBadge(set,type){
-  const b=(type==='global'?globalBadges:lookupBadges).find(x=>x.set===set); if(!b) return;
-  const ev = EV_BY_IMG[b.imgId]; const st = ev?status(ev.ev):null;
-  const how = b.how || (ev ? ev.b.how : "") || "No public description for this badge.";
-  open(`<div class="hero-img">${tile(b)}</div><h3>${esc(b.name)}</h3><div class="sub">${type==='global'?'Twitch global badge':'Channel badge'}${b.free?' · <span class="pill free">Free</span>':''}${st==="live"?' · <span class="pill live">Active now</span>':st==="soon"?' · <span class="pill soon">Upcoming</span>':''}</div>
-    ${ev&&st==="live"?`<div class="cd" data-cd="${ev.ev.end}">${countdown(ev.ev.end)}<small>until it ends</small></div>`:''}
-    <dl class="kv"><dt>How to get it</dt><dd>${esc(how)}</dd>${ev?`<dt>Event</dt><dd>${esc(ev.ev.name)}<br><span style="color:var(--muted)">${fmtFull(ev.ev.start)} – ${fmtFull(ev.ev.end)}</span></dd>`:''}${b.added?`<dt>Added</dt><dd>${fmt(b.added)}</dd>`:''}${b.users?`<dt>Users</dt><dd>${num(b.users)}</dd>`:''}<dt>Versions</dt><dd>${b.versions.length}</dd>${type==='global'?`<dt>Set ID</dt><dd><code>${esc(b.set)}</code></dd>`:''}</dl>
-    ${b.versions.length>1?`<div class="versions">${b.versions.map(v=>`<span class="v">${tile({name:v.title||v.id,img:v.img})}<span>${esc(v.title&&v.title!==b.name?v.title.replace(b.name,'').trim()||v.id:v.id)}</span></span>`).join('')}</div>`:''}
-    <div class="actions">${ev?`<button class="btn" data-openev="${ev.ev.id}">Open event</button>`:''}<a class="btn ghost" href="${esc(b.img)}" target="_blank" rel="noopener">Open image</a><button class="btn ghost" data-copy="${esc(b.img)}">Copy image URL</button></div>`);
-}
-
-/* ---------- badge detail page ---------- */
-let bpVersion = 0, bpTheme = "dark";
-function renderBadgePage(set){
-  const box=$('#badgePage'); $('.back').setAttribute('href','#global'); $('.back').textContent='← All Twitch Global Badges';
-  const b = globalBadges.find(x=>x.set===set) || globalBadges.find(x=>x.imgId===set) || globalBadges.find(x=>x.versions.some(v=>v.img.includes(set)));
-  if(!b){ box.innerHTML = `<div class="page-head"><div><h1>Badge not found</h1><p class="lead">This badge is not in the archive (yet).</p></div></div>`; return; }
-  if(bpVersion >= b.versions.length) bpVersion = 0;
-  const v = b.versions[bpVersion]; const vid = v.img.match(/badges\/v1\/([0-9a-f-]+)\//)?.[1] || b.imgId;
-  const ev = EV_BY_IMG[vid] || EV_BY_IMG[b.imgId]; const st = ev ? status(ev.ev) : null;
-  const cat = ev ? ev.ev.category.split(" · ")[0] : "";
-  const chan = ev && /channel:\s*(\S+)/i.exec(ev.ev.category)?.[1];
-  const twitchDesc = (b.how && b.how.toLowerCase()!==b.name.toLowerCase() ? b.how : "") || (ev && ev.b.desc) || "";
-  const desc = twitchDesc || (ev ? `This badge is earned during the ${ev.ev.name} event: ${ev.b.how}` : "Twitch does not provide a description for this badge.");
-  const context = ev ? (ev.ev.about || ev.ev.note || `This badge was added to promote ${ev.ev.name}${cat && !/any|unknown|twitch/i.test(cat) ? ` in the ${cat} category` : ""} on Twitch.`) : "";
-  const cd = st==="live" ? `<div class="bp-cd" data-cd="${ev.ev.end}">${countdown(ev.ev.end)}<small>until it ends</small></div>` : st==="soon" ? `<div class="bp-cd" data-cd="${ev.ev.start}">${countdown(ev.ev.start)}<small>until it starts</small></div>` : "";
-  const bg = bpTheme==="dark" ? "#18181b" : "#f7f7f8";
-  box.innerHTML = `
-    <div class="page-head"><div><h1>${esc(v.title||b.name)}</h1><p class="lead">Everything you need to know about this Twitch global badge.</p></div>
-      <div>${b.free?'<span class="pill free">Free</span> ':''}${st==="live"?'<span class="pill live">Active</span>':st==="soon"?'<span class="pill soon">Upcoming</span>':st==="ended"?'<span class="pill na">Ended</span>':''}</div></div>
-    <div class="bp-grid">
-      <div class="card2"><h3>Images <span class="seg mini" id="bpTheme"><button data-t="dark" class="${bpTheme==='dark'?'on':''}">Dark</button><button data-t="light" class="${bpTheme==='light'?'on':''}">Light</button></span></h3>
-        <div class="sizes" style="--bp-bg:${bg}">
-          ${[1,2,3].map((s,i)=>`<a href="${esc(v.img.replace(/\/3$/,'/'+s))}" target="_blank" rel="noopener"><span class="box"><img src="${esc(v.img.replace(/\/3$/,'/'+s))}" width="${18*(i===2?4:i+1)}" height="${18*(i===2?4:i+1)}" alt=""></span>${['1x','2x','4x'][i]}</a>`).join('')}
-        </div>
-        ${b.versions.length>1?`<h3 style="margin-top:18px">Versions</h3><div class="vers">${b.versions.map((x,i)=>`<a href="#badge/${encodeURIComponent(b.set)}" data-ver="${i}" class="${i===bpVersion?'on':''}"><img src="${esc(x.img)}" alt="">${esc(x.title||('Version '+(i+1)))}</a>`).join('')}</div>`:''}
-      </div>
-      <div class="card2"><h3>Details</h3>
-        <dl class="kv2">
-          <dt>Title</dt><dd>${esc(v.title||b.name)}</dd>
-          <dt>Description</dt><dd>${esc(desc)}</dd>
-          <dt>Set ID</dt><dd><code>${esc(b.set)}</code></dd>
-          <dt>Version ID</dt><dd><code>${esc(String(bpVersion+1))}</code>${b.versions.length>1?` of ${b.versions.length}`:''}</dd>
-          ${b.added?`<dt>Added</dt><dd>${fmt(b.added)}</dd>`:''}
-          ${b.users?`<dt>Users</dt><dd>${num(b.users)}</dd>`:''}
-          <dt>Cost</dt><dd>${b.free?'Free':(ev&&ev.b.cost==='paid')?'Paid (subscription / gift sub)':'—'}</dd>
-        </dl>
-      </div>
-      <div class="card2"><h3>Availability</h3>
-        ${cd}
-        <dl class="kv2">
-          <dt>Status</dt><dd>${st?{live:"Active",soon:"Upcoming",ended:"Ended",tba:"Date not announced"}[st]:"Unknown / not a timed event"}</dd>
-          <dt>Objective</dt><dd>${ev?esc(ev.b.how):"—"}</dd>
-          <dt>Category</dt><dd>${cat && !/any|unknown|twitch/i.test(cat)?`<a href="${catUrl(cat)}?filter=drops" target="_blank" rel="noopener">${esc(cat)}</a>`:esc(cat||"—")}</dd>
-          <dt>Channels</dt><dd>${chan?`<a href="https://twitch.tv/${esc(chan)}" target="_blank" rel="noopener">${esc(chan)}</a>`:"Any"}</dd>
-          <dt>Started</dt><dd>${ev?fmtFull(ev.ev.start):"—"}</dd>
-          <dt>Ends</dt><dd>${ev?fmtFull(ev.ev.end):"—"}</dd>
-        </dl>
-        ${ev?`<div class="actions" style="margin-top:16px;display:flex;gap:8px"><button class="btn" data-ev="${ev.ev.id}">Open event</button></div>`:''}
-      </div>
-      <div class="card2"><h3>Context</h3><p class="ctx">${context?esc(context):"No additional context yet. Follow twitch.tv/badge_db for updates."}</p>
-        <h3 style="margin-top:18px">History</h3><dl class="kv2"><dt>Added</dt><dd>${b.added?fmt(b.added):"Before tracking started"}</dd></dl>
-        <div class="actions" style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap"><a class="btn ghost" href="${esc(v.img)}" target="_blank" rel="noopener">Open image</a><button class="btn ghost" data-copy="${esc(v.img)}">Copy image URL</button><button class="btn ghost" data-copy="${esc(location.origin+location.pathname+'#badge/'+encodeURIComponent(b.set))}">Copy page link</button></div>
-      </div>
-    </div>`;
-}
-document.addEventListener('click', e => {
-  const t=e.target.closest('#bpTheme button'); if(t){ bpTheme=t.dataset.t; route(); e.preventDefault(); return; }
-  const vv=e.target.closest('[data-ver]'); if(vv){ bpVersion=+vv.dataset.ver; route(); e.preventDefault(); }
-});
-
-function renderChannelBadgePage(imgId){
-  const box=$('#badgePage'); const b = channelBadges.find(x=>x.imgId===imgId);
-  $('.back').setAttribute('href','#channel'); $('.back').textContent='← All Twitch Channel Badges';
-  if(!b){ box.innerHTML = `<div class="page-head"><div><h1>Badge not found</h1><p class="lead">This channel badge is not in the archive.</p></div></div>`; return; }
-  const bg = bpTheme==="dark" ? "#18181b" : "#f7f7f8";
-  const siblings = channelBadges.filter(x=>x.setId.replace(/-(sub|mw|ranking)$/,'')===b.setId.replace(/-(sub|mw|ranking)$/,'') && x.imgId!==b.imgId);
-  const how = {sub:"Subscribe (or gift a sub) to the channel while the campaign is running.", watch:"Watch the channel for the required time while the campaign is running.", ranking:"Be one of the top supporters of the campaign.", other:"See the channel for details."}[b.type];
-  box.innerHTML = `
-    <div class="page-head"><div><h1>${esc(b.name)}</h1><p class="lead">Channel badge from <a href="https://twitch.tv/${esc(b.login)}" target="_blank" rel="noopener" style="color:var(--purple-2);font-weight:700">${esc(b.display||b.login)}</a></p></div><div><span class="pill ${b.type}">${CTYPE[b.type]||b.type}</span></div></div>
-    <div class="bp-grid">
-      <div class="card2"><h3>Images <span class="seg mini" id="bpTheme"><button data-t="dark" class="${bpTheme==='dark'?'on':''}">Dark</button><button data-t="light" class="${bpTheme==='light'?'on':''}">Light</button></span></h3>
-        <div class="sizes" style="--bp-bg:${bg}">${[1,2,3].map((s,i)=>`<a href="${esc(b.img.replace(/\/3$/,'/'+s))}" target="_blank" rel="noopener"><span class="box"><img src="${esc(b.img.replace(/\/3$/,'/'+s))}" width="${18*(i===2?4:i+1)}" height="${18*(i===2?4:i+1)}" alt=""></span>${['1x','2x','4x'][i]}</a>`).join('')}</div>
-        ${siblings.length?`<h3 style="margin-top:18px">Same campaign</h3><div class="vers">${siblings.map(x=>`<a href="#channel-badge/${esc(x.imgId)}"><img src="${esc(x.img)}" alt="">${esc(x.name)}</a>`).join('')}</div>`:''}
-      </div>
-      <div class="card2"><h3>Details</h3>
-        <dl class="kv2">
-          <dt>Title</dt><dd>${esc(b.name)}</dd>
-          <dt>Channel</dt><dd><a href="https://twitch.tv/${esc(b.login)}" target="_blank" rel="noopener">${esc(b.display||b.login)}</a></dd>
-          <dt>Type</dt><dd>${CTYPE[b.type]||b.type}</dd>
-          <dt>How to get it</dt><dd>${how}</dd>
-          <dt>Set ID</dt><dd><code>${esc(b.setId)}</code></dd>
-          <dt>First seen</dt><dd>${fmt(b.added)}</dd>
-        </dl>
-        <div class="actions" style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="https://twitch.tv/${esc(b.login)}" target="_blank" rel="noopener">Open channel</a><a class="btn ghost" href="${esc(b.img)}" target="_blank" rel="noopener">Open image</a><button class="btn ghost" data-copy="${esc(b.img)}">Copy image URL</button></div>
-      </div>
-    </div>`;
-}
-
-/* ---------- admin: edit events.json through the GitHub API ---------- */
-const ADM = { token:"", sha:"", events:[], dirty:false, filter:"needs", status:"" };
-try{ ADM.token = localStorage.getItem("badgedb_gh_token") || ""; }catch(_){}
-const b64encode = str => { const bytes = new TextEncoder().encode(str); let bin=""; for(let i=0;i<bytes.length;i+=0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i,i+0x8000)); return btoa(bin); };
-const b64decode = b64 => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\n/g,"")), c=>c.charCodeAt(0)));
-async function gh(path, opts={}){
-  const r = await fetch(`https://api.github.com/repos/${CONFIG.repo}/${path}`, { ...opts, headers:{ "Accept":"application/vnd.github+json", "Authorization":`Bearer ${ADM.token}`, ...(opts.headers||{}) } });
-  if(!r.ok){ const t = await r.text(); const e = new Error(`GitHub ${r.status}`); e.status=r.status; e.body=t; throw e; }
-  return r.json();
-}
-const toLocalInput = iso => { if(!iso) return ""; const d=new Date(iso); if(isNaN(d)) return ""; return new Date(d - d.getTimezoneOffset()*60000).toISOString().slice(0,16); };
-const fromLocalInput = v => v ? new Date(v).toISOString().replace(/\.\d{3}Z$/,"Z") : "";
-function admSetStatus(msg, cls=""){ ADM.status = msg; const el=$('#admStatus'); if(el){ el.textContent=msg; el.className='adm-status '+cls; } }
-function admMarkDirty(){ ADM.dirty=true; admSetStatus("Unsaved changes","dirty"); }
-
-async function admLoad(){
-  admSetStatus("Loading…");
-  try{
-    const f = await gh("contents/events.json?ref=main");
-    ADM.sha = f.sha; ADM.events = JSON.parse(b64decode(f.content)); ADM.dirty=false;
-    admSetStatus(`Loaded ${ADM.events.length} events`, "ok"); renderAdmin();
-  }catch(e){
-    if(e.status===401||e.status===403||e.status===404){ admSetStatus("Token rejected — check it has Contents: Read and write on this repo.","err"); }
-    else admSetStatus("Could not load: "+e.message,"err");
-  }
-}
-async function admSave(){
-  admSetStatus("Saving…");
-  try{
-    const body = { message:"Update events via admin", content:b64encode(JSON.stringify(ADM.events,null,1)), sha:ADM.sha, branch:"main" };
-    const r = await gh("contents/events.json", { method:"PUT", body:JSON.stringify(body) });
-    ADM.sha = r.content.sha; ADM.dirty=false;
-    EVENTS = JSON.parse(JSON.stringify(ADM.events)); indexEvents(); renderEvents(); renderTimeline(); renderHome();
-    admSetStatus("Saved — the public site updates in about a minute","ok");
-  }catch(e){
-    if(e.status===409) admSetStatus("The bot changed events.json meanwhile. Click Reload, then redo your edit.","err");
-    else admSetStatus("Save failed: "+e.message,"err");
-  }
-}
-function admNeeds(ev){ return !ev.start || ev.badges.some(b=>b.cost==="na" || is_ph(b.how)) || !ev.category || ev.category==="Unknown"; }
-const is_ph = h => { h=(h||"").trim().toLowerCase(); return !h || h==="objective not announced yet." || h==="objective not confirmed yet." || h.startsWith("watch in the category (exact time"); };
-
-function renderAdmin(){
-  const top=$('#admTop'), body=$('#admBody');
-  if(!ADM.token){
-    top.innerHTML="";
-    body.innerHTML = `<div class="card2 adm-login"><h3>Sign in with a GitHub token</h3>
-      <p class="ctx">The editor saves straight into your repository, so it needs a key that can write only this one repo. It is stored in this browser only.</p>
-      <ol>
-        <li>Open <b>github.com/settings/personal-access-tokens/new</b> (Fine-grained token).</li>
-        <li>Token name: <b>BadgeDB admin</b>, Expiration: as long as you like.</li>
-        <li>Repository access: <b>Only select repositories</b> → <b>${esc(CONFIG.repo)}</b>.</li>
-        <li>Permissions → Repository permissions → <b>Contents: Read and write</b>.</li>
-        <li><b>Generate token</b>, copy it and paste it below.</li>
-      </ol>
-      <div class="adm-row"><label class="search" style="flex:1;min-width:260px"><input id="admTok" type="password" placeholder="github_pat_…" autocomplete="off"></label><button class="btn" id="admLogin">Sign in</button></div>
-      <p class="adm-status" id="admStatus">${esc(ADM.status)}</p></div>`;
-    return;
-  }
-  top.innerHTML = `<span class="adm-status" id="admStatus">${esc(ADM.status)}</span>
-    <button class="btn ghost" id="admReload">Reload</button><button class="btn ghost" id="admNew">+ New event</button><button class="btn" id="admSave">Save changes</button>
-    <button class="btn ghost" id="admLogout" title="Forget token on this device">Sign out</button>`;
-  if(!ADM.events.length){ body.innerHTML = `<div class="empty">Loading events…</div>`; return; }
-  const list = ADM.events.map((ev,i)=>({ev,i})).filter(({ev})=> ADM.filter==="all" ? true : ADM.filter==="needs" ? admNeeds(ev) : ["live","soon"].includes(status(ev)));
-  const covered = new Set(ADM.events.flatMap(e=>e.badges.map(b=>b.img)));
-  const spare = globalBadges.filter(b=>!covered.has(b.imgId) && b.added && (Date.now()-Date.parse(b.added)) < 90*864e5);
-  const counts = { needs: ADM.events.filter(admNeeds).length, active: ADM.events.filter(e=>["live","soon"].includes(status(e))).length, all: ADM.events.length };
-  body.innerHTML = `
-    <div class="seg adm-tabs" id="admFilter">
-      <button data-f="needs" class="${ADM.filter==='needs'?'on':''}">Needs info (${counts.needs})</button>
-      <button data-f="active" class="${ADM.filter==='active'?'on':''}">Active &amp; upcoming (${counts.active})</button>
-      <button data-f="all" class="${ADM.filter==='all'?'on':''}">All (${counts.all})</button>
-    </div>
-    ${list.length ? list.map(({ev,i})=>admEventCard(ev,i,spare)).join('') : `<div class="empty">Nothing here — every event has its info filled in.</div>`}`;
-}
-function admEventCard(ev,i,spare){
-  const st = status(ev), needs = admNeeds(ev);
-  const pill = st==="live"?'<span class="pill live">Active</span>':st==="soon"?'<span class="pill soon">Upcoming</span>':st==="ended"?'<span class="pill na">Ended</span>':'<span class="pill na">No dates</span>';
-  const utc = iso => iso ? new Date(iso).toUTCString().replace(" GMT"," UTC").slice(5,22)+" UTC" : "";
-  return `<details class="adm-ev ${needs?'needs':''}" data-i="${i}" ${needs && ADM.filter==='needs'?'open':''}>
-    <summary><span class="imgs">${ev.badges.slice(0,4).map(b=>`<img src="${esc(cdn(b.img))}" alt="">`).join('')}</span>
-      <span><b>${esc(ev.name)}</b><small>${esc(ev.category||'Unknown category')} · ${ev.badges.length} badge${ev.badges.length>1?'s':''}${ev.start?` · ${fmt(ev.start)} – ${fmt(ev.end)}`:''}</small></span>${pill}</summary>
-    <div class="adm-form">
-      <label>Event name<input data-k="name" value="${esc(ev.name)}"></label>
-      <label>Twitch category<input data-k="category" value="${esc(ev.category||'')}" placeholder="e.g. Minecraft"></label>
-      <label>Starts <span class="hint">your local time${ev.start?` · ${utc(ev.start)}`:''}${ev.dates_src==='twitch'?' · auto from Twitch':ev.dates_src==='manual'?' · set by you':''}</span><input type="datetime-local" data-k="start" value="${toLocalInput(ev.start)}"></label>
-      <label>Ends <span class="hint">your local time${ev.end?` · ${utc(ev.end)}`:''}</span><input type="datetime-local" data-k="end" value="${toLocalInput(ev.end)}"></label>
-      <label>Only on channel <span class="hint">optional, for single-channel events</span><input data-k="channel" value="${esc(ev.channel||'')}" placeholder="e.g. ironmouse"></label>
-      <label>Note <span class="hint">optional, shown as a highlighted hint</span><input data-k="note" value="${esc(ev.note||'')}"></label>
-      <div class="adm-badges">${ev.badges.map((b,j)=>`
-        <div class="adm-b" data-j="${j}"><img src="${esc(cdn(b.img))}" alt="">
-          <span class="nm">${esc(b.name)}</span>
-          <input data-bk="how" value="${esc(b.how||'')}" placeholder="How to get it, e.g. Watch 60 minutes in the category.">
-          <select data-bk="cost"><option value="free" ${b.cost==='free'?'selected':''}>Free</option><option value="paid" ${b.cost==='paid'?'selected':''}>Sub / paid</option><option value="na" ${(!b.cost||b.cost==='na')?'selected':''}>Unknown</option></select>
-          <button data-rmb="${j}" title="Remove badge from this event">×</button>
-          ${b.desc?`<span class="ds">Twitch: ${esc(b.desc)}</span>`:''}
-        </div>`).join('')}</div>
-      <div class="adm-row">
-        ${spare.length?`<select data-addb><option value="">+ Add a recent badge to this event…</option>${spare.map(s=>`<option value="${esc(s.imgId)}">${esc(s.name)} (${fmt(s.added)})</option>`).join('')}</select>`:''}
-        <span style="flex:1"></span><button class="btn ghost" data-del="${i}">Delete event</button>
-      </div>
-    </div></details>`;
-}
-function admFromBadge(img){ const g = globalBadges.find(b=>b.imgId===img); return g ? { name:g.name, img:g.imgId, how:g.how||"Objective not announced yet.", cost:g.free?"free":"na" } : null; }
-
-document.addEventListener('input', e=>{
-  const card = e.target.closest('.adm-ev'); if(!card) return;
-  const ev = ADM.events[+card.dataset.i];
-  if(e.target.dataset.k){ const k=e.target.dataset.k, v=e.target.value.trim();
-    if(k==="start"||k==="end"){ ev[k]=fromLocalInput(e.target.value); ev.dates_src="manual"; }
-    else if(v || k==="name" || k==="category") ev[k]=e.target.value; else delete ev[k];
-    if(k==="name") ev.name_src="manual";
-    admMarkDirty(); }
-  if(e.target.dataset.bk){ const j=+e.target.closest('.adm-b').dataset.j; ev.badges[j][e.target.dataset.bk]=e.target.value; if(e.target.dataset.bk==="how") ev.badges[j].how_src="manual"; admMarkDirty(); }
-});
-document.addEventListener('change', e=>{
-  if(e.target.matches('[data-bk="cost"]')){ const card=e.target.closest('.adm-ev'); ADM.events[+card.dataset.i].badges[+e.target.closest('.adm-b').dataset.j].cost=e.target.value; admMarkDirty(); }
-  if(e.target.matches('[data-addb]') && e.target.value){ const card=e.target.closest('.adm-ev'); const nb=admFromBadge(e.target.value);
-    if(nb){ ADM.events[+card.dataset.i].badges.push(nb); admMarkDirty(); renderAdmin(); document.querySelector(`.adm-ev[data-i="${card.dataset.i}"]`)?.setAttribute('open',''); } }
-});
-document.addEventListener('click', e=>{
-  if(e.target.id==='admLogin'){ const t=$('#admTok').value.trim(); if(!t) return; ADM.token=t; try{localStorage.setItem("badgedb_gh_token",t);}catch(_){} renderAdmin(); admLoad(); return; }
-  if(e.target.id==='admLogout'){ ADM.token=""; ADM.events=[]; try{localStorage.removeItem("badgedb_gh_token");}catch(_){} admSetStatus(""); renderAdmin(); return; }
-  if(e.target.id==='admReload'){ if(!ADM.dirty || confirm("Discard unsaved changes?")) admLoad(); return; }
-  if(e.target.id==='admSave'){ admSave(); return; }
-  if(e.target.id==='admNew'){ ADM.events.unshift({id:"event-"+Date.now().toString(36),name:"New event",category:"",start:"",end:"",badges:[]}); ADM.filter="all"; admMarkDirty(); renderAdmin(); document.querySelector('.adm-ev[data-i="0"]')?.setAttribute('open',''); return; }
-  const f=e.target.closest('#admFilter button'); if(f){ ADM.filter=f.dataset.f; renderAdmin(); return; }
-  const rm=e.target.closest('[data-rmb]'); if(rm){ e.preventDefault(); const card=rm.closest('.adm-ev'); ADM.events[+card.dataset.i].badges.splice(+rm.dataset.rmb,1); admMarkDirty(); renderAdmin(); document.querySelector(`.adm-ev[data-i="${card.dataset.i}"]`)?.setAttribute('open',''); return; }
-  const del=e.target.closest('[data-del]'); if(del){ if(confirm("Delete this event from the timeline? (The badges stay in the archive.)")){ ADM.events.splice(+del.dataset.del,1); admMarkDirty(); renderAdmin(); } return; }
-});
-window.addEventListener('beforeunload', e=>{ if(ADM.dirty){ e.preventDefault(); e.returnValue=""; } });
-
-/* ---------- "data updated" line in the footer ---------- */
-if(!isFile) fetch(`https://api.github.com/repos/${CONFIG.repo}/commits?per_page=1`).then(r=>r.ok?r.json():null).then(c=>{
-  if(!c||!c[0]) return; const t=Date.parse(c[0].commit.committer.date); const m=Math.round((Date.now()-t)/60000);
-  $('#dataAge').textContent = `Data last updated ${m<1?'just now':m<60?m+' min ago':Math.round(m/60)+' h ago'}.`;
-}).catch(()=>{});
-
-/* ---------- stream bar ---------- */
-function togglePlayer(){
-  const p=$('#player'); if(!p.hidden){ p.hidden=true; $('#playerBody').innerHTML=''; $('#btnPlayer').innerHTML='<span class="lg">Load stream &amp; chat</span><span class="sm">Watch live</span>'; return; }
-  const ch=CONFIG.channel;
-  $('#playerBody').innerHTML = isFile ? `<div class="ph2">The embedded player only works when the site is hosted over http(s).<br><a class="btn" style="margin-top:12px" href="https://twitch.tv/${ch}" target="_blank" rel="noopener">Open twitch.tv/${ch} ↗</a></div>`
-    : `<iframe src="https://player.twitch.tv/?channel=${ch}&${PARENTS()}&muted=true" allowfullscreen></iframe><iframe src="https://www.twitch.tv/embed/${ch}/chat?${PARENTS()}&darkpopout" style="height:300px"></iframe>`;
-  p.hidden=false; $('#btnPlayer').innerHTML='Hide stream';
-}
-
-/* ---------- wiring ---------- */
-document.addEventListener('click', e => {
-  const seg=e.target.closest('.seg button'); if(seg){ const id=seg.parentElement.id; seg.parentElement.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===seg)); const v=seg.dataset.v;
-    if(id==='evFilter') evFilter=v; if(id==='gSort') gSort=v; if(id==='gDir') gDir=v; if(id==='gFilter') gFilter=v; if(id==='cFilter') cFilter=v; gShown=90; renderEvents(); renderGlobal(); renderChannel(); return; }
-  if(e.target.id==='btnMore'){ gShown+=90; renderGlobal(); return; }
-  if(e.target.id==='btnCMore'){ cShown+=90; renderChannel(); return; }
-  const cb=e.target.closest('[data-cbadge]'); if(cb){ location.hash='#channel-badge/'+cb.dataset.cbadge; return; }
-  const ev=e.target.closest('[data-ev]'); if(ev){ openEvent(ev.dataset.ev); return; }
-  const oe=e.target.closest('[data-openev]'); if(oe){ openEvent(oe.dataset.openev); return; }
-  const bd=e.target.closest('[data-badge]'); if(bd){ if(bd.tagName==='A' && (e.ctrlKey||e.metaKey||e.shiftKey||e.button===1)) return; e.preventDefault(); if(bd.dataset.type==='global'){ bpVersion=0; location.hash='#badge/'+encodeURIComponent(bd.dataset.badge); } else openBadge(bd.dataset.badge,bd.dataset.type); return; }
-  const cp=e.target.closest('[data-copy]'); if(cp){ navigator.clipboard?.writeText(cp.dataset.copy).then(()=>toast('Copied')); return; }
-});
-$('#qEv').addEventListener('input',e=>{evQuery=e.target.value.trim().toLowerCase();renderEvents();});
-$('#qG').addEventListener('input',e=>{gQuery=e.target.value.trim().toLowerCase();gShown=90;renderGlobal();});
-$('#qC').addEventListener('input',e=>{cQuery=e.target.value.trim().toLowerCase();cShown=90;renderChannel();});
-$('#scrim').addEventListener('click',closeDrawer); $('#closeDrawer').addEventListener('click',closeDrawer);
-$('#btnPlayer').addEventListener('click',togglePlayer); $('#btnPlayerX').addEventListener('click',togglePlayer);
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDrawer(); });
-
-renderAll(); route(); setInterval(tick,1000);
-// When hosted, prefer the live badges.json kept up to date by the bot (see badgedb-bot/).
-if(!isFile) fetch('badges.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(rows=>{
-  if(!Array.isArray(rows)||!rows.length) return;
-  globalBadges = normalize(rows);
-  renderAll(); if(location.hash.startsWith('#badge/')) route();
-}).catch(()=>{});
-if(!isFile) fetch('events.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(rows=>{
-  if(!Array.isArray(rows)||!rows.length) return;
-  EVENTS = rows; indexEvents(); renderAll(); if(location.hash.startsWith('#badge/')) route();
-}).catch(()=>{});
-if(!isFile) fetch('channel-badges.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(rows=>{
-  if(!Array.isArray(rows)) return;
-  channelBadges = normChannel(rows); renderChannel(); if(location.hash.startsWith('#channel-badge/')) route();
-}).catch(()=>{});
-</script>
+<script src="/assets/app.js"></script>
 </body>
 </html>
