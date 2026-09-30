@@ -361,8 +361,15 @@ function renderEmotes(){
   const grid = $('#gridEmotes'); if(!grid) return;
   const live = EMOTES.filter(e => e[4] !== 0);
   $('#cEmotes').textContent = live.length || '';
-  let list = eFilter === "retired" ? EMOTES.filter(e => e[4] === 0) : live;
+  // date filters only make sense once the bot has recorded at least one new emote
   const yr = String(new Date().getFullYear()), halfYear = new Date(Date.now() - 182*864e5).toISOString().slice(0,10);
+  const hasYear = EMOTES.some(e => (e[2] || "").startsWith(yr)), hasHalf = EMOTES.some(e => (e[2] || "") >= halfYear);
+  const fy = $('#eFilter [data-v="year"]'), fh = $('#eFilter [data-v="6m"]');
+  if(fy) fy.hidden = !hasYear; if(fh) fh.hidden = !hasHalf;
+  if((eFilter === "year" && !hasYear) || (eFilter === "6m" && !hasHalf)){
+    eFilter = "all"; $$('#eFilter button').forEach(b => b.classList.toggle('on', b.dataset.v === 'all'));
+  }
+  let list = eFilter === "retired" ? EMOTES.filter(e => e[4] === 0) : live;
   if(eFilter === "animated") list = list.filter(e => e[3] === 1);
   if(eFilter === "year") list = list.filter(e => (e[2] || "").startsWith(yr));
   if(eFilter === "6m") list = list.filter(e => (e[2] || "") >= halfYear);

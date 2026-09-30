@@ -571,3 +571,5 @@
   .pop-note{margin-top:18px;font-size:12.5px;color:var(--dim);max-width:75ch;line-height:1.6}.pop-note a{color:var(--muted);font-weight:700}
   @media (max-width:640px){.pop-stats{grid-template-columns:1fr}.egrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.emo{padding:10px 4px}
     .prow{grid-template-columns:30px 36px minmax(0,1fr) auto;gap:8px}.prow img{width:30px;height:30px}.prow .nm{font-size:13px}}
+
+  .seg button[hidden]{display:none}
