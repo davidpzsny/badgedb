@@ -468,7 +468,7 @@ function renderPopularity(){
   if(!ranked.length){ box.innerHTML = `<div class="empty">${READY ? 'No usage data yet — it is refreshed once a day.' : 'Loading…'}</div>`; $('#popStats').innerHTML=''; return; }
   const total = ranked.reduce((n, b) => n + b.users, 0), top = ranked[0], max = top.users;
   $('#popStats').innerHTML = `<div><b>${ranked.length}</b><span>badges ranked</span></div><div><b>${compact(total)}</b><span>badge users counted</span></div>
-    <div><b>${esc(top.name)}</b><span>most used · ${compact(top.users)} users${POP && POP.updated ? ` · updated ${fmt(POP.updated)}` : ''}</span></div>`;
+    <div><b>${esc(top.name)}</b><span>most used · ${compact(top.users)} users${POP && POP.updated ? ` · updated ${fmt(POP.updated)}` : ' · older snapshot, refresh pending'}</span></div>`;
   let list = ranked;
   if(pFilter === "event") list = list.filter(b => EV_BY_IMG[b.imgId]);
   if(pFilter === "2026") list = list.filter(b => (b.added || "").startsWith("2026"));
@@ -653,13 +653,30 @@ async function admSave(){
 async function admSavePopularity(){
   admSetStatus("Fetching badge popularity from potat.app…");
   const c = await livePopularity(true);
-  if(!c){ admSetStatus("potat.app did not answer this browser (blocked or offline) — try again later.","err"); return; }
+  if(!c){ admShowPopPaste(); return; }
+  await admStorePopularity(c);
+}
+function admShowPopPaste(){
+  admSetStatus("potat.app doesn't allow other sites to load its data automatically — paste it instead (see below).","err");
+  const body = $('#admBody'); let box = $('#admPopBox');
+  if(!box){ box = document.createElement('div'); box.id = 'admPopBox'; box.className = 'card2'; box.style.marginBottom = '16px'; body.prepend(box); }
+  box.innerHTML = `<h3>Update badge popularity by hand</h3>
+    <ol class="ctx" style="padding-left:20px;margin:8px 0 12px;display:flex;flex-direction:column;gap:4px">
+      <li>Open <a href="${POTAT_URL}" target="_blank" rel="noopener" style="color:var(--purple-2);font-weight:700">${POTAT_URL}</a> in a new tab.</li>
+      <li>Press <b>Ctrl+A</b>, then <b>Ctrl+C</b> on that page.</li>
+      <li>Come back, click into the box below, press <b>Ctrl+V</b>, then <b>Save popularity</b>.</li></ol>
+    <textarea id="admPopText" rows="6" style="width:100%;background:var(--bg);border:1px solid var(--line-2);border-radius:9px;color:var(--text);font:12px ui-monospace,monospace;padding:10px" placeholder="Paste the potat.app page here…"></textarea>
+    <div style="display:flex;gap:8px;margin-top:10px"><button class="btn" id="admPopSave">Save popularity</button><button class="btn ghost" id="admPopClose">Cancel</button></div>`;
+}
+async function admStorePopularity(c){
   try{
     let sha; try{ sha = (await gh("contents/popularity.json?ref=main")).sha; }catch(_){}
     const body = {message:"Update badge popularity via admin", branch:"main",
       content: b64encode(JSON.stringify({updated:c.updated, source:c.source, counts:c.counts})), ...(sha?{sha}:{})};
     await gh("contents/popularity.json", {method:"PUT", body:JSON.stringify(body)});
     POP = c; applyPopularity(); renderPopularity(); renderGlobal();
+    try{ localStorage.setItem(POP_CACHE, JSON.stringify({...c, t: Date.now()})); }catch(_){}
+    $('#admPopBox')?.remove();
     admSetStatus(`Saved popularity for ${Object.keys(c.counts).length} badges — the site updates in a few minutes`,"ok");
   }catch(e){ admSetStatus("Could not save popularity: "+e.message,"err"); }
 }
@@ -750,6 +767,14 @@ document.addEventListener('click', e=>{
   if(e.target.id==='admReload'){ if(!ADM.dirty || confirm("Discard unsaved changes?")) admLoad(); return; }
   if(e.target.id==='admSave'){ admSave(); return; }
   if(e.target.id==='admPop'){ admSavePopularity(); return; }
+  if(e.target.id==='admPopClose'){ $('#admPopBox')?.remove(); return; }
+  if(e.target.id==='admPopSave'){
+    const raw = $('#admPopText').value, a = raw.search(/[\[{]/), z = Math.max(raw.lastIndexOf('}'), raw.lastIndexOf(']'));
+    let j; try{ j = JSON.parse(raw.slice(a, z + 1)); }catch(_){ admSetStatus("That isn't the potat.app data — copy the whole page (Ctrl+A, Ctrl+C) and paste again.","err"); return; }
+    const counts = parsePotat(j);
+    if(Object.keys(counts).length < 10){ admSetStatus(`Only ${Object.keys(counts).length} badges recognised — is this the right page?`,"err"); return; }
+    admStorePopularity({updated:new Date().toISOString().slice(0,10), source:"PotatBotat (potat.app)", counts}); return;
+  }
   if(e.target.id==='admNew'){ ADM.events.unshift({id:"event-"+Date.now().toString(36),name:"New event",category:"",start:"",end:"",badges:[]}); ADM.filter="all"; admMarkDirty(); renderAdmin(); document.querySelector('.adm-ev[data-i="0"]')?.setAttribute('open',''); return; }
   const f=e.target.closest('#admFilter button'); if(f){ ADM.filter=f.dataset.f; renderAdmin(); return; }
   const rm=e.target.closest('[data-rmb]'); if(rm){ e.preventDefault(); const card=rm.closest('.adm-ev'); ADM.events[+card.dataset.i].badges.splice(+rm.dataset.rmb,1); admMarkDirty(); renderAdmin(); document.querySelector(`.adm-ev[data-i="${card.dataset.i}"]`)?.setAttribute('open',''); return; }
