@@ -253,7 +253,7 @@ function renderEvents(){
     buckets[status(ev)].push(ev);
   });
   buckets.live.sort((a,b)=>Date.parse(a.end)-Date.parse(b.end)); buckets.soon.sort((a,b)=>Date.parse(a.start)-Date.parse(b.start)); buckets.ended.sort((a,b)=>Date.parse(b.end)-Date.parse(a.end));
-  buckets.ended = buckets.ended.filter(ev => Date.now() - Date.parse(ev.end) <= 3*864e5).slice(0, 6);
+  delete buckets.ended;                              // finished events stay in the archive, not on the timeline
   for(const k of Object.keys(buckets)){ const K=k[0].toUpperCase()+k.slice(1); $('#ev'+K).innerHTML = buckets[k].length?buckets[k].map(ev=>eventCard(ev,k)).join(''):`<div class="empty">${evQuery?'No events match your search.':READY?'Nothing here right now.':'Loading…'}</div>`; $('#n'+K).textContent = buckets[k].length||''; }
 }
 const DAY=864e5, COLW=46;
@@ -292,7 +292,7 @@ function leftText(r){
 }
 function renderCalendar(id){
   const el=document.getElementById(id); if(!el) return; const st=CAL[id];
-  const [a0,a1]=calRange(st), n=st.span, now=Date.now(), rows=calRows(a0,a1).filter(r => id!=='calHome' || r.st!=='ended');
+  const [a0,a1]=calRange(st), n=st.span, now=Date.now(), rows=calRows(a0,a1).filter(r => r.st!=='ended');
   const compact = window.matchMedia('(max-width:640px)').matches;
   const cols = compact && n===28 ? 4 : n;                           // phones: 4 week columns instead of 28 day columns
   const days=Array.from({length:cols},(_,i)=>{ const step = cols===n ? DAY : 7*DAY, d=new Date(a0+i*step);
