@@ -370,6 +370,8 @@ def main():
     changed += write("emotes/index.html", emotes_page(load("emotes.json", [])))
     changed += write("popularity/index.html", popularity_page(sets, pop))
     changed += write("faq/index.html", faq_page())
+    changed += write("me/index.html", page("/me/", "My Badges – Your Twitch Badge Collection | Badge Database",
+                     "Tick the Twitch badges you have and see which ones you can still get right now.", "me", noindex=True))
     changed += write("privacy/index.html", page("/privacy/", "Privacy Policy | Badge Database", "How Badge Database handles personal data: no accounts, no tracking cookies, which third-party services are used, and your rights under the GDPR.", "privacy"))
     changed += write("terms/index.html", page("/terms/", "Terms of Service | Badge Database", "Terms of Service for Badge Database, an independent fan project not affiliated with Twitch: accuracy of badge information, acceptable use and liability.", "terms"))
     changed += write("404.html", page("/404.html", "Badge Database", "Every Twitch badge and when to get it.", "home", noindex=True))
