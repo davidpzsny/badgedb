@@ -77,6 +77,29 @@ def parse_desc(desc):
     if m: out["channel"] = m.group(1)
     return out
 
+_STOP = {"badge", "twitch", "elden", "ring", "the", "and", "launch", "event", "edition", "season", "supporter"}
+def _words(t): return {w for w in re.findall(r"[a-z0-9]+", (t or "").lower()) if len(w) >= 4 and w not in _STOP}
+
+def resolve_placeholders(events, title_to_img):
+    """Badges entered before Twitch published them have no image. Link them to the real badge by name,
+    or drop them once a real badge with a clearly matching name has joined the same event."""
+    fixed = 0
+    for ev in events:
+        real = [b for b in ev.get("badges", []) if b.get("img")]
+        keep = []
+        for b in ev.get("badges", []):
+            if b.get("img"): keep.append(b); continue
+            img = title_to_img.get(_norm(b.get("name")))
+            if img:
+                if any(r["img"] == img for r in real): fixed += 1; continue          # already there -> drop the duplicate
+                b["img"] = img; keep.append(b); fixed += 1; continue
+            common = [w for r in real for w in _words(b.get("name")) & _words(r.get("name"))]
+            if len(set(common)) >= 2 or any(len(w) >= 6 for w in common):
+                fixed += 1; continue                                                # e.g. "Festering Bloody Finger" -> "Bloody Finger ELDEN RING"
+            keep.append(b)
+        ev["badges"] = keep
+    return fixed
+
 def load_events():
     try: return json.load(open(EV_DB, encoding="utf-8"))
     except Exception: return []
@@ -84,7 +107,7 @@ def load_events():
 def save_events(events):
     json.dump(events, open(EV_DB, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
-def sync_events(desc_by_img, new_sets):
+def sync_events(desc_by_img, new_sets, title_to_img=None):
     """1) Fill placeholder fields of existing events from Twitch descriptions (never overwrites manual edits).
        2) Put newly discovered badge sets on the timeline, grouped by category / merged into a matching open event."""
     events = load_events(); changed = 0
@@ -128,9 +151,10 @@ def sync_events(desc_by_img, new_sets):
             if info.get("channel"): ev["channel"] = info["channel"]
             events.insert(0, ev)
         known_imgs.add(b["img"]); added += 1
-    if changed or added:
+    linked = resolve_placeholders(events, title_to_img or {})
+    if changed or added or linked:
         save_events(events)
-        print(f"events.json: {added} new badge(s) on the timeline, {changed} field(s) filled from Twitch descriptions")
+        print(f"events.json: {added} new badge(s) on the timeline, {changed} field(s) filled from Twitch descriptions, {linked} placeholder(s) resolved")
 
 
 # ---------- Twitch reward campaigns: dates, category, objective ----------
@@ -394,10 +418,21 @@ def sync_emotes(token):
     out = json.dumps(rows, ensure_ascii=False, separators=(",", ":"))
     if out != before:
         open(EMOTES_DB, "w", encoding="utf-8").write(out)
+    status("emotes", f"{len(data)} live, {len(new)} new, {len(removed)} removed")
     print(f"global emotes: {len(data)} live, {len(new)} new, {len(removed)} removed" + (f" -> new: {', '.join(new[:10])}" if new else "")
           + (f" -> removed: {', '.join(removed[:10])}" if removed else "") + (" (first run: baseline saved)" if first_run else ""))
 
 # ---------- badge popularity (public PotatBotat API, updated once a day) ----------
+STATUS = {}                                          # small run report -> status.json (readable from the repo for debugging)
+def status(key, msg):
+    STATUS[key] = {"at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"), "msg": str(msg)[:600]}
+def write_status():
+    try:
+        old = load_json(os.path.join(ROOT, "status.json"), {})
+        old.update(STATUS)
+        json.dump(old, open(os.path.join(ROOT, "status.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    except Exception as e: print("status.json not written:", e)
+
 POP_DB = os.path.join(ROOT, "popularity.json")      # {"updated": "YYYY-MM-DD", "source": ..., "counts": {set_id: users}}
 POTAT_URL = "https://api.potat.app/twitch/badges"
 def _find_list(j, depth=0):
@@ -424,12 +459,13 @@ def update_popularity(live):
     try:
         r = requests.get(POTAT_URL, timeout=40, headers={"User-Agent": "BadgeDatabase (badgedatabase.com)", "Accept": "application/json"})
         print(f"popularity: potat.app answered HTTP {r.status_code}, {len(r.content)} bytes")
+        status("popularity_http", f"HTTP {r.status_code}, {len(r.content)} bytes, starts with: {r.text[:300]}")
         j = r.json()
     except Exception as e:
-        print("popularity: request failed ->", e); return
+        print("popularity: request failed ->", e); status("popularity", f"request failed: {e}"); return
     items = _find_list(j)
     if not items:
-        print(f"popularity: unexpected response -> {str(j)[:400]}"); return
+        print(f"popularity: unexpected response -> {str(j)[:400]}"); status("popularity", f"unexpected response: {str(j)[:400]}"); return
     print(f"popularity: {len(items)} rows, first row: {str(items[0])[:300]}")
     sets = {b["set"] for b in live}
     by_title = {_norm(b["title"]): b["set"] for b in live}
@@ -453,11 +489,12 @@ def update_popularity(live):
             sid = next((by_title[_norm(v)] for v in strs if _norm(v) in by_title), None)
         if sid: counts[sid] = max(counts.get(sid, 0), int(n))    # multi-version sets: the largest version
     if not counts:
-        print(f"popularity: could not match any badge -> first row {str(items[0])[:300]}"); return
+        print(f"popularity: could not match any badge -> first row {str(items[0])[:300]}"); status("popularity", f"no badge matched, first row: {str(items[0])[:300]}"); return
     json.dump({"updated": today, "source": "PotatBotat (potat.app)", "counts": dict(sorted(counts.items(), key=lambda kv: -kv[1]))},
               open(POP_DB, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     top = max(counts, key=counts.get)
     print(f"popularity: {len(counts)} badge sets updated (top: {top} {counts[top]:,})")
+    status("popularity", f"ok: {len(counts)} badge sets, top {top} {counts[top]:,}")
 
 # ---------- post image (1200x675 card) ----------
 def make_card(badge_png_bytes, title, subtitle=""):
@@ -644,7 +681,7 @@ def main():
         json.dump(rows, open(DB, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
         print("badges.json updated")
 
-    sync_events({b["img"]: b.get("desc", "") for b in live}, new_sets)
+    sync_events({b["img"]: b.get("desc", "") for b in live}, new_sets, {_norm(b["title"]): b["img"] for b in live})
     try: apply_campaigns(rows)
     except Exception as e: print("twitch campaigns: skipped ->", e)
 
@@ -652,7 +689,7 @@ def main():
     except Exception as e: print("x link reply: skipped ->", e)
 
     try: update_popularity(live)
-    except Exception as e: print("popularity: skipped ->", e)
+    except Exception as e: print("popularity: skipped ->", e); status("popularity", f"crashed: {e!r}")
 
     tok = None
     try: tok = app_token()
@@ -662,6 +699,8 @@ def main():
         except Exception as e: print("global emotes: skipped ->", e)
         try: crawl_channel_badges(tok)
         except Exception as e: print("channel crawl failed:", e)
+
+    write_status()
 
 if __name__ == "__main__":
     main()
