@@ -760,17 +760,47 @@
  {
   "id": "wsci",
   "name": "2026 World Star Challengers Invitational",
-  "category": "Unknown",
+  "category": "League of Legends",
   "start": "2026-09-19T16:00:00Z",
   "end": "2026-10-03T03:59:00Z",
   "badges": [
    {
     "name": "WSCI 2026",
     "img": "e61d79be-7d9d-4de2-8571-41f00bf2081a",
-    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub to a participating League of Legends co-streamer. Prime subs don't count.",
     "cost": "paid",
-    "desc": "This badge was earned by supporting the 2026 World Star Challengers Invitational!"
+    "desc": "This badge was earned by supporting the 2026 World Star Challengers Invitational!",
+    "how_src": "manual"
    }
-  ]
+  ],
+  "channels": [
+   "Caedrel",
+   "ibai",
+   "Kamet0",
+   "Nisqyy",
+   "ElOjoNinja",
+   "getFlakked",
+   "Th3Antonio",
+   "Starky",
+   "MalzaharBerkut",
+   "Karni",
+   "champi14",
+   "Werlyb",
+   "gtroubleinc",
+   "Peaxy",
+   "Freezecz",
+   "Xnapycz",
+   "TL_Nero",
+   "KenRhen",
+   "Terenas",
+   "frajgo",
+   "Nervarien",
+   "TTobias_lol",
+   "Archarom",
+   "KamusLoL",
+   "skain"
+  ],
+  "channels_partial": true,
+  "channels_note": "About 95 League of Legends co-streamers take part; these are some of them."
  }
 ]
