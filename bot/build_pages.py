@@ -103,8 +103,16 @@ def _asset_version():
         except Exception: pass
     return h.hexdigest()[:10]
 ASSET_V = _asset_version()
+CLIENT_ID = (os.environ.get("TWITCH_CLIENT_ID") or "").strip()      # public app id, used by "Log in with Twitch"
 def _versioned(html_text):
-    return re.sub(r'(/assets/app\.(?:css|js))(\?v=[0-9a-f]*)?"', lambda m: f'{m.group(1)}?v={ASSET_V}"', html_text)
+    html_text = re.sub(r'(/assets/app\.(?:css|js))(\?v=[0-9a-f]*)?"', lambda m: f'{m.group(1)}?v={ASSET_V}"', html_text)
+    if CLIENT_ID and re.fullmatch(r"[a-z0-9]{10,64}", CLIENT_ID):
+        tag = f'<meta name="twitch-client-id" content="{CLIENT_ID}">'
+        if 'name="twitch-client-id"' in html_text:
+            html_text = re.sub(r'<meta name="twitch-client-id" content="[^"]*">', tag, html_text, count=1)
+        else:
+            html_text = html_text.replace("</head>", tag + "\n</head>", 1)
+    return html_text
 
 # keep the homepage (index.html) pointing at the current asset version too
 _idx_path = os.path.join(ROOT, "index.html")
@@ -156,11 +164,33 @@ def state_of(ev, by_img, now):
     if st == "tba": return "ended" if is_stale(ev, by_img, now) else "tba"
     return st
 
+def ev_channels(ev):
+    one = ev.get("channel") or (re.search(r"channel:\s*(\S+)", ev.get("category") or "", re.I) or [None, None])[1]
+    out = []
+    for c in ([one] if one else []) + list(ev.get("channels") or []):
+        c = str(c).strip().lstrip("@")
+        if c and c not in out: out.append(c)
+    return out
+
+def channels_html(ev, cat):
+    ch = ev_channels(ev)
+    drops = (f'https://www.twitch.tv/directory/category/{e(re.sub(r"[^a-z0-9]+", "-", cat.lower()).strip("-"))}?filter=drops' if cat else "")
+    if ch:
+        chips = "".join(f'<a class="chan" href="https://twitch.tv/{e(c)}" target="_blank" rel="noopener">{e(c)}</a>' for c in ch[:30])
+        if len(ch) > 30: chips += f'<span class="chan more">+{len(ch) - 30} more</span>'
+        note = ""
+        if ev.get("channels_partial"):
+            note = f'<div class="chan-note">{e(ev.get("channels_note") or "These are some of the participating channels.")}' + \
+                   (f' <a href="{drops}" target="_blank" rel="noopener">See every live participating channel on Twitch ↗</a>' if drops else "") + "</div>"
+        return f'<div class="chans">{chips}</div>{note}'
+    return f'Any channel in the category with Drops enabled — <a href="{drops}" target="_blank" rel="noopener">see live channels ↗</a>' if drops else "Any"
+
 def tile(img, alt=""):
     return f'<span class="tile"><img src="{CDN.format(img)}" alt="{e(alt)}" loading="lazy"></span>' if img else '<span class="tile"><span class="ph">?</span></span>'
 
-def brow(s, state=None):
-    pills = ('<span class="pill free">Free</span>' if s["free"] else "") + (PILL.get(state, "") if state else "")
+def brow(s, state=None, cost=None):
+    free = (cost == "free") if cost in ("free", "paid") else s["free"]
+    pills = ('<span class="pill free">Free</span>' if free else "") + (PILL.get(state, "") if state else "")
     meta = " · ".join(x for x in [f"Added {day(s['added'])}" if s["added"] else "", f"{s['users']:,} users" if s["users"] else ""] if x)
     return (f'<a class="brow" href="/badges/{e(s["set"])}/" data-badge="{e(s["set"])}" data-type="global">{tile(s["img"], s["name"])}'
             f'<span class="t"><span class="n">{e(s["name"])}</span><span class="m">{pills}<span>{meta}</span></span></span></a>')
@@ -177,7 +207,7 @@ def badge_page(s, ev, evb, related, now, stale=False):
     when = f"Available {day(ev['start'])} – {day(ev['end'])}." if ev and ev.get("start") else ""
     meta = f"{s['name']} is a Twitch global badge. {how or desc_text} {when}".strip()
     meta = (meta[:157] + "…") if len(meta) > 158 else meta
-    pills = ('<span class="pill free">Free</span> ' if s["free"] else "") + \
+    pills = ('<span class="pill free">Free</span> ' if cost == "free" else "") + \
             {"live": '<span class="pill live">Active</span>', "soon": '<span class="pill soon">Upcoming</span>', "ended": '<span class="pill na">Ended</span>', "tba": ""}[st]
     base = CDN.format(s["img"])[:-1]
     sizes = "".join(f'<a href="{base}{n}" target="_blank" rel="noopener"><span class="box"><img src="{base}{n}" width="{w}" height="{w}" alt=""></span>{lbl}</a>'
@@ -197,7 +227,7 @@ def badge_page(s, ev, evb, related, now, stale=False):
     avail = [("Status", ("Ended (dates were never announced)" if stale else {"live": "Active", "soon": "Upcoming", "ended": "Ended", "tba": "Date not announced"}[st]) if ev
                         else ("Ended — exact dates weren't recorded" if eventish else "Not a timed event")),
              ("Objective", e(how) if how else "—"), ("Category", cat_link),
-             ("Channels", f'<a href="https://twitch.tv/{e(ev["channel"])}" target="_blank" rel="noopener">{e(ev["channel"])}</a>' if ev and ev.get("channel") else "Any"),
+             ("Channels", channels_html(ev, cat) if ev else "Any"),
              ("Started", utc(ev["start"]) if ev and ev.get("start") else ("Not recorded" if not ev and eventish else "—")),
              ("Ends", utc(ev["end"]) if ev and ev.get("end") else ("Not recorded" if not ev and eventish else "—"))]
     dl = lambda rows: '<dl class="kv2">' + "".join(f"<dt>{k}</dt><dd>{v}</dd>" for k, v in rows) + "</dl>"
@@ -222,7 +252,7 @@ def badge_page(s, ev, evb, related, now, stale=False):
                 jsonld=[crumbs_ld(("Home", "/"), ("Global Badges", "/badges/"), (s["name"], None)), ld_page], image=CDN.format(s["img"]))
 
 def global_page(sets, ev_of, by_img, now):
-    rows = "".join(brow(s, state_of(ev_of.get(s["img"], (None,))[0], by_img, now)) for s in sets)
+    rows = "".join(brow(s, state_of(ev_of.get(s["img"], (None, None))[0], by_img, now), (ev_of.get(s["img"], (None, {}))[1] or {}).get("cost")) for s in sets)
     return page("/badges/", f"All {len(sets)} Twitch Global Badges – Full List | Badge Database",
                 f"The complete list of all {len(sets)} Twitch global badges with images, how to get each one, and when it is available. Updated automatically.",
                 "global", fills={'<div class="count-line" id="gCount"></div>': f'<div class="count-line" id="gCount">{len(sets)} badge sets</div>',
