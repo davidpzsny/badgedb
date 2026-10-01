@@ -93,6 +93,7 @@ function route(){
   else if(!h && (m = p.match(/^\/channel\/([^/]+)\/$/))){ if(channelBadges.length) renderChannelBadgePage(decodeURIComponent(m[1])); h = "badge"; }
   if(!h) h = "home";
   if(h==="admin"){ renderAdmin(); if(ADM.token && !ADM.events.length) admLoad(); }
+  if(h==="popularity") maybeLivePopularity();
   $$('[data-page]').forEach(s => s.hidden = s.dataset.page !== h);
   const TITLES = {emotes:"Twitch Global Emotes – Full List | Badge Database", popularity:"Twitch Badge Popularity – Most Used Badges | Badge Database", home:"Badge Database – Every Twitch Badge & When to Get It", timeline:"Timeline – Twitch Badges Available Now | Badge Database",
     global:"All Twitch Global Badges | Badge Database", channel:"Twitch Channel Badges | Badge Database", faq:"FAQ – Twitch Badges | Badge Database",
@@ -402,6 +403,60 @@ function openEmote(id){
 /* ---------- badge popularity ---------- */
 let POP = null, pQuery = "", pFilter = "all", pShown = 100;
 const compact = n => n >= 1e6 ? (n/1e6).toFixed(n >= 1e7 ? 1 : 2).replace(/\.?0+$/,'') + 'M' : n >= 1e4 ? Math.round(n/1e3) + 'K' : num(n);
+/* Live counts straight from potat.app in the visitor's browser (the bot's server requests are blocked by
+   Cloudflare). Cached for 12 h per browser; if potat.app doesn't allow browser requests, nothing changes. */
+const POTAT_URL = "https://api.potat.app/twitch/badges", POP_CACHE = "badgedb_pop_cache";
+function potatList(j, depth = 0){
+  if(Array.isArray(j)) return j;
+  if(j && typeof j === "object" && depth < 4){
+    for(const k of ["data","badges","results","items"]) if(k in j){ const r = potatList(j[k], depth+1); if(r.length) return r; }
+    const vals = Object.values(j);
+    if(vals.length > 1 && vals.every(v => typeof v === "number" || (v && typeof v === "object" && !Array.isArray(v))))
+      return Object.entries(j).map(([k,v]) => typeof v === "number" ? {badge:k, user_count:v} : {...v, badge:k});
+    for(const v of vals){ const r = potatList(v, depth+1); if(r.length && typeof r[0] === "object") return r; }
+  }
+  return [];
+}
+function parsePotat(j){
+  const norm = t => String(t||"").toLowerCase().replace(/[^a-z0-9]+/g,"");
+  const sets = new Set(globalBadges.map(b => b.set)), byTitle = {}, byImg = {};
+  globalBadges.forEach(b => { byTitle[norm(b.name)] = b.set; b.versions.forEach(v => { const m = v.img.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/); if(m) byImg[m[0]] = b.set; }); });
+  const counts = {};
+  for(const it of potatList(j)){
+    if(!it || typeof it !== "object") continue;
+    const flat = {...it};
+    for(const [k,v] of Object.entries(it)) if(v && typeof v === "object" && !Array.isArray(v)) for(const [kk,vv] of Object.entries(v)) flat[k+"_"+kk] = vv;
+    const nums = Object.entries(flat).filter(([k,v]) => typeof v === "number");
+    const pref = nums.filter(([k]) => /user|count|total|amount|seen/i.test(k));
+    const n = pref.length ? pref[0][1] : nums.length ? Math.max(...nums.map(x => x[1])) : null;
+    if(n == null) continue;
+    const strs = Object.values(flat).filter(v => typeof v === "string");
+    let sid = strs.find(v => sets.has(v));
+    if(!sid) for(const v of strs){ const m = v.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g) || []; const hit = m.find(u => byImg[u]); if(hit){ sid = byImg[hit]; break; } }
+    if(!sid) sid = strs.map(v => byTitle[norm(v)]).find(Boolean);
+    if(sid) counts[sid] = Math.max(counts[sid] || 0, Math.round(n));
+  }
+  return counts;
+}
+async function livePopularity(force = false){
+  if(!force){ try{ const c = JSON.parse(localStorage.getItem(POP_CACHE) || "null"); if(c && Date.now() - c.t < 12*36e5 && c.counts) return c; }catch(_){} }
+  try{
+    const r = await fetch(POTAT_URL, {headers:{Accept:"application/json"}});
+    if(!r.ok) return null;
+    const counts = parsePotat(await r.json());
+    if(Object.keys(counts).length < 10) return null;
+    const c = {t: Date.now(), updated: new Date().toISOString().slice(0,10), source: "PotatBotat (potat.app)", counts};
+    try{ localStorage.setItem(POP_CACHE, JSON.stringify(c)); }catch(_){}
+    return c;
+  }catch(e){ return null; }          // blocked (CORS / network): keep whatever we already show
+}
+let liveTried = false;
+function maybeLivePopularity(){
+  if(liveTried || !READY) return; liveTried = true;
+  const today = new Date().toISOString().slice(0,10);
+  if(POP && POP.updated === today) return;                         // the repo already has today's numbers
+  livePopularity().then(c => { if(!c) return; POP = c; applyPopularity(); renderPopularity(); renderGlobal(); });
+}
 function applyPopularity(){
   if(!POP || !POP.counts) return;
   globalBadges.forEach(b => { b.users = POP.counts[b.set] || 0; });   // one consistent source; old snapshot numbers are dropped
@@ -595,6 +650,19 @@ async function admSave(){
     else admSetStatus("Save failed: "+e.message,"err");
   }
 }
+async function admSavePopularity(){
+  admSetStatus("Fetching badge popularity from potat.app…");
+  const c = await livePopularity(true);
+  if(!c){ admSetStatus("potat.app did not answer this browser (blocked or offline) — try again later.","err"); return; }
+  try{
+    let sha; try{ sha = (await gh("contents/popularity.json?ref=main")).sha; }catch(_){}
+    const body = {message:"Update badge popularity via admin", branch:"main",
+      content: b64encode(JSON.stringify({updated:c.updated, source:c.source, counts:c.counts})), ...(sha?{sha}:{})};
+    await gh("contents/popularity.json", {method:"PUT", body:JSON.stringify(body)});
+    POP = c; applyPopularity(); renderPopularity(); renderGlobal();
+    admSetStatus(`Saved popularity for ${Object.keys(c.counts).length} badges — the site updates in a few minutes`,"ok");
+  }catch(e){ admSetStatus("Could not save popularity: "+e.message,"err"); }
+}
 function admNeeds(ev){ if(isStale(ev)) return false; return !ev.start || ev.badges.some(b=>b.cost==="na" || is_ph(b.how)) || !ev.category || ev.category==="Unknown"; }
 const is_ph = h => { h=(h||"").trim().toLowerCase(); return !h || h==="objective not announced yet." || h==="objective not confirmed yet." || h.startsWith("watch in the category (exact time"); };
 
@@ -616,7 +684,7 @@ function renderAdmin(){
     return;
   }
   top.innerHTML = `<span class="adm-status" id="admStatus">${esc(ADM.status)}</span>
-    <button class="btn ghost" id="admReload">Reload</button><button class="btn ghost" id="admNew">+ New event</button><button class="btn" id="admSave">Save changes</button>
+    <button class="btn ghost" id="admReload">Reload</button><button class="btn ghost" id="admNew">+ New event</button><button class="btn ghost" id="admPop" title="Fetch badge user counts from potat.app in this browser and save them to the site">Update popularity</button><button class="btn" id="admSave">Save changes</button>
     <button class="btn ghost" id="admLogout" title="Forget token on this device">Sign out</button>`;
   if(!ADM.events.length){ body.innerHTML = `<div class="empty">Loading events…</div>`; return; }
   const list = ADM.events.map((ev,i)=>({ev,i})).filter(({ev})=> ADM.filter==="all" ? true : ADM.filter==="needs" ? admNeeds(ev) : ["live","soon"].includes(status(ev)));
@@ -681,6 +749,7 @@ document.addEventListener('click', e=>{
   if(e.target.id==='admLogout'){ ADM.token=""; ADM.events=[]; try{localStorage.removeItem("badgedb_gh_token");}catch(_){} admSetStatus(""); renderAdmin(); return; }
   if(e.target.id==='admReload'){ if(!ADM.dirty || confirm("Discard unsaved changes?")) admLoad(); return; }
   if(e.target.id==='admSave'){ admSave(); return; }
+  if(e.target.id==='admPop'){ admSavePopularity(); return; }
   if(e.target.id==='admNew'){ ADM.events.unshift({id:"event-"+Date.now().toString(36),name:"New event",category:"",start:"",end:"",badges:[]}); ADM.filter="all"; admMarkDirty(); renderAdmin(); document.querySelector('.adm-ev[data-i="0"]')?.setAttribute('open',''); return; }
   const f=e.target.closest('#admFilter button'); if(f){ ADM.filter=f.dataset.f; renderAdmin(); return; }
   const rm=e.target.closest('[data-rmb]'); if(rm){ e.preventDefault(); const card=rm.closest('.adm-ev'); ADM.events[+card.dataset.i].badges.splice(+rm.dataset.rmb,1); admMarkDirty(); renderAdmin(); document.querySelector(`.adm-ev[data-i="${card.dataset.i}"]`)?.setAttribute('open',''); return; }
@@ -737,6 +806,7 @@ Promise.allSettled([getJSON('/badges.json'), getJSON('/events.json'), getJSON('/
   if(e.status === 'fulfilled' && Array.isArray(e.value) && e.value.length){ EVENTS = e.value; indexEvents(); }
   applyPopularity();
   READY = true; renderAll(); route();
+  if(pathKey() === "/popularity/") maybeLivePopularity();
 });
 getJSON('/emotes.json').then(rows => { if(Array.isArray(rows)) EMOTES = rows; E_READY = true; renderEmotes(); }).catch(() => { E_READY = true; renderEmotes(); });
 getJSON('/channel-badges.json').then(rows => {
