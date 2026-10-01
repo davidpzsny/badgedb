@@ -27,15 +27,31 @@ async function twFetchUser(){
     const me = ((await u.json()).data || [])[0]; if(!me) return;
     let color = "";
     try{ color = (((await (await fetch("https://api.twitch.tv/helix/chat/color?user_id=" + me.id, {headers: h})).json()).data || [])[0] || {}).color || ""; }catch(_){}
+    const before = JSON.stringify(TW_USER);
     TW_USER = { login: me.login, name: me.display_name || me.login, color, avatar: me.profile_image_url };
     try{ localStorage.setItem("badgedb_tw_user", JSON.stringify(TW_USER)); }catch(_){}
-    if(typeof route === "function") route();
+    if(JSON.stringify(TW_USER) !== before){ renderSideUser(); if(typeof route === "function") route(); }
   }catch(_){}
 }
 function twLogout(){
   let token; try{ token = localStorage.getItem("badgedb_tw_token"); localStorage.removeItem("badgedb_tw_token"); localStorage.removeItem("badgedb_tw_user"); }catch(_){}
   if(token && TW_CID) fetch("https://id.twitch.tv/oauth2/revoke", {method: "POST", body: new URLSearchParams({client_id: TW_CID, token})}).catch(()=>{});
-  TW_USER = null; if(typeof route === "function") route();
+  TW_USER = null; renderSideUser(); if(typeof route === "function") route();
+}
+function renderSideUser(){
+  const el = document.getElementById("sideUser"); if(!el) return;
+  if(!TW_CID){ el.innerHTML = ""; return; }
+  const tw = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2 2 6v14h5v3h3l3-3h4l5-5V2H4zm16 12-3 3h-5l-3 3v-3H6V4h14v10zm-4-7h-2v5h2V7zm-5 0H9v5h2V7z"/></svg>';
+  el.innerHTML = TW_USER
+    ? `<div class="su-in">${TW_USER.avatar ? `<img src="${esc(TW_USER.avatar)}" alt="">` : `<span class="su-av">${esc((TW_USER.name||"?")[0])}</span>`}
+         <span class="su-t"><b style="color:${esc(TW_USER.color || "inherit")}">${esc(TW_USER.name)}</b><small>Badge previews use your name</small></span>
+         <button class="linkish" data-twlogout title="Log out">Log out</button></div>`
+    : `<button class="su-login" data-twlogin>${tw}<span><b>Log in with Twitch</b><small>See badges next to your name</small></span></button>`;
+}
+function chatPreview(imgHtml, text){
+  const name = TW_USER ? TW_USER.name : "YourName", color = (TW_USER && TW_USER.color) || "#9146FF";
+  const line = `<span class="pv-line">${imgHtml}<b style="color:${esc(color)}">${esc(name)}</b><span>${text}</span></span>`;
+  return `<div class="pv-chats"><div class="pv dark">${line}</div><div class="pv light">${line}</div></div>`;
 }
 function previewCard(img){
   const name = TW_USER ? TW_USER.name : "YourName", color = (TW_USER && TW_USER.color) || "#9146FF";
@@ -446,7 +462,11 @@ function openEmote(id){
   const e = EMOTES.find(x => x[0] === id); if(!e) return;
   const sizes = t => [["1.0","1x"],["2.0","2x"],["3.0","4x"]].map(([sc,l]) => `<a href="${emoteUrl(e[0],sc,t)}" target="_blank" rel="noopener"><img src="${emoteUrl(e[0],sc,t)}" alt="">${l}</a>`).join('');
   open(`<h2 style="margin:0 0 4px">${esc(e[1])}</h2><p class="ctx" style="margin-bottom:16px">Twitch global emote${e[4]===0?' (no longer in the global set)':''}</p>
-    <h3>Dark</h3><div class="emote-sizes">${sizes('dark')}</div><h3 style="margin-top:14px">Light</h3><div class="emote-sizes light">${sizes('light')}</div>
+    <h3>In chat${TW_USER ? '' : ' <button class="linkish" data-twlogin style="margin-left:6px">Log in with Twitch to use your name</button>'}</h3>
+    ${(() => { const name = TW_USER ? TW_USER.name : "YourName", color = (TW_USER && TW_USER.color) || "#9146FF";
+       const line = `<span class="pv-line"><b style="color:${esc(color)}">${esc(name)}</b><span>:&nbsp;</span><img class="emo-inline" src="${emoteUrl(e[0],'1.0')}" srcset="${emoteUrl(e[0],'2.0')} 2x" alt="${esc(e[1])}"></span>`;
+       return `<div class="pv-chats one"><div class="pv dark">${line}</div><div class="pv light">${line}</div></div>`; })()}
+    <h3 style="margin-top:16px">Dark</h3><div class="emote-sizes">${sizes('dark')}</div><h3 style="margin-top:14px">Light</h3><div class="emote-sizes light">${sizes('light')}</div>
     <dl class="kv" style="margin-top:18px"><dt>Name</dt><dd><code>${esc(e[1])}</code></dd><dt>Emote ID</dt><dd><code>${esc(e[0])}</code></dd>
     <dt>Type</dt><dd>${e[3]===1?'Animated':'Static'}</dd><dt>First seen</dt><dd>${e[2]?fmt(e[2]):'Before tracking started'}</dd>${e[4]===0?`<dt>Removed</dt><dd>${e[5]?fmt(e[5]):'Yes'}</dd>`:''}</dl>
     <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap"><button class="btn" data-copy="${esc(e[1])}">Copy name</button><a class="btn ghost" href="${emoteUrl(e[0],'3.0')}" target="_blank" rel="noopener">Open image</a></div>`);
@@ -663,6 +683,7 @@ function renderChannelBadgePage(imgId){
   const how = {sub:"Subscribe (or gift a sub) to the channel while the campaign is running.", watch:"Watch the channel for the required time while the campaign is running.", ranking:"Be one of the top supporters of the campaign.", other:"See the channel for details."}[b.type];
   box.innerHTML = `
     <div class="page-head"><div><h1>${esc(b.name)}</h1><p class="lead">Channel badge from <a href="https://twitch.tv/${esc(b.login)}" target="_blank" rel="noopener" style="color:var(--purple-2);font-weight:700">${esc(b.display||b.login)}</a></p></div><div><span class="pill ${b.type}">${CTYPE[b.type]||b.type}</span></div></div>
+    ${previewCard(b.img)}
     <div class="bp-grid">
       <div class="card2"><h3>Images <span class="seg mini" id="bpTheme"><button data-t="dark" class="${bpTheme==='dark'?'on':''}">Dark</button><button data-t="light" class="${bpTheme==='light'?'on':''}">Light</button></span></h3>
         <div class="sizes" style="--bp-bg:${bg}">${[1,2,3].map((s,i)=>`<a href="${esc(b.img.replace(/\/3$/,'/'+s))}" target="_blank" rel="noopener"><span class="box"><img src="${esc(b.img.replace(/\/3$/,'/'+s))}" width="${18*(i===2?4:i+1)}" height="${18*(i===2?4:i+1)}" alt=""></span>${['1x','2x','4x'][i]}</a>`).join('')}</div>
@@ -899,6 +920,7 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDrawer(); });
 // Pages built by the bot arrive pre-filled (data-ssr): keep that content until live data is loaded.
 if(!document.body.dataset.ssr) renderAll();
 route(); setInterval(tick,1000);
+renderSideUser(); if(TW_USER) twFetchUser();
 const getJSON = u => fetch(u, {cache:'no-store'}).then(r => r.ok ? r.json() : null);
 Promise.allSettled([getJSON('/badges.json'), getJSON('/events.json'), getJSON('/popularity.json')]).then(([b, e, pp]) => {
   if(pp.status === 'fulfilled' && pp.value && pp.value.counts) POP = pp.value;

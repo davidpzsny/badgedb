@@ -599,3 +599,18 @@
   .pv-line b{font-weight:700}
   .pv-note{margin-top:10px;font-size:12px;color:var(--dim)}
   @media (max-width:640px){.pv-chats{grid-template-columns:1fr}}
+
+  /* sidebar login */
+  .side-user{margin-bottom:8px}
+  .su-login{width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:#9146FF;color:#fff;text-align:left;transition:background .15s,transform .15s}
+  .su-login:hover{background:#7c3aed;transform:translateY(-1px)}
+  .su-login svg{width:20px;height:20px;flex:none}
+  .su-login b{display:block;font-size:13.5px}.su-login small{display:block;font-size:11.5px;opacity:.85}
+  .su-in{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:var(--panel);border:1px solid var(--line)}
+  .su-in img,.su-av{width:30px;height:30px;border-radius:50%;flex:none}
+  .su-av{display:grid;place-items:center;background:var(--panel-2);font-weight:800}
+  .su-t{flex:1;min-width:0}.su-t b{display:block;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .su-t small{display:block;font-size:11px;color:var(--dim)}
+  .su-in .linkish{font-size:12px}
+  .pv-chats.one{grid-template-columns:1fr 1fr;margin-bottom:4px}
+  .emo-inline{height:28px;width:auto;vertical-align:middle}
