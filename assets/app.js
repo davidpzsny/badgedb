@@ -144,7 +144,7 @@ const isFile = location.protocol === "file:";
 const redirectUri = () => location.origin + location.pathname;
 
 /* ---------- routing (real URLs, no #) ---------- */
-const PATHS = {"/":"home","/timeline/":"timeline","/badges/":"global","/channel/":"channel","/emotes/":"emotes","/popularity/":"popularity","/faq/":"faq","/privacy/":"privacy","/terms/":"terms","/admin/":"admin"};
+const PATHS = {"/":"home","/timeline/":"timeline","/badges/":"global","/channel/":"channel","/me/":"me","/emotes/":"emotes","/popularity/":"popularity","/faq/":"faq","/privacy/":"privacy","/terms/":"terms","/admin/":"admin"};
 const LEGACY = {home:"/",timeline:"/timeline/",global:"/badges/",channel:"/channel/",faq:"/faq/",privacy:"/privacy/",terms:"/terms/",admin:"/admin/"};
 function pathKey(){ let p = location.pathname.replace(/index\.html$/,''); if(!p.endsWith('/')) p += '/'; return p; }
 // old #links keep working: /#global -> /badges/, /#badge/x -> /badges/x/
@@ -162,7 +162,7 @@ function route(){
   if(h==="admin"){ renderAdmin(); if(ADM.token && !ADM.events.length) admLoad(); }
   if(h==="popularity") maybeLivePopularity();
   $$('[data-page]').forEach(s => s.hidden = s.dataset.page !== h);
-  const TITLES = {emotes:"Twitch Global Emotes – Full List | Badge Database", popularity:"Twitch Badge Popularity – Most Used Badges | Badge Database", home:"Badge Database – Every Twitch Badge & When to Get It", timeline:"Timeline – Twitch Badges Available Now | Badge Database",
+  const TITLES = {me:"My Badges – Your Twitch Badge Collection | Badge Database", emotes:"Twitch Global Emotes – Full List | Badge Database", popularity:"Twitch Badge Popularity – Most Used Badges | Badge Database", home:"Badge Database – Every Twitch Badge & When to Get It", timeline:"Timeline – Twitch Badges Available Now | Badge Database",
     global:"All Twitch Global Badges | Badge Database", channel:"Twitch Channel Badges | Badge Database", faq:"FAQ – Twitch Badges | Badge Database",
     privacy:"Privacy Policy | Badge Database", terms:"Terms of Service | Badge Database", admin:"Admin | Badge Database"};
   if(h==="badge"){ const bb = set && globalBadges.find(x=>x.set===set); if(bb) document.title = bb.name+" – Twitch Badge | Badge Database"; }
@@ -391,7 +391,7 @@ function badgeRow(b, type){
     ? [ b.added?`Added ${fmt(b.added)}`:'', b.users?`${num(b.users)} users`:'' ].filter(Boolean).join(' · ')
     : (b.versions.length>1 ? `${b.versions.length} versions` : 'Details');
   const tag = type==='global' ? `a href="/badges/${encodeURIComponent(b.set)}/"` : 'button';
-  return `<${tag} class="brow" data-badge="${esc(b.set)}" data-type="${type}">${tile(b)}<span class="t"><span class="n">${esc(b.name)}</span><span class="m">${isFree(b)?'<span class="pill free">Free</span>':''}${bs?STATE_PILL[bs]:''}<span>${meta}</span></span></span></${type==='global'?'a':'button'}>`;
+  return `<${tag} class="brow ${type==='global'&&MY.has(b.set)?'mine':''}" data-badge="${esc(b.set)}" data-type="${type}">${tile(b)}${type==='global'&&MY.has(b.set)?'<i class="mine-ck" title="In My Badges">✓</i>':''}<span class="t"><span class="n">${esc(b.name)}</span><span class="m">${isFree(b)?'<span class="pill free">Free</span>':''}${bs?STATE_PILL[bs]:''}<span>${meta}</span></span></span></${type==='global'?'a':'button'}>`;
 }
 function renderGlobal(){
   let list = globalBadges.filter(b => !gQuery || (b.name+" "+b.set).toLowerCase().includes(gQuery));
@@ -421,7 +421,56 @@ function renderChannel(){
   $('#cMore').innerHTML = list.length>cShown ? `<button class="btn ghost" id="btnCMore">Show ${Math.min(90,list.length-cShown)} more</button>` : '';
   $('#cChannel').textContent = channelBadges.length || '';
 }
-function renderAll(){ renderHome(); renderEvents(); renderTimeline(); renderGlobal(); renderChannel(); renderEmotes(); renderPopularity(); }
+function renderAll(){ renderHome(); renderEvents(); renderTimeline(); renderGlobal(); renderChannel(); renderEmotes(); renderPopularity(); renderMe(); }
+
+/* ---------- My Badges: a personal checklist, stored only in this browser ---------- */
+const MY_KEY = "badgedb_my_badges";
+let MY = new Set(), mQuery = "", mFilter = "missing", mShown = 120;
+try{ (JSON.parse(localStorage.getItem(MY_KEY) || "{}").sets || []).forEach(x => MY.add(x)); }catch(_){}
+function saveMy(){ try{ localStorage.setItem(MY_KEY, JSON.stringify({sets: [...MY], updated: new Date().toISOString()})); }catch(_){} }
+function toggleMy(set){
+  if(MY.has(set)) MY.delete(set); else MY.add(set);
+  saveMy(); renderMe(); renderGlobal();
+  if(/^\/badges\/[^/]+\/$/.test(pathKey())) route();
+}
+function renderMe(){
+  const box = $('#meStats'); if(!box) return;
+  $('#cMine').textContent = MY.size || "";
+  if(!READY){ box.innerHTML = '<div class="empty">Loading…</div>'; return; }
+  const all = globalBadges, owned = all.filter(b => MY.has(b.set)).sort((a, b) => (b.added || "").localeCompare(a.added || "") || a.name.localeCompare(b.name));
+  const avail = all.filter(b => ["live", "ending"].includes(badgeState(b)));
+  const missing = avail.filter(b => !MY.has(b.set)).sort((a, b) => Date.parse(EV_BY_IMG[a.imgId].ev.end) - Date.parse(EV_BY_IMG[b.imgId].ev.end));
+  $('#meTitle').textContent = TW_USER ? `${TW_USER.name}'s Badges` : "My Badges";
+  $('#meWho').innerHTML = TW_USER && TW_USER.avatar ? `<img class="me-av" src="${esc(TW_USER.avatar)}" alt="">` : "";
+  box.innerHTML = `<div><b>${owned.length}</b><span>badges collected</span></div>
+    <div><b>${all.length ? Math.round(owned.length / all.length * 100) : 0}%</b><span>of all ${all.length} global badges</span></div>
+    <div><b>${avail.length - missing.length} / ${avail.length}</b><span>of the badges available now</span></div>`;
+  $('#meMissingH').textContent = missing.length ? `Available now — still missing (${missing.length})` : "Available now";
+  $('#meMissing').innerHTML = !avail.length ? '<div class="empty">No badges can be earned right now.</div>'
+    : !missing.length ? '<div class="empty">🎉 You have every badge that is available right now.</div>'
+    : missing.map(b => { const ev = EV_BY_IMG[b.imgId]; return `<div class="mm">
+        <a class="mm-tile" href="/badges/${encodeURIComponent(b.set)}/">${tile(b)}</a>
+        <div class="mm-t"><a href="/badges/${encodeURIComponent(b.set)}/"><b>${esc(b.name)}</b></a>
+          <span class="mm-how">${esc(ev.b.how || "")}</span>
+          <span class="mm-end">${isFree(b) ? '<span class="pill free">Free</span>' : '<span class="pill paid">Sub / paid</span>'} ends in <b data-cd="${esc(ev.ev.end)}">${countdown(ev.ev.end)}</b></span></div>
+        <button class="btn ghost mm-got" data-mytoggle="${esc(b.set)}">✓ I have it</button></div>`; }).join("");
+  $('#meOwnedH').textContent = `My collection (${owned.length})`;
+  $('#meOwned').innerHTML = owned.length ? owned.map(b => `<a class="mg" href="/badges/${encodeURIComponent(b.set)}/" title="${esc(b.name)}">${tile(b)}<span>${esc(b.name)}</span></a>`).join("")
+    : '<div class="empty">Nothing yet — add the badges you have below, or with “+ Add to My Badges” on any badge page.</div>';
+  let list = all;
+  if(mFilter === "missing") list = list.filter(b => !MY.has(b.set));
+  if(mFilter === "free") list = list.filter(b => isFree(b));
+  if(mFilter === "2026") list = list.filter(b => (b.added || "").startsWith("2026"));
+  if(mQuery) list = list.filter(b => b.name.toLowerCase().includes(mQuery));
+  list = [...list].sort((a, b) => (b.added || "").localeCompare(a.added || "") || a.name.localeCompare(b.name));
+  $('#meAll').innerHTML = list.length ? list.slice(0, mShown).map(b => `<button class="mg ${MY.has(b.set) ? "on" : ""}" data-mytoggle="${esc(b.set)}" title="${esc(b.name)}">${tile(b)}<span>${esc(b.name)}</span>${MY.has(b.set) ? '<i class="ck">✓</i>' : ""}</button>`).join("")
+    : `<div class="empty">${mFilter === "missing" && !mQuery ? "You have them all. Impressive." : "No badges match."}</div>`;
+  $('#mMore').innerHTML = list.length > mShown ? `<button class="btn ghost" id="btnMMore">Show ${Math.min(120, list.length - mShown)} more</button>` : "";
+}
+function myExport(){
+  const blob = new Blob([JSON.stringify({site: "badgedatabase.com", user: TW_USER ? TW_USER.login : null, sets: [...MY], exported: new Date().toISOString()}, null, 1)], {type: "application/json"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "my-twitch-badges.json"; document.body.appendChild(a); a.click(); a.remove();
+}
 
 /* ---------- global emotes ---------- */
 let EMOTES = [], E_READY = false, eQuery = "", eSort = "added", eFilter = "all", eShown = 120;
@@ -628,7 +677,7 @@ function renderBadgePage(set){
   const bg = bpTheme==="dark" ? "#18181b" : "#f7f7f8";
   box.innerHTML = `
     <div class="page-head"><div><h1>${esc(v.title||b.name)}</h1><p class="lead">Everything you need to know about this Twitch global badge.</p></div>
-      <div>${isFree(b)?'<span class="pill free">Free</span> ':''}${st==="live"?'<span class="pill live">Active</span>':st==="soon"?'<span class="pill soon">Upcoming</span>':st==="ended"?'<span class="pill na">Ended</span>':''}</div></div>
+      <div class="bp-side"><button class="btn ${MY.has(b.set)?'my-on':'ghost'} my-btn" data-mytoggle="${esc(b.set)}">${MY.has(b.set)?'✓ In My Badges':'+ Add to My Badges'}</button>${isFree(b)?'<span class="pill free">Free</span> ':''}${st==="live"?'<span class="pill live">Active</span>':st==="soon"?'<span class="pill soon">Upcoming</span>':st==="ended"?'<span class="pill na">Ended</span>':''}</div></div>
     ${previewCard(v.img)}
     <div class="bp-grid">
       <div class="card2"><h3>Images <span class="seg mini" id="bpTheme"><button data-t="dark" class="${bpTheme==='dark'?'on':''}">Dark</button><button data-t="light" class="${bpTheme==='light'?'on':''}">Light</button></span></h3>
@@ -669,6 +718,10 @@ function renderBadgePage(set){
 }
 document.addEventListener('click', e => {
   const t=e.target.closest('#bpTheme button'); if(t){ bpTheme=t.dataset.t; route(); e.preventDefault(); return; }
+  const mt = e.target.closest('[data-mytoggle]'); if(mt){ e.preventDefault(); toggleMy(mt.dataset.mytoggle); return; }
+  if(e.target.id === 'btnMMore'){ mShown += 120; renderMe(); return; }
+  if(e.target.id === 'meExport'){ myExport(); return; }
+  if(e.target.id === 'meClear'){ if(confirm("Remove every badge from your collection in this browser?")){ MY.clear(); saveMy(); renderMe(); renderGlobal(); } return; }
   if(e.target.closest('[data-twlogin]')){ twLogin(); return; }
   if(e.target.closest('[data-twlogout]')){ twLogout(); return; }
   const vv=e.target.closest('[data-ver]'); if(vv){ e.preventDefault(); bpVersion=+vv.dataset.ver; route(); }
@@ -896,7 +949,7 @@ function togglePlayer(){
 /* ---------- wiring ---------- */
 document.addEventListener('click', e => {
   const seg=e.target.closest('.seg button'); if(seg){ const id=seg.parentElement.id; seg.parentElement.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===seg)); const v=seg.dataset.v;
-    if(id==='evFilter') evFilter=v; if(id==='gSort') gSort=v; if(id==='gDir') gDir=v; if(id==='gFilter') gFilter=v; if(id==='cFilter') cFilter=v; if(id==='eSort') eSort=v; if(id==='eFilter') eFilter=v; if(id==='pFilter') pFilter=v; eShown=120; pShown=100; renderEmotes(); renderPopularity(); gShown=90; renderEvents(); renderGlobal(); renderChannel(); return; }
+    if(id==='evFilter') evFilter=v; if(id==='gSort') gSort=v; if(id==='gDir') gDir=v; if(id==='gFilter') gFilter=v; if(id==='cFilter') cFilter=v; if(id==='eSort') eSort=v; if(id==='eFilter') eFilter=v; if(id==='pFilter') pFilter=v; if(id==='mFilter'){ mFilter=v; mShown=120; renderMe(); } eShown=120; pShown=100; renderEmotes(); renderPopularity(); gShown=90; renderEvents(); renderGlobal(); renderChannel(); return; }
   if(e.target.id==='btnMore'){ gShown+=90; renderGlobal(); return; }
   if(e.target.id==='btnCMore'){ cShown+=90; renderChannel(); return; }
   if(e.target.id==='btnEMore'){ eShown+=120; renderEmotes(); return; }
@@ -913,6 +966,15 @@ $('#qG').addEventListener('input',e=>{gQuery=e.target.value.trim().toLowerCase()
 $('#qC').addEventListener('input',e=>{cQuery=e.target.value.trim().toLowerCase();cShown=90;renderChannel();});
 $('#qE').addEventListener('input',e=>{eQuery=e.target.value.trim().toLowerCase();eShown=120;renderEmotes();});
 $('#qP').addEventListener('input',e=>{pQuery=e.target.value.trim().toLowerCase();pShown=100;renderPopularity();});
+$('#qM').addEventListener('input',e=>{mQuery=e.target.value.trim().toLowerCase();mShown=120;renderMe();});
+$('#meImport').addEventListener('change', async e => {
+  const f = e.target.files && e.target.files[0]; if(!f) return;
+  try{ const j = JSON.parse(await f.text()); const sets = Array.isArray(j) ? j : j.sets; if(!Array.isArray(sets)) throw 0;
+       const known = new Set(globalBadges.map(b => b.set)); let n = 0; sets.forEach(x => { if(known.has(x) && !MY.has(x)){ MY.add(x); n++; } });
+       saveMy(); renderMe(); renderGlobal(); toast(`Restored ${n} badge${n === 1 ? "" : "s"}`); }
+  catch(_){ toast("That file isn't a My Badges backup"); }
+  e.target.value = "";
+});
 $('#scrim').addEventListener('click',closeDrawer); $('#closeDrawer').addEventListener('click',closeDrawer);
 $('#btnPlayer').addEventListener('click',togglePlayer); $('#btnPlayerX').addEventListener('click',togglePlayer);
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDrawer(); });
