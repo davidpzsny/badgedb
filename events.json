@@ -143,13 +143,13 @@
   "id": "alien-isolation",
   "name": "Alien: Isolation",
   "category": "Alien: Isolation",
-  "start": "",
-  "end": "",
+  "start": "2026-10-01T09:00:00Z",
+  "end": "2026-10-29T08:58:00Z",
   "badges": [
    {
     "name": "SEEGSON Synthetics",
     "img": "4709f62b-9cd9-4759-8953-c096527401c7",
-    "how": "Watch 30 minutes.",
+    "how": "Watch 30 minutes in the category.",
     "cost": "free",
     "desc": "This badge was earned by watching the Alien Isolation category for 30 minutes"
    },
@@ -160,7 +160,8 @@
     "cost": "paid",
     "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Alien Isolation category"
    }
-  ]
+  ],
+  "dates_src": "manual"
  },
  {
   "id": "dnd-dungeon-masters",
@@ -260,8 +261,8 @@
   "id": "ultramarine",
   "name": "Space Marine II 2nd Anniversary",
   "category": "Warhammer 40,000: Space Marine II",
-  "start": "",
-  "end": "",
+  "start": "2026-10-01T08:00:00Z",
+  "end": "2026-10-29T07:59:00Z",
   "badges": [
    {
     "name": "Ultramarine",
@@ -270,7 +271,8 @@
     "cost": "paid",
     "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Space Marine 2 category during the anniversary campaign!"
    }
-  ]
+  ],
+  "dates_src": "manual"
  },
  {
   "id": "onimusha",
@@ -562,12 +564,6 @@
   "start": "2026-10-01T00:00:00Z",
   "end": "2026-10-28T23:59:00Z",
   "badges": [
-   {
-    "name": "Festering Bloody Finger",
-    "img": "",
-    "how": "Details not announced yet.",
-    "cost": "na"
-   },
    {
     "name": "Bloody Finger ELDEN RING",
     "img": "12266c73-c6bc-433a-ab66-dc021bb8159f",
