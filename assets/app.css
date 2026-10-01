@@ -573,3 +573,29 @@
     .prow{grid-template-columns:30px 36px minmax(0,1fr) auto;gap:8px}.prow img{width:30px;height:30px}.prow .nm{font-size:13px}}
 
   .seg button[hidden]{display:none}
+
+  /* channel lists on badge pages */
+  .chans{display:flex;flex-wrap:wrap;gap:6px}
+  .chan{display:inline-block;padding:3px 9px;border-radius:999px;background:rgba(139,92,246,.14);color:var(--purple-2);font-size:12.5px;font-weight:700}
+  .chan:hover{background:rgba(139,92,246,.26)}
+  .chan.more{background:rgba(255,255,255,.06);color:var(--muted)}
+  .chan-note{margin-top:8px;font-size:12.5px;color:var(--muted);line-height:1.5}.chan-note a{color:var(--purple-2);font-weight:700}
+  .adm-form label.chk{flex-direction:row;align-items:center;gap:8px;font-weight:600;color:var(--muted)}
+
+  /* badge preview in chat */
+  .pv-card{margin-bottom:16px}
+  .pv-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+  .pv-head h3{margin:0}
+  .btn.tw{background:#9146FF;color:#fff}.btn.tw svg{width:16px;height:16px}.btn.tw:hover{background:#7c3aed}
+  .pv-who{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}.pv-who b{color:var(--text)}
+  .pv-who img{width:24px;height:24px;border-radius:50%}
+  .linkish{color:var(--purple-2);font-weight:700;font-size:13px}.linkish:hover{text-decoration:underline}
+  .pv-chats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .pv{border-radius:12px;padding:14px 16px;font:13px/1.5 Inter,"Helvetica Neue",Arial,sans-serif}
+  .pv.dark{background:#18181b;color:#efeff1;border:1px solid #2f2f35}
+  .pv.light{background:#fff;color:#0e0e10;border:1px solid #dedee3}
+  .pv-line{display:inline-flex;align-items:center;flex-wrap:wrap}
+  .pv-line img{width:18px;height:18px;vertical-align:middle;margin-right:4px}
+  .pv-line b{font-weight:700}
+  .pv-note{margin-top:10px;font-size:12px;color:var(--dim)}
+  @media (max-width:640px){.pv-chats{grid-template-columns:1fr}}

@@ -1,3 +1,54 @@
+/* ---------- "Log in with Twitch" (badge preview with your own name) ----------
+   Implicit OAuth without scopes: the token can only read public profile info. Everything stays in this browser. */
+const TW_CID = (document.querySelector('meta[name="twitch-client-id"]') || {}).content || "";
+let TW_USER = null;
+try{ TW_USER = JSON.parse(localStorage.getItem("badgedb_tw_user") || "null"); }catch(_){}
+(function twitchReturn(){
+  if(!/access_token=/.test(location.hash)) return;
+  const q = new URLSearchParams(location.hash.slice(1));
+  const [back, nonce] = (q.get("state") || "/|").split("|");
+  let ok = false; try{ ok = nonce && nonce === sessionStorage.getItem("badgedb_tw_nonce"); }catch(_){}
+  history.replaceState(null, "", back && back.startsWith("/") ? back : "/");
+  if(ok && q.get("access_token")){ try{ localStorage.setItem("badgedb_tw_token", q.get("access_token")); }catch(_){} twFetchUser(); }
+})();
+function twLogin(){
+  const nonce = Math.random().toString(36).slice(2);
+  try{ sessionStorage.setItem("badgedb_tw_nonce", nonce); }catch(_){}
+  location.href = "https://id.twitch.tv/oauth2/authorize?" + new URLSearchParams({ client_id: TW_CID, redirect_uri: location.origin + "/",
+    response_type: "token", scope: "", state: location.pathname + "|" + nonce, force_verify: "false" });
+}
+async function twFetchUser(){
+  let token; try{ token = localStorage.getItem("badgedb_tw_token"); }catch(_){}
+  if(!token || !TW_CID) return;
+  const h = { "Client-Id": TW_CID, "Authorization": "Bearer " + token };
+  try{
+    const u = await fetch("https://api.twitch.tv/helix/users", {headers: h});
+    if(u.status === 401){ twLogout(); return; }
+    const me = ((await u.json()).data || [])[0]; if(!me) return;
+    let color = "";
+    try{ color = (((await (await fetch("https://api.twitch.tv/helix/chat/color?user_id=" + me.id, {headers: h})).json()).data || [])[0] || {}).color || ""; }catch(_){}
+    TW_USER = { login: me.login, name: me.display_name || me.login, color, avatar: me.profile_image_url };
+    try{ localStorage.setItem("badgedb_tw_user", JSON.stringify(TW_USER)); }catch(_){}
+    if(typeof route === "function") route();
+  }catch(_){}
+}
+function twLogout(){
+  let token; try{ token = localStorage.getItem("badgedb_tw_token"); localStorage.removeItem("badgedb_tw_token"); localStorage.removeItem("badgedb_tw_user"); }catch(_){}
+  if(token && TW_CID) fetch("https://id.twitch.tv/oauth2/revoke", {method: "POST", body: new URLSearchParams({client_id: TW_CID, token})}).catch(()=>{});
+  TW_USER = null; if(typeof route === "function") route();
+}
+function previewCard(img){
+  const name = TW_USER ? TW_USER.name : "YourName", color = (TW_USER && TW_USER.color) || "#9146FF";
+  const line = `<span class="pv-line"><img src="${esc(img.replace(/\/3$/, "/1"))}" srcset="${esc(img.replace(/\/3$/, "/2"))} 2x" width="18" height="18" alt="">`
+             + `<b style="color:${esc(color)}">${esc(name)}</b><span>: gg, just got this badge!</span></span>`;
+  const tw = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2 2 6v14h5v3h3l3-3h4l5-5V2H4zm16 12-3 3h-5l-3 3v-3H6V4h14v10zm-4-7h-2v5h2V7zm-5 0H9v5h2V7z"/></svg>';
+  return `<div class="card2 pv-card"><div class="pv-head"><h3>See it next to your name</h3>
+      ${TW_USER ? `<span class="pv-who">${TW_USER.avatar ? `<img src="${esc(TW_USER.avatar)}" alt="">` : ""}Logged in as <b>${esc(TW_USER.name)}</b> · <button class="linkish" data-twlogout>Log out</button></span>`
+                : (TW_CID ? `<button class="btn tw" data-twlogin>${tw}Log in with Twitch</button>` : "")}</div>
+    <div class="pv-chats"><div class="pv dark">${line}</div><div class="pv light">${line}</div></div>
+    ${TW_USER ? "" : (TW_CID ? `<p class="pv-note">Log in to see the badge with your own name and chat color. Only your public display name and color are read — nothing is posted, and it stays in this browser.</p>` : "")}
+  </div>`;
+}
 
 /* =====================================================================
    CONFIG — links shown on the home page. Leave a URL empty to hide it.
@@ -307,6 +358,7 @@ function tick(){ $$('[data-cd]').forEach(el=>el.textContent=countdown(el.dataset
 
 /* ---------- global badges page ---------- */
 let gQuery="", gSort="added", gDir="desc", gFilter="all", gShown=90;
+function isFree(b){ const ev = EV_BY_IMG[b.imgId]; return ev && ev.b.cost && ev.b.cost !== "na" ? ev.b.cost === "free" : !!b.free; }
 function badgeState(b){
   const ev = EV_BY_IMG[b.imgId] || (b.versions||[]).map(v => EV_BY_IMG[(v.img.match(/badges\/v1\/([0-9a-f-]+)\//)||[])[1]]).find(Boolean);
   if(!ev) return null;
@@ -323,7 +375,7 @@ function badgeRow(b, type){
     ? [ b.added?`Added ${fmt(b.added)}`:'', b.users?`${num(b.users)} users`:'' ].filter(Boolean).join(' · ')
     : (b.versions.length>1 ? `${b.versions.length} versions` : 'Details');
   const tag = type==='global' ? `a href="/badges/${encodeURIComponent(b.set)}/"` : 'button';
-  return `<${tag} class="brow" data-badge="${esc(b.set)}" data-type="${type}">${tile(b)}<span class="t"><span class="n">${esc(b.name)}</span><span class="m">${b.free?'<span class="pill free">Free</span>':''}${bs?STATE_PILL[bs]:''}<span>${meta}</span></span></span></${type==='global'?'a':'button'}>`;
+  return `<${tag} class="brow" data-badge="${esc(b.set)}" data-type="${type}">${tile(b)}<span class="t"><span class="n">${esc(b.name)}</span><span class="m">${isFree(b)?'<span class="pill free">Free</span>':''}${bs?STATE_PILL[bs]:''}<span>${meta}</span></span></span></${type==='global'?'a':'button'}>`;
 }
 function renderGlobal(){
   let list = globalBadges.filter(b => !gQuery || (b.name+" "+b.set).toLowerCase().includes(gQuery));
@@ -487,6 +539,22 @@ const prettify = s => s.replace(/[-_]/g,' ').replace(/\b\w/g,c=>c.toUpperCase())
 /* ---------- drawer ---------- */
 function open(html){ $('#drawerBody').innerHTML=html; $('#drawer').classList.add('open'); $('#scrim').classList.add('show'); $('#drawer').setAttribute('aria-hidden','false'); $('#closeDrawer').focus(); }
 function closeDrawer(){ $('#drawer').classList.remove('open'); $('#scrim').classList.remove('show'); $('#drawer').setAttribute('aria-hidden','true'); }
+function evChannels(ev){
+  const list = Array.isArray(ev.channels) ? ev.channels : [];
+  const one = ev.channel || (/channel:\s*(\S+)/i.exec(ev.category || "") || [])[1];
+  return [...new Set([...(one ? [one] : []), ...list].map(x => String(x).trim().replace(/^@/, "")).filter(Boolean))];
+}
+function channelsHtml(ev, cat){
+  const ch = evChannels(ev), hasCat = cat && !/any|unknown|twitch/i.test(cat);
+  const drops = hasCat ? `${catUrl(cat)}?filter=drops` : "";
+  if(ch.length){
+    const chips = ch.slice(0, 30).map(c => `<a class="chan" href="https://twitch.tv/${esc(c)}" target="_blank" rel="noopener">${esc(c)}</a>`).join("")
+                + (ch.length > 30 ? `<span class="chan more">+${ch.length - 30} more</span>` : "");
+    const note = ev.channels_partial ? `<div class="chan-note">${esc(ev.channels_note || "These are some of the participating channels.")}${drops ? ` <a href="${drops}" target="_blank" rel="noopener">See every live participating channel on Twitch ↗</a>` : ""}</div>` : "";
+    return `<div class="chans">${chips}</div>${note}`;
+  }
+  return hasCat ? `Any channel in the category with Drops enabled — <a href="${drops}" target="_blank" rel="noopener">see live channels ↗</a>` : "Any";
+}
 const catUrl = c => `https://www.twitch.tv/directory/category/${encodeURIComponent(c.toLowerCase().replace(/[:'’]/g,'').replace(/\s+/g,'-'))}`;
 function openEvent(id){
   const ev=allEvents().find(e=>e.id===id); if(!ev) return; const st=status(ev);
@@ -501,7 +569,7 @@ function openBadge(set,type){
   const b=(type==='global'?globalBadges:lookupBadges).find(x=>x.set===set); if(!b) return;
   const ev = EV_BY_IMG[b.imgId]; const st = ev?status(ev.ev):null;
   const how = b.how || (ev ? ev.b.how : "") || "No public description for this badge.";
-  open(`<div class="hero-img">${tile(b)}</div><h3>${esc(b.name)}</h3><div class="sub">${type==='global'?'Twitch global badge':'Channel badge'}${b.free?' · <span class="pill free">Free</span>':''}${st==="live"?' · <span class="pill live">Active now</span>':st==="soon"?' · <span class="pill soon">Upcoming</span>':''}</div>
+  open(`<div class="hero-img">${tile(b)}</div><h3>${esc(b.name)}</h3><div class="sub">${type==='global'?'Twitch global badge':'Channel badge'}${(type==='global'?isFree(b):b.free)?' · <span class="pill free">Free</span>':''}${st==="live"?' · <span class="pill live">Active now</span>':st==="soon"?' · <span class="pill soon">Upcoming</span>':''}</div>
     ${ev&&st==="live"?`<div class="cd" data-cd="${ev.ev.end}">${countdown(ev.ev.end)}<small>until it ends</small></div>`:''}
     <dl class="kv"><dt>How to get it</dt><dd>${esc(how)}</dd>${ev?`<dt>Event</dt><dd>${esc(ev.ev.name)}<br><span style="color:var(--muted)">${fmtFull(ev.ev.start)} – ${fmtFull(ev.ev.end)}</span></dd>`:''}${b.added?`<dt>Added</dt><dd>${fmt(b.added)}</dd>`:''}${b.users?`<dt>Users</dt><dd>${num(b.users)}</dd>`:''}<dt>Versions</dt><dd>${b.versions.length}</dd>${type==='global'?`<dt>Set ID</dt><dd><code>${esc(b.set)}</code></dd>`:''}</dl>
     ${b.versions.length>1?`<div class="versions">${b.versions.map(v=>`<span class="v">${tile({name:v.title||v.id,img:v.img})}<span>${esc(v.title&&v.title!==b.name?v.title.replace(b.name,'').trim()||v.id:v.id)}</span></span>`).join('')}</div>`:''}
@@ -540,7 +608,8 @@ function renderBadgePage(set){
   const bg = bpTheme==="dark" ? "#18181b" : "#f7f7f8";
   box.innerHTML = `
     <div class="page-head"><div><h1>${esc(v.title||b.name)}</h1><p class="lead">Everything you need to know about this Twitch global badge.</p></div>
-      <div>${b.free?'<span class="pill free">Free</span> ':''}${st==="live"?'<span class="pill live">Active</span>':st==="soon"?'<span class="pill soon">Upcoming</span>':st==="ended"?'<span class="pill na">Ended</span>':''}</div></div>
+      <div>${isFree(b)?'<span class="pill free">Free</span> ':''}${st==="live"?'<span class="pill live">Active</span>':st==="soon"?'<span class="pill soon">Upcoming</span>':st==="ended"?'<span class="pill na">Ended</span>':''}</div></div>
+    ${previewCard(v.img)}
     <div class="bp-grid">
       <div class="card2"><h3>Images <span class="seg mini" id="bpTheme"><button data-t="dark" class="${bpTheme==='dark'?'on':''}">Dark</button><button data-t="light" class="${bpTheme==='light'?'on':''}">Light</button></span></h3>
         <div class="sizes" style="--bp-bg:${bg}">
@@ -556,7 +625,7 @@ function renderBadgePage(set){
           <dt>Version ID</dt><dd><code>${esc(String(bpVersion+1))}</code>${b.versions.length>1?` of ${b.versions.length}`:''}</dd>
           ${b.added?`<dt>Added</dt><dd>${fmt(b.added)}</dd>`:''}
           ${b.users?`<dt>Users</dt><dd>${num(b.users)}</dd>`:''}
-          <dt>Cost</dt><dd>${b.free||(ev&&ev.b.cost==='free')||(!ev&&info.cost==='free')?'Free':(ev&&ev.b.cost==='paid')||(!ev&&info.cost==='paid')?'Paid (subscription / gift sub)':'—'}</dd>
+          <dt>Cost</dt><dd>${ev&&ev.b.cost==='paid'?'Paid (subscription / gift sub)':ev&&ev.b.cost==='free'?'Free':b.free||(!ev&&info.cost==='free')?'Free':(!ev&&info.cost==='paid')?'Paid (subscription / gift sub)':'—'}</dd>
         </dl>
       </div>
       <div class="card2"><h3>Availability</h3>
@@ -566,7 +635,7 @@ function renderBadgePage(set){
                                   :(info.objective||info.category)?"Ended — exact dates weren't recorded":"Not a timed event"}</dd>
           <dt>Objective</dt><dd>${ev&&ev.b.how&&!/^objective not/i.test(ev.b.how)?esc(ev.b.how):esc(info.objective||"—")}</dd>
           <dt>Category</dt><dd>${cat && !/any|unknown|twitch/i.test(cat)?`<a href="${catUrl(cat)}?filter=drops" target="_blank" rel="noopener">${esc(cat)}</a>`:esc(cat||"—")}</dd>
-          <dt>Channels</dt><dd>${chan?`<a href="https://twitch.tv/${esc(chan)}" target="_blank" rel="noopener">${esc(chan)}</a>`:"Any"}</dd>
+          <dt>Channels</dt><dd>${ev?channelsHtml(ev.ev, cat):"Any"}</dd>
           <dt>Started</dt><dd>${ev&&ev.ev.start?fmtFull(ev.ev.start):(info.objective||info.category)&&!ev?"Not recorded":"—"}</dd>
           <dt>Ends</dt><dd>${ev&&ev.ev.end?fmtFull(ev.ev.end):(info.objective||info.category)&&!ev?"Not recorded":"—"}</dd>
         </dl>
@@ -580,6 +649,8 @@ function renderBadgePage(set){
 }
 document.addEventListener('click', e => {
   const t=e.target.closest('#bpTheme button'); if(t){ bpTheme=t.dataset.t; route(); e.preventDefault(); return; }
+  if(e.target.closest('[data-twlogin]')){ twLogin(); return; }
+  if(e.target.closest('[data-twlogout]')){ twLogout(); return; }
   const vv=e.target.closest('[data-ver]'); if(vv){ e.preventDefault(); bpVersion=+vv.dataset.ver; route(); }
 });
 
@@ -728,7 +799,8 @@ function admEventCard(ev,i,spare){
       <label>Twitch category<input data-k="category" value="${esc(ev.category||'')}" placeholder="e.g. Minecraft"></label>
       <label>Starts <span class="hint">your local time${ev.start?` · ${utc(ev.start)}`:''}${ev.dates_src==='twitch'?' · auto from Twitch':ev.dates_src==='manual'?' · set by you':''}</span><input type="datetime-local" data-k="start" value="${toLocalInput(ev.start)}"></label>
       <label>Ends <span class="hint">your local time${ev.end?` · ${utc(ev.end)}`:''}</span><input type="datetime-local" data-k="end" value="${toLocalInput(ev.end)}"></label>
-      <label>Only on channel <span class="hint">optional, for single-channel events</span><input data-k="channel" value="${esc(ev.channel||'')}" placeholder="e.g. ironmouse"></label>
+      <label>Channels <span class="hint">optional — comma separated; leave empty if any channel in the category counts</span><input data-k="channels" value="${esc(evChannels(ev).join(', '))}" placeholder="e.g. ironmouse, caedrel"></label>
+      <label class="chk"><input type="checkbox" data-k="channels_partial" ${ev.channels_partial?'checked':''}> The list is only part of the participating channels</label>
       <label>Note <span class="hint">optional, shown as a highlighted hint</span><input data-k="note" value="${esc(ev.note||'')}"></label>
       <div class="adm-badges">${ev.badges.map((b,j)=>`
         <div class="adm-b" data-j="${j}"><img src="${esc(cdn(b.img))}" alt="">
@@ -750,6 +822,8 @@ document.addEventListener('input', e=>{
   const card = e.target.closest('.adm-ev'); if(!card) return;
   const ev = ADM.events[+card.dataset.i];
   if(e.target.dataset.k){ const k=e.target.dataset.k, v=e.target.value.trim();
+    if(k==="channels"){ const l=e.target.value.split(/[\s,;]+/).map(x=>x.replace(/^@/,'')).filter(Boolean); delete ev.channel; if(l.length) ev.channels=l; else delete ev.channels; admMarkDirty(); return; }
+    if(k==="channels_partial") return;
     if(k==="start"||k==="end"){ ev[k]=fromLocalInput(e.target.value); ev.dates_src="manual"; }
     else if(v || k==="name" || k==="category") ev[k]=e.target.value; else delete ev[k];
     if(k==="name") ev.name_src="manual";
@@ -757,6 +831,7 @@ document.addEventListener('input', e=>{
   if(e.target.dataset.bk){ const j=+e.target.closest('.adm-b').dataset.j; ev.badges[j][e.target.dataset.bk]=e.target.value; if(e.target.dataset.bk==="how") ev.badges[j].how_src="manual"; admMarkDirty(); }
 });
 document.addEventListener('change', e=>{
+  if(e.target.matches('[data-k="channels_partial"]')){ const card=e.target.closest('.adm-ev'); const ev=ADM.events[+card.dataset.i]; if(e.target.checked) ev.channels_partial=true; else delete ev.channels_partial; admMarkDirty(); return; }
   if(e.target.matches('[data-bk="cost"]')){ const card=e.target.closest('.adm-ev'); ADM.events[+card.dataset.i].badges[+e.target.closest('.adm-b').dataset.j].cost=e.target.value; admMarkDirty(); }
   if(e.target.matches('[data-addb]') && e.target.value){ const card=e.target.closest('.adm-ev'); const nb=admFromBadge(e.target.value);
     if(nb){ ADM.events[+card.dataset.i].badges.push(nb); admMarkDirty(); renderAdmin(); document.querySelector(`.adm-ev[data-i="${card.dataset.i}"]`)?.setAttribute('open',''); } }
