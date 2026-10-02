@@ -404,9 +404,11 @@ def main():
     changed += write("faq/index.html", faq_page())
     changed += write("privacy/index.html", page("/privacy/", "Privacy Policy | Badge Database", "How Badge Database handles personal data: no accounts, no tracking cookies, which third-party services are used, and your rights under the GDPR.", "privacy"))
     changed += write("terms/index.html", page("/terms/", "Terms of Service | Badge Database", "Terms of Service for Badge Database, an independent fan project not affiliated with Twitch: accuracy of badge information, acceptable use and liability.", "terms"))
-    changed += write("404.html", page("/404.html", "Badge Database", "Every Twitch badge and when to get it.", "home", noindex=True))
+    changed += write("404.html", page("/404.html", "Page not found | Badge Database", "This page does not exist on Badge Database.", "notfound", noindex=True))
+    changed += write("legal/index.html", page("/legal/", "Legal Notice | Badge Database",
+                     "Operator, contact, hosting, trademark notice, content removal requests and data sources of Badge Database.", "legal"))
     urls = [("/", now[:10], "hourly", "1.0"), ("/timeline/", now[:10], "hourly", "0.9"), ("/badges/", now[:10], "daily", "0.9"),
-            ("/channel/", now[:10], "daily", "0.8"), ("/emotes/", now[:10], "daily", "0.8"), ("/popularity/", now[:10], "daily", "0.8"), ("/stats/", now[:10], "daily", "0.7"), ("/faq/", None, "monthly", "0.5")]
+            ("/channel/", now[:10], "daily", "0.8"), ("/emotes/", now[:10], "daily", "0.8"), ("/popularity/", now[:10], "daily", "0.8"), ("/stats/", now[:10], "daily", "0.7"), ("/faq/", None, "monthly", "0.5"), ("/legal/", None, "yearly", "0.2")]
     urls += [(f"/badges/{s['set']}/", s["added"] or None, "weekly", "0.7") for s in sets]
     sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for u, lm, cf, pr in urls:
