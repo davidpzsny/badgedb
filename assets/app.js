@@ -466,6 +466,77 @@ function calendarMenu(ev){
     </div></details>`;
 }
 
+/* ---------- quick search (Ctrl+K / "/") ---------- */
+const QS_PAGES = [["Home","/"],["Timeline","/timeline/"],["Global Badges","/badges/"],["Channel Badges","/channel/"],["Global Emotes","/emotes/"],
+  ["Badge Popularity","/popularity/"],["Statistics","/stats/"],["FAQ","/faq/"],["Privacy Policy","/privacy/"],["Terms of Service","/terms/"]];
+let qsItems = [], qsActive = 0;
+const qsNorm = t => String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+function qsScore(title, extra, q){
+  const t = qsNorm(title); if(!q) return 0;
+  if(t === q) return 100; if(t.startsWith(q)) return 80;
+  if(new RegExp("(^|[^a-z0-9])" + q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).test(t)) return 60;
+  if(t.includes(q)) return 40;
+  return qsNorm(extra).includes(q) ? 15 : -1;
+}
+const STATE_TXT = {live: "Active now", ending: "Ends soon", soon: "Upcoming", tba: "Date not announced", ended: "Ended"};
+function qsSearch(raw){
+  const q = qsNorm(raw.trim()), groups = [];
+  const push = (group, limit, arr) => { const items = arr.filter(x => x.s >= 0).sort((a, b) => b.s - a.s || a.title.localeCompare(b.title)).slice(0, limit).map(x => ({...x, group}));
+    if(items.length) groups.push(items); };
+  const done = () => groups.sort((a, b) => q ? b[0].s - a[0].s : 0).flat();      // best match first
+  if(!q){
+    const live = globalBadges.filter(b => ["ending", "live"].includes(badgeState(b))).sort((a, b) => Date.parse(EV_BY_IMG[a.imgId].ev.end) - Date.parse(EV_BY_IMG[b.imgId].ev.end));
+    push("Available now", 6, live.map(b => ({s: 1, title: b.name, sub: STATE_TXT[badgeState(b)], img: b.img, go: () => navigate(`/badges/${encodeURIComponent(b.set)}/`)})));
+    push("Pages", 10, QS_PAGES.map(([t, u]) => ({s: 1, title: t, sub: u, go: () => navigate(u)})));
+    return done();
+  }
+  push("Pages", 3, QS_PAGES.map(([t, u]) => ({s: qsScore(t, "", q), title: t, sub: u, go: () => navigate(u)})));
+  push("Global badges", 8, globalBadges.map(b => { const st = badgeState(b), ev = EV_BY_IMG[b.imgId];
+    const base = qsScore(b.name, [b.set, b.how, ev && ev.ev.name, ev && ev.ev.category].join(" "), q);
+    return {s: base < 0 ? -1 : base + (st === "live" || st === "ending" ? 5 : 0),
+            title: b.name, sub: [st ? STATE_TXT[st] : "", ev && ev.ev.category && !/unknown/i.test(ev.ev.category) ? ev.ev.category : "", b.added ? "added " + fmt(b.added) : ""].filter(Boolean).join(" · "),
+            img: b.img, go: () => navigate(`/badges/${encodeURIComponent(b.set)}/`)}; }));
+  push("Events", 4, EVENTS.filter(e => !(e.end && Date.parse(e.end) < Date.now() - 30*864e5)).map(e => ({s: qsScore(e.name, [e.category, ...e.badges.map(b => b.name)].join(" "), q),
+    title: e.name, sub: [e.category && !/unknown/i.test(e.category) ? e.category : "", e.start ? `${fmt(e.start)} – ${fmt(e.end)}` : "dates not announced"].filter(Boolean).join(" · "),
+    img: e.badges[0] && e.badges[0].img ? cdn(e.badges[0].img) : "", go: () => openEvent(e.id)})));
+  push("Channel badges", 5, channelBadges.map(b => ({s: qsNorm(b.display || b.login) === q || qsNorm(b.login) === q ? 90 : qsScore(b.name, [b.login, b.display].join(" "), q),
+    title: b.name, sub: `${b.display || b.login || ""}${b.type ? " · " + (b.type === "sub" ? "Sub badge" : b.type === "watch" ? "Watch badge" : b.type === "ranking" ? "Top supporter" : "Campaign") : ""}`,
+    img: b.img, go: () => navigate(`/channel/${encodeURIComponent(b.imgId)}/`)})));
+  push("Global emotes", 5, EMOTES.filter(e => e[4] !== 0).map(e => ({s: qsScore(e[1], "", q), title: e[1], sub: e[3] === 1 ? "Animated emote" : "Global emote",
+    img: emoteUrl(e[0], "1.0"), go: () => { navigate("/emotes/"); openEmote(e[0]); }})));
+  return done();
+}
+function qsRender(){
+  const box = $('#qsRes'), q = $('#qsInput').value;
+  qsItems = qsSearch(q); if(qsActive >= qsItems.length) qsActive = 0;
+  if(!qsItems.length){ box.innerHTML = `<div class="qs-empty">No results for “${esc(q)}”.</div>`; return; }
+  let last = "";
+  box.innerHTML = qsItems.map((it, i) => { const head = it.group !== last ? `<div class="qs-g">${esc(it.group)}</div>` : ""; last = it.group;
+    return head + `<button class="qs-it ${i === qsActive ? "on" : ""}" data-qs="${i}" role="option" aria-selected="${i === qsActive}">
+      <span class="qs-ic">${it.img ? `<img src="${esc(it.img)}" alt="" loading="lazy">` : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>'}</span>
+      <span class="qs-t"><b>${esc(it.title)}</b>${it.sub ? `<small>${esc(it.sub)}</small>` : ""}</span></button>`; }).join("");
+}
+function qsOpen(){ const el = $('#qs'); if(!el.hidden) return; el.hidden = false; document.body.classList.add('qs-on'); if(typeof setMenu === "function") setMenu(false);
+  $('#qsInput').value = ""; qsActive = 0; qsRender(); setTimeout(() => $('#qsInput').focus(), 0); }
+function qsClose(){ $('#qs').hidden = true; document.body.classList.remove('qs-on'); }
+function qsGo(i){ const it = qsItems[i]; if(!it) return; qsClose(); it.go(); window.scrollTo({top: 0}); }
+document.addEventListener('keydown', e => {
+  const open = !$('#qs').hidden;
+  if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k"){ e.preventDefault(); open ? qsClose() : qsOpen(); return; }
+  if(!open && e.key === "/" && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName) && !document.activeElement.isContentEditable){ e.preventDefault(); qsOpen(); return; }
+  if(!open) return;
+  if(e.key === "Escape"){ e.preventDefault(); qsClose(); }
+  else if(e.key === "ArrowDown" || e.key === "ArrowUp"){ e.preventDefault(); const n = qsItems.length; if(!n) return; qsActive = (qsActive + (e.key === "ArrowDown" ? 1 : n - 1)) % n; qsRender();
+    $('#qsRes .qs-it.on')?.scrollIntoView({block: "nearest"}); }
+  else if(e.key === "Enter"){ e.preventDefault(); qsGo(qsActive); }
+});
+document.addEventListener('input', e => { if(e.target.id === 'qsInput'){ qsActive = 0; qsRender(); } });
+document.addEventListener('click', e => {
+  if(e.target.closest('#qsBtn')){ qsOpen(); return; }
+  const it = e.target.closest('[data-qs]'); if(it){ qsGo(+it.dataset.qs); return; }
+  if(e.target.id === 'qs'){ qsClose(); }
+});
+
 /* ---------- statistics ---------- */
 function badgeFacts(b){
   const ev = EV_BY_IMG[b.imgId], info = descInfo(b.how || (ev && ev.b.desc) || "");
