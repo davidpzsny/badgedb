@@ -30,7 +30,7 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#0C0B11">
 <link rel="preload" href="/assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.css?v=5c4958ef92">
+<link rel="stylesheet" href="/assets/app.css?v=ca8977867b">
 <meta name="twitch-client-id" content="nqfd84n7ko17trxgtfepmsw5ys3375">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://badgedatabase.com/"}, {"@type": "ListItem", "position": 2, "name": "Global Badges", "item": "https://badgedatabase.com/badges/"}, {"@type": "ListItem", "position": 3, "name": "Solasta II Multiplayer"}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Solasta II Multiplayer – Twitch Global Badge", "description": "Solasta II Multiplayer is a Twitch global badge. Watch 30 minutes in the category. Available Sep 8, 2026 – Sep 29, 2026.", "url": "https://badgedatabase.com/badges/solasta-2-multiplayer/", "primaryImageOfPage": {"@type": "ImageObject", "url": "https://static-cdn.jtvnw.net/badges/v1/e8430418-13e9-4325-b2ad-85664d2a4ddd/3"}, "isPartOf": {"@type": "WebSite", "name": "Badge Database", "url": "https://badgedatabase.com/"}, "datePublished": "2026-09-08"}</script>
@@ -53,6 +53,9 @@
       <a href="/badges/" data-route="global"><img src="https://static-cdn.jtvnw.net/badges/v1/bd444ec6-8f34-4bf9-91f4-af1e3428d80f/3" alt="">Global Badges <span class="count" id="cGlobal"></span></a>
       <a href="/channel/" data-route="channel"><img src="https://static-cdn.jtvnw.net/badges/v1/5d9f2208-5dd8-11e7-8513-2ff4adfae661/3" alt="">Channel Badges <span class="count" id="cChannel"></span></a>
       <a href="/emotes/" data-route="emotes"><img src="https://static-cdn.jtvnw.net/emoticons/v2/25/default/dark/2.0" alt="">Global Emotes <span class="count" id="cEmotes"></span></a>
+    </nav>
+    <nav class="nav group" aria-label="Insights">
+      <h6>Insights</h6>
       <a href="/stats/" data-route="stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-6"/></svg>Statistics</a>
       <a href="/popularity/" data-route="popularity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Badge Popularity</a>
     </nav>
@@ -60,6 +63,7 @@
       <h6>Legal</h6>
       <a href="/privacy/" data-route="privacy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6l7-3z"/></svg>Privacy Policy</a>
       <a href="/terms/" data-route="terms"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l5 5v13H6z"/><path d="M14 3v6h6M9 13h7M9 17h7"/></svg>Terms of Service</a>
+      <a href="/legal/" data-route="legal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v5h1"/></svg>Legal Notice</a>
     </nav>
     <div class="side-foot">
         <div class="side-user" id="sideUser"></div>
@@ -237,6 +241,53 @@
       <p class="pop-note">User counts come from <a href="https://potat.app" target="_blank" rel="noopener">PotatBotat</a>: a user is counted once they have been seen with the badge in a chat the bot is in. People who own a badge but never display it are not counted, so real numbers are higher. Updated daily.</p>
     </section>
 
+    <!-- 404 -->
+    <section data-page="notfound" hidden>
+      <div class="nf">
+        <div class="nf-code">404</div>
+        <h1>Page not found</h1>
+        <p class="lead">There's nothing at <code id="nfPath"></code>. The badge or page may have been renamed, or the link has a typo.</p>
+        <div class="nf-actions"><button class="btn" id="nfSearch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>Search the site</button><a class="btn ghost" href="/">Go to the homepage</a></div>
+        <div id="nfSuggest"></div>
+        <div class="nf-links"><a href="/timeline/">Timeline</a><a href="/badges/">Global Badges</a><a href="/channel/">Channel Badges</a><a href="/emotes/">Global Emotes</a><a href="/stats/">Statistics</a><a href="/faq/">FAQ</a></div>
+      </div>
+    </section>
+
+    <!-- LEGAL NOTICE -->
+    <section data-page="legal" hidden>
+      <div class="crumbs"><a href="/">Home</a><span>/</span>Legal Notice</div>
+      <div class="page-head"><div><h1>Legal Notice</h1><p class="lead">Effective date: October 2, 2026</p></div></div>
+      <div class="legal">
+        <h2>Operator</h2>
+        <p>Badge Database (badgedatabase.com) is a free, non-commercial fan project operated by a private individual based in Hungary. It has no advertising, sells nothing and does not collect payments.</p>
+        <p><b>Contact:</b> <a href="mailto:support@badgedatabase.com">support@badgedatabase.com</a> · <a href="https://discord.gg/QkuRDXcZH5" target="_blank" rel="noopener">Discord</a> · <a href="https://x.com/BadgeDatabase" target="_blank" rel="noopener">X (@BadgeDatabase)</a></p>
+
+        <h2>Hosting</h2>
+        <p>The website is hosted on GitHub Pages by GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA.</p>
+
+        <h2>No affiliation, trademarks</h2>
+        <p>Badge Database is not affiliated with, endorsed, sponsored or approved by Twitch Interactive, Inc. or any game publisher, brand or streamer whose badges, emotes or names appear on this website. “Twitch” and related names and logos are trademarks of Twitch Interactive, Inc. All other trademarks and names belong to their respective owners and are used only to identify the badges and events they relate to.</p>
+
+        <h2>Copyright and content removal</h2>
+        <p>Badge and emote images, names and descriptions belong to Twitch Interactive, Inc. and the respective rights holders and are shown for informational purposes only. The design, text and code of this website belong to Badge Database.</p>
+        <p>If you hold rights in something shown here and want it removed or corrected — or you are a streamer who wants your channel's badges removed from the Channel Badges section — email <a href="mailto:support@badgedatabase.com">support@badgedatabase.com</a> with the page address (URL), what should be removed or changed, and how you are connected to it. Requests are reviewed promptly, and content is removed where the request is justified.</p>
+
+        <h2>Data sources and credits</h2>
+        <ul>
+          <li>Badge, emote and channel information: the public <a href="https://dev.twitch.tv/docs/api/" target="_blank" rel="noopener">Twitch API</a> and public Twitch pages.</li>
+          <li>Badge dates and objectives: official announcements by Twitch and game publishers, and the Twitch website.</li>
+          <li>Badge popularity: <a href="https://potat.app" target="_blank" rel="noopener">PotatBotat</a>.</li>
+          <li>Typeface: Manrope by The Manrope Project Authors, under the SIL Open Font License (<a href="/assets/fonts/OFL.txt">licence text</a>).</li>
+        </ul>
+
+        <h2>Accuracy and liability</h2>
+        <p>Information is collected automatically and by hand and may be incomplete or out of date. Always confirm conditions on Twitch before spending money to obtain a badge. Details are set out in the <a href="/terms/">Terms of Service</a>; how personal data is handled is described in the <a href="/privacy/">Privacy Policy</a>.</p>
+
+        <h2>External links</h2>
+        <p>This website links to and embeds third-party services (Twitch, X, Discord and others). Their content is the responsibility of their operators; Badge Database has no influence over it. If a linked page turns out to be unlawful, it will be removed as soon as we become aware of it.</p>
+      </div>
+    </section>
+
     <!-- FAQ -->
     <section data-page="faq" hidden>
       <div class="crumbs"><a href="/">Home</a><span>/</span>FAQ</div>
@@ -391,7 +442,10 @@
           </div>
         </div>
         <nav class="sf-col" aria-label="Explore"><h6>Explore</h6>
-          <a href="/timeline/">Timeline</a><a href="/badges/">Global Badges</a><a href="/channel/">Channel Badges</a><a href="/emotes/">Global Emotes</a><a href="/popularity/">Badge Popularity</a><a href="/stats/">Statistics</a><a href="/faq/">FAQ</a>
+          <a href="/timeline/">Timeline</a><a href="/badges/">Global Badges</a><a href="/channel/">Channel Badges</a><a href="/emotes/">Global Emotes</a><a href="/faq/">FAQ</a>
+        </nav>
+        <nav class="sf-col" aria-label="Insights"><h6>Insights</h6>
+          <a href="/stats/">Statistics</a><a href="/popularity/">Badge Popularity</a>
         </nav>
         <nav class="sf-col" aria-label="Community"><h6>Community</h6>
           <a href="https://twitch.tv/badge_db" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2 2 6v14h5v3h3l3-3h4l5-5V2H4zm16 12-3 3h-5l-3 3v-3H6V4h14v10zm-4-7h-2v5h2V7zm-5 0H9v5h2V7z"/></svg>24/7 Stream</a>
@@ -400,7 +454,7 @@
         </nav>
         <nav class="sf-col" aria-label="Legal"><h6>Legal</h6>
           <a href="/privacy/">Privacy Policy</a><a href="/terms/">Terms of Service</a>
-        </nav>
+        <a href="/legal/">Legal Notice</a></nav>
       </div>
       <div class="sf-bottom">
         <span>© 2026 Badge Database · Not affiliated with Twitch Interactive, Inc. Badge images © their respective owners.</span>
@@ -430,6 +484,6 @@
   </div>
 </div>
 
-<script src="/assets/app.js?v=5c4958ef92"></script>
+<script src="/assets/app.js?v=ca8977867b"></script>
 </body>
 </html>
