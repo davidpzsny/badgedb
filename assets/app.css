@@ -711,3 +711,5 @@
   .nf-links{display:flex;gap:6px 16px;justify-content:center;flex-wrap:wrap;margin-top:28px;font-size:13.5px;font-weight:700}
   .nf-links a{color:var(--muted)}.nf-links a:hover{color:var(--text)}
   @media (max-width:640px){.nf-code{font-size:84px}}
+
+  .brand b em{font-style:normal;color:var(--purple-2)}
