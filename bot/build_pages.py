@@ -328,6 +328,37 @@ def popularity_page(sets, pop):
                                      '<div class="pop-list" id="popList"></div>': f'<div class="pop-list" id="popList">{rows}</div>'},
                 jsonld=[crumbs_ld(("Home", "/"), ("Badge Popularity", None))])
 
+def stats_page(sets, events, emotes, ev_of, now):
+    yr = now[:4]; d30 = (datetime.date.fromisoformat(now[:10]) - datetime.timedelta(days=30)).isoformat()
+    dated = [s for s in sets if s["added"]]
+    this_year = sum(1 for s in dated if s["added"].startswith(yr)); last30 = sum(1 for s in dated if s["added"] >= d30)
+    lens = [(datetime.datetime.fromisoformat(e["end"].replace("Z", "+00:00")) - datetime.datetime.fromisoformat(e["start"].replace("Z", "+00:00"))).days
+            for e in events if e.get("start") and e.get("end")]
+    lens = [l for l in lens if 0 < l < 120]; avg = round(sum(lens) / len(lens)) if lens else 0
+    live_emotes = sum(1 for r in emotes if len(r) >= 5 and r[4] != 0)
+    cards = [(len(sets), "global badge sets"), (this_year, f"added in {yr}"), (last30, "added in the last 30 days"),
+             (f"{avg} days" if avg else "—", "average event length"), (live_emotes or "—", "global emotes")]
+    cards_html = "".join(f'<div><b>{c if isinstance(c, str) else f"{c:,}"}</b><span>{l}</span></div>' for c, l in cards)
+    by_cat = {}
+    for s in sets:
+        ev, evb = ev_of.get(s["img"], (None, None))
+        cat = ev.get("category") if ev and ev.get("category") not in (None, "", "Unknown") else desc_info(s["desc"]).get("category", "")
+        if cat and not re.search(r"eligible|categories|any |various|multiple", cat, re.I): by_cat[cat] = by_cat.get(cat, 0) + 1
+    top = sorted(by_cat.items(), key=lambda kv: (-kv[1], kv[0]))[:10]
+    cmax = top[0][1] if top else 1
+    cats_html = "".join(f'<div class="st-row"><span class="st-c">{e(c)}</span><span class="st-track"><i style="width:{n/cmax*100:.1f}%"></i></span><b>{n}</b></div>' for c, n in top)
+    years = {}
+    for s in dated: years[s["added"][:4]] = years.get(s["added"][:4], 0) + 1
+    ymax = max(years.values()) if years else 1
+    years_html = "".join(f'<div class="st-row"><span class="st-c">{y}</span><span class="st-track"><i style="width:{n/ymax*100:.1f}%"></i></span><b>{n}</b></div>' for y, n in sorted(years.items(), reverse=True))
+    years_html += f'<div class="st-row muted"><span class="st-c">Before tracking</span><span class="st-track"></span><b>{len(sets) - len(dated)}</b></div>'
+    return page("/stats/", "Twitch Badge Statistics – How Many Twitch Badges Are There? | Badge Database",
+                f"There are {len(sets)} Twitch global badge sets — {this_year} added in {yr} so far. See new badges per month, free vs paid badges and which games get the most.",
+                "stats", fills={'<div class="st-cards" id="stCards"></div>': f'<div class="st-cards" id="stCards">{cards_html}</div>',
+                                '<div id="stCats"></div>': f'<div id="stCats">{cats_html}</div>',
+                                '<div class="st-years" id="stYears"></div>': f'<div class="st-years" id="stYears">{years_html}</div>'},
+                jsonld=[crumbs_ld(("Home", "/"), ("Statistics", None))])
+
 def faq_page():
     qa = re.findall(r'<details(?: open)?><summary>(.*?)</summary><div class="a">(.*?)</div></details>', TEMPLATE, flags=re.S)
     strip = lambda s: html.unescape(re.sub(r"<[^>]+>", "", s))
@@ -369,12 +400,13 @@ def main():
     changed += write("channel/index.html", channel_page(load("channel-badges.json", [])))
     changed += write("emotes/index.html", emotes_page(load("emotes.json", [])))
     changed += write("popularity/index.html", popularity_page(sets, pop))
+    changed += write("stats/index.html", stats_page(sets, events, load("emotes.json", []), ev_of, now))
     changed += write("faq/index.html", faq_page())
     changed += write("privacy/index.html", page("/privacy/", "Privacy Policy | Badge Database", "How Badge Database handles personal data: no accounts, no tracking cookies, which third-party services are used, and your rights under the GDPR.", "privacy"))
     changed += write("terms/index.html", page("/terms/", "Terms of Service | Badge Database", "Terms of Service for Badge Database, an independent fan project not affiliated with Twitch: accuracy of badge information, acceptable use and liability.", "terms"))
     changed += write("404.html", page("/404.html", "Badge Database", "Every Twitch badge and when to get it.", "home", noindex=True))
     urls = [("/", now[:10], "hourly", "1.0"), ("/timeline/", now[:10], "hourly", "0.9"), ("/badges/", now[:10], "daily", "0.9"),
-            ("/channel/", now[:10], "daily", "0.8"), ("/emotes/", now[:10], "daily", "0.8"), ("/popularity/", now[:10], "daily", "0.8"), ("/faq/", None, "monthly", "0.5")]
+            ("/channel/", now[:10], "daily", "0.8"), ("/emotes/", now[:10], "daily", "0.8"), ("/popularity/", now[:10], "daily", "0.8"), ("/stats/", now[:10], "daily", "0.7"), ("/faq/", None, "monthly", "0.5")]
     urls += [(f"/badges/{s['set']}/", s["added"] or None, "weekly", "0.7") for s in sets]
     sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for u, lm, cf, pr in urls:
