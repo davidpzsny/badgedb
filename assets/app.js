@@ -144,7 +144,7 @@ const isFile = location.protocol === "file:";
 const redirectUri = () => location.origin + location.pathname;
 
 /* ---------- routing (real URLs, no #) ---------- */
-const PATHS = {"/":"home","/timeline/":"timeline","/badges/":"global","/channel/":"channel","/stats/":"stats","/emotes/":"emotes","/popularity/":"popularity","/faq/":"faq","/legal/":"legal","/privacy/":"privacy","/terms/":"terms","/admin/":"admin"};
+const PATHS = {"/":"home","/timeline/":"timeline","/badges/":"global","/channel/":"channel","/stats/":"stats","/emotes/":"emotes","/popularity/":"popularity","/faq/":"faq","/legal/":"legal","/contact/":"contact","/privacy/":"privacy","/terms/":"terms","/admin/":"admin"};
 const LEGACY = {home:"/",timeline:"/timeline/",global:"/badges/",channel:"/channel/",faq:"/faq/",privacy:"/privacy/",terms:"/terms/",admin:"/admin/"};
 function pathKey(){ let p = location.pathname.replace(/index\.html$/,''); if(!p.endsWith('/')) p += '/'; return p; }
 // old #links keep working: /#global -> /badges/, /#badge/x -> /badges/x/
@@ -163,10 +163,11 @@ function route(){
     if(CH_READY && !channelBadges.find(x => x.imgId === id)) h = "notfound"; else { if(channelBadges.length) renderChannelBadgePage(id); h = "badge"; } }
   if(!h) h = p === "/" ? "home" : "notfound";
   if(h === "notfound") renderNotFound();
+  if(h === "contact") contactPrefill();
   if(h==="admin"){ renderAdmin(); if(ADM.token && !ADM.events.length) admLoad(); }
   if(h==="popularity") maybeLivePopularity();
   $$('[data-page]').forEach(s => s.hidden = s.dataset.page !== h);
-  const TITLES = {notfound:"Page not found | Badge Database", legal:"Legal Notice | Badge Database", stats:"Twitch Badge Statistics | Badge Database", emotes:"Twitch Global Emotes – Full List | Badge Database", popularity:"Twitch Badge Popularity – Most Used Badges | Badge Database", home:"Badge Database – Every Twitch Badge & When to Get It", timeline:"Timeline – Twitch Badges Available Now | Badge Database",
+  const TITLES = {contact:"Contact | Badge Database", notfound:"Page not found | Badge Database", legal:"Legal Notice | Badge Database", stats:"Twitch Badge Statistics | Badge Database", emotes:"Twitch Global Emotes – Full List | Badge Database", popularity:"Twitch Badge Popularity – Most Used Badges | Badge Database", home:"Badge Database – Every Twitch Badge & When to Get It", timeline:"Timeline – Twitch Badges Available Now | Badge Database",
     global:"All Twitch Global Badges | Badge Database", channel:"Twitch Channel Badges | Badge Database", faq:"FAQ – Twitch Badges | Badge Database",
     privacy:"Privacy Policy | Badge Database", terms:"Terms of Service | Badge Database", admin:"Admin | Badge Database"};
   if(h==="badge"){ const bb = set && globalBadges.find(x=>x.set===set); if(bb) document.title = bb.name+" – Twitch Badge | Badge Database"; }
@@ -548,6 +549,33 @@ document.addEventListener('click', e => {
   if(e.target.id === 'qs'){ qsClose(); }
 });
 
+/* ---------- contact (opens a pre-filled email; no server needed) ---------- */
+const CT_MAIL = "support@badgedatabase.com";
+const CT_TOPICS = {question: "Question", fix: "Badge info correction", idea: "Suggestion", removal: "Content removal request", other: "Message"};
+function contactPrefill(){
+  const q = new URLSearchParams(location.search);
+  if(q.get("topic") && CT_TOPICS[q.get("topic")]) $('#ctTopic').value = q.get("topic");
+  if(q.get("link")) $('#ctLink').value = q.get("link");
+  const badge = q.get("badge");
+  $('#ctMsg').placeholder = badge ? `What's wrong or missing for “${badge}”? (dates, objective, channels…)` : "What should we know?";
+  $('#ctMsg').dataset.badge = badge || "";
+  $('#ctTip').textContent = "";
+}
+document.addEventListener('click', e => {
+  if(e.target.closest('#ctSend')){
+    const topic = $('#ctTopic').value, msg = $('#ctMsg').value.trim(), link = $('#ctLink').value.trim(), badge = $('#ctMsg').dataset.badge || "";
+    if(!msg){ toast("Write a short message first"); $('#ctMsg').focus(); return; }
+    const subject = `[BadgeDB] ${CT_TOPICS[topic] || "Message"}${badge ? ": " + badge : ""}`;
+    const body = msg + (link ? `\n\nLink: ${link}` : "") + `\n\n— sent from badgedatabase.com/contact/`;
+    location.href = `mailto:${CT_MAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    $('#ctTip').textContent = "Your email app should open now.";
+    return;
+  }
+  if(e.target.closest('#ctCopy')){
+    (navigator.clipboard ? navigator.clipboard.writeText(CT_MAIL) : Promise.reject()).then(() => { $('#ctTip').textContent = "Address copied!"; }, () => { $('#ctTip').textContent = CT_MAIL; });
+  }
+});
+
 /* ---------- 404 ---------- */
 function renderNotFound(){
   const path = decodeURIComponent(location.pathname);
@@ -848,7 +876,7 @@ function renderBadgePage(set){
       </div>
       <div class="card2"><h3>Context</h3><p class="ctx">${context?esc(context):"No additional context yet. Follow twitch.tv/badge_db for updates."}</p>
         <h3 style="margin-top:18px">History</h3><dl class="kv2"><dt>Added</dt><dd>${b.added?fmt(b.added):"Before tracking started"}</dd></dl>
-        <div class="actions" style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap"><a class="btn ghost" href="${esc(v.img)}" target="_blank" rel="noopener">Open image</a><button class="btn ghost" data-copy="${esc(v.img)}">Copy image URL</button><button class="btn ghost" data-copy="${esc(location.origin+'/badges/'+encodeURIComponent(b.set)+'/')}">Copy page link</button></div>
+        <div class="actions" style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap"><a class="btn ghost" href="${esc(v.img)}" target="_blank" rel="noopener">Open image</a><button class="btn ghost" data-copy="${esc(v.img)}">Copy image URL</button><button class="btn ghost" data-copy="${esc(location.origin+'/badges/'+encodeURIComponent(b.set)+'/')}">Copy page link</button><a class="report-link" href="/contact/?topic=fix&badge=${encodeURIComponent(b.name)}&link=${encodeURIComponent(location.origin+'/badges/'+encodeURIComponent(b.set)+'/')}" style="align-self:center;margin-left:auto">Report a mistake</a></div>
       </div>
     </div>`;
 }
