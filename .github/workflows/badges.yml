@@ -45,7 +45,7 @@ jobs:
           git config user.name "badgedb-bot"
           git config user.email "bot@users.noreply.github.com"
           for f in index.html badges.json events.json channel-badges.json channels-state.json emotes.json popularity.json posts.json status.json \
-                   badges timeline channel emotes popularity stats faq privacy terms assets sitemap.xml robots.txt 404.html; do
+                   badges timeline channel emotes popularity stats faq privacy terms legal assets sitemap.xml robots.txt 404.html; do
             if [ -e "$f" ]; then git add "$f"; fi
           done
           if git diff --cached --quiet; then echo "Nothing changed."; exit 0; fi
