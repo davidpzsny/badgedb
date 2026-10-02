@@ -346,7 +346,7 @@
 
   /* ================= footer + stream bar ================= */
   .site-foot{margin-top:72px;padding-top:36px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted)}
-  .sf-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:32px}
+  .sf-grid{display:grid;grid-template-columns:1.5fr repeat(4,1fr);gap:28px}
   .sf-logo{display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:17px;letter-spacing:-.02em;color:var(--text)}
   .sf-logo img{width:32px;height:32px;border-radius:8px}
   .sf-logo em{font-style:normal;color:var(--purple-2)}
@@ -699,3 +699,15 @@
     .qs-btn span,.qs-btn kbd{display:none}.qs-btn svg{width:20px;height:20px}
     .qs{padding:10px}.qs-box{max-height:88vh}.qs-foot{display:none}
   }
+
+  /* ================= 404 ================= */
+  .nf{max-width:640px;margin:8vh auto 0;text-align:center}
+  .nf-code{font-size:120px;font-weight:800;letter-spacing:-.06em;line-height:1;background:linear-gradient(135deg,var(--purple-2),var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .nf h1{margin-top:6px}.nf .lead{margin:10px auto 0}
+  .nf code{font-family:ui-monospace,Menlo,monospace;font-size:.9em;background:var(--panel-2);padding:2px 7px;border-radius:6px;color:var(--purple-2);word-break:break-all}
+  .nf-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+  .nf-actions .btn svg{width:16px;height:16px}
+  .nf-sug{margin-top:28px;text-align:left}.nf-sug h3{font-size:13px;text-transform:uppercase;letter-spacing:.07em;color:var(--dim);margin-bottom:8px}
+  .nf-links{display:flex;gap:6px 16px;justify-content:center;flex-wrap:wrap;margin-top:28px;font-size:13.5px;font-weight:700}
+  .nf-links a{color:var(--muted)}.nf-links a:hover{color:var(--text)}
+  @media (max-width:640px){.nf-code{font-size:84px}}

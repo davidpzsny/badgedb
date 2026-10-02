@@ -144,7 +144,7 @@ const isFile = location.protocol === "file:";
 const redirectUri = () => location.origin + location.pathname;
 
 /* ---------- routing (real URLs, no #) ---------- */
-const PATHS = {"/":"home","/timeline/":"timeline","/badges/":"global","/channel/":"channel","/stats/":"stats","/emotes/":"emotes","/popularity/":"popularity","/faq/":"faq","/privacy/":"privacy","/terms/":"terms","/admin/":"admin"};
+const PATHS = {"/":"home","/timeline/":"timeline","/badges/":"global","/channel/":"channel","/stats/":"stats","/emotes/":"emotes","/popularity/":"popularity","/faq/":"faq","/legal/":"legal","/privacy/":"privacy","/terms/":"terms","/admin/":"admin"};
 const LEGACY = {home:"/",timeline:"/timeline/",global:"/badges/",channel:"/channel/",faq:"/faq/",privacy:"/privacy/",terms:"/terms/",admin:"/admin/"};
 function pathKey(){ let p = location.pathname.replace(/index\.html$/,''); if(!p.endsWith('/')) p += '/'; return p; }
 // old #links keep working: /#global -> /badges/, /#badge/x -> /badges/x/
@@ -156,13 +156,17 @@ function pathKey(){ let p = location.pathname.replace(/index\.html$/,''); if(!p.
 function navigate(url){ if(url !== location.pathname) history.pushState(null, '', url); route(); }
 function route(){
   const p = pathKey(); let h = PATHS[p], m, set = null;
-  if(!h && (m = p.match(/^\/badges\/([^/]+)\/$/))){ set = decodeURIComponent(m[1]); if(READY) renderBadgePage(set); h = "badge"; }
-  else if(!h && (m = p.match(/^\/channel\/([^/]+)\/$/))){ if(channelBadges.length) renderChannelBadgePage(decodeURIComponent(m[1])); h = "badge"; }
-  if(!h) h = "home";
+  if(!h && (m = p.match(/^\/badges\/([^/]+)\/$/))){ set = decodeURIComponent(m[1]);
+    const known = globalBadges.find(x => x.set === set) || globalBadges.find(x => x.imgId === set);
+    if(READY && !known) h = "notfound"; else { if(READY) renderBadgePage(set); h = "badge"; } }
+  else if(!h && (m = p.match(/^\/channel\/([^/]+)\/$/))){ const id = decodeURIComponent(m[1]);
+    if(CH_READY && !channelBadges.find(x => x.imgId === id)) h = "notfound"; else { if(channelBadges.length) renderChannelBadgePage(id); h = "badge"; } }
+  if(!h) h = p === "/" ? "home" : "notfound";
+  if(h === "notfound") renderNotFound();
   if(h==="admin"){ renderAdmin(); if(ADM.token && !ADM.events.length) admLoad(); }
   if(h==="popularity") maybeLivePopularity();
   $$('[data-page]').forEach(s => s.hidden = s.dataset.page !== h);
-  const TITLES = {stats:"Twitch Badge Statistics | Badge Database", emotes:"Twitch Global Emotes – Full List | Badge Database", popularity:"Twitch Badge Popularity – Most Used Badges | Badge Database", home:"Badge Database – Every Twitch Badge & When to Get It", timeline:"Timeline – Twitch Badges Available Now | Badge Database",
+  const TITLES = {notfound:"Page not found | Badge Database", legal:"Legal Notice | Badge Database", stats:"Twitch Badge Statistics | Badge Database", emotes:"Twitch Global Emotes – Full List | Badge Database", popularity:"Twitch Badge Popularity – Most Used Badges | Badge Database", home:"Badge Database – Every Twitch Badge & When to Get It", timeline:"Timeline – Twitch Badges Available Now | Badge Database",
     global:"All Twitch Global Badges | Badge Database", channel:"Twitch Channel Badges | Badge Database", faq:"FAQ – Twitch Badges | Badge Database",
     privacy:"Privacy Policy | Badge Database", terms:"Terms of Service | Badge Database", admin:"Admin | Badge Database"};
   if(h==="badge"){ const bb = set && globalBadges.find(x=>x.set===set); if(bb) document.title = bb.name+" – Twitch Badge | Badge Database"; }
@@ -480,6 +484,13 @@ function qsScore(title, extra, q){
 }
 const STATE_TXT = {live: "Active now", ending: "Ends soon", soon: "Upcoming", tba: "Date not announced", ended: "Ended"};
 function qsSearch(raw){
+  const res = qsSearchOne(raw);
+  if(res.length || !/\s/.test(raw.trim())) return res;
+  // nothing for the whole phrase (e.g. a typo): try the words one by one, longest first
+  for(const w of raw.trim().split(/\s+/).filter(x => x.length >= 3).sort((a, b) => b.length - a.length)){ const r = qsSearchOne(w); if(r.length) return r; }
+  return [];
+}
+function qsSearchOne(raw){
   const q = qsNorm(raw.trim()), groups = [];
   const push = (group, limit, arr) => { const items = arr.filter(x => x.s >= 0).sort((a, b) => b.s - a.s || a.title.localeCompare(b.title)).slice(0, limit).map(x => ({...x, group}));
     if(items.length) groups.push(items); };
@@ -536,6 +547,23 @@ document.addEventListener('click', e => {
   const it = e.target.closest('[data-qs]'); if(it){ qsGo(+it.dataset.qs); return; }
   if(e.target.id === 'qs'){ qsClose(); }
 });
+
+/* ---------- 404 ---------- */
+function renderNotFound(){
+  const path = decodeURIComponent(location.pathname);
+  $('#nfPath').textContent = path;
+  const words = path.replace(/^\/|\/$/g, "").split("/").pop().replace(/[-_]+/g, " ").replace(/\b(badges?|channel|v\d+)\b/gi, "").trim();
+  let sug = [];
+  if(words && READY){
+    const q = qsNorm(words);
+    sug = globalBadges.map(b => { const t = qsNorm(b.name); const w = q.split(/\s+/).filter(x => x.length > 2);
+      const hits = w.filter(x => t.includes(x) || qsNorm(b.set).includes(x)).length; return {b, s: hits / Math.max(1, w.length)}; })
+      .filter(x => x.s > 0).sort((a, b) => b.s - a.s || (b.b.added || "").localeCompare(a.b.added || "")).slice(0, 4).map(x => x.b);
+  }
+  $('#nfSuggest').innerHTML = sug.length ? `<div class="nf-sug"><h3>Did you mean</h3><div class="blist">${sug.map(b => badgeRow(b, "global")).join("")}</div></div>` : "";
+}
+document.addEventListener('click', e => { if(e.target.closest('#nfSearch')){ qsOpen(); const w = decodeURIComponent(location.pathname).split("/").filter(Boolean).pop() || "";
+  $('#qsInput').value = w.replace(/[-_]+/g, " "); qsActive = 0; qsRender(); } });
 
 /* ---------- statistics ---------- */
 function badgeFacts(b){
