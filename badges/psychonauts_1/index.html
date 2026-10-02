@@ -29,9 +29,8 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#0C0B11">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/app.css?v=8eeb41662f">
+<link rel="preload" href="/assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/app.css?v=8a1bb5628f">
 <meta name="twitch-client-id" content="nqfd84n7ko17trxgtfepmsw5ys3375">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://badgedatabase.com/"}, {"@type": "ListItem", "position": 2, "name": "Global Badges", "item": "https://badgedatabase.com/badges/"}, {"@type": "ListItem", "position": 3, "name": "Psychonauts"}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Psychonauts – Twitch Global Badge", "description": "Psychonauts is a Twitch global badge. Psychonauts", "url": "https://badgedatabase.com/badges/psychonauts_1/", "primaryImageOfPage": {"@type": "ImageObject", "url": "https://static-cdn.jtvnw.net/badges/v1/a9811799-dce3-475f-8feb-3745ad12b7ea/3"}, "isPartOf": {"@type": "WebSite", "name": "Badge Database", "url": "https://badgedatabase.com/"}}</script>
@@ -53,6 +52,7 @@
       <a href="/badges/" data-route="global"><img src="https://static-cdn.jtvnw.net/badges/v1/bd444ec6-8f34-4bf9-91f4-af1e3428d80f/3" alt="">Global Badges <span class="count" id="cGlobal"></span></a>
       <a href="/channel/" data-route="channel"><img src="https://static-cdn.jtvnw.net/badges/v1/5d9f2208-5dd8-11e7-8513-2ff4adfae661/3" alt="">Channel Badges <span class="count" id="cChannel"></span></a>
       <a href="/emotes/" data-route="emotes"><img src="https://static-cdn.jtvnw.net/emoticons/v2/25/default/dark/2.0" alt="">Global Emotes <span class="count" id="cEmotes"></span></a>
+      <a href="/stats/" data-route="stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-6"/></svg>Statistics</a>
       <a href="/popularity/" data-route="popularity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Badge Popularity</a>
     </nav>
     <nav class="nav group" aria-label="Legal">
@@ -177,6 +177,22 @@
 </div><h2>Recently added badges</h2><div class="blist"><a class="brow" href="/badges/thedragonsdogma/" data-badge="thedragonsdogma" data-type="global"><span class="tile"><img src="https://static-cdn.jtvnw.net/badges/v1/f699b4ab-8952-46a1-88ff-a5515406f0a5/3" alt="TheDragonsDogma" loading="lazy"></span><span class="t"><span class="n">TheDragonsDogma</span><span class="m"><span>Added Oct 1, 2026</span></span></span></a><a class="brow" href="/badges/frekifriend/" data-badge="frekifriend" data-type="global"><span class="tile"><img src="https://static-cdn.jtvnw.net/badges/v1/2d1bfde9-94a9-4ed1-84a5-4aeb85911f1d/3" alt="FrekiFriend" loading="lazy"></span><span class="t"><span class="n">FrekiFriend</span><span class="m"><span>Added Oct 1, 2026</span></span></span></a><a class="brow" href="/badges/bloody-finger-elden-ring/" data-badge="bloody-finger-elden-ring" data-type="global"><span class="tile"><img src="https://static-cdn.jtvnw.net/badges/v1/12266c73-c6bc-433a-ab66-dc021bb8159f/3" alt="Bloody Finger ELDEN RING" loading="lazy"></span><span class="t"><span class="n">Bloody Finger ELDEN RING</span><span class="m"><span>Added Sep 30, 2026</span></span></span></a><a class="brow" href="/badges/wolf-medallion/" data-badge="wolf-medallion" data-type="global"><span class="tile"><img src="https://static-cdn.jtvnw.net/badges/v1/3e008d8a-4a24-4858-9e8f-74e8a3808955/3" alt="Wolf Medallion" loading="lazy"></span><span class="t"><span class="n">Wolf Medallion</span><span class="m"><span>Added Sep 28, 2026 · 13,316 users</span></span></span></a><a class="brow" href="/badges/yellow-party-hat/" data-badge="yellow-party-hat" data-type="global"><span class="tile"><img src="https://static-cdn.jtvnw.net/badges/v1/6325b96b-0187-4a60-90d0-8bb45efa3fff/3" alt="Yellow Party Hat" loading="lazy"></span><span class="t"><span class="n">Yellow Party Hat</span><span class="m"><span>Added Sep 25, 2026</span></span></span></a><a class="brow" href="/badges/ace-combat-8-nugget/" data-badge="ace-combat-8-nugget" data-type="global"><span class="tile"><img src="https://static-cdn.jtvnw.net/badges/v1/8468fb6c-1d33-4482-85ef-fa1898288ee2/3" alt="ACE COMBAT 8 Nugget" loading="lazy"></span><span class="t"><span class="n">ACE COMBAT 8 Nugget</span><span class="m"><span>Added Sep 25, 2026 · 3,173 users</span></span></span></a></div></div>
     </section>
 
+    <!-- STATISTICS -->
+    <section data-page="stats" hidden>
+      <div class="crumbs"><a href="/">Home</a><span>/</span>Twitch<span>/</span>Statistics</div>
+      <div class="page-head"><div><h1>Twitch Badge Statistics</h1><p class="lead">How many Twitch global badges there are, how fast new ones arrive, which games get the most and how many are free.</p></div></div>
+      <div class="st-cards" id="stCards"></div>
+      <h2>New global badges per month</h2>
+      <div class="st-chart" id="stMonths"></div>
+      <p class="st-note" id="stMonthsNote"></p>
+      <div class="st-two">
+        <div class="card2"><h3>Free or paid?</h3><div id="stCost"></div></div>
+        <div class="card2"><h3>Games with the most badges</h3><div id="stCats"></div></div>
+      </div>
+      <h2>By year</h2>
+      <div class="st-years" id="stYears"></div>
+    </section>
+
     <!-- GLOBAL EMOTES -->
     <section data-page="emotes" hidden>
       <div class="crumbs"><a href="/">Home</a><span>/</span>Twitch<span>/</span>Global Emotes</div>
@@ -238,7 +254,7 @@
     <!-- LEGAL -->
     <section data-page="privacy" hidden>
       <div class="crumbs"><a href="/">Home</a><span>/</span>Privacy Policy</div>
-      <div class="page-head"><div><h1>Privacy Policy</h1><p class="lead">Effective date: October 1, 2026</p></div></div>
+      <div class="page-head"><div><h1>Privacy Policy</h1><p class="lead">Effective date: October 2, 2026</p></div></div>
       <div class="legal">
         <nav class="legal-toc" aria-label="Contents"><b>Contents</b>
           <a href="#p1">1. Who we are</a><a href="#p2">2. Summary</a><a href="#p3">3. Data processed when you visit</a><a href="#p4">4. Third-party services</a>
@@ -255,7 +271,7 @@
           <li>We do <b>not</b> require an account, and we do <b>not</b> ask you for any personal information. Logging in with Twitch is optional and only used for badge previews in your own browser.</li>
           <li>We do <b>not</b> use analytics, advertising or tracking cookies, and we do not sell or share personal data.</li>
           <li>Like any website, your browser necessarily sends technical data (such as your IP address) to the services that deliver the page and its content — see <a href="#p3">sections 3</a> and <a href="#p4">4</a>.</li>
-          <li>The embedded Twitch player and chat are provided by Twitch, which may set its own cookies — see <a href="#p4">section 4</a>.</li>
+          <li>The Twitch player and chat only load when you click to play them; Twitch may then set its own cookies — see <a href="#p4">section 4</a>.</li>
         </ul>
 
         <h2 id="p3">3. Data processed when you visit</h2>
@@ -265,9 +281,9 @@
         <p>To show the website and its content, your browser connects directly to the following providers. Each of them receives your IP address and standard technical request data and processes it under its own privacy policy:</p>
         <ul>
           <li><b>GitHub Pages</b> (GitHub, Inc., USA) — hosts the website. <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub Privacy Statement</a>. The footer line “Data last updated…” is loaded from the public GitHub API.</li>
-          <li><b>Twitch</b> (Twitch Interactive, Inc., USA) — badge images are loaded from Twitch’s image servers. On the homepage, and when you click “Load stream &amp; chat”, the <b>Twitch video player and chat</b> are embedded; Twitch may set cookies and collect usage data in that embed. <a href="https://www.twitch.tv/p/legal/privacy-notice/" target="_blank" rel="noopener">Twitch Privacy Notice</a>.</li>
-          <li><b>Google Fonts</b> (Google LLC / Google Ireland Ltd.) — provides the typeface used on the site. <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a>.</li>
-        </ul>
+          <li><b>Twitch</b> (Twitch Interactive, Inc., USA) — badge and emote images and the homepage stream preview image are loaded from Twitch's image servers. The <b>Twitch video player and chat</b> are only embedded after you click to play the stream (on the homepage or with “Load stream &amp; chat”); Twitch may set cookies and collect usage data in that embed. <a href="https://www.twitch.tv/p/legal/privacy-notice/" target="_blank" rel="noopener">Twitch Privacy Notice</a>.</li>
+          </ul>
+        <p>The site's typeface (Manrope) is served from badgedatabase.com itself, so no font service receives your data.</p>
         <p>Links to external websites such as X (Twitter), Discord and Twitch only transfer data to those services when you click them. Their own privacy policies apply once you are on their sites.</p>
 
         <h2 id="p5">5. Cookies and local storage</h2>
@@ -374,7 +390,7 @@
           </div>
         </div>
         <nav class="sf-col" aria-label="Explore"><h6>Explore</h6>
-          <a href="/timeline/">Timeline</a><a href="/badges/">Global Badges</a><a href="/channel/">Channel Badges</a><a href="/emotes/">Global Emotes</a><a href="/popularity/">Badge Popularity</a><a href="/faq/">FAQ</a>
+          <a href="/timeline/">Timeline</a><a href="/badges/">Global Badges</a><a href="/channel/">Channel Badges</a><a href="/emotes/">Global Emotes</a><a href="/popularity/">Badge Popularity</a><a href="/stats/">Statistics</a><a href="/faq/">FAQ</a>
         </nav>
         <nav class="sf-col" aria-label="Community"><h6>Community</h6>
           <a href="https://twitch.tv/badge_db" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2 2 6v14h5v3h3l3-3h4l5-5V2H4zm16 12-3 3h-5l-3 3v-3H6V4h14v10zm-4-7h-2v5h2V7zm-5 0H9v5h2V7z"/></svg>24/7 Stream</a>
@@ -406,6 +422,6 @@
 <aside class="drawer" id="drawer" aria-hidden="true" role="dialog"><button class="close" id="closeDrawer" aria-label="Close">×</button><div id="drawerBody"></div></aside>
 <div class="toast" id="toast"></div>
 
-<script src="/assets/app.js?v=8eeb41662f"></script>
+<script src="/assets/app.js?v=8a1bb5628f"></script>
 </body>
 </html>
