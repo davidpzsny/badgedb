@@ -30,7 +30,7 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#0C0B11">
 <link rel="preload" href="/assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.css?v=13f60e23ae">
+<link rel="stylesheet" href="/assets/app.css?v=a662ad022c">
 <meta name="twitch-client-id" content="nqfd84n7ko17trxgtfepmsw5ys3375">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://badgedatabase.com/"}, {"@type": "ListItem", "position": 2, "name": "Global Badges", "item": "https://badgedatabase.com/badges/"}, {"@type": "ListItem", "position": 3, "name": "Frog Lantern"}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Frog Lantern – Twitch Global Badge", "description": "Frog Lantern is a Twitch global badge. Subscribing or gifting three times in the Sea of Thieves category!", "url": "https://badgedatabase.com/badges/frog-lantern/", "primaryImageOfPage": {"@type": "ImageObject", "url": "https://static-cdn.jtvnw.net/badges/v1/dfc75f94-14f9-404b-b953-37eba481df37/3"}, "isPartOf": {"@type": "WebSite", "name": "Badge Database", "url": "https://badgedatabase.com/"}, "datePublished": "2025-12-10"}</script>
@@ -46,7 +46,6 @@
     <nav class="nav group" aria-label="Main">
       <a href="/" data-route="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>Home</a>
       <a href="/timeline/" data-route="timeline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Timeline <span class="count" id="cEvents"></span></a>
-      <a href="/faq/" data-route="faq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .8-1 1.5V14M12 17.5v.01"/></svg>FAQ</a>
     </nav>
     <nav class="nav group" aria-label="Twitch">
       <h6>Twitch</h6>
@@ -58,6 +57,11 @@
       <h6>Insights</h6>
       <a href="/stats/" data-route="stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-6"/></svg>Statistics</a>
       <a href="/popularity/" data-route="popularity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Badge Popularity</a>
+    </nav>
+    <nav class="nav group" aria-label="Help">
+      <h6>Help</h6>
+      <a href="/faq/" data-route="faq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .8-1 1.5V14M12 17.5v.01"/></svg>FAQ</a>
+      <a href="/contact/" data-route="contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Contact</a>
     </nav>
     <nav class="nav group" aria-label="Legal">
       <h6>Legal</h6>
@@ -288,6 +292,32 @@
       </div>
     </section>
 
+    <!-- CONTACT -->
+    <section data-page="contact" hidden>
+      <div class="crumbs"><a href="/">Home</a><span>/</span>Contact</div>
+      <div class="page-head"><div><h1>Contact</h1><p class="lead">Spotted a wrong date, missing badge or have an idea? Get in touch — every message is read.</p></div></div>
+      <div class="ct-cards">
+        <a class="ct-card" href="mailto:support@badgedatabase.com"><span class="ct-ic mail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span><b>Email</b><span>support@badgedatabase.com</span><small>Questions, corrections, removal requests</small></a>
+        <a class="ct-card" href="https://discord.gg/QkuRDXcZH5" target="_blank" rel="noopener"><span class="ct-ic dc"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.5 5.5A16 16 0 0 0 15.6 4l-.5 1a15 15 0 0 0-6.2 0l-.5-1a16 16 0 0 0-3.9 1.5C2 9.3 1.3 13 1.6 16.6A16 16 0 0 0 6.5 19l1-1.6a10 10 0 0 1-1.6-.8l.4-.3a11.5 11.5 0 0 0 11.4 0l.4.3-1.6.8 1 1.6a16 16 0 0 0 4.9-2.4c.4-4.2-.7-7.8-2.9-11.1zM8.7 14.4c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2zm6.6 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2z"/></svg></span><b>Discord</b><span>Join the server</span><small>Fastest answers, badge chat with the community</small></a>
+        <a class="ct-card" href="https://x.com/BadgeDatabase" target="_blank" rel="noopener"><span class="ct-ic xx"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 3h3l-7 8 8 10h-6l-4.7-6.2L5.5 21h-3l7.5-8.6L2.5 3h6l4.3 5.7z"/></svg></span><b>X / Twitter</b><span>@BadgeDatabase</span><small>New badge alerts and site updates</small></a>
+      </div>
+      <div class="card2 ct-form">
+        <h3>Send a message</h3>
+        <p class="ctx">This opens your email app with the message filled in. Prefer not to? Write to <a href="mailto:support@badgedatabase.com">support@badgedatabase.com</a> directly.</p>
+        <label>Topic<select id="ctTopic">
+          <option value="question">General question</option>
+          <option value="fix">Wrong or missing badge info</option>
+          <option value="idea">Suggestion / feature idea</option>
+          <option value="removal">Content removal (rights holders, streamers)</option>
+          <option value="other">Something else</option>
+        </select></label>
+        <label id="ctLinkWrap">Link to the badge or page <span class="hint">optional</span><input id="ctLink" type="url" placeholder="https://badgedatabase.com/badges/…"></label>
+        <label>Message<textarea id="ctMsg" rows="6" placeholder="What should we know?"></textarea></label>
+        <div class="ct-row"><button class="btn" id="ctSend"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Write email</button><button class="btn ghost" id="ctCopy">Copy address</button><span class="ct-tip" id="ctTip"></span></div>
+      </div>
+      <p class="ct-note">Content removal requests are handled as described in the <a href="/legal/">Legal Notice</a>. Badge Database is not Twitch — for problems with your Twitch account or a badge you didn't receive, contact <a href="https://help.twitch.tv" target="_blank" rel="noopener">Twitch Support</a>.</p>
+    </section>
+
     <!-- FAQ -->
     <section data-page="faq" hidden>
       <div class="crumbs"><a href="/">Home</a><span>/</span>FAQ</div>
@@ -442,10 +472,13 @@
           </div>
         </div>
         <nav class="sf-col" aria-label="Explore"><h6>Explore</h6>
-          <a href="/timeline/">Timeline</a><a href="/badges/">Global Badges</a><a href="/channel/">Channel Badges</a><a href="/emotes/">Global Emotes</a><a href="/faq/">FAQ</a>
+          <a href="/timeline/">Timeline</a><a href="/badges/">Global Badges</a><a href="/channel/">Channel Badges</a><a href="/emotes/">Global Emotes</a>
         </nav>
         <nav class="sf-col" aria-label="Insights"><h6>Insights</h6>
           <a href="/stats/">Statistics</a><a href="/popularity/">Badge Popularity</a>
+        </nav>
+        <nav class="sf-col" aria-label="Help"><h6>Help</h6>
+          <a href="/faq/">FAQ</a><a href="/contact/">Contact</a>
         </nav>
         <nav class="sf-col" aria-label="Community"><h6>Community</h6>
           <a href="https://twitch.tv/badge_db" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2 2 6v14h5v3h3l3-3h4l5-5V2H4zm16 12-3 3h-5l-3 3v-3H6V4h14v10zm-4-7h-2v5h2V7zm-5 0H9v5h2V7z"/></svg>24/7 Stream</a>
@@ -484,6 +517,6 @@
   </div>
 </div>
 
-<script src="/assets/app.js?v=13f60e23ae"></script>
+<script src="/assets/app.js?v=a662ad022c"></script>
 </body>
 </html>
