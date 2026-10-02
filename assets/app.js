@@ -144,7 +144,7 @@ const isFile = location.protocol === "file:";
 const redirectUri = () => location.origin + location.pathname;
 
 /* ---------- routing (real URLs, no #) ---------- */
-const PATHS = {"/":"home","/timeline/":"timeline","/badges/":"global","/channel/":"channel","/emotes/":"emotes","/popularity/":"popularity","/faq/":"faq","/privacy/":"privacy","/terms/":"terms","/admin/":"admin"};
+const PATHS = {"/":"home","/timeline/":"timeline","/badges/":"global","/channel/":"channel","/stats/":"stats","/emotes/":"emotes","/popularity/":"popularity","/faq/":"faq","/privacy/":"privacy","/terms/":"terms","/admin/":"admin"};
 const LEGACY = {home:"/",timeline:"/timeline/",global:"/badges/",channel:"/channel/",faq:"/faq/",privacy:"/privacy/",terms:"/terms/",admin:"/admin/"};
 function pathKey(){ let p = location.pathname.replace(/index\.html$/,''); if(!p.endsWith('/')) p += '/'; return p; }
 // old #links keep working: /#global -> /badges/, /#badge/x -> /badges/x/
@@ -162,7 +162,7 @@ function route(){
   if(h==="admin"){ renderAdmin(); if(ADM.token && !ADM.events.length) admLoad(); }
   if(h==="popularity") maybeLivePopularity();
   $$('[data-page]').forEach(s => s.hidden = s.dataset.page !== h);
-  const TITLES = {emotes:"Twitch Global Emotes – Full List | Badge Database", popularity:"Twitch Badge Popularity – Most Used Badges | Badge Database", home:"Badge Database – Every Twitch Badge & When to Get It", timeline:"Timeline – Twitch Badges Available Now | Badge Database",
+  const TITLES = {stats:"Twitch Badge Statistics | Badge Database", emotes:"Twitch Global Emotes – Full List | Badge Database", popularity:"Twitch Badge Popularity – Most Used Badges | Badge Database", home:"Badge Database – Every Twitch Badge & When to Get It", timeline:"Timeline – Twitch Badges Available Now | Badge Database",
     global:"All Twitch Global Badges | Badge Database", channel:"Twitch Channel Badges | Badge Database", faq:"FAQ – Twitch Badges | Badge Database",
     privacy:"Privacy Policy | Badge Database", terms:"Terms of Service | Badge Database", admin:"Admin | Badge Database"};
   if(h==="badge"){ const bb = set && globalBadges.find(x=>x.set===set); if(bb) document.title = bb.name+" – Twitch Badge | Badge Database"; }
@@ -203,7 +203,9 @@ function renderHome(){
   if(!$('#homeStream').dataset.done){ $('#homeStream').dataset.done=1;
     $('#homeStream').innerHTML = isFile
       ? `<div class="sc-off"><img src="/logo-192.png" alt="">The player appears here once the site is hosted (http/https).<a class="btn" href="https://twitch.tv/${CONFIG.channel}" target="_blank" rel="noopener">Watch on Twitch ↗</a></div>`
-      : `<iframe src="https://player.twitch.tv/?channel=${CONFIG.channel}&${PARENTS()}&muted=true&autoplay=true" allowfullscreen allow="autoplay; fullscreen"></iframe>`; }
+      : `<button class="sc-play" data-playhome style="background-image:url('https://static-cdn.jtvnw.net/previews-ttv/live_user_${esc(CONFIG.channel)}-640x360.jpg')">
+           <span class="sc-play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+           <span class="sc-play-t"><b>Watch the 24/7 stream</b><small>Click to load the Twitch player (Twitch may set cookies)</small></span></button>`; }
 
   // recently added badges from the archive
   const recent = [...globalBadges].filter(b=>b.added).sort((a,b)=>b.added.localeCompare(a.added)).slice(0,8);
@@ -421,8 +423,91 @@ function renderChannel(){
   $('#cMore').innerHTML = list.length>cShown ? `<button class="btn ghost" id="btnCMore">Show ${Math.min(90,list.length-cShown)} more</button>` : '';
   $('#cChannel').textContent = channelBadges.length || '';
 }
-function renderAll(){ renderHome(); renderEvents(); renderTimeline(); renderGlobal(); renderChannel(); renderEmotes(); renderPopularity(); }
+function renderAll(){ renderHome(); renderEvents(); renderTimeline(); renderGlobal(); renderChannel(); renderEmotes(); renderPopularity(); renderStats(); }
 
+
+/* ---------- "Add to calendar": .ics file (Apple / Outlook / most apps) and Google Calendar links ---------- */
+const icsTime = iso => new Date(iso).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+const icsText = t => String(t || "").replace(/\\/g, "\\\\").replace(/[;,]/g, m => "\\" + m).replace(/\r?\n/g, "\\n");
+function icsFold(line){ const out = []; while(line.length > 74){ out.push(line.slice(0, 74)); line = " " + line.slice(74); } out.push(line); return out.join("\r\n"); }
+function calInfo(ev){
+  const names = ev.badges.map(b => (globalBadges.find(g => g.imgId === b.img) || {}).name || b.name);
+  const first = globalBadges.find(g => g.imgId === (ev.badges[0] || {}).img);
+  const url = location.origin + (first ? `/badges/${encodeURIComponent(first.set)}/` : "/timeline/");
+  const how = ev.badges.map((b, i) => `${names[i]}: ${b.how || "see the badge page"}`).join("\n");
+  return { title: names.length > 2 ? `${ev.name} (${names.length} badges)` : names.join(" & "), how, url };
+}
+function downloadIcs(ev){
+  const { title, how, url } = calInfo(ev), now = icsTime(new Date().toISOString()), lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Badge Database//badgedatabase.com//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH"];
+  const add = (uid, start, end, summary, alarms) => {
+    lines.push("BEGIN:VEVENT", `UID:${uid}@badgedatabase.com`, `DTSTAMP:${now}`, `DTSTART:${icsTime(start)}`, `DTEND:${icsTime(end)}`,
+      icsFold(`SUMMARY:${icsText(summary)}`), icsFold(`DESCRIPTION:${icsText(how + "\n\nDetails: " + url)}`), icsFold(`URL:${url}`));
+    alarms.forEach(t => lines.push("BEGIN:VALARM", "ACTION:DISPLAY", icsFold(`DESCRIPTION:${icsText(summary)}`), `TRIGGER:${t}`, "END:VALARM"));
+    lines.push("END:VEVENT");
+  };
+  if(Date.parse(ev.start) > Date.now()) add(`start-${ev.id}`, ev.start, new Date(Date.parse(ev.start) + 30*6e4).toISOString(), `Twitch badge available: ${title}`, ["PT0M"]);
+  add(`end-${ev.id}`, new Date(Date.parse(ev.end) - 60*6e4).toISOString(), ev.end, `Last chance: ${title} (Twitch badge ends)`, ["-P1D", "PT0M"]);
+  lines.push("END:VCALENDAR");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([lines.join("\r\n") + "\r\n"], {type: "text/calendar;charset=utf-8"}));
+  a.download = `${ev.id}.ics`; document.body.appendChild(a); a.click(); a.remove();
+}
+function calendarMenu(ev){
+  if(!ev || !ev.start || !ev.end || Date.parse(ev.end) < Date.now()) return "";
+  const { title, how, url } = calInfo(ev);
+  const g = (text, start, end) => "https://calendar.google.com/calendar/render?" + new URLSearchParams({ action: "TEMPLATE", text,
+    dates: `${icsTime(start)}/${icsTime(end)}`, details: `${how}\n\nDetails: ${url}`, location: "Twitch" });
+  const startsLater = Date.parse(ev.start) > Date.now();
+  return `<details class="cal-add"><summary class="btn ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Add to calendar</summary>
+    <div class="cal-menu">
+      <button data-ics="${esc(ev.id)}"><b>Apple / Outlook / other</b><small>${startsLater ? "Reminder when it starts + " : ""}last-chance reminder a day before it ends (.ics)</small></button>
+      ${startsLater ? `<a href="${g("Twitch badge available: " + title, ev.start, new Date(Date.parse(ev.start) + 30*6e4).toISOString())}" target="_blank" rel="noopener"><b>Google Calendar — when it starts</b><small>${esc(fmtFull(ev.start))}</small></a>` : ""}
+      <a href="${g("Last chance: " + title + " (Twitch badge ends)", new Date(Date.parse(ev.end) - 60*6e4).toISOString(), ev.end)}" target="_blank" rel="noopener"><b>Google Calendar — before it ends</b><small>${esc(fmtFull(ev.end))}</small></a>
+    </div></details>`;
+}
+
+/* ---------- statistics ---------- */
+function badgeFacts(b){
+  const ev = EV_BY_IMG[b.imgId], info = descInfo(b.how || (ev && ev.b.desc) || "");
+  const cat = ev && ev.ev.category && !/unknown|any/i.test(ev.ev.category) ? ev.ev.category.split(" · ")[0] : info.category || "";
+  const cost = ev && ["free", "paid"].includes(ev.b.cost) ? ev.b.cost : info.cost || (b.free ? "free" : "");
+  return { cat, cost };
+}
+function renderStats(){
+  const box = $('#stCards'); if(!box) return;
+  if(!READY){ box.innerHTML = '<div class="empty">Loading…</div>'; return; }
+  const all = globalBadges, now = new Date(), yr = String(now.getFullYear());
+  const dated = all.filter(b => b.added), d30 = new Date(Date.now() - 30*864e5).toISOString().slice(0,10);
+  const active = all.filter(b => ["live", "ending"].includes(badgeState(b))).length;
+  const emotes = EMOTES.filter(e => e[4] !== 0).length;
+  const lens = EVENTS.filter(e => e.start && e.end).map(e => (Date.parse(e.end) - Date.parse(e.start)) / 864e5).filter(d => d > 0 && d < 120);
+  const avgLen = lens.length ? Math.round(lens.reduce((a, b) => a + b, 0) / lens.length) : 0;
+  box.innerHTML = [[all.length, "global badge sets"], [all.filter(b => (b.added || "").startsWith(yr)).length, `added in ${yr}`], [all.filter(b => (b.added || "") >= d30).length, "added in the last 30 days"],
+    [active, "available right now"], [avgLen ? avgLen + " days" : "—", "average event length"], [emotes || "—", "global emotes"]]
+    .map(([n, l]) => `<div><b>${typeof n === "number" ? num(n) : n}</b><span>${l}</span></div>`).join("");
+  // per month, last 18 months
+  const months = []; const d = new Date(now.getFullYear(), now.getMonth(), 1);
+  for(let i = 17; i >= 0; i--){ const m = new Date(d.getFullYear(), d.getMonth() - i, 1); months.push(m.getFullYear() + "-" + String(m.getMonth() + 1).padStart(2, "0")); }
+  const per = Object.fromEntries(months.map(m => [m, 0])); dated.forEach(b => { const k = b.added.slice(0, 7); if(k in per) per[k]++; });
+  const max = Math.max(1, ...Object.values(per));
+  $('#stMonths').innerHTML = months.map(m => { const n = per[m], dt = new Date(m + "-01T12:00:00");
+    return `<div class="st-bar" title="${n} new badge${n === 1 ? "" : "s"} in ${dt.toLocaleDateString(undefined, {month: "long", year: "numeric"})}">
+      <span class="st-n">${n || ""}</span><i style="height:${(n / max * 100).toFixed(1)}%"></i><span class="st-m">${dt.toLocaleDateString(undefined, {month: "short"})}${dt.getMonth() === 0 ? `<br>${dt.getFullYear()}` : ""}</span></div>`; }).join("");
+  $('#stMonthsNote').textContent = `${all.length - dated.length} older badges were added before tracking started and have no recorded date.`;
+  // free vs paid (timed / event badges only)
+  const facts = all.map(badgeFacts), free = facts.filter(f => f.cost === "free").length, paid = facts.filter(f => f.cost === "paid").length, tot = free + paid || 1;
+  $('#stCost').innerHTML = `<div class="st-donut" style="--p:${(free / tot * 100).toFixed(1)}"><span><b>${Math.round(free / tot * 100)}%</b>free</span></div>
+    <div class="st-legend"><span><i class="f"></i>Free (watch / view) — ${free}</span><span><i class="p"></i>Sub / paid — ${paid}</span><small>Event badges with a known requirement.</small></div>`;
+  // top games
+  const byCat = {}; facts.forEach(f => { if(f.cat && !/eligible|categories|any |various|multiple/i.test(f.cat)) byCat[f.cat] = (byCat[f.cat] || 0) + 1; });
+  const top = Object.entries(byCat).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, 10), cmax = top.length ? top[0][1] : 1;
+  $('#stCats').innerHTML = top.length ? top.map(([c, n]) => `<div class="st-row"><span class="st-c">${esc(c)}</span><span class="st-track"><i style="width:${(n / cmax * 100).toFixed(1)}%"></i></span><b>${n}</b></div>`).join("") : '<div class="empty">No data yet.</div>';
+  // per year
+  const years = {}; dated.forEach(b => { const y = b.added.slice(0, 4); years[y] = (years[y] || 0) + 1; });
+  const ymax = Math.max(1, ...Object.values(years));
+  $('#stYears').innerHTML = Object.entries(years).sort().reverse().map(([y, n]) => `<div class="st-row"><span class="st-c">${y}</span><span class="st-track"><i style="width:${(n / ymax * 100).toFixed(1)}%"></i></span><b>${n}</b></div>`).join("")
+    + `<div class="st-row muted"><span class="st-c">Before tracking</span><span class="st-track"></span><b>${all.length - dated.length}</b></div>`;
+}
 
 /* ---------- global emotes ---------- */
 let EMOTES = [], E_READY = false, eQuery = "", eSort = "added", eFilter = "all", eShown = 120;
@@ -584,7 +669,7 @@ function openEvent(id){
     <dl class="kv"><dt>Status</dt><dd>${{live:"Active now",soon:"Upcoming",ended:"Ended",tba:"Date not announced"}[st]}</dd><dt>Starts</dt><dd>${fmtFull(ev.start)}</dd><dt>Ends</dt><dd>${fmtFull(ev.end)}</dd></dl>
     ${ev.note?`<p class="hint">${esc(ev.note)}</p>`:''}
     <div class="badgelist">${ev.badges.map(b=>`<div>${tile({...b,img:cdn(b.img)})}<span><b>${esc(b.name)}</b><span>${esc(b.how)}</span></span><span class="pill ${b.cost}" style="margin-left:auto;flex:none">${{free:"Free",paid:"Paid",na:"TBA"}[b.cost]}</span></div>`).join('')}</div>
-    <div class="actions">${!/any|unknown|twitch|eligible/i.test(ev.category)?`<a class="btn" target="_blank" rel="noopener" href="${catUrl(ev.category)}">Open category on Twitch</a>`:''}<button class="btn ghost" data-copy="${esc(ev.name)} — ${esc(ev.badges.map(b=>b.name+': '+b.how).join(' | '))} (${fmt(ev.start)} – ${fmt(ev.end)})">Copy summary</button></div>`);
+    <div class="actions">${!/any|unknown|twitch|eligible/i.test(ev.category)?`<a class="btn" target="_blank" rel="noopener" href="${catUrl(ev.category)}">Open category on Twitch</a>`:''}<button class="btn ghost" data-copy="${esc(ev.name)} — ${esc(ev.badges.map(b=>b.name+': '+b.how).join(' | '))} (${fmt(ev.start)} – ${fmt(ev.end)})">Copy summary</button>${calendarMenu(ev)}</div>`);
 }
 function openBadge(set,type){
   const b=(type==='global'?globalBadges:lookupBadges).find(x=>x.set===set); if(!b) return;
@@ -594,7 +679,7 @@ function openBadge(set,type){
     ${ev&&st==="live"?`<div class="cd" data-cd="${ev.ev.end}">${countdown(ev.ev.end)}<small>until it ends</small></div>`:''}
     <dl class="kv"><dt>How to get it</dt><dd>${esc(how)}</dd>${ev?`<dt>Event</dt><dd>${esc(ev.ev.name)}<br><span style="color:var(--muted)">${fmtFull(ev.ev.start)} – ${fmtFull(ev.ev.end)}</span></dd>`:''}${b.added?`<dt>Added</dt><dd>${fmt(b.added)}</dd>`:''}${b.users?`<dt>Users</dt><dd>${num(b.users)}</dd>`:''}<dt>Versions</dt><dd>${b.versions.length}</dd>${type==='global'?`<dt>Set ID</dt><dd><code>${esc(b.set)}</code></dd>`:''}</dl>
     ${b.versions.length>1?`<div class="versions">${b.versions.map(v=>`<span class="v">${tile({name:v.title||v.id,img:v.img})}<span>${esc(v.title&&v.title!==b.name?v.title.replace(b.name,'').trim()||v.id:v.id)}</span></span>`).join('')}</div>`:''}
-    <div class="actions">${ev?`<button class="btn" data-openev="${ev.ev.id}">Open event</button>`:''}<a class="btn ghost" href="${esc(b.img)}" target="_blank" rel="noopener">Open image</a><button class="btn ghost" data-copy="${esc(b.img)}">Copy image URL</button></div>`);
+    <div class="actions">${ev?`<button class="btn" data-openev="${ev.ev.id}">Open event</button>${calendarMenu(ev.ev)}`:''}<a class="btn ghost" href="${esc(b.img)}" target="_blank" rel="noopener">Open image</a><button class="btn ghost" data-copy="${esc(b.img)}">Copy image URL</button></div>`);
 }
 
 /* ---------- badge detail page ---------- */
@@ -660,7 +745,7 @@ function renderBadgePage(set){
           <dt>Started</dt><dd>${ev&&ev.ev.start?fmtFull(ev.ev.start):(info.objective||info.category)&&!ev?"Not recorded":"—"}</dd>
           <dt>Ends</dt><dd>${ev&&ev.ev.end?fmtFull(ev.ev.end):(info.objective||info.category)&&!ev?"Not recorded":"—"}</dd>
         </dl>
-        ${ev?`<div class="actions" style="margin-top:16px;display:flex;gap:8px"><button class="btn" data-ev="${ev.ev.id}">Open event</button></div>`:''}
+        ${ev?`<div class="actions" style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-ev="${ev.ev.id}">Open event</button>${calendarMenu(ev.ev)}</div>`:''}
       </div>
       <div class="card2"><h3>Context</h3><p class="ctx">${context?esc(context):"No additional context yet. Follow twitch.tv/badge_db for updates."}</p>
         <h3 style="margin-top:18px">History</h3><dl class="kv2"><dt>Added</dt><dd>${b.added?fmt(b.added):"Before tracking started"}</dd></dl>
@@ -670,6 +755,8 @@ function renderBadgePage(set){
 }
 document.addEventListener('click', e => {
   const t=e.target.closest('#bpTheme button'); if(t){ bpTheme=t.dataset.t; route(); e.preventDefault(); return; }
+  const icsB = e.target.closest('[data-ics]'); if(icsB){ const ev = EVENTS.find(x => x.id === icsB.dataset.ics); if(ev) downloadIcs(ev); icsB.closest('details')?.removeAttribute('open'); return; }
+  if(e.target.closest('[data-playhome]')){ $('#homeStream').innerHTML = `<iframe src="https://player.twitch.tv/?channel=${CONFIG.channel}&${PARENTS()}&muted=false&autoplay=true" allowfullscreen allow="autoplay; fullscreen"></iframe>`; return; }
   if(e.target.closest('[data-twlogin]')){ twLogin(); return; }
   if(e.target.closest('[data-twlogout]')){ twLogout(); return; }
   const vv=e.target.closest('[data-ver]'); if(vv){ e.preventDefault(); bpVersion=+vv.dataset.ver; route(); }
@@ -931,7 +1018,7 @@ Promise.allSettled([getJSON('/badges.json'), getJSON('/events.json'), getJSON('/
   READY = true; renderAll(); route();
   if(pathKey() === "/popularity/") maybeLivePopularity();
 });
-getJSON('/emotes.json').then(rows => { if(Array.isArray(rows)) EMOTES = rows; E_READY = true; renderEmotes(); }).catch(() => { E_READY = true; renderEmotes(); });
+getJSON('/emotes.json').then(rows => { if(Array.isArray(rows)) EMOTES = rows; E_READY = true; renderEmotes(); renderStats(); }).catch(() => { E_READY = true; renderEmotes(); });
 getJSON('/channel-badges.json').then(rows => {
   if(!Array.isArray(rows)) return;
   channelBadges = normChannel(rows); CH_READY = true; renderChannel();
