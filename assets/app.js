@@ -576,6 +576,29 @@ document.addEventListener('click', e => {
   }
 });
 
+/* ---------- floating "back to top" button ---------- */
+(function(){
+  const btn = document.getElementById("toTop"); if(!btn) return;
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    const player = document.getElementById("player");
+    const show = window.scrollY > Math.max(600, innerHeight * 1.2) && !(player && !player.hidden) && document.getElementById("qs").hidden;
+    btn.classList.toggle("show", show);
+  };
+  const queue = () => { if(!ticking){ ticking = true; requestAnimationFrame(update); } };
+  window.addEventListener("scroll", queue, {passive: true});
+  window.addEventListener("resize", queue);
+  window.addEventListener("popstate", () => setTimeout(queue, 50));
+  document.addEventListener("click", () => setTimeout(queue, 0));          // e.g. player opened / closed
+  btn.addEventListener("click", () => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({top: 0, behavior: reduce ? "auto" : "smooth"});
+    btn.blur();
+  });
+  queue();
+})();
+
 /* ---------- 404 ---------- */
 function renderNotFound(){
   const path = decodeURIComponent(location.pathname);
@@ -781,8 +804,8 @@ function channelsHtml(ev, cat){
   const ch = evChannels(ev), hasCat = cat && !/any|unknown|twitch/i.test(cat);
   const drops = hasCat ? `${catUrl(cat)}?filter=drops` : "";
   if(ch.length){
-    const chips = ch.slice(0, 30).map(c => `<a class="chan" href="https://twitch.tv/${esc(c)}" target="_blank" rel="noopener">${esc(c)}</a>`).join("")
-                + (ch.length > 30 ? `<span class="chan more">+${ch.length - 30} more</span>` : "");
+    const chips = ch.slice(0, 100).map(c => `<a class="chan" href="https://twitch.tv/${esc(c)}" target="_blank" rel="noopener">${esc(c)}</a>`).join("")
+                + (ch.length > 100 ? `<span class="chan more">+${ch.length - 100} more</span>` : "");
     const note = ev.channels_partial ? `<div class="chan-note">${esc(ev.channels_note || "These are some of the participating channels.")}${drops ? ` <a href="${drops}" target="_blank" rel="noopener">See every live participating channel on Twitch ↗</a>` : ""}</div>` : "";
     return `<div class="chans">${chips}</div>${note}`;
   }
