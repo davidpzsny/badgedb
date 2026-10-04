@@ -176,8 +176,8 @@ def channels_html(ev, cat):
     ch = ev_channels(ev)
     drops = (f'https://www.twitch.tv/directory/category/{e(re.sub(r"[^a-z0-9]+", "-", cat.lower()).strip("-"))}?filter=drops' if cat else "")
     if ch:
-        chips = "".join(f'<a class="chan" href="https://twitch.tv/{e(c)}" target="_blank" rel="noopener">{e(c)}</a>' for c in ch[:30])
-        if len(ch) > 30: chips += f'<span class="chan more">+{len(ch) - 30} more</span>'
+        chips = "".join(f'<a class="chan" href="https://twitch.tv/{e(c)}" target="_blank" rel="noopener">{e(c)}</a>' for c in ch[:100])
+        if len(ch) > 100: chips += f'<span class="chan more">+{len(ch) - 100} more</span>'
         note = ""
         if ev.get("channels_partial"):
             note = f'<div class="chan-note">{e(ev.get("channels_note") or "These are some of the participating channels.")}' + \
