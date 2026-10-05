@@ -30,7 +30,7 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#0C0B11">
 <link rel="preload" href="/assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.css?v=591264825a">
+<link rel="stylesheet" href="/assets/app.css?v=a5884491d2">
 <meta name="twitch-client-id" content="nqfd84n7ko17trxgtfepmsw5ys3375">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://badgedatabase.com/"}, {"@type": "ListItem", "position": 2, "name": "Global Badges", "item": "https://badgedatabase.com/badges/"}, {"@type": "ListItem", "position": 3, "name": "OWL All-Access Pass 2018"}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "OWL All-Access Pass 2018 – Twitch Global Badge", "description": "OWL All-Access Pass 2018 is a Twitch global badge. OWL All-Access Pass 2018", "url": "https://badgedatabase.com/badges/overwatch-league-insider_1/", "primaryImageOfPage": {"@type": "ImageObject", "url": "https://static-cdn.jtvnw.net/badges/v1/51e9e0aa-12e3-48ce-b961-421af0787dad/3"}, "isPartOf": {"@type": "WebSite", "name": "Badge Database", "url": "https://badgedatabase.com/"}}</script>
@@ -107,7 +107,17 @@
         </div>
       </div>
 
+      <div class="sl-wrap" id="sliderWrap" hidden>
+        <div class="sl-head"><h2>Get these badges right now</h2><a href="/timeline/">See all →</a></div>
+        <div class="slider" id="badgeSlider"></div>
+      </div>
+
       <div class="cal" id="calHome"></div>
+
+      <div class="home-two">
+        <div class="card2 tc-card"><div class="h-row"><h3>Top categories right now</h3><small id="tcUpd">Most watched games on Twitch</small></div><div class="tc-grid" id="topCats"><div class="empty">Loading…</div></div></div>
+        <div class="card2 tb-card"><div class="h-row"><h3>Most popular badges</h3><a href="/popularity/">Full ranking →</a></div><div id="topBadges"><div class="empty">Loading…</div></div></div>
+      </div>
 
       <h2>Get notified</h2>
       <p class="sec-sub">New badges are announced here the moment they show up on Twitch.</p>
@@ -368,7 +378,7 @@
         <ul>
           <li><b>GitHub Pages</b> (GitHub, Inc., USA) — hosts the website. <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub Privacy Statement</a>. The footer line “Data last updated…” is loaded from the public GitHub API.</li>
           <li><b>Namecheap</b> (Namecheap, Inc., USA) — registrar and DNS provider of the domain; it also forwards emails sent to support@badgedatabase.com to the operator's mailbox, so messages you send by email pass through its servers. <a href="https://www.namecheap.com/legal/general/privacy-policy/" target="_blank" rel="noopener">Namecheap Privacy Policy</a>.</li>
-          <li><b>Twitch</b> (Twitch Interactive, Inc., USA) — badge and emote images and the homepage stream preview image are loaded from Twitch's image servers. The <b>Twitch video player and chat</b> are only embedded after you click to play the stream (on the homepage or with “Load stream &amp; chat”); Twitch may set cookies and collect usage data in that embed. <a href="https://www.twitch.tv/p/legal/privacy-notice/" target="_blank" rel="noopener">Twitch Privacy Notice</a>.</li>
+          <li><b>Twitch</b> (Twitch Interactive, Inc., USA) — badge and emote images, game box art and the homepage stream preview image are loaded from Twitch's image servers. The <b>Twitch video player and chat</b> are only embedded after you click to play the stream (on the homepage or with “Load stream &amp; chat”); Twitch may set cookies and collect usage data in that embed. <a href="https://www.twitch.tv/p/legal/privacy-notice/" target="_blank" rel="noopener">Twitch Privacy Notice</a>.</li>
           </ul>
         <p>The site's typeface (Manrope) is served from badgedatabase.com itself, so no font service receives your data.</p>
         <p>Links to external websites such as X (Twitter), Discord and Twitch only transfer data to those services when you click them. Their own privacy policies apply once you are on their sites.</p>
@@ -513,6 +523,7 @@
 
 <div class="scrim" id="scrim"></div>
 <aside class="drawer" id="drawer" aria-hidden="true" role="dialog"><button class="close" id="closeDrawer" aria-label="Close">×</button><div id="drawerBody"></div></aside>
+<button class="to-top" id="toTop" aria-label="Back to top" title="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
 <div class="toast" id="toast"></div>
 <div class="qs" id="qs" hidden role="dialog" aria-modal="true" aria-label="Search">
   <div class="qs-box">
@@ -522,6 +533,6 @@
   </div>
 </div>
 
-<script src="/assets/app.js?v=591264825a"></script>
+<script src="/assets/app.js?v=a5884491d2"></script>
 </body>
 </html>
