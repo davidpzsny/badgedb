@@ -144,7 +144,7 @@ const isFile = location.protocol === "file:";
 const redirectUri = () => location.origin + location.pathname;
 
 /* ---------- routing (real URLs, no #) ---------- */
-const PATHS = {"/":"home","/timeline/":"timeline","/badges/":"global","/channel/":"channel","/stats/":"stats","/emotes/":"emotes","/popularity/":"popularity","/faq/":"faq","/legal/":"legal","/contact/":"contact","/privacy/":"privacy","/terms/":"terms","/admin/":"admin"};
+const PATHS = {"/":"home","/timeline/":"timeline","/badges/":"global","/channel/":"channel","/categories/":"categories","/stats/":"stats","/emotes/":"emotes","/popularity/":"popularity","/faq/":"faq","/legal/":"legal","/contact/":"contact","/privacy/":"privacy","/terms/":"terms","/admin/":"admin"};
 const LEGACY = {home:"/",timeline:"/timeline/",global:"/badges/",channel:"/channel/",faq:"/faq/",privacy:"/privacy/",terms:"/terms/",admin:"/admin/"};
 function pathKey(){ let p = location.pathname.replace(/index\.html$/,''); if(!p.endsWith('/')) p += '/'; return p; }
 // old #links keep working: /#global -> /badges/, /#badge/x -> /badges/x/
@@ -167,7 +167,7 @@ function route(){
   if(h==="admin"){ renderAdmin(); if(ADM.token && !ADM.events.length) admLoad(); }
   if(h==="popularity") maybeLivePopularity();
   $$('[data-page]').forEach(s => s.hidden = s.dataset.page !== h);
-  const TITLES = {contact:"Contact | Badge Database", notfound:"Page not found | Badge Database", legal:"Legal Notice | Badge Database", stats:"Twitch Badge Statistics | Badge Database", emotes:"Twitch Global Emotes – Full List | Badge Database", popularity:"Twitch Badge Popularity – Most Used Badges | Badge Database", home:"Badge Database – Every Twitch Badge & When to Get It", timeline:"Timeline – Twitch Badges Available Now | Badge Database",
+  const TITLES = {categories:"Top Twitch Categories Right Now | Badge Database", contact:"Contact | Badge Database", notfound:"Page not found | Badge Database", legal:"Legal Notice | Badge Database", stats:"Twitch Badge Statistics | Badge Database", emotes:"Twitch Global Emotes – Full List | Badge Database", popularity:"Twitch Badge Popularity – Most Used Badges | Badge Database", home:"Badge Database – Every Twitch Badge & When to Get It", timeline:"Timeline – Twitch Badges Available Now | Badge Database",
     global:"All Twitch Global Badges | Badge Database", channel:"Twitch Channel Badges | Badge Database", faq:"FAQ – Twitch Badges | Badge Database",
     privacy:"Privacy Policy | Badge Database", terms:"Terms of Service | Badge Database", admin:"Admin | Badge Database"};
   if(h==="badge"){ const bb = set && globalBadges.find(x=>x.set===set); if(bb) document.title = bb.name+" – Twitch Badge | Badge Database"; }
@@ -430,7 +430,7 @@ function renderChannel(){
   $('#cMore').innerHTML = list.length>cShown ? `<button class="btn ghost" id="btnCMore">Show ${Math.min(90,list.length-cShown)} more</button>` : '';
   $('#cChannel').textContent = channelBadges.length || '';
 }
-function renderAll(){ renderHome(); renderEvents(); renderTimeline(); renderGlobal(); renderChannel(); renderEmotes(); renderPopularity(); renderStats(); renderSlider(); renderTopCats(); renderTopBadges(); }
+function renderAll(){ renderHome(); renderEvents(); renderTimeline(); renderGlobal(); renderChannel(); renderEmotes(); renderPopularity(); renderStats(); renderSlider(); renderTopCats(); renderTopBadges(); renderCategories(); }
 
 
 /* ---------- "Add to calendar": .ics file (Apple / Outlook / most apps) and Google Calendar links ---------- */
@@ -640,15 +640,48 @@ function renderSlider(){
       <small>${isFree(b) ? '<i class="f">Free</i>' : '<i class="p">Sub</i>'}${esc(when)}</small></span></a>`; };
   fillSlider(el, items.map(card));
 }
+const catKey = t => qsNorm(t).replace(/[^a-z0-9]/g, "");
+function badgesForCategory(name){
+  const n = catKey(name), now = Date.now();
+  return EVENTS.filter(e => e.start && Date.parse(e.start) <= now && Date.parse(e.end) > now)
+    .filter(e => { const c = catKey((e.category || "").split(" · ")[0]); return c && (c === n || (c.length > 5 && (c.startsWith(n) || n.startsWith(c)))); })
+    .flatMap(e => e.badges.filter(b => b.img).map(b => ({b, ev: e})));
+}
+let tQuery = "", tFilter = "all";
+function renderCategories(){
+  const grid = $('#catGrid'); if(!grid) return;
+  if(!TOPCATS){ return; }
+  const games = (TOPCATS.games || []).map((g, i) => ({...g, rank: i + 1, badges: badgesForCategory(g.name)}));
+  if(!games.length){ grid.innerHTML = '<div class="empty">No data yet — the bot refreshes this every 15 minutes.</div>'; $('#catStats').innerHTML = ""; return; }
+  const total = games.reduce((a, g) => a + (g.viewers || 0), 0), withB = games.filter(g => g.badges.length);
+  const mins = TOPCATS.updated ? Math.max(0, Math.round((Date.now() - Date.parse(TOPCATS.updated)) / 6e4)) : null;
+  $('#catStats').innerHTML = `<div><b>${esc(games[0].name)}</b><span>most watched · ${compact(games[0].viewers || 0)} viewers</span></div>
+    <div><b>${compact(total)}</b><span>watching the top ${games.length} categories</span></div>
+    <div><b>${withB.length}</b><span>categories with a badge to earn right now</span></div>`;
+  let list = games;
+  if(tFilter === "badges") list = list.filter(g => g.badges.length);
+  if(tQuery) list = list.filter(g => qsNorm(g.name).includes(tQuery));
+  $('#catCount').textContent = `${list.length} of ${games.length} categories${mins == null ? "" : ` · updated ${mins < 1 ? "just now" : mins + " min ago"}`}`;
+  grid.innerHTML = list.length ? list.map(g => {
+    const art = (g.box || "").replace("{width}", "285").replace("{height}", "380");
+    const share = total ? (g.viewers / total * 100) : 0;
+    return `<div class="catc ${g.rank <= 3 ? "top" : ""}">
+      <a class="catc-art" href="${catUrl(g.name)}" target="_blank" rel="noopener" title="Open ${esc(g.name)} on Twitch"><img src="${esc(art)}" alt="${esc(g.name)}" loading="lazy"><span class="tc-rank">${g.rank}</span></a>
+      <div class="catc-b">
+        <a class="catc-n" href="${catUrl(g.name)}" target="_blank" rel="noopener">${esc(g.name)}</a>
+        <div class="catc-v"><b>${compact(g.viewers || 0)}</b> watching<span>·</span>${g.streams >= 100 ? "100+" : g.streams} live</div>
+        <div class="catc-bar"><i style="width:${Math.max(1.5, share / ((games[0].viewers || 1) / total * 100) * 100).toFixed(1)}%"></i></div>
+        ${g.top && g.top.login ? `<div class="catc-top">Top stream: <a href="https://twitch.tv/${esc(g.top.login)}" target="_blank" rel="noopener">${esc(g.top.name || g.top.login)}</a> <small>${compact(g.top.viewers || 0)}</small></div>` : ""}
+        ${g.badges.length ? `<div class="catc-badges">${g.badges.slice(0, 4).map(({b}) => { const gb = globalBadges.find(x => x.imgId === b.img);
+            return `<a href="${gb ? `/badges/${encodeURIComponent(gb.set)}/` : "/timeline/"}" title="${esc(b.how || "")}"><img src="${esc(cdn(b.img))}" alt="">${esc(gb ? gb.name : b.name)}</a>`; }).join("")}</div>` : ""}
+      </div></div>`; }).join("")
+    : `<div class="empty">${tFilter === "badges" && !tQuery ? "No badge campaign runs in the top categories right now." : "No categories match."}</div>`;
+}
 function renderTopCats(){
   const el = $('#topCats'); if(!el) return;
   if(!TOPCATS || !TOPCATS.games || !TOPCATS.games.length){ if(TOPCATS) el.innerHTML = '<div class="empty">No data yet — the bot refreshes this every 15 minutes.</div>'; return; }
-  const norm = t => qsNorm(t).replace(/[^a-z0-9]/g, "");
-  const liveEvents = EVENTS.filter(e => e.start && Date.parse(e.start) <= Date.now() && Date.parse(e.end) > Date.now());
   el.innerHTML = TOPCATS.games.slice(0, 12).map((g, i) => {
-    const n = norm(g.name);
-    const badges = liveEvents.filter(e => { const c = norm((e.category || "").split(" · ")[0]); return c && (c === n || (c.length > 5 && (c.startsWith(n) || n.startsWith(c)))); })
-      .flatMap(e => e.badges).filter(b => b.img).slice(0, 4);
+    const badges = badgesForCategory(g.name).map(x => x.b).slice(0, 4);
     const art = (g.box || "").replace("{width}", "144").replace("{height}", "192");
     return `<a class="tc" href="${catUrl(g.name)}" target="_blank" rel="noopener" title="${esc(g.name)}">
       <span class="tc-art"><img src="${esc(art)}" alt="" loading="lazy"><span class="tc-rank">${i + 1}</span>
@@ -1183,7 +1216,7 @@ function togglePlayer(){
 /* ---------- wiring ---------- */
 document.addEventListener('click', e => {
   const seg=e.target.closest('.seg button'); if(seg){ const id=seg.parentElement.id; seg.parentElement.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===seg)); const v=seg.dataset.v;
-    if(id==='evFilter') evFilter=v; if(id==='gSort') gSort=v; if(id==='gDir') gDir=v; if(id==='gFilter') gFilter=v; if(id==='cFilter') cFilter=v; if(id==='eSort') eSort=v; if(id==='eFilter') eFilter=v; if(id==='pFilter') pFilter=v; eShown=120; pShown=100; renderEmotes(); renderPopularity(); gShown=90; renderEvents(); renderGlobal(); renderChannel(); return; }
+    if(id==='evFilter') evFilter=v; if(id==='gSort') gSort=v; if(id==='gDir') gDir=v; if(id==='gFilter') gFilter=v; if(id==='cFilter') cFilter=v; if(id==='eSort') eSort=v; if(id==='eFilter') eFilter=v; if(id==='pFilter') pFilter=v; if(id==='tFilter'){ tFilter=v; renderCategories(); } eShown=120; pShown=100; renderEmotes(); renderPopularity(); gShown=90; renderEvents(); renderGlobal(); renderChannel(); return; }
   if(e.target.id==='btnMore'){ gShown+=90; renderGlobal(); return; }
   if(e.target.id==='btnCMore'){ cShown+=90; renderChannel(); return; }
   if(e.target.id==='btnEMore'){ eShown+=120; renderEmotes(); return; }
@@ -1200,6 +1233,7 @@ $('#qG').addEventListener('input',e=>{gQuery=e.target.value.trim().toLowerCase()
 $('#qC').addEventListener('input',e=>{cQuery=e.target.value.trim().toLowerCase();cShown=90;renderChannel();});
 $('#qE').addEventListener('input',e=>{eQuery=e.target.value.trim().toLowerCase();eShown=120;renderEmotes();});
 $('#qP').addEventListener('input',e=>{pQuery=e.target.value.trim().toLowerCase();pShown=100;renderPopularity();});
+$('#qT').addEventListener('input',e=>{tQuery=qsNorm(e.target.value.trim());renderCategories();});
 $('#scrim').addEventListener('click',closeDrawer); $('#closeDrawer').addEventListener('click',closeDrawer);
 $('#btnPlayer').addEventListener('click',togglePlayer); $('#btnPlayerX').addEventListener('click',togglePlayer);
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDrawer(); });
@@ -1217,7 +1251,7 @@ Promise.allSettled([getJSON('/badges.json'), getJSON('/events.json'), getJSON('/
   READY = true; renderAll(); route();
   if(pathKey() === "/popularity/") maybeLivePopularity();
 });
-getJSON('/top-categories.json').then(j => { TOPCATS = j || {games: []}; renderTopCats(); }).catch(() => { TOPCATS = {games: []}; renderTopCats(); });
+getJSON('/top-categories.json').then(j => { TOPCATS = j || {games: []}; renderTopCats(); renderCategories(); }).catch(() => { TOPCATS = {games: []}; renderTopCats(); renderCategories(); });
 getJSON('/emotes.json').then(rows => { if(Array.isArray(rows)) EMOTES = rows; E_READY = true; renderEmotes(); renderStats(); }).catch(() => { E_READY = true; renderEmotes(); });
 getJSON('/channel-badges.json').then(rows => {
   if(!Array.isArray(rows)) return;
