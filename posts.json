@@ -21,6 +21,18 @@
   "tweet": "2107071960756748316",
   "title": "DayZ Yellow King",
   "posted": "2026-10-05T11:34:37+00:00",
+  "replied": true
+ },
+ "vaultbreakers": {
+  "tweet": "2107072783989559581",
+  "title": "Vaultbreakers",
+  "posted": "2026-10-05T11:37:54+00:00",
+  "replied": false
+ },
+ "vaultbreakers-golden": {
+  "tweet": "2107072787256930466",
+  "title": "Vaultbreakers Golden",
+  "posted": "2026-10-05T11:37:54+00:00",
   "replied": false
  }
 }
