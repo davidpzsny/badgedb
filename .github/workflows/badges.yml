@@ -44,7 +44,7 @@ jobs:
         run: |
           git config user.name "badgedb-bot"
           git config user.email "bot@users.noreply.github.com"
-          for f in index.html badges.json events.json channel-badges.json channels-state.json emotes.json popularity.json posts.json status.json \
+          for f in index.html badges.json events.json channel-badges.json channels-state.json emotes.json popularity.json posts.json status.json top-categories.json \
                    badges timeline channel emotes popularity stats faq privacy terms legal contact assets sitemap.xml robots.txt 404.html; do
             if [ -e "$f" ]; then git add "$f"; fi
           done
