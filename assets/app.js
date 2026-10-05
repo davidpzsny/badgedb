@@ -213,8 +213,10 @@ function renderHome(){
            <span class="sc-play-t"><b>Watch the 24/7 stream</b><small>Click to load the Twitch player (Twitch may set cookies)</small></span></button>`; }
 
   // recently added badges from the archive
-  const recent = [...globalBadges].filter(b=>b.added).sort((a,b)=>b.added.localeCompare(a.added)).slice(0,8);
-  $('#recent').innerHTML = recent.map(b=>`<a class="rc" href="/badges/${encodeURIComponent(b.set)}/" data-badge="${esc(b.set)}" data-type="global">${tile(b)}<span class="n">${esc(b.name)}</span><span class="d">${fmt(b.added)}</span></a>`).join('');
+  const recent = [...globalBadges].filter(b=>b.added).sort((a,b)=>b.added.localeCompare(a.added)||a.name.localeCompare(b.name)).slice(0,20);
+  const newCut = new Date(Date.now() - 3*864e5).toISOString().slice(0,10);
+  fillSlider($('#recent'), recent.map(b => `<a class="sl-it" href="/badges/${encodeURIComponent(b.set)}/" title="${esc(b.name)}">${tile(b)}<span class="sl-t"><b>${esc(b.name)}</b>
+    <small>${b.added >= newCut ? '<i class="n">New</i>' : ''}Added ${fmt(b.added)}</small></span></a>`), 3.6);
 
   const strip = list => list.slice(0,6).map(b=>`<img src="${esc(b.img)}" alt="" loading="lazy">`).join('') + (list.length>6?`<span class="more">+${list.length-6}</span>`:'');
   const evBadges = live.flatMap(e=>e.badges.filter(b=>b.img).map(b=>({img:cdn(b.img)})));
@@ -618,6 +620,13 @@ document.addEventListener('click', e => { if(e.target.closest('#nfSearch')){ qsO
 
 /* ---------- home: badge slider, top categories, most popular badges ---------- */
 let TOPCATS = null;
+function fillSlider(el, cards, secPerItem = 3.2){
+  const html = cards.join("");
+  const animate = cards.length >= 5 && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  el.classList.add("slider"); el.classList.toggle("anim", animate);
+  el.style.setProperty("--sl-dur", (cards.length * secPerItem) + "s");
+  el.innerHTML = `<div class="sl-track">${html}${animate ? `<span class="sl-dup" aria-hidden="true">${html}</span>` : ""}</div>`;
+}
 function renderSlider(){
   const el = $('#badgeSlider'); if(!el) return;
   if(!READY){ return; }
@@ -629,11 +638,7 @@ function renderSlider(){
     const when = st === "soon" ? `starts in ${countdown(ev.start).split(" ").slice(0, 2).join(" ")}` : `${countdown(ev.end).split(" ").slice(0, 2).join(" ")} left`;
     return `<a class="sl-it ${st}" href="/badges/${encodeURIComponent(b.set)}/" title="${esc(b.name)}">${tile(b)}<span class="sl-t"><b>${esc(b.name)}</b>
       <small>${isFree(b) ? '<i class="f">Free</i>' : '<i class="p">Sub</i>'}${esc(when)}</small></span></a>`; };
-  const html = items.map(card).join("");
-  const animate = items.length >= 5 && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  el.classList.toggle("anim", animate);
-  el.style.setProperty("--sl-dur", (items.length * 3.2) + "s");
-  el.innerHTML = `<div class="sl-track">${html}${animate ? `<span class="sl-dup" aria-hidden="true">${html}</span>` : ""}</div>`;
+  fillSlider(el, items.map(card));
 }
 function renderTopCats(){
   const el = $('#topCats'); if(!el) return;
