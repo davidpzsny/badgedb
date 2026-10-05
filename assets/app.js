@@ -428,7 +428,7 @@ function renderChannel(){
   $('#cMore').innerHTML = list.length>cShown ? `<button class="btn ghost" id="btnCMore">Show ${Math.min(90,list.length-cShown)} more</button>` : '';
   $('#cChannel').textContent = channelBadges.length || '';
 }
-function renderAll(){ renderHome(); renderEvents(); renderTimeline(); renderGlobal(); renderChannel(); renderEmotes(); renderPopularity(); renderStats(); }
+function renderAll(){ renderHome(); renderEvents(); renderTimeline(); renderGlobal(); renderChannel(); renderEmotes(); renderPopularity(); renderStats(); renderSlider(); renderTopCats(); renderTopBadges(); }
 
 
 /* ---------- "Add to calendar": .ics file (Apple / Outlook / most apps) and Google Calendar links ---------- */
@@ -615,6 +615,50 @@ function renderNotFound(){
 }
 document.addEventListener('click', e => { if(e.target.closest('#nfSearch')){ qsOpen(); const w = decodeURIComponent(location.pathname).split("/").filter(Boolean).pop() || "";
   $('#qsInput').value = w.replace(/[-_]+/g, " "); qsActive = 0; qsRender(); } });
+
+/* ---------- home: badge slider, top categories, most popular badges ---------- */
+let TOPCATS = null;
+function renderSlider(){
+  const el = $('#badgeSlider'); if(!el) return;
+  if(!READY){ return; }
+  const live = globalBadges.filter(b => ["ending", "live"].includes(badgeState(b))).sort((a, b) => Date.parse(EV_BY_IMG[a.imgId].ev.end) - Date.parse(EV_BY_IMG[b.imgId].ev.end));
+  const soon = globalBadges.filter(b => badgeState(b) === "soon").sort((a, b) => Date.parse(EV_BY_IMG[a.imgId].ev.start) - Date.parse(EV_BY_IMG[b.imgId].ev.start));
+  const items = [...live, ...soon].slice(0, 30);
+  $('#sliderWrap').hidden = !items.length; if(!items.length) return;
+  const card = b => { const ev = EV_BY_IMG[b.imgId].ev, st = badgeState(b);
+    const when = st === "soon" ? `starts in ${countdown(ev.start).split(" ").slice(0, 2).join(" ")}` : `${countdown(ev.end).split(" ").slice(0, 2).join(" ")} left`;
+    return `<a class="sl-it ${st}" href="/badges/${encodeURIComponent(b.set)}/" title="${esc(b.name)}">${tile(b)}<span class="sl-t"><b>${esc(b.name)}</b>
+      <small>${isFree(b) ? '<i class="f">Free</i>' : '<i class="p">Sub</i>'}${esc(when)}</small></span></a>`; };
+  const html = items.map(card).join("");
+  const animate = items.length >= 5 && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  el.classList.toggle("anim", animate);
+  el.style.setProperty("--sl-dur", (items.length * 3.2) + "s");
+  el.innerHTML = `<div class="sl-track">${html}${animate ? `<span class="sl-dup" aria-hidden="true">${html}</span>` : ""}</div>`;
+}
+function renderTopCats(){
+  const el = $('#topCats'); if(!el) return;
+  if(!TOPCATS || !TOPCATS.games || !TOPCATS.games.length){ if(TOPCATS) el.innerHTML = '<div class="empty">No data yet — the bot refreshes this every 15 minutes.</div>'; return; }
+  const norm = t => qsNorm(t).replace(/[^a-z0-9]/g, "");
+  const liveEvents = EVENTS.filter(e => e.start && Date.parse(e.start) <= Date.now() && Date.parse(e.end) > Date.now());
+  el.innerHTML = TOPCATS.games.slice(0, 12).map((g, i) => {
+    const n = norm(g.name);
+    const badges = liveEvents.filter(e => { const c = norm((e.category || "").split(" · ")[0]); return c && (c === n || (c.length > 5 && (c.startsWith(n) || n.startsWith(c)))); })
+      .flatMap(e => e.badges).filter(b => b.img).slice(0, 4);
+    const art = (g.box || "").replace("{width}", "144").replace("{height}", "192");
+    return `<a class="tc" href="${catUrl(g.name)}" target="_blank" rel="noopener" title="${esc(g.name)}">
+      <span class="tc-art"><img src="${esc(art)}" alt="" loading="lazy"><span class="tc-rank">${i + 1}</span>
+        ${badges.length ? `<span class="tc-badges" title="Badge available in this category">${badges.map(b => `<img src="${esc(cdn(b.img))}" alt="">`).join("")}</span>` : ""}</span>
+      <b>${esc(g.name)}</b><small>${g.viewers ? compact(g.viewers) + " watching" : ""}</small></a>`; }).join("");
+  const mins = TOPCATS.updated ? Math.max(0, Math.round((Date.now() - Date.parse(TOPCATS.updated)) / 6e4)) : null;
+  $('#tcUpd').textContent = mins == null ? "Most watched games on Twitch" : `Most watched games on Twitch · updated ${mins < 1 ? "just now" : mins + " min ago"}`;
+}
+function renderTopBadges(){
+  const el = $('#topBadges'); if(!el || !READY) return;
+  const top = globalBadges.filter(b => b.users > 0).sort((a, b) => b.users - a.users).slice(0, 6);
+  el.innerHTML = top.length ? top.map((b, i) => `<a class="tb" href="/badges/${encodeURIComponent(b.set)}/"><span class="tb-r">${i + 1}</span>${tile(b)}
+      <span class="tb-t"><b>${esc(b.name)}</b><small>${compact(b.users)} users</small></span></a>`).join("")
+    : '<div class="empty">Popularity data is coming soon.</div>';
+}
 
 /* ---------- statistics ---------- */
 function badgeFacts(b){
@@ -1168,6 +1212,7 @@ Promise.allSettled([getJSON('/badges.json'), getJSON('/events.json'), getJSON('/
   READY = true; renderAll(); route();
   if(pathKey() === "/popularity/") maybeLivePopularity();
 });
+getJSON('/top-categories.json').then(j => { TOPCATS = j || {games: []}; renderTopCats(); }).catch(() => { TOPCATS = {games: []}; renderTopCats(); });
 getJSON('/emotes.json').then(rows => { if(Array.isArray(rows)) EMOTES = rows; E_READY = true; renderEmotes(); renderStats(); }).catch(() => { E_READY = true; renderEmotes(); });
 getJSON('/channel-badges.json').then(rows => {
   if(!Array.isArray(rows)) return;
