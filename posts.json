@@ -39,18 +39,18 @@
   "tweet": "2107248514434560010",
   "title": "Gastly",
   "posted": "2026-10-05T23:16:11+00:00",
-  "replied": false
+  "replied": true
  },
  "gengar": {
   "tweet": "2107248518444310533",
   "title": "Gengar",
   "posted": "2026-10-05T23:16:12+00:00",
-  "replied": false
+  "replied": true
  },
  "haunter": {
   "tweet": "2107248521875268076",
   "title": "Haunter",
   "posted": "2026-10-05T23:16:13+00:00",
-  "replied": false
+  "replied": true
  }
 }
