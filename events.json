@@ -1,5 +1,53 @@
 [
  {
+  "id": "haunter",
+  "name": "Haunter",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Haunter",
+    "img": "ddfbf317-aa77-482e-a99d-eb975deb2fe7",
+    "how": "Objective not announced yet.",
+    "cost": "na",
+    "desc": "This badge was earned by evolving the Night Out 2026 Gastly badge."
+   }
+  ]
+ },
+ {
+  "id": "gengar",
+  "name": "Gengar",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Gengar",
+    "img": "f68e567f-67cf-4d4a-8c3e-a0dcee42f095",
+    "how": "Objective not announced yet.",
+    "cost": "na",
+    "desc": "This badge was earned by evolving the Night Out 2026 Haunter badge"
+   }
+  ]
+ },
+ {
+  "id": "gastly",
+  "name": "Gastly",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Gastly",
+    "img": "602335f3-4d73-40f9-b8e2-5c5e25f32d62",
+    "how": "Objective not announced yet.",
+    "cost": "na",
+    "desc": "This badge was earned during Pokémon Night Out 2026."
+   }
+  ]
+ },
+ {
   "id": "vaultbreakers",
   "name": "Vaultbreakers",
   "category": "Vaultbreakers",
