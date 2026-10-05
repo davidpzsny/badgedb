@@ -496,6 +496,24 @@ def update_popularity(live):
     print(f"popularity: {len(counts)} badge sets updated (top: {top} {counts[top]:,})")
     status("popularity", f"ok: {len(counts)} badge sets, top {top} {counts[top]:,}")
 
+# ---------- top Twitch categories right now (official Helix API) ----------
+TOPCAT_DB = os.path.join(ROOT, "top-categories.json")
+def update_top_categories(token, n=12):
+    games = helix_get(token, "games/top", {"first": n})
+    out = []
+    for g in games:
+        viewers = streams = 0
+        try:
+            live = helix_get(token, "streams", {"game_id": g["id"], "first": 100, "type": "live"})
+            streams = len(live); viewers = sum(x.get("viewer_count", 0) for x in live)
+        except Exception as e:
+            print("top categories: streams lookup failed for", g.get("name"), "->", e)
+        out.append({"id": g["id"], "name": g.get("name", ""), "box": g.get("box_art_url", ""), "viewers": viewers, "streams": streams})
+    json.dump({"updated": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"), "note": "viewers = top 100 live streams", "games": out},
+              open(TOPCAT_DB, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+    status("top_categories", f"{len(out)} categories, #1 {out[0]['name'] if out else '-'}")
+    print(f"top categories: {len(out)} saved" + (f" (#1 {out[0]['name']}, ~{out[0]['viewers']:,} viewers)" if out else ""))
+
 # ---------- post image (1200x675 card) ----------
 def make_card(badge_png_bytes, title, subtitle=""):
     from PIL import Image, ImageDraw, ImageFont, ImageFilter
@@ -695,6 +713,8 @@ def main():
     try: tok = app_token()
     except Exception as e: print("app token failed:", e)
     if tok:
+        try: update_top_categories(tok)
+        except Exception as e: print("top categories: skipped ->", e)
         try: sync_emotes(tok)
         except Exception as e: print("global emotes: skipped ->", e)
         try: crawl_channel_badges(tok)
