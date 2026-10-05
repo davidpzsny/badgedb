@@ -1,5 +1,21 @@
 [
  {
+  "id": "dayz",
+  "name": "DayZ",
+  "category": "DayZ",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "DayZ Yellow King",
+    "img": "739379da-c982-4294-9bfd-75c3cc4187d3",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the DayZ category during the DayZ Badlands expansion launch!"
+   }
+  ]
+ },
+ {
   "id": "thedragonsdogma",
   "name": "TheDragonsDogma",
   "category": "Unknown",
