@@ -647,7 +647,7 @@ function badgesForCategory(name){
     .filter(e => { const c = catKey((e.category || "").split(" · ")[0]); return c && (c === n || (c.length > 5 && (c.startsWith(n) || n.startsWith(c)))); })
     .flatMap(e => e.badges.filter(b => b.img).map(b => ({b, ev: e})));
 }
-let tQuery = "", tFilter = "all";
+let tQuery = "", tFilter = "all", tShown = 60;
 function renderCategories(){
   const grid = $('#catGrid'); if(!grid) return;
   if(!TOPCATS){ return; }
@@ -661,8 +661,10 @@ function renderCategories(){
   let list = games;
   if(tFilter === "badges") list = list.filter(g => g.badges.length);
   if(tQuery) list = list.filter(g => qsNorm(g.name).includes(tQuery));
+  $('#catNoteN').textContent = `Showing Twitch's ${games.length} most watched categories.`;
+  $('#tMore').innerHTML = list.length > tShown ? `<button class="btn ghost" id="btnTMore">Show ${Math.min(60, list.length - tShown)} more</button>` : "";
   $('#catCount').textContent = `${list.length} of ${games.length} categories${mins == null ? "" : ` · updated ${mins < 1 ? "just now" : mins + " min ago"}`}`;
-  grid.innerHTML = list.length ? list.map(g => {
+  grid.innerHTML = list.length ? list.slice(0, tShown).map(g => {
     const art = (g.box || "").replace("{width}", "285").replace("{height}", "380");
     const share = total ? (g.viewers / total * 100) : 0;
     return `<div class="catc ${g.rank <= 3 ? "top" : ""}">
@@ -1216,11 +1218,12 @@ function togglePlayer(){
 /* ---------- wiring ---------- */
 document.addEventListener('click', e => {
   const seg=e.target.closest('.seg button'); if(seg){ const id=seg.parentElement.id; seg.parentElement.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===seg)); const v=seg.dataset.v;
-    if(id==='evFilter') evFilter=v; if(id==='gSort') gSort=v; if(id==='gDir') gDir=v; if(id==='gFilter') gFilter=v; if(id==='cFilter') cFilter=v; if(id==='eSort') eSort=v; if(id==='eFilter') eFilter=v; if(id==='pFilter') pFilter=v; if(id==='tFilter'){ tFilter=v; renderCategories(); } eShown=120; pShown=100; renderEmotes(); renderPopularity(); gShown=90; renderEvents(); renderGlobal(); renderChannel(); return; }
+    if(id==='evFilter') evFilter=v; if(id==='gSort') gSort=v; if(id==='gDir') gDir=v; if(id==='gFilter') gFilter=v; if(id==='cFilter') cFilter=v; if(id==='eSort') eSort=v; if(id==='eFilter') eFilter=v; if(id==='pFilter') pFilter=v; if(id==='tFilter'){ tFilter=v; tShown=60; renderCategories(); } eShown=120; pShown=100; renderEmotes(); renderPopularity(); gShown=90; renderEvents(); renderGlobal(); renderChannel(); return; }
   if(e.target.id==='btnMore'){ gShown+=90; renderGlobal(); return; }
   if(e.target.id==='btnCMore'){ cShown+=90; renderChannel(); return; }
   if(e.target.id==='btnEMore'){ eShown+=120; renderEmotes(); return; }
   if(e.target.id==='btnPMore'){ pShown+=100; renderPopularity(); return; }
+  if(e.target.id==='btnTMore'){ tShown+=60; renderCategories(); return; }
   const em=e.target.closest('[data-emote]'); if(em){ openEmote(em.dataset.emote); return; }
   const cb=e.target.closest('[data-cbadge]'); if(cb){ navigate('/channel/'+cb.dataset.cbadge+'/'); return; }
   const ev=e.target.closest('[data-ev]'); if(ev){ openEvent(ev.dataset.ev); return; }
@@ -1233,7 +1236,7 @@ $('#qG').addEventListener('input',e=>{gQuery=e.target.value.trim().toLowerCase()
 $('#qC').addEventListener('input',e=>{cQuery=e.target.value.trim().toLowerCase();cShown=90;renderChannel();});
 $('#qE').addEventListener('input',e=>{eQuery=e.target.value.trim().toLowerCase();eShown=120;renderEmotes();});
 $('#qP').addEventListener('input',e=>{pQuery=e.target.value.trim().toLowerCase();pShown=100;renderPopularity();});
-$('#qT').addEventListener('input',e=>{tQuery=qsNorm(e.target.value.trim());renderCategories();});
+$('#qT').addEventListener('input',e=>{tQuery=qsNorm(e.target.value.trim());tShown=60;renderCategories();});
 $('#scrim').addEventListener('click',closeDrawer); $('#closeDrawer').addEventListener('click',closeDrawer);
 $('#btnPlayer').addEventListener('click',togglePlayer); $('#btnPlayerX').addEventListener('click',togglePlayer);
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDrawer(); });
