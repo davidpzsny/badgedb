@@ -498,23 +498,39 @@ def update_popularity(live):
 
 # ---------- top Twitch categories right now (official Helix API) ----------
 TOPCAT_DB = os.path.join(ROOT, "top-categories.json")
-def update_top_categories(token, n=50):
-    """Top Twitch categories (official Helix API). Viewers = sum of the 100 biggest live streams in the category."""
-    games = helix_get(token, "games/top", {"first": n})
-    out = []
-    for g in games:
-        viewers = streams = 0; top = None
+def helix_page(token, path, params):
+    r = requests.get("https://api.twitch.tv/helix/" + path, params=params, timeout=30,
+                     headers={"Client-Id": os.environ["TWITCH_CLIENT_ID"], "Authorization": f"Bearer {token}"})
+    r.raise_for_status(); return r.json()
+
+def update_top_categories(token, n=150):
+    """Top Twitch categories (official Helix API, paginated — max 100 per request).
+    Viewers = sum of the 100 biggest live streams in each category; looked up in parallel."""
+    games, cursor = [], None
+    while len(games) < n:
+        params = {"first": min(100, n - len(games))}
+        if cursor: params["after"] = cursor
+        j = helix_page(token, "games/top", params)
+        games += j.get("data", [])
+        cursor = (j.get("pagination") or {}).get("cursor")
+        if not cursor or not j.get("data"): break
+    games = games[:n]
+
+    def lookup(g):
         try:
             live = helix_get(token, "streams", {"game_id": g["id"], "first": 100, "type": "live"})
-            streams = len(live); viewers = sum(x.get("viewer_count", 0) for x in live)
-            if live:
-                t = max(live, key=lambda x: x.get("viewer_count", 0))
-                top = {"login": t.get("user_login", ""), "name": t.get("user_name", ""), "viewers": t.get("viewer_count", 0)}
         except Exception as e:
-            print("top categories: streams lookup failed for", g.get("name"), "->", e)
-        row = {"id": g["id"], "name": g.get("name", ""), "box": g.get("box_art_url", ""), "viewers": viewers, "streams": streams}
-        if top: row["top"] = top
-        out.append(row)
+            print("top categories: streams lookup failed for", g.get("name"), "->", e); live = []
+        row = {"id": g["id"], "name": g.get("name", ""), "box": g.get("box_art_url", ""),
+               "viewers": sum(x.get("viewer_count", 0) for x in live), "streams": len(live)}
+        if live:
+            t = max(live, key=lambda x: x.get("viewer_count", 0))
+            row["top"] = {"login": t.get("user_login", ""), "name": t.get("user_name", ""), "viewers": t.get("viewer_count", 0)}
+        return row
+
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        out = list(pool.map(lookup, games))          # keeps Twitch's own ranking order
     json.dump({"updated": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"), "note": "viewers = top 100 live streams", "games": out},
               open(TOPCAT_DB, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     status("top_categories", f"{len(out)} categories, #1 {out[0]['name'] if out else '-'}")

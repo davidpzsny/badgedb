@@ -367,9 +367,10 @@ def categories_page(top):
                     f'<div class="catc-b"><span class="catc-n">{e(g["name"])}</span><div class="catc-v"><b>{comp(g.get("viewers", 0))}</b> watching</div></div></div>'
                     for i, g in enumerate(games))
     top1 = games[0]["name"] if games else "Just Chatting"
+    fills_note = {'<span id="catNoteN">Showing Twitch\'s most watched categories.</span>': f'<span id="catNoteN">Showing Twitch\'s {len(games)} most watched categories.</span>'} if games else {}
     return page("/categories/", "Top Twitch Categories Right Now – Most Watched Games | Badge Database",
                 f"The most watched Twitch categories right now, led by {top1} — viewers, biggest streams and the badges you can earn in each. Updated every 15 minutes.",
-                "categories", fills={'<div class="cat-grid" id="catGrid"><div class="empty">Loading…</div></div>': f'<div class="cat-grid" id="catGrid">{cards}</div>'} if cards else None,
+                "categories", fills=({'<div class="cat-grid" id="catGrid"><div class="empty">Loading…</div></div>': f'<div class="cat-grid" id="catGrid">{cards}</div>', **fills_note} if cards else None),
                 jsonld=[crumbs_ld(("Home", "/"), ("Top Categories", None))])
 
 def faq_page():
