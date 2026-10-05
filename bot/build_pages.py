@@ -359,6 +359,19 @@ def stats_page(sets, events, emotes, ev_of, now):
                                 '<div class="st-years" id="stYears"></div>': f'<div class="st-years" id="stYears">{years_html}</div>'},
                 jsonld=[crumbs_ld(("Home", "/"), ("Statistics", None))])
 
+def categories_page(top):
+    games = (top or {}).get("games") or []
+    comp = lambda n: (f"{n/1e6:.1f}".rstrip("0").rstrip(".") + "M") if n >= 1e6 else (f"{round(n/1e3)}K" if n >= 1e4 else f"{n:,}")
+    cards = "".join(f'<div class="catc"><a class="catc-art" href="https://www.twitch.tv/directory/category/{e(re.sub(r"[^a-z0-9]+", "-", g["name"].lower()).strip("-"))}" target="_blank" rel="noopener">'
+                    f'<img src="{e((g.get("box") or "").replace("{width}", "285").replace("{height}", "380"))}" alt="{e(g["name"])}" loading="lazy"><span class="tc-rank">{i+1}</span></a>'
+                    f'<div class="catc-b"><span class="catc-n">{e(g["name"])}</span><div class="catc-v"><b>{comp(g.get("viewers", 0))}</b> watching</div></div></div>'
+                    for i, g in enumerate(games))
+    top1 = games[0]["name"] if games else "Just Chatting"
+    return page("/categories/", "Top Twitch Categories Right Now – Most Watched Games | Badge Database",
+                f"The most watched Twitch categories right now, led by {top1} — viewers, biggest streams and the badges you can earn in each. Updated every 15 minutes.",
+                "categories", fills={'<div class="cat-grid" id="catGrid"><div class="empty">Loading…</div></div>': f'<div class="cat-grid" id="catGrid">{cards}</div>'} if cards else None,
+                jsonld=[crumbs_ld(("Home", "/"), ("Top Categories", None))])
+
 def faq_page():
     qa = re.findall(r'<details(?: open)?><summary>(.*?)</summary><div class="a">(.*?)</div></details>', TEMPLATE, flags=re.S)
     strip = lambda s: html.unescape(re.sub(r"<[^>]+>", "", s))
@@ -400,6 +413,7 @@ def main():
     changed += write("channel/index.html", channel_page(load("channel-badges.json", [])))
     changed += write("emotes/index.html", emotes_page(load("emotes.json", [])))
     changed += write("popularity/index.html", popularity_page(sets, pop))
+    changed += write("categories/index.html", categories_page(load("top-categories.json", {})))
     changed += write("stats/index.html", stats_page(sets, events, load("emotes.json", []), ev_of, now))
     changed += write("faq/index.html", faq_page())
     changed += write("privacy/index.html", page("/privacy/", "Privacy Policy | Badge Database", "How Badge Database handles personal data: no accounts, no tracking cookies, which third-party services are used, and your rights under the GDPR.", "privacy"))
@@ -410,7 +424,7 @@ def main():
     changed += write("legal/index.html", page("/legal/", "Legal Notice | Badge Database",
                      "Operator, contact, hosting, trademark notice, content removal requests and data sources of Badge Database.", "legal"))
     urls = [("/", now[:10], "hourly", "1.0"), ("/timeline/", now[:10], "hourly", "0.9"), ("/badges/", now[:10], "daily", "0.9"),
-            ("/channel/", now[:10], "daily", "0.8"), ("/emotes/", now[:10], "daily", "0.8"), ("/popularity/", now[:10], "daily", "0.8"), ("/stats/", now[:10], "daily", "0.7"), ("/faq/", None, "monthly", "0.5"), ("/legal/", None, "yearly", "0.2"), ("/contact/", None, "yearly", "0.3")]
+            ("/channel/", now[:10], "daily", "0.8"), ("/emotes/", now[:10], "daily", "0.8"), ("/popularity/", now[:10], "daily", "0.8"), ("/stats/", now[:10], "daily", "0.7"), ("/categories/", now[:10], "hourly", "0.7"), ("/faq/", None, "monthly", "0.5"), ("/legal/", None, "yearly", "0.2"), ("/contact/", None, "yearly", "0.3")]
     urls += [(f"/badges/{s['set']}/", s["added"] or None, "weekly", "0.7") for s in sets]
     sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for u, lm, cf, pr in urls:
