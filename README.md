@@ -51,6 +51,10 @@ Static site on GitHub Pages + a bot in GitHub Actions that runs **every 15 minut
    same category when one exists (uses the `TWITCH_GQL_OAUTH` login). Otherwise dates are entered in `/admin/`.
 4. **Link reply on X** — after a new badge post, as soon as its page is online the bot replies with the link
    (switch off with variable `X_LINK_REPLY = 0`).
+   **"Now available" posts** — when an event with a known start time begins, the bot posts
+   "🟢 Now available on Twitch: …" (image, objective, end time) to X and Discord, then replies with the link.
+   If an event starts within 12 minutes the bot waits and posts right on time; it never posts an event more than
+   90 minutes late, never twice, and never for events without dates (switch off with variable `X_LIVE_POSTS = 0`).
 5. **Global emotes** — tracked from the official API (first-seen and removed dates).
 6. **Popularity** — tries PotatBotat once a day. potat.app blocks requests from GitHub's servers, so for now
    it is updated by hand (see below).
@@ -131,7 +135,7 @@ shows new badges, `twitch campaigns: …`, `global emotes: …`, `popularity: �
 | `DISCORD_WEBHOOK` | optional — post new badges to a Discord channel |
 
 **Variables** (*Variables* tab): `SITE_URL` = `https://badgedatabase.com` · optional `X_LINK_REPLY` = `0`
-(no link replies) · optional `DRY_RUN` = `1` (test without posting).
+(no link replies) · optional `X_LIVE_POSTS` = `0` (no "Now available" posts) · optional `DRY_RUN` = `1` (test without posting).
 
 **Admin token** (stored only in your browser): github.com/settings/personal-access-tokens → fine-grained →
 *Only select repositories* → `badgedb` → *Repository permissions → Contents: Read and write*.
