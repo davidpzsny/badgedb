@@ -12,7 +12,7 @@ Environment variables (set as GitHub Secrets):
   SITE_URL          (optional, e.g. https://badgedb.hu — only used in Discord,
                      NOT in X posts, because posts containing links cost more)
 """
-import json, os, sys, io, datetime, requests
+import json, os, sys, io, time, datetime, requests
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 DB = os.path.join(ROOT, "badges.json")
@@ -496,6 +496,89 @@ def update_popularity(live):
     print(f"popularity: {len(counts)} badge sets updated (top: {top} {counts[top]:,})")
     status("popularity", f"ok: {len(counts)} badge sets, top {top} {counts[top]:,}")
 
+# ---------- "Now available" posts when a badge event starts ----------
+X_LIVE_POSTS = (os.environ.get("X_LIVE_POSTS") or "1").strip().lower() not in ("0", "false", "no", "off")
+LIVE_WAIT_MIN = 12          # if an event starts within this many minutes, wait for it and post on time
+LIVE_LATE_MIN = 90          # never announce an event that started longer ago than this
+def _iso(t): return datetime.datetime.fromisoformat(t.replace("Z", "+00:00"))
+
+def live_post_text(ev, badges_meta):
+    names = [m["title"] for m in badges_meta]
+    title = " & ".join(names[:2]) + (f" + {len(names) - 2} more" if len(names) > 2 else "")
+    end = _iso(ev["end"]); left = end - datetime.datetime.now(datetime.timezone.utc)
+    days = left.days; hours = left.seconds // 3600
+    until = end.strftime("%b %-d, %H:%M UTC") + (f" ({days}d {hours}h left)" if days else f" ({hours}h left)")
+    hows = [b.get("how", "") for b in ev.get("badges", []) if b.get("img")]
+    how = hows[0] if hows and all(h == hows[0] for h in hows) else " / ".join(dict.fromkeys(h for h in hows if h))
+    head = f"🟢 Now available on Twitch: {title}"
+    tail = f"\n\n⏳ Until {until}\n#Twitch #TwitchBadges"
+    room = 270 - len(head) - len(tail)
+    if how and room > 20:
+        how = how if len(how) <= room else how[:room - 1].rstrip() + "…"
+        return f"{head}\n\n{how}{tail}"
+    return head + tail
+
+def announce_live(events, live):
+    """Post once per event when it starts. Waits up to LIVE_WAIT_MIN minutes so the post lands on time."""
+    if not X_LIVE_POSTS: return
+    by_img = {b["img"]: b for b in live}
+    posts = load_json(POSTS_DB, {})
+    now = datetime.datetime.now(datetime.timezone.utc)
+    due = []
+    for ev in events:
+        if not ev.get("start") or not ev.get("end") or f"live:{ev['id']}" in posts: continue
+        start, end = _iso(ev["start"]), _iso(ev["end"])
+        if end <= now: continue
+        mins = (start - now).total_seconds() / 60
+        if -LIVE_LATE_MIN <= mins <= LIVE_WAIT_MIN:
+            meta = [by_img[b["img"]] for b in ev.get("badges", []) if b.get("img") in by_img]
+            if meta: due.append((start, ev, meta))
+    for start, ev, meta in sorted(due, key=lambda x: x[0])[:4]:
+        wait = (start - datetime.datetime.now(datetime.timezone.utc)).total_seconds()
+        if wait > 0:
+            print(f"now-available: waiting {int(wait)}s for {ev['name']} to start")
+            time.sleep(wait + 5)
+        text = live_post_text(ev, meta)
+        first = meta[0]
+        if DRY_RUN:
+            print("DRY_RUN now-available post:\n" + text); continue
+        tweet_id = None
+        try:
+            import tweepy
+            kw = dict(consumer_key=os.environ["X_API_KEY"], consumer_secret=os.environ["X_API_SECRET"],
+                      access_token=os.environ["X_ACCESS_TOKEN"], access_token_secret=os.environ["X_ACCESS_SECRET"])
+            media_ids = None
+            try:
+                png = requests.get(first["url"], timeout=30).content
+                card = make_card(png, " & ".join(m["title"] for m in meta[:2]), header="NOW AVAILABLE ON TWITCH",
+                                 header_sub="Get it before " + _iso(ev["end"]).strftime("%b %-d, %H:%M UTC"), accent=(52, 211, 153))
+                api = tweepy.API(tweepy.OAuth1UserHandler(*kw.values()))
+                media_ids = [api.media_upload(filename=f"{first['img']}-live.png", file=io.BytesIO(card)).media_id]
+            except Exception as e:
+                print("now-available: image failed, posting text only ->", e)
+            resp = tweepy.Client(**kw).create_tweet(text=text, media_ids=media_ids)
+            tweet_id = (resp.data or {}).get("id")
+            print(f"now-available: posted for {ev['name']} -> {tweet_id}")
+        except Exception as e:
+            print(f"now-available: X post failed for {ev['name']} ->", e)
+        try:
+            hook = os.environ.get("DISCORD_WEBHOOK")
+            if hook:
+                site = (os.environ.get("SITE_URL") or "https://badgedatabase.com").rstrip("/")
+                requests.post(hook, json={"embeds": [{"title": f"🟢 Now available: {' & '.join(m['title'] for m in meta[:3])}",
+                    "description": text.split("\n\n", 1)[-1].replace("#Twitch #TwitchBadges", "").strip(),
+                    "url": f"{site}/badges/{first['set']}/", "thumbnail": {"url": first["url"]}, "color": 0x34D399}]}, timeout=30)
+        except Exception as e:
+            print("now-available: Discord post failed ->", e)
+        # remember it (also when X failed, so it's never posted twice); the link reply follows like for new badges
+        posts = load_json(POSTS_DB, {})
+        posts[f"live:{ev['id']}"] = {"tweet": str(tweet_id) if tweet_id else "", "title": first["title"], "set": first["set"],
+                                     "posted": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
+                                     "replied": False if tweet_id else "no tweet",
+                                     "reply": "Objective, channels and exact dates: {url}"}
+        json.dump(posts, open(POSTS_DB, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        status("now_available", f"{ev['name']} at {ev['start']} -> tweet {tweet_id}")
+
 # ---------- top Twitch categories right now (official Helix API) ----------
 TOPCAT_DB = os.path.join(ROOT, "top-categories.json")
 def helix_page(token, path, params):
@@ -537,7 +620,7 @@ def update_top_categories(token, n=150):
     print(f"top categories: {len(out)} saved" + (f" (#1 {out[0]['name']}, ~{out[0]['viewers']:,} viewers)" if out else ""))
 
 # ---------- post image (1200x675 card) ----------
-def make_card(badge_png_bytes, title, subtitle=""):
+def make_card(badge_png_bytes, title, subtitle="", header="NEW TWITCH GLOBAL BADGE", header_sub="Badge added on Twitch", accent=(167, 139, 250)):
     from PIL import Image, ImageDraw, ImageFont, ImageFilter
     W, H = 1200, 675
     def font(sz, bold=True):
@@ -552,8 +635,8 @@ def make_card(badge_png_bytes, title, subtitle=""):
     try:
         logo = Image.open(os.path.join(ROOT, "logo.png")).convert("RGBA").resize((72, 72)); img.paste(logo, (56, 46), logo)
     except Exception: pass
-    d.text((148, 52), "NEW TWITCH GLOBAL BADGE", font=font(24), fill=(167, 139, 250))
-    d.text((148, 82), "Badge added on Twitch", font=font(26, False), fill=(158, 154, 176))
+    d.text((148, 52), header, font=font(24), fill=accent)
+    d.text((148, 82), header_sub, font=font(26, False), fill=(158, 154, 176))
     d.line((56, 150, W - 56, 150), fill=(45, 43, 58), width=2)
     # badge on a rounded tile, centered
     tile = Image.new("RGBA", (300, 300), (0, 0, 0, 0))
@@ -602,10 +685,10 @@ def post_to_x(badge, image_bytes):
 # ---------- X: reply with the badge's page link once it is live ----------
 POSTS_DB = os.path.join(ROOT, "posts.json")        # {set_id: {"tweet": id, "title": ..., "posted": iso, "replied": bool}}
 X_LINK_REPLY = (os.environ.get("X_LINK_REPLY") or "1").strip().lower() not in ("0", "false", "no", "off")
-def remember_post(badge, tweet_id):
+def remember_post(badge, tweet_id, key=None):
     if not tweet_id: return
     posts = load_json(POSTS_DB, {})
-    posts[badge["set"]] = {"tweet": str(tweet_id), "title": badge["title"],
+    posts[key or badge["set"]] = {"tweet": str(tweet_id), "title": badge["title"], "set": badge["set"],
                            "posted": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"), "replied": False}
     json.dump(posts, open(POSTS_DB, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
@@ -625,7 +708,7 @@ def reply_with_links(max_per_run=3):
         if done >= max_per_run: break
         if (now - datetime.datetime.fromisoformat(v["posted"])).total_seconds() > 3 * 86400:
             v["replied"] = "skipped (too old)"; continue
-        url = f"{site}/badges/{set_id}/"
+        url = f"{site}/badges/{v.get('set') or set_id}/"
         try:
             live = requests.get(url, timeout=20).status_code == 200
         except Exception:
@@ -633,7 +716,8 @@ def reply_with_links(max_per_run=3):
         if not live:
             print(f"x link reply: {url} not online yet, will retry"); continue
         try:
-            client.create_tweet(text=f"How to get {v['title']} and when it's available: {url}", in_reply_to_tweet_id=v["tweet"])
+            text = v.get("reply") or f"How to get {v['title']} and when it's available: {url}"
+            client.create_tweet(text=text.replace("{url}", url), in_reply_to_tweet_id=v["tweet"])
             v["replied"] = True; done += 1
             print(f"x link reply: posted for {set_id}")
         except Exception as e:
@@ -724,6 +808,9 @@ def main():
     sync_events({b["img"]: b.get("desc", "") for b in live}, new_sets, {_norm(b["title"]): b["img"] for b in live})
     try: apply_campaigns(rows)
     except Exception as e: print("twitch campaigns: skipped ->", e)
+
+    try: announce_live(load_events(), live)
+    except Exception as e: print("now-available: skipped ->", e)
 
     try: reply_with_links()
     except Exception as e: print("x link reply: skipped ->", e)
