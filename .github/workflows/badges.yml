@@ -32,6 +32,7 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
           TWITCH_GQL_OAUTH: ${{ secrets.TWITCH_GQL_OAUTH }}
           X_LINK_REPLY: ${{ vars.X_LINK_REPLY }}
+          X_LIVE_POSTS: ${{ vars.X_LIVE_POSTS }}
           SITE_URL: ${{ vars.SITE_URL }}
           DRY_RUN: ${{ vars.DRY_RUN }}
         run: python bot/check_badges.py
