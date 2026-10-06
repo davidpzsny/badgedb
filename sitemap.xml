@@ -11,6 +11,13 @@
   <url><loc>https://badgedatabase.com/faq/</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://badgedatabase.com/legal/</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
   <url><loc>https://badgedatabase.com/contact/</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://badgedatabase.com/badges/wartortle/</loc><lastmod>2026-10-06</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://badgedatabase.com/badges/venusaur/</loc><lastmod>2026-10-06</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://badgedatabase.com/badges/pikachu/</loc><lastmod>2026-10-06</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://badgedatabase.com/badges/ivysaur/</loc><lastmod>2026-10-06</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://badgedatabase.com/badges/charmeleon/</loc><lastmod>2026-10-06</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://badgedatabase.com/badges/charizard/</loc><lastmod>2026-10-06</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://badgedatabase.com/badges/blastoise/</loc><lastmod>2026-10-06</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://badgedatabase.com/badges/vaultbreakers-golden/</loc><lastmod>2026-10-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://badgedatabase.com/badges/vaultbreakers/</loc><lastmod>2026-10-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://badgedatabase.com/badges/haunter/</loc><lastmod>2026-10-05</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>

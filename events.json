@@ -1,5 +1,117 @@
 [
  {
+  "id": "wartortle",
+  "name": "Wartortle",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Wartortle",
+    "img": "15a0db5d-bef1-49bb-8594-e3925e1ec248",
+    "how": "Objective not announced yet.",
+    "cost": "na",
+    "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign."
+   }
+  ]
+ },
+ {
+  "id": "venusaur",
+  "name": "Venusaur",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Venusaur",
+    "img": "ad14f7e4-1ca6-476b-acaf-250da22388ec",
+    "how": "Objective not announced yet.",
+    "cost": "na",
+    "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign."
+   }
+  ]
+ },
+ {
+  "id": "pikachu",
+  "name": "Pikachu",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Pikachu",
+    "img": "b9dd6905-474f-45d1-a4ff-8ba138208afc",
+    "how": "Objective not announced yet.",
+    "cost": "na",
+    "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign."
+   }
+  ]
+ },
+ {
+  "id": "ivysaur",
+  "name": "Ivysaur",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Ivysaur",
+    "img": "6de326e8-643f-4043-beb6-3ad135385708",
+    "how": "Objective not announced yet.",
+    "cost": "na",
+    "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign."
+   }
+  ]
+ },
+ {
+  "id": "charmeleon",
+  "name": "Charmeleon",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Charmeleon",
+    "img": "d9698627-aff7-434c-8002-1351b2c59984",
+    "how": "Objective not announced yet.",
+    "cost": "na",
+    "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign."
+   }
+  ]
+ },
+ {
+  "id": "charizard",
+  "name": "Charizard",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Charizard",
+    "img": "ac097350-add0-44c4-b405-e70aa746389b",
+    "how": "Objective not announced yet.",
+    "cost": "na",
+    "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign."
+   }
+  ]
+ },
+ {
+  "id": "blastoise",
+  "name": "Blastoise",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Blastoise",
+    "img": "2b975e12-fd49-4e54-85c4-6cc042453dbb",
+    "how": "Objective not announced yet.",
+    "cost": "na",
+    "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign."
+   }
+  ]
+ },
+ {
   "id": "haunter",
   "name": "Haunter",
   "category": "Unknown",
