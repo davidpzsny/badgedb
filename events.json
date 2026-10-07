@@ -1,5 +1,51 @@
 [
  {
+  "id": "witchspire",
+  "name": "Witchspire",
+  "category": "Witchspire",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Gold Stamp",
+    "img": "94f4c9cb-de1d-44a0-a3fd-5e0b205451c0",
+    "how": "Watch 240 minutes in the category.",
+    "cost": "free",
+    "desc": "This badge was earned by watching a streamer in the Witchspire category for 240 minutes"
+   },
+   {
+    "name": "Witchspire Logo",
+    "img": "9be56234-70e5-414f-a6a0-78ec9cbb08f7",
+    "how": "Watch 60 minutes in the category.",
+    "cost": "free",
+    "desc": "This badge was earned by watching a streamer in the Witchspire category for 60 minutes"
+   },
+   {
+    "name": "Witch Hat",
+    "img": "52fc3c6b-f177-4f68-8334-4172d0555923",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Witchspire category"
+   }
+  ]
+ },
+ {
+  "id": "sonic-racing-crossworlds",
+  "name": "Sonic Racing: CrossWorlds",
+  "category": "Sonic Racing: CrossWorlds",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "CrossWorlds World Championship 2026",
+    "img": "97062b99-1125-4f41-91df-b98687176d8e",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Sonic Racing: CrossWorlds category during the 2026 World Championship Finals and Club Chaos festivities."
+   }
+  ]
+ },
+ {
   "id": "wartortle",
   "name": "Wartortle",
   "category": "Unknown",
