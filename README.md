@@ -16,13 +16,13 @@ channel campaign badges, global emotes, badge popularity and statistics. New bad
 
 | Page | URL | What it shows |
 |---|---|---|
-| Home | `/` | "Badges available right now" calendar, stats, 24/7 stream (loads on click), recent badges |
+| Home | `/` | Stat tiles (Active now · Upcoming · Date TBA · Free today — click one to jump to that part of the timeline), "Badges available right now" calendar, 24/7 stream (loads on click), top categories, most popular badges, recently added |
 | Timeline | `/timeline/` | Active now · Coming up · Date not announced, with a week / 4-week calendar (finished badges are hidden) |
 | Global Badges | `/badges/` | Every global badge set — filters: Free, Paid, Active, Ends soon, Upcoming, No date yet |
 | Badge page | `/badges/<set-id>/` | Images, objective, category, channels, start/end, Twitch description, chat preview with your own name, **Add to calendar** |
 | Channel Badges | `/channel/` · `/channel/<image-id>/` | Campaign badges (sub / watch / top supporter) collected from live channels |
 | Global Emotes | `/emotes/` | All global emotes; new ones get a date, removed ones move to "Removed" |
-| Top Categories | `/categories/` | Top 50 Twitch categories right now: viewers, live channels, biggest stream, badges you can earn there |
+| Top Categories | `/categories/` | Top 150 Twitch categories right now: viewers, live channels, biggest stream, badges you can earn there |
 | Badge Popularity | `/popularity/` | Badges ranked by users seen wearing them (data: PotatBotat) |
 | Statistics | `/stats/` | Badges per month / year, free vs paid, games with the most badges |
 | Contact | `/contact/` | Email / Discord / X, and a form that opens a pre-filled email (badge pages link here with "Report a mistake") |
@@ -48,11 +48,15 @@ Static site on GitHub Pages + a bot in GitHub Actions that runs **every 15 minut
    ("Watch 60 minutes…") and free / paid. Badges of the same campaign are grouped into one event.
    A placeholder badge entered by hand is linked to the real badge once Twitch publishes it.
 3. **Dates** — Twitch's API has no badge dates. The bot takes them from Twitch *reward campaigns* in the
-   same category when one exists (uses the `TWITCH_GQL_OAUTH` login). Otherwise dates are entered in `/admin/`.
+   same category when one exists (uses the `TWITCH_GQL_OAUTH` login). It also tries Twitch *Drops campaigns*,
+   but Twitch currently blocks automated access to them ("failed integrity check"). The bot does not try to get
+   around that: after a failed attempt it waits until the next day. Drops dates are entered in `/admin/`
+   (copy them from [twitch.tv/drops/campaigns](https://www.twitch.tv/drops/campaigns)).
 4. **Link reply on X** — after a new badge post, as soon as its page is online the bot replies with the link
    (switch off with variable `X_LINK_REPLY = 0`).
    **"Now available" posts** — when an event with a known start time begins, the bot posts
-   "🟢 Now available on Twitch: …" (image, objective, end time) to X and Discord, then replies with the link.
+   "🟢 Now available on Twitch: …" (image, objective, end date in UTC — no countdown) to X and Discord,
+   then replies with the link.
    If an event starts within 12 minutes the bot waits and posts right on time; it never posts an event more than
    90 minutes late, never twice, and never for events without dates (switch off with variable `X_LIVE_POSTS = 0`).
 5. **Global emotes** — tracked from the official API (first-seen and removed dates).
@@ -66,6 +70,11 @@ Static site on GitHub Pages + a bot in GitHub Actions that runs **every 15 minut
 Rules the site applies by itself:
 - An event without dates whose badge has been on Twitch for **21+ days** counts as ended.
 - Finished badges leave the timeline and calendars immediately; they stay in the archive as "Ended".
+- **Calendars show the newest badges first** (like BadgeBase): ordered by the day Twitch added the badge,
+  upcoming ones included; badges of one event stay together. "Active now" cards and "Date not announced"
+  are newest first too; "Coming up" is ordered by start time.
+- **All counts are badge counts, not event counts** (an event can hold several badges), so the home tiles and
+  the timeline headings always show the same numbers.
 - Anything set by hand in `/admin/` is never overwritten by the bot.
 
 ---
@@ -84,7 +93,8 @@ channel-badges.json       channel campaign badges         ← bot
 emotes.json               global emotes                   ← bot
 popularity.json           badge user counts               ← /admin/ (bot when potat allows it)
 posts.json                X posts awaiting a link reply   ← bot
-status.json               last run report (popularity, emotes) — check this first when debugging
+status.json               last run report (popularity, emotes, drop campaigns) — check this first when debugging
+top-categories.json       top 150 Twitch categories        ← bot
 channels-state.json       crawler bookkeeping             ← bot
 channels.txt              extra channels to always check (one per line)
 
@@ -163,6 +173,7 @@ uploaded while the bot runs, that run skips saving and the next run redoes it (n
 | Popularity shows old numbers | potat.app blocks the bot — update by hand in `/admin/`. |
 | `/admin/` save fails with 403 | The admin token lacks *Contents: Read and write* on `badgedb`. |
 | Log: `TWITCH_GQL_OAUTH token was rejected` | Copy a fresh `auth-token` for the helper account into the secret. |
+| A new badge has no dates, but Twitch shows them | It is a Drops campaign — Twitch blocks reading those automatically. Enter the dates in `/admin/` (`status.json` → `drop_campaigns` shows the bot's last attempt). |
 | Log: `posting failed` | Check X credit and that the X app still has *Read and write*. |
 | "Log in with Twitch" missing | `TWITCH_CLIENT_ID` must be passed to the *Build SEO pages* step; run the workflow once. |
 | Something else | Open `status.json` in the repo — the bot writes its last results there. |
