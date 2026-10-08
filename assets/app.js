@@ -197,9 +197,10 @@ function renderHome(){
   $('#socials').innerHTML = defs.map(([n,u,c,svg])=>`<a class="social" style="--c:${c}" href="${esc(u)}" target="_blank" rel="noopener"><span class="ic" ${n==='X'?'style="color:#111"':''}>${svg}</span><span><b>${n}</b><small>${esc(u.replace(/^https?:\/\/(www\.)?/,''))}</small></span><span class="go">↗</span></a>`).join('');
 
   const live = EVENTS.filter(e=>status(e)==="live");
-  const soon = allEvents().filter(e=>["soon","tba"].includes(status(e)) && !isStale(e));
+  const soon = allEvents().filter(e=>status(e)==="soon"), tbaN = allEvents().filter(e=>status(e)==="tba" && !isStale(e)).length;
   $('#sLive').textContent = live.reduce((n,e)=>n+e.badges.length,0);
-  $('#sSoon').textContent = soon.length;
+  $('#sSoon').textContent = soon.length;   // same numbers as the Timeline's "Coming up" / "Date not announced"
+  $('#sTba').textContent = tbaN;
   $('#sFree').textContent = live.reduce((n,e)=>n+e.badges.filter(b=>b.cost==="free").length,0);
   $('#cEvents').textContent = live.length; $('#cGlobal').textContent = globalBadges.length; $('#hArchive').textContent = globalBadges.length;
 
@@ -263,10 +264,8 @@ function renderEvents(){
   });
   buckets.live.sort((a,b)=>evNewest(b)-evNewest(a) || Date.parse(b.start)-Date.parse(a.start)); buckets.soon.sort((a,b)=>Date.parse(a.start)-Date.parse(b.start)); buckets.ended.sort((a,b)=>Date.parse(b.end)-Date.parse(a.end));
   delete buckets.ended;                              // finished events stay in the archive, not on the timeline
-  // "Coming up" also lists events without dates (after the dated ones, newest first) — no date shown on them
-  buckets.tba.sort((a,b)=>evNewest(b)-evNewest(a));
-  const tba = new Set(buckets.tba); buckets.soon = buckets.soon.concat(buckets.tba); delete buckets.tba;
-  for(const k of Object.keys(buckets)){ const K=k[0].toUpperCase()+k.slice(1); $('#ev'+K).innerHTML = buckets[k].length?buckets[k].map(ev=>eventCard(ev, tba.has(ev) ? "tba" : k)).join(''):`<div class="empty">${evQuery?'No events match your search.':READY?'Nothing here right now.':'Loading…'}</div>`; $('#n'+K).textContent = buckets[k].length||''; }
+  buckets.tba.sort((a,b)=>evNewest(b)-evNewest(a));  // events without dates: newest first
+  for(const k of Object.keys(buckets)){ const K=k[0].toUpperCase()+k.slice(1); $('#ev'+K).innerHTML = buckets[k].length?buckets[k].map(ev=>eventCard(ev,k)).join(''):`<div class="empty">${evQuery?'No events match your search.':READY?'Nothing here right now.':'Loading…'}</div>`; $('#n'+K).textContent = buckets[k].length||''; }
 }
 const DAY=864e5, COLW=46;
 /* ---------- mobile menu ---------- */
