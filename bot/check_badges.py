@@ -211,6 +211,11 @@ def fetch_drop_campaigns():
     """Drops campaigns visible to the helper account. Twitch's own badge campaigns are published by 'Twitch Gaming';
     returned in the same shape as reward campaigns (without rewards) so they date events by category/name."""
     if not GQL_OAUTH: return []
+    # Twitch currently refuses this ("failed integrity check"). Don't hammer it every 15 minutes from the helper
+    # account: after a refusal, try again at most once a day, so it starts working by itself if Twitch ever allows it.
+    prev = load_json(os.path.join(ROOT, "status.json"), {}).get("drop_campaigns", {})
+    if str(prev.get("msg", "")).startswith("not available") and str(prev.get("at", ""))[:10] == datetime.date.today().isoformat():
+        print("drop campaigns: refused by Twitch earlier today — next try tomorrow"); return []
     headers = {"Client-Id": GQL_CLIENT_ID, "Authorization": f"OAuth {GQL_OAUTH}", "Content-Type": "text/plain;charset=UTF-8",
                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128 Safari/537.36"}
     attempts = [
@@ -544,9 +549,7 @@ def _dt(t): return datetime.datetime.fromisoformat(t.replace("Z", "+00:00"))
 def live_post_text(ev, badges_meta):
     names = [m["title"] for m in badges_meta]
     title = " & ".join(names[:2]) + (f" + {len(names) - 2} more" if len(names) > 2 else "")
-    end = _dt(ev["end"]); left = end - datetime.datetime.now(datetime.timezone.utc)
-    days = left.days; hours = left.seconds // 3600
-    until = end.strftime("%b %-d, %H:%M UTC") + (f" ({days}d {hours}h left)" if days else f" ({hours}h left)")
+    until = _dt(ev["end"]).strftime("%b %-d, %H:%M UTC")
     hows = [b.get("how", "") for b in ev.get("badges", []) if b.get("img")]
     how = hows[0] if hows and all(h == hows[0] for h in hows) else " / ".join(dict.fromkeys(h for h in hows if h))
     head = f"🟢 Now available on Twitch: {title}"
