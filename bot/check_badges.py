@@ -546,12 +546,19 @@ LIVE_WAIT_MIN = 12          # if an event starts within this many minutes, wait 
 LIVE_LATE_MIN = 90          # never announce an event that started longer ago than this
 def _dt(t): return datetime.datetime.fromisoformat(t.replace("Z", "+00:00"))
 
-def live_post_text(ev, badges_meta):
+def live_title(badges_meta):
     names = [m["title"] for m in badges_meta]
-    title = " & ".join(names[:2]) + (f" + {len(names) - 2} more" if len(names) > 2 else "")
+    return " & ".join(names[:2]) + (f" + {len(names) - 2} more" if len(names) > 2 else "")
+
+def live_post_text(ev, badges_meta):
+    title = live_title(badges_meta)
     until = _dt(ev["end"]).strftime("%b %-d, %H:%M UTC")
-    hows = [b.get("how", "") for b in ev.get("badges", []) if b.get("img")]
-    how = hows[0] if hows and all(h == hows[0] for h in hows) else " / ".join(dict.fromkeys(h for h in hows if h))
+    how_of = {b.get("img"): (b.get("how") or "").strip() for b in ev.get("badges", []) if b.get("img")}
+    hows = [how_of.get(m["img"], "") for m in badges_meta]
+    if hows and all(h == hows[0] for h in hows):
+        how = hows[0]                                   # same objective for every badge: say it once
+    else:                                               # different objectives: one line per badge, so it's clear which is which
+        how = "\n".join(f"• {m['title']}: {h}" for m, h in zip(badges_meta, hows) if h)
     head = f"🟢 Now available on Twitch: {title}"
     tail = f"\n\n⏳ Until {until}\n#Twitch #TwitchBadges"
     room = 270 - len(head) - len(tail)
@@ -591,8 +598,9 @@ def announce_live(events, live):
                       access_token=os.environ["X_ACCESS_TOKEN"], access_token_secret=os.environ["X_ACCESS_SECRET"])
             media_ids = None
             try:
-                png = requests.get(first["url"], timeout=30).content
-                card = make_card(png, " & ".join(m["title"] for m in meta[:2]), header="NOW AVAILABLE ON TWITCH",
+                pngs = [requests.get(m["url"], timeout=30).content for m in meta[:5]]   # every badge of the event on the image
+                if len(meta) > 5: pngs += [b""] * (len(meta) - 5)                     # counted in the "+N" tile
+                card = make_card(pngs, live_title(meta), header="NOW AVAILABLE ON TWITCH",
                                  header_sub="Get it before " + _dt(ev["end"]).strftime("%b %-d, %H:%M UTC"), accent=(52, 211, 153))
                 api = tweepy.API(tweepy.OAuth1UserHandler(*kw.values()))
                 media_ids = [api.media_upload(filename=f"{first['img']}-live.png", file=io.BytesIO(card)).media_id]
@@ -680,19 +688,42 @@ def make_card(badge_png_bytes, title, subtitle="", header="NEW TWITCH GLOBAL BAD
     d.text((148, 52), header, font=font(24), fill=accent)
     d.text((148, 82), header_sub, font=font(26, False), fill=(158, 154, 176))
     d.line((56, 150, W - 56, 150), fill=(45, 43, 58), width=2)
-    # badge on a rounded tile, centered
-    tile = Image.new("RGBA", (300, 300), (0, 0, 0, 0))
-    ImageDraw.Draw(tile).rounded_rectangle((0, 0, 299, 299), radius=52, fill=(30, 29, 42), outline=(70, 66, 95), width=2)
-    b = Image.open(io.BytesIO(badge_png_bytes)).convert("RGBA").resize((216, 216), Image.NEAREST)
-    tile.alpha_composite(b, (42, 42)); img.paste(tile, ((W - 300) // 2, 178), tile)
+    # badges on rounded tiles, side by side and centered (one event can have several badges);
+    # more than 5 → the first 4 and a "+N" tile
+    pngs = list(badge_png_bytes) if isinstance(badge_png_bytes, (list, tuple)) else [badge_png_bytes]
+    extra = 0
+    if len(pngs) > 5: extra = len(pngs) - 4; pngs = pngs[:4]
+    n = len(pngs) + (1 if extra else 0); gap = 28 if n <= 3 else 22
+    s = int(min(300, (W - 112 - gap * (n - 1)) / n)); x = (W - (s * n + gap * (n - 1))) // 2; y0 = 178 + (300 - s) // 2
+    def blank():
+        t = Image.new("RGBA", (s, s), (0, 0, 0, 0))
+        ImageDraw.Draw(t).rounded_rectangle((0, 0, s - 1, s - 1), radius=int(s * .17), fill=(30, 29, 42), outline=(70, 66, 95), width=2)
+        return t
+    for p in pngs:
+        tile = blank(); bs = int(s * .72)
+        try:
+            b = Image.open(io.BytesIO(p)).convert("RGBA").resize((bs, bs), Image.NEAREST)
+            tile.alpha_composite(b, ((s - bs) // 2, (s - bs) // 2))
+        except Exception: pass
+        img.paste(tile, (x, y0), tile); x += s + gap
+    if extra:
+        tile = blank(); td = ImageDraw.Draw(tile); fx = font(int(s * .3)); t = f"+{extra}"
+        td.text(((s - td.textlength(t, font=fx)) / 2, s / 2 - s * .19), t, font=fx, fill=(167, 139, 250))
+        img.paste(tile, (x, y0), tile)
     # title
-    tsz = 66 if len(title) <= 22 else 52 if len(title) <= 40 else 40
-    f = font(tsz); lines, cur = [], ""
-    for w in title.split():
-        t = (cur + " " + w).strip()
-        if d.textlength(t, font=f) > W - 160 and cur: lines.append(cur); cur = w
-        else: cur = t
-    lines.append(cur); y = 500 if len(lines) == 1 else 490
+    def wrap(f):
+        lines, cur = [], ""
+        for w in title.split():
+            t = (cur + " " + w).strip()
+            if d.textlength(t, font=f) > W - 160 and cur: lines.append(cur); cur = w
+            else: cur = t
+        return lines + [cur]
+    tsz = 66 if len(title) <= 22 else 52 if len(title) <= 40 else 44
+    while True:                                   # shrink until it fits on one line (two lines at the smallest size)
+        f = font(tsz); lines = wrap(f)
+        if len(lines) == 1 or tsz <= 38: break
+        tsz -= 4
+    y = 500 if len(lines) == 1 else 484
     for ln in lines[:2]: d.text(((W - d.textlength(ln, font=f)) / 2, y), ln, font=f, fill=(244, 243, 248)); y += int(tsz * 1.12)
     # footer
     d.line((56, H - 78, W - 56, H - 78), fill=(45, 43, 58), width=2)
