@@ -278,13 +278,10 @@ def timeline_page(events, by_img, now):
     # newest badges first (day Twitch added the badge, then start); sort is stable, so an event's badges keep their order
     groups["live"].sort(key=lambda x: ((by_img.get(x[1].get("img")) or {}).get("added") or x[0]["start"][:10], x[0]["start"]), reverse=True)
     groups["soon"].sort(key=lambda x: x[0]["start"])
-    # "Coming up" also lists badges without dates (after the dated ones, newest first, no date on them)
-    groups["tba"].sort(key=lambda x: (by_img.get(x[1].get("img")) or {}).get("added") or "", reverse=True)
-    groups["soon"] = [(ev, b, "soon") for ev, b in groups["soon"]] + [(ev, b, "tba") for ev, b in groups.pop("tba")]
-    groups["live"] = [(ev, b, "live") for ev, b in groups["live"]]
+    groups["tba"].sort(key=lambda x: (by_img.get(x[1].get("img")) or {}).get("added") or "", reverse=True)  # no dates: newest first
     fills = {}
-    for key, cid, nid in (("live", "evLive", "nLive"), ("soon", "evSoon", "nSoon")):
-        fills[f'<div class="events" id="{cid}"></div>'] = f'<div class="events" id="{cid}">' + ("".join(card(ev, b, st) for ev, b, st in groups[key]) or '<div class="empty">Nothing here right now.</div>') + "</div>"
+    for key, cid, nid in (("live", "evLive", "nLive"), ("soon", "evSoon", "nSoon"), ("tba", "evTba", "nTba")):
+        fills[f'<div class="events" id="{cid}"></div>'] = f'<div class="events" id="{cid}">' + ("".join(card(ev, b, key) for ev, b in groups[key]) or '<div class="empty">Nothing here right now.</div>') + "</div>"
         fills[f'<span class="n" id="{nid}"></span>'] = f'<span class="n" id="{nid}">{len(groups[key]) or ""}</span>'
     n = len(groups["live"])
     return page("/timeline/", f"{n} Twitch Badges Available Now – Timeline | Badge Database",
