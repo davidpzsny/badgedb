@@ -204,6 +204,43 @@ def fetch_reward_campaigns():
             print(f"twitch campaigns: {body['operationName']} failed -> {e}")
     return []
 
+DROPS_QUERY = """query BadgeDBDropCampaigns {
+  currentUser { dropCampaigns { id name status startAt endAt game { displayName } owner { name } } }
+}"""
+def fetch_drop_campaigns():
+    """Drops campaigns visible to the helper account. Twitch's own badge campaigns are published by 'Twitch Gaming';
+    returned in the same shape as reward campaigns (without rewards) so they date events by category/name."""
+    if not GQL_OAUTH: return []
+    headers = {"Client-Id": GQL_CLIENT_ID, "Authorization": f"OAuth {GQL_OAUTH}", "Content-Type": "text/plain;charset=UTF-8",
+               "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128 Safari/537.36"}
+    attempts = [
+        {"operationName": "BadgeDBDropCampaigns", "query": DROPS_QUERY, "variables": {}},
+        {"operationName": "ViewerDropsDashboard", "variables": {"fetchRewardCampaigns": False},
+         "extensions": {"persistedQuery": {"version": 1, "sha256Hash": GQL_HASH}}},
+    ]
+    last = ""
+    for body in attempts:
+        try:
+            j = requests.post("https://gql.twitch.tv/gql", json=body, headers=headers, timeout=30).json()
+            if isinstance(j, list): j = j[0] if j else {}
+            camps = (((j or {}).get("data") or {}).get("currentUser") or {}).get("dropCampaigns")
+            if camps is not None:
+                ours = [c for c in camps if "twitch" in ((c.get("owner") or {}).get("name") or "").lower()
+                        and (c.get("status") or "").upper() in ("ACTIVE", "UPCOMING", "")]
+                print(f"drop campaigns: {len(camps)} found via {body['operationName']}, {len(ours)} published by Twitch")
+                for c in ours[:30]:
+                    print(f"   - {c.get('name')} | {(c.get('game') or {}).get('displayName')} | {c.get('startAt')} -> {c.get('endAt')}")
+                status("drop_campaigns", f"ok via {body['operationName']}: {len(camps)} total, {len(ours)} by Twitch: "
+                       + "; ".join(f"{c.get('name')} ({(c.get('game') or {}).get('displayName')})" for c in ours[:12]))
+                return [{"id": c.get("id"), "name": c.get("name"), "startsAt": c.get("startAt"), "endsAt": c.get("endAt"),
+                         "game": c.get("game") or {}, "rewards": [], "kind": "drops"} for c in ours]
+            last = str((j or {}).get("errors") or j)[:300]
+            print(f"drop campaigns: {body['operationName']} gave no data -> {last}")
+        except Exception as e:
+            last = f"{body['operationName']} failed -> {e}"; print("drop campaigns:", last)
+    status("drop_campaigns", f"not available: {last}")
+    return []
+
 def _norm(t): return re.sub(r"[^a-z0-9]+", "", (t or "").lower())
 
 def _iso(t):
@@ -225,6 +262,8 @@ def apply_campaigns(rows):
     """Match Twitch reward campaigns to our badges and fill dates/objective/category.
     Fields you edited in the admin page are marked *_src='manual' and are never overwritten."""
     camps = fetch_reward_campaigns()
+    try: camps = camps + fetch_drop_campaigns()      # drops have no reward list: they only date events by category/name
+    except Exception as e: print("drop campaigns: skipped ->", e)
     if not camps: return
     events = load_events()
     title_of = {r[1]: r[0] for r in rows}
@@ -500,12 +539,12 @@ def update_popularity(live):
 X_LIVE_POSTS = (os.environ.get("X_LIVE_POSTS") or "1").strip().lower() not in ("0", "false", "no", "off")
 LIVE_WAIT_MIN = 12          # if an event starts within this many minutes, wait for it and post on time
 LIVE_LATE_MIN = 90          # never announce an event that started longer ago than this
-def _iso(t): return datetime.datetime.fromisoformat(t.replace("Z", "+00:00"))
+def _dt(t): return datetime.datetime.fromisoformat(t.replace("Z", "+00:00"))
 
 def live_post_text(ev, badges_meta):
     names = [m["title"] for m in badges_meta]
     title = " & ".join(names[:2]) + (f" + {len(names) - 2} more" if len(names) > 2 else "")
-    end = _iso(ev["end"]); left = end - datetime.datetime.now(datetime.timezone.utc)
+    end = _dt(ev["end"]); left = end - datetime.datetime.now(datetime.timezone.utc)
     days = left.days; hours = left.seconds // 3600
     until = end.strftime("%b %-d, %H:%M UTC") + (f" ({days}d {hours}h left)" if days else f" ({hours}h left)")
     hows = [b.get("how", "") for b in ev.get("badges", []) if b.get("img")]
@@ -527,7 +566,7 @@ def announce_live(events, live):
     due = []
     for ev in events:
         if not ev.get("start") or not ev.get("end") or f"live:{ev['id']}" in posts: continue
-        start, end = _iso(ev["start"]), _iso(ev["end"])
+        start, end = _dt(ev["start"]), _dt(ev["end"])
         if end <= now: continue
         mins = (start - now).total_seconds() / 60
         if -LIVE_LATE_MIN <= mins <= LIVE_WAIT_MIN:
@@ -551,7 +590,7 @@ def announce_live(events, live):
             try:
                 png = requests.get(first["url"], timeout=30).content
                 card = make_card(png, " & ".join(m["title"] for m in meta[:2]), header="NOW AVAILABLE ON TWITCH",
-                                 header_sub="Get it before " + _iso(ev["end"]).strftime("%b %-d, %H:%M UTC"), accent=(52, 211, 153))
+                                 header_sub="Get it before " + _dt(ev["end"]).strftime("%b %-d, %H:%M UTC"), accent=(52, 211, 153))
                 api = tweepy.API(tweepy.OAuth1UserHandler(*kw.values()))
                 media_ids = [api.media_upload(filename=f"{first['img']}-live.png", file=io.BytesIO(card)).media_id]
             except Exception as e:
