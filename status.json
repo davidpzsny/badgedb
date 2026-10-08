@@ -1,19 +1,19 @@
 {
  "popularity_http": {
-  "at": "2026-10-08T12:56:00+00:00",
-  "msg": "HTTP 403, 4828 bytes, starts with: <!DOCTYPE html>\n<!--[if lt IE 7]> <html class=\"no-js ie6 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 7]>    <html class=\"no-js ie7 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 8]>    <html class=\"no-js ie8 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if gt IE 8]><!--> <html class=\"no-js\" lang=\"en-US\"> <!"
+  "at": "2026-10-08T13:20:51+00:00",
+  "msg": "HTTP 403, 4829 bytes, starts with: <!DOCTYPE html>\n<!--[if lt IE 7]> <html class=\"no-js ie6 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 7]>    <html class=\"no-js ie7 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 8]>    <html class=\"no-js ie8 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if gt IE 8]><!--> <html class=\"no-js\" lang=\"en-US\"> <!"
  },
  "popularity": {
-  "at": "2026-10-08T12:56:00+00:00",
+  "at": "2026-10-08T13:20:51+00:00",
   "msg": "request failed: Expecting value: line 1 column 1 (char 0)"
  },
  "emotes": {
-  "at": "2026-10-08T12:56:04+00:00",
+  "at": "2026-10-08T13:20:54+00:00",
   "msg": "302 live, 0 new, 0 removed"
  },
  "top_categories": {
-  "at": "2026-10-08T12:56:04+00:00",
-  "msg": "150 categories, #1 VALORANT"
+  "at": "2026-10-08T13:20:54+00:00",
+  "msg": "150 categories, #1 Just Chatting"
  },
  "drop_campaigns": {
   "at": "2026-10-08T11:14:40+00:00",
