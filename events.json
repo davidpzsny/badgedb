@@ -31,10 +31,10 @@
  },
  {
   "id": "sonic-racing-crossworlds",
-  "name": "Sonic Racing: CrossWorlds",
+  "name": "CrossWorlds World Championship 2026",
   "category": "Sonic Racing: CrossWorlds",
-  "start": "",
-  "end": "",
+  "start": "2026-10-09T16:00:00Z",
+  "end": "2026-10-16T15:59:00Z",
   "badges": [
    {
     "name": "CrossWorlds World Championship 2026",
@@ -43,156 +43,15 @@
     "cost": "paid",
     "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Sonic Racing: CrossWorlds category during the 2026 World Championship Finals and Club Chaos festivities."
    }
-  ]
- },
- {
-  "id": "wartortle",
-  "name": "Wartortle",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "Wartortle",
-    "img": "15a0db5d-bef1-49bb-8594-e3925e1ec248",
-    "how": "Objective not announced yet.",
-    "cost": "na",
-    "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign."
-   }
-  ]
- },
- {
-  "id": "venusaur",
-  "name": "Venusaur",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "Venusaur",
-    "img": "ad14f7e4-1ca6-476b-acaf-250da22388ec",
-    "how": "Objective not announced yet.",
-    "cost": "na",
-    "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign."
-   }
-  ]
- },
- {
-  "id": "pikachu",
-  "name": "Pikachu",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "Pikachu",
-    "img": "b9dd6905-474f-45d1-a4ff-8ba138208afc",
-    "how": "Objective not announced yet.",
-    "cost": "na",
-    "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign."
-   }
-  ]
- },
- {
-  "id": "ivysaur",
-  "name": "Ivysaur",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "Ivysaur",
-    "img": "6de326e8-643f-4043-beb6-3ad135385708",
-    "how": "Objective not announced yet.",
-    "cost": "na",
-    "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign."
-   }
-  ]
- },
- {
-  "id": "charmeleon",
-  "name": "Charmeleon",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "Charmeleon",
-    "img": "d9698627-aff7-434c-8002-1351b2c59984",
-    "how": "Objective not announced yet.",
-    "cost": "na",
-    "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign."
-   }
-  ]
- },
- {
-  "id": "charizard",
-  "name": "Charizard",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "Charizard",
-    "img": "ac097350-add0-44c4-b405-e70aa746389b",
-    "how": "Objective not announced yet.",
-    "cost": "na",
-    "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign."
-   }
-  ]
- },
- {
-  "id": "blastoise",
-  "name": "Blastoise",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "Blastoise",
-    "img": "2b975e12-fd49-4e54-85c4-6cc042453dbb",
-    "how": "Objective not announced yet.",
-    "cost": "na",
-    "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign."
-   }
-  ]
- },
- {
-  "id": "haunter",
-  "name": "Haunter",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "Haunter",
-    "img": "ddfbf317-aa77-482e-a99d-eb975deb2fe7",
-    "how": "Objective not announced yet.",
-    "cost": "na",
-    "desc": "This badge was earned by evolving the Night Out 2026 Gastly badge."
-   }
-  ]
- },
- {
-  "id": "gengar",
-  "name": "Gengar",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "Gengar",
-    "img": "f68e567f-67cf-4d4a-8c3e-a0dcee42f095",
-    "how": "Objective not announced yet.",
-    "cost": "na",
-    "desc": "This badge was earned by evolving the Night Out 2026 Haunter badge."
-   }
-  ]
+  ],
+  "dates_src": "twitch",
+  "name_src": "manual",
+  "about": "Sonic Racing: CrossWorlds World Championship 2026 finals in New York on October 9. Twitch hasn't announced the end date yet — the end shown is an estimate."
  },
  {
   "id": "gastly",
-  "name": "Gastly",
-  "category": "Unknown",
+  "name": "Pokémon Night Out 2026",
+  "category": "Pokémon",
   "start": "",
   "end": "",
   "badges": [
@@ -202,15 +61,32 @@
     "how": "Objective not announced yet.",
     "cost": "na",
     "desc": "This badge was earned during Pokémon Night Out 2026."
+   },
+   {
+    "name": "Haunter",
+    "img": "ddfbf317-aa77-482e-a99d-eb975deb2fe7",
+    "how": "Evolves from the Night Out 2026 Gastly badge.",
+    "cost": "na",
+    "desc": "This badge was earned by evolving the Night Out 2026 Gastly badge.",
+    "how_src": "manual"
+   },
+   {
+    "name": "Gengar",
+    "img": "f68e567f-67cf-4d4a-8c3e-a0dcee42f095",
+    "how": "Evolves from the Night Out 2026 Gastly badge.",
+    "cost": "na",
+    "desc": "This badge was earned by evolving the Night Out 2026 Haunter badge.",
+    "how_src": "manual"
    }
-  ]
+  ],
+  "name_src": "manual"
  },
  {
   "id": "vaultbreakers",
-  "name": "Vaultbreakers",
+  "name": "Vaultbreakers release",
   "category": "Vaultbreakers",
-  "start": "",
-  "end": "",
+  "start": "2026-10-08T17:00:00Z",
+  "end": "2026-11-05T16:59:00Z",
   "badges": [
    {
     "name": "Vaultbreakers",
@@ -226,14 +102,16 @@
     "cost": "paid",
     "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Vaultbreakers category"
    }
-  ]
+  ],
+  "dates_src": "twitch",
+  "name_src": "manual"
  },
  {
   "id": "dayz",
-  "name": "DayZ",
+  "name": "DayZ Badlands launch",
   "category": "DayZ",
-  "start": "",
-  "end": "",
+  "start": "2026-10-08T11:00:00Z",
+  "end": "2026-10-19T08:59:00Z",
   "badges": [
    {
     "name": "DayZ Yellow King",
@@ -242,14 +120,16 @@
     "cost": "paid",
     "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the DayZ category during the DayZ Badlands expansion launch!"
    }
-  ]
+  ],
+  "dates_src": "twitch",
+  "name_src": "manual"
  },
  {
-  "id": "thedragonsdogma",
-  "name": "TheDragonsDogma",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
+  "id": "dragon-s-dogma-ii",
+  "name": "Dragon's Dogma 2: Dark Arisen",
+  "category": "Dragon's Dogma II",
+  "start": "2026-10-08T12:00:00Z",
+  "end": "2026-10-31T22:58:00Z",
   "badges": [
    {
     "name": "TheDragonsDogma",
@@ -257,16 +137,7 @@
     "how": "Watch 60 minutes.",
     "cost": "free",
     "desc": "This badge was earned by watching Dragon's Dogma 2: Dark Arisen for 1 hour"
-   }
-  ]
- },
- {
-  "id": "dragon-s-dogma-ii",
-  "name": "Dragon's Dogma II",
-  "category": "Dragon's Dogma II",
-  "start": "",
-  "end": "",
-  "badges": [
+   },
    {
     "name": "FrekiFriend",
     "img": "2d1bfde9-94a9-4ed1-84a5-4aeb85911f1d",
@@ -274,7 +145,9 @@
     "cost": "paid",
     "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Dragon's Dogma II category during the launch of Dragon's Dogma 2: Dark Arisen!"
    }
-  ]
+  ],
+  "dates_src": "twitch",
+  "name_src": "manual"
  },
  {
   "id": "witcher-3",
@@ -1000,18 +873,70 @@
  },
  {
   "id": "pokemon-evo",
-  "name": "Pokémon evolution badges",
+  "name": "Pokémon First Partners — evolutions",
   "category": "Pokémon",
   "start": "",
   "end": "",
   "badges": [
    {
-    "name": "Evolutions (up to 8)",
-    "img": "",
-    "how": "Requires the four starter badges unlocked before Oct 1. Details later.",
-    "cost": "na"
+    "name": "Ivysaur",
+    "img": "6de326e8-643f-4043-beb6-3ad135385708",
+    "how": "Evolves from your First Partners starter badge (unlocked before Nov 1).",
+    "cost": "na",
+    "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign.",
+    "how_src": "manual"
+   },
+   {
+    "name": "Venusaur",
+    "img": "ad14f7e4-1ca6-476b-acaf-250da22388ec",
+    "how": "Evolves from your First Partners starter badge (unlocked before Nov 1).",
+    "cost": "na",
+    "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign.",
+    "how_src": "manual"
+   },
+   {
+    "name": "Charmeleon",
+    "img": "d9698627-aff7-434c-8002-1351b2c59984",
+    "how": "Evolves from your First Partners starter badge (unlocked before Nov 1).",
+    "cost": "na",
+    "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign.",
+    "how_src": "manual"
+   },
+   {
+    "name": "Charizard",
+    "img": "ac097350-add0-44c4-b405-e70aa746389b",
+    "how": "Evolves from your First Partners starter badge (unlocked before Nov 1).",
+    "cost": "na",
+    "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign.",
+    "how_src": "manual"
+   },
+   {
+    "name": "Wartortle",
+    "img": "15a0db5d-bef1-49bb-8594-e3925e1ec248",
+    "how": "Evolves from your First Partners starter badge (unlocked before Nov 1).",
+    "cost": "na",
+    "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign.",
+    "how_src": "manual"
+   },
+   {
+    "name": "Blastoise",
+    "img": "2b975e12-fd49-4e54-85c4-6cc042453dbb",
+    "how": "Evolves from your First Partners starter badge (unlocked before Nov 1).",
+    "cost": "na",
+    "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign.",
+    "how_src": "manual"
+   },
+   {
+    "name": "Pikachu",
+    "img": "b9dd6905-474f-45d1-a4ff-8ba138208afc",
+    "how": "Evolves from the Pichu badge (Pichu had to be unlocked before Oct 1).",
+    "cost": "na",
+    "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign.",
+    "how_src": "manual"
    }
-  ]
+  ],
+  "name_src": "manual",
+  "about": "Evolutions of the Pokémon First Partners Collection badges. Pichu evolves if it was unlocked before October 1; Bulbasaur, Charmander and Squirtle if unlocked before November 1. Twitch hasn't announced when evolving opens."
  },
  {
   "id": "wasteland",
