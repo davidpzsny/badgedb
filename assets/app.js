@@ -263,7 +263,10 @@ function renderEvents(){
   });
   buckets.live.sort((a,b)=>evNewest(b)-evNewest(a) || Date.parse(b.start)-Date.parse(a.start)); buckets.soon.sort((a,b)=>Date.parse(a.start)-Date.parse(b.start)); buckets.ended.sort((a,b)=>Date.parse(b.end)-Date.parse(a.end));
   delete buckets.ended;                              // finished events stay in the archive, not on the timeline
-  for(const k of Object.keys(buckets)){ const K=k[0].toUpperCase()+k.slice(1); $('#ev'+K).innerHTML = buckets[k].length?buckets[k].map(ev=>eventCard(ev,k)).join(''):`<div class="empty">${evQuery?'No events match your search.':READY?'Nothing here right now.':'Loading…'}</div>`; $('#n'+K).textContent = buckets[k].length||''; }
+  // "Coming up" also lists events without dates (after the dated ones, newest first) — no date shown on them
+  buckets.tba.sort((a,b)=>evNewest(b)-evNewest(a));
+  const tba = new Set(buckets.tba); buckets.soon = buckets.soon.concat(buckets.tba); delete buckets.tba;
+  for(const k of Object.keys(buckets)){ const K=k[0].toUpperCase()+k.slice(1); $('#ev'+K).innerHTML = buckets[k].length?buckets[k].map(ev=>eventCard(ev, tba.has(ev) ? "tba" : k)).join(''):`<div class="empty">${evQuery?'No events match your search.':READY?'Nothing here right now.':'Loading…'}</div>`; $('#n'+K).textContent = buckets[k].length||''; }
 }
 const DAY=864e5, COLW=46;
 /* ---------- mobile menu ---------- */
