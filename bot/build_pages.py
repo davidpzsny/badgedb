@@ -275,7 +275,9 @@ def timeline_page(events, by_img, now):
         if st == "tba" and is_stale(ev, by_img, now): continue
         if st in groups:
             for b in ev.get("badges", []): groups[st].append((ev, b))
-    groups["live"].sort(key=lambda x: x[0]["end"]); groups["soon"].sort(key=lambda x: x[0]["start"])
+    # newest badges first (day Twitch added the badge, then start); sort is stable, so an event's badges keep their order
+    groups["live"].sort(key=lambda x: ((by_img.get(x[1].get("img")) or {}).get("added") or x[0]["start"][:10], x[0]["start"]), reverse=True)
+    groups["soon"].sort(key=lambda x: x[0]["start"])
     fills = {}
     for key, cid, nid in (("live", "evLive", "nLive"), ("soon", "evSoon", "nSoon"), ("tba", "evTba", "nTba")):
         fills[f'<div class="events" id="{cid}"></div>'] = f'<div class="events" id="{cid}">' + ("".join(card(ev, b, key) for ev, b in groups[key]) or '<div class="empty">Nothing here right now.</div>') + "</div>"
