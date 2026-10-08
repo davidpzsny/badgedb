@@ -261,7 +261,7 @@ function renderEvents(){
     if(isStale(ev)) return;               // undated for 3+ weeks: treat as over, keep it off the timeline
     buckets[status(ev)].push(ev);
   });
-  buckets.live.sort((a,b)=>Date.parse(a.end)-Date.parse(b.end)); buckets.soon.sort((a,b)=>Date.parse(a.start)-Date.parse(b.start)); buckets.ended.sort((a,b)=>Date.parse(b.end)-Date.parse(a.end));
+  buckets.live.sort((a,b)=>evNewest(b)-evNewest(a) || Date.parse(b.start)-Date.parse(a.start)); buckets.soon.sort((a,b)=>Date.parse(a.start)-Date.parse(b.start)); buckets.ended.sort((a,b)=>Date.parse(b.end)-Date.parse(a.end));
   delete buckets.ended;                              // finished events stay in the archive, not on the timeline
   for(const k of Object.keys(buckets)){ const K=k[0].toUpperCase()+k.slice(1); $('#ev'+K).innerHTML = buckets[k].length?buckets[k].map(ev=>eventCard(ev,k)).join(''):`<div class="empty">${evQuery?'No events match your search.':READY?'Nothing here right now.':'Loading…'}</div>`; $('#n'+K).textContent = buckets[k].length||''; }
 }
@@ -288,10 +288,19 @@ function calRows(a0,a1){
   const out=[];
   EVENTS.forEach(ev=>{ if(!ev.start||!ev.end) return; const s=Date.parse(ev.start), e=Date.parse(ev.end);
     if(!(s<a1 && e>a0)) return;
-    ev.badges.forEach(b=>out.push({ev,b,s,e,st:status(ev)})); });
-  const rank={live:0,soon:1,ended:2};
-  return out.sort((x,y)=> rank[x.st]-rank[y.st] || (x.st==="soon" ? x.s-y.s : x.e-y.e) || x.b.name.localeCompare(y.b.name));
+    ev.badges.forEach((b,i)=>out.push({ev,b,s,e,i,a:badgeAddedMs(b, s<=Date.now() ? s : 0),st:status(ev)})); });
+  // newest badges on top (like BadgeBase): by the day Twitch added the badge — upcoming ones included —
+  // then the later start first; badges of one event stay together in their own order
+  return out.sort((x,y)=> (y.a-x.a) || (y.s-x.s) || (x.ev===y.ev ? x.i-y.i : x.ev.id.localeCompare(y.ev.id)));
 }
+// when Twitch added a badge (ms); placeholders without a Twitch record use the fallback
+// (the event start once it has started, otherwise the bottom of the list)
+function badgeAddedMs(b, fallback){
+  const g = b.img && globalBadges.find(x => x.imgId === b.img || x.versions.some(v => v.img.includes(b.img)));
+  const t = g && g.added ? Date.parse(g.added) : NaN;
+  return isNaN(t) ? fallback : t;
+}
+function evNewest(ev){ const s = Date.parse(ev.start) || 0; return Math.max(...ev.badges.map(b => badgeAddedMs(b, s))); }
 const fmtShort = t => new Date(t).toLocaleString(undefined,{weekday:'short',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
 function leftText(r){
   const now=Date.now(), fmtD = ms => { const d=Math.floor(ms/DAY), hh=Math.floor(ms%DAY/36e5); return d ? `${d}d ${hh}h` : `${hh}h ${Math.floor(ms%36e5/6e4)}m`; };
@@ -344,7 +353,7 @@ function renderCalendar(id){
       <div class="cal-body">${rows.length?bars:`<div class="cal-empty">${READY?'No badges with known dates in this range.':'Loading…'}</div>`}${nowX}</div>
     </div></div>
     <div class="cal-foot"><span><i style="background:rgba(52,211,153,.5)"></i>Free</span><span><i style="background:rgba(139,92,246,.6)"></i>Sub / paid</span><span><i style="border:1px dashed var(--line-2)"></i>Starts later</span>
-      <span class="sp">* Shown in your local time (${esc(Intl.DateTimeFormat().resolvedOptions().timeZone||'')}). Hover a badge for details, click to open it.</span></div>`;
+      <span class="sp">* Newest badges first. Shown in your local time (${esc(Intl.DateTimeFormat().resolvedOptions().timeZone||'')}). Hover a badge for details, click to open it.</span></div>`;
   el._rows = rows;
   if(n===28 && !compact){ const sc=el.querySelector('.cal-scroll'); if(sc && now>=a0 && now<a1) sc.scrollLeft = Math.max(0,(now-a0)/(a1-a0)*sc.scrollWidth - sc.clientWidth/3); }
 }
