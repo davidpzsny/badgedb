@@ -30,7 +30,7 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#0C0B11">
 <link rel="preload" href="/assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.css?v=4daf4f3ab7">
+<link rel="stylesheet" href="/assets/app.css?v=d57413af66">
 <meta name="twitch-client-id" content="nqfd84n7ko17trxgtfepmsw5ys3375">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://badgedatabase.com/"}, {"@type": "ListItem", "position": 2, "name": "Global Badges", "item": "https://badgedatabase.com/badges/"}, {"@type": "ListItem", "position": 3, "name": "Star Force Mega Man"}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Star Force Mega Man – Twitch Global Badge", "description": "Star Force Mega Man is a Twitch global badge. Subscribing or gifting a sub to a streamer during the Mega Man Star Force Legacy Collection launch.", "url": "https://badgedatabase.com/badges/star-force-mega-man/", "primaryImageOfPage": {"@type": "ImageObject", "url": "https://static-cdn.jtvnw.net/badges/v1/ce4e940c-025b-42fa-99f0-776459c511e9/3"}, "isPartOf": {"@type": "WebSite", "name": "Badge Database", "url": "https://badgedatabase.com/"}, "datePublished": "2026-03-26"}</script>
@@ -94,10 +94,10 @@
           <p class="lead">Live countdowns for active badge drops, upcoming events before they start, and the complete global badge archive — <b id="hArchive">370</b> sets and counting.</p>
           <div class="hero2-cta"><a class="btn" href="/timeline/">View timeline</a><a class="btn ghost" href="/badges/">Browse all badges</a></div>
           <div class="hero2-stats">
-            <div><b id="sLive">0</b><span>active now</span></div>
-            <div><b id="sSoon">0</b><span>upcoming</span></div>
-            <div><b id="sTba">0</b><span>date not announced</span></div>
-            <div><b id="sFree">0</b><span>free today</span></div>
+            <a class="hs live" href="/timeline/" data-jump="evLive" data-evf="all"><span class="hs-l"><i></i>Active now</span><b id="sLive">0</b><small>to earn right now</small></a>
+            <a class="hs soon" href="/timeline/" data-jump="evSoon" data-evf="all"><span class="hs-l"><i></i>Upcoming</span><b id="sSoon">0</b><small>dates known</small></a>
+            <a class="hs tba" href="/timeline/" data-jump="evTba" data-evf="all"><span class="hs-l"><i></i>Date TBA</span><b id="sTba">0</b><small>no dates yet</small></a>
+            <a class="hs free" href="/timeline/" data-jump="evLive" data-evf="free"><span class="hs-l"><i></i>Free today</span><b id="sFree">0</b><small>no sub needed</small></a>
           </div>
         </div>
         <div class="hero2-r">
@@ -550,6 +550,6 @@
   </div>
 </div>
 
-<script src="/assets/app.js?v=4daf4f3ab7"></script>
+<script src="/assets/app.js?v=d57413af66"></script>
 </body>
 </html>
