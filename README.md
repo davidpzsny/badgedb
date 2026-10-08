@@ -56,7 +56,8 @@ Static site on GitHub Pages + a bot in GitHub Actions that runs **every 15 minut
    (switch off with variable `X_LINK_REPLY = 0`).
    **"Now available" posts** — when an event with a known start time begins, the bot posts
    "🟢 Now available on Twitch: …" (image, objective, end date in UTC — no countdown) to X and Discord,
-   then replies with the link.
+   then replies with the link. If the event has several badges, the image shows all of them side by side
+   (more than 5: the first 4 and a "+N" tile) and the text lists each badge with its own objective.
    If an event starts within 12 minutes the bot waits and posts right on time; it never posts an event more than
    90 minutes late, never twice, and never for events without dates (switch off with variable `X_LIVE_POSTS = 0`).
 5. **Global emotes** — tracked from the official API (first-seen and removed dates).
