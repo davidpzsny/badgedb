@@ -183,7 +183,11 @@ document.addEventListener('click', e => {
   if(e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || e.button !== 0) return;
   if(a.closest('[data-ver]') || a.hasAttribute('data-ver')) return;          // version switcher handles itself
   e.preventDefault(); if(typeof setMenu === 'function') setMenu(false);
-  navigate(a.getAttribute('href')); window.scrollTo({top:0});
+  if(a.dataset.evf && a.dataset.evf !== evFilter){              // home stat tiles: set the timeline's Free / All filter
+    evFilter = a.dataset.evf; $$('#evFilter button').forEach(b => b.classList.toggle('on', b.dataset.v === evFilter)); renderEvents(); }
+  navigate(a.getAttribute('href'));
+  const jump = a.dataset.jump && document.getElementById(a.dataset.jump);       // …and jump to that section
+  if(jump) (jump.previousElementSibling || jump).scrollIntoView({block:'start', behavior:'instant'}); else window.scrollTo({top:0});
 });
 
 /* ---------- home ---------- */
@@ -197,10 +201,11 @@ function renderHome(){
   $('#socials').innerHTML = defs.map(([n,u,c,svg])=>`<a class="social" style="--c:${c}" href="${esc(u)}" target="_blank" rel="noopener"><span class="ic" ${n==='X'?'style="color:#111"':''}>${svg}</span><span><b>${n}</b><small>${esc(u.replace(/^https?:\/\/(www\.)?/,''))}</small></span><span class="go">↗</span></a>`).join('');
 
   const live = EVENTS.filter(e=>status(e)==="live");
-  const soon = allEvents().filter(e=>status(e)==="soon"), tbaN = allEvents().filter(e=>status(e)==="tba" && !isStale(e)).length;
-  $('#sLive').textContent = live.reduce((n,e)=>n+e.badges.length,0);
-  $('#sSoon').textContent = soon.length;   // same numbers as the Timeline's "Coming up" / "Date not announced"
-  $('#sTba').textContent = tbaN;
+  // every number counts badges (an event can hold several) — same numbers as the Timeline sections
+  const soon = allEvents().filter(e=>status(e)==="soon"), tba = allEvents().filter(e=>status(e)==="tba" && !isStale(e));
+  $('#sLive').textContent = badgeCount(live);
+  $('#sSoon').textContent = badgeCount(soon);
+  $('#sTba').textContent = badgeCount(tba);
   $('#sFree').textContent = live.reduce((n,e)=>n+e.badges.filter(b=>b.cost==="free").length,0);
   $('#cEvents').textContent = live.length; $('#cGlobal').textContent = globalBadges.length; $('#hArchive').textContent = globalBadges.length;
 
@@ -252,6 +257,7 @@ function orphanEvents(){
                  badges:[{ name:b.name, img:b.imgId, how:b.how || "Objective not confirmed yet.", cost: b.free ? "free" : "na" }] }));
 }
 function allEvents(){ return EVENTS.concat(orphanEvents()); }
+function badgeCount(evs){ return evs.reduce((n, e) => n + e.badges.length, 0); }   // counts badges, not events
 function renderEvents(){
   const buckets = {live:[],soon:[],tba:[],ended:[]};
   allEvents().forEach(ev => {
@@ -265,7 +271,7 @@ function renderEvents(){
   buckets.live.sort((a,b)=>evNewest(b)-evNewest(a) || Date.parse(b.start)-Date.parse(a.start)); buckets.soon.sort((a,b)=>Date.parse(a.start)-Date.parse(b.start)); buckets.ended.sort((a,b)=>Date.parse(b.end)-Date.parse(a.end));
   delete buckets.ended;                              // finished events stay in the archive, not on the timeline
   buckets.tba.sort((a,b)=>evNewest(b)-evNewest(a));  // events without dates: newest first
-  for(const k of Object.keys(buckets)){ const K=k[0].toUpperCase()+k.slice(1); $('#ev'+K).innerHTML = buckets[k].length?buckets[k].map(ev=>eventCard(ev,k)).join(''):`<div class="empty">${evQuery?'No events match your search.':READY?'Nothing here right now.':'Loading…'}</div>`; $('#n'+K).textContent = buckets[k].length||''; }
+  for(const k of Object.keys(buckets)){ const K=k[0].toUpperCase()+k.slice(1); $('#ev'+K).innerHTML = buckets[k].length?buckets[k].map(ev=>eventCard(ev,k)).join(''):`<div class="empty">${evQuery?'No events match your search.':READY?'Nothing here right now.':'Loading…'}</div>`; $('#n'+K).textContent = badgeCount(buckets[k])||''; }
 }
 const DAY=864e5, COLW=46;
 /* ---------- mobile menu ---------- */
