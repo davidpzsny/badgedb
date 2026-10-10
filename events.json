@@ -1,5 +1,21 @@
 [
  {
+  "id": "call-of-duty-modern-warfare-4",
+  "name": "Call of Duty Modern Warfare 4",
+  "category": "Call of Duty Modern Warfare 4",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Modern Warfare 4",
+    "img": "41505da3-121e-4d81-985f-95185a79186c",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Call of Duty Modern Warfare 4 category during the launch."
+   }
+  ]
+ },
+ {
   "id": "witchspire",
   "name": "Witchspire",
   "category": "Witchspire",
