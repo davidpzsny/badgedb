@@ -78,6 +78,7 @@ const CONFIG = {
     discord: "https://discord.gg/QkuRDXcZH5",
     reddit:  "",
   },
+  discordDown: true,     // true = notice "Discord is temporarily unavailable" + Discord links paused. Set to false when it works again.
   clientId: "",
   repo: "davidpzsny/badgedb",        // used by the #admin page to save events.json
 };
@@ -190,6 +191,33 @@ document.addEventListener('click', e => {
   if(jump) (jump.previousElementSibling || jump).scrollIntoView({block:'start', behavior:'instant'}); else window.scrollTo({top:0});
 });
 
+/* ---------- Discord temporarily unavailable (CONFIG.discordDown) ---------- */
+const DC_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.5 5.5A16 16 0 0 0 15.6 4l-.5 1a15 15 0 0 0-6.2 0l-.5-1a16 16 0 0 0-3.9 1.5C2 9.3 1.3 13 1.6 16.6A16 16 0 0 0 6.5 19l1-1.6a10 10 0 0 1-1.6-.8l.4-.3a11.5 11.5 0 0 0 11.4 0l.4.3-1.6.8 1 1.6a16 16 0 0 0 4.9-2.4c.4-4.2-.7-7.8-2.9-11.1zM8.7 14.4c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2zm6.6 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2z"/></svg>';
+const isDiscordLink = a => /discord\.(gg|com\/invite)\//i.test(a.getAttribute('href') || '');
+function markDiscord(){
+  if(!CONFIG.discordDown) return;
+  $$('a[href*="discord"]').forEach(a => { if(!isDiscordLink(a)) return;
+    a.classList.add('dc-off'); a.setAttribute('aria-disabled', 'true'); a.title = 'Discord is temporarily unavailable. It will be back soon!'; });
+}
+function discordNotice(){
+  if(!CONFIG.discordDown || $('#dcNote')) return;
+  try{ if(sessionStorage.getItem('badgedb_dc_note') === 'hidden') return; }catch(_){}
+  const n = document.createElement('div'); n.id = 'dcNote'; n.className = 'dc-note'; n.setAttribute('role', 'status');
+  n.innerHTML = `<span class="ic">${DC_ICON}</span><p><b>Our Discord server is temporarily unavailable.</b> <span>It will be back soon! Until then, new badges are posted on <a href="${esc(CONFIG.socials.x)}" target="_blank" rel="noopener">X @BadgeDatabase</a>.</span></p><button type="button" aria-label="Hide this notice" title="Hide">×</button>`;
+  n.querySelector('button').addEventListener('click', () => { n.remove(); try{ sessionStorage.setItem('badgedb_dc_note', 'hidden'); }catch(_){} });
+  $('#main').prepend(n);
+}
+let dcToastT;
+document.addEventListener('click', e => {                 // paused Discord links: show a short message instead of a dead invite
+  const a = CONFIG.discordDown && e.target.closest('a[href*="discord"]');
+  if(!a || !isDiscordLink(a)) return;
+  e.preventDefault(); e.stopPropagation();
+  let t = $('#dcToast'); if(!t){ t = document.createElement('div'); t.id = 'dcToast'; t.className = 'dc-toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
+  t.innerHTML = `${DC_ICON}<span>Discord is temporarily unavailable. It will be back soon!</span>`;
+  requestAnimationFrame(() => t.classList.add('show')); clearTimeout(dcToastT); dcToastT = setTimeout(() => t.classList.remove('show'), 3500);
+}, true);
+discordNotice(); markDiscord();
+
 /* ---------- home ---------- */
 function renderHome(){
   const S = CONFIG.socials;
@@ -198,7 +226,8 @@ function renderHome(){
     ["DISCORD",S.discord,"#5865F2",'<svg viewBox="0 0 24 24"><path d="M19.5 5.5A16 16 0 0 0 15.6 4l-.5 1a15 15 0 0 0-6.2 0l-.5-1a16 16 0 0 0-3.9 1.5C2 9.3 1.3 13 1.6 16.6A16 16 0 0 0 6.5 19l1-1.6a10 10 0 0 1-1.6-.8l.4-.3a11.5 11.5 0 0 0 11.4 0l.4.3-1.6.8 1 1.6a16 16 0 0 0 4.9-2.4c.4-4.2-.7-7.8-2.9-11.1zM8.7 14.4c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2zm6.6 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2z"/></svg>'],
     ["X",S.x,"#E5E7EB",'<svg viewBox="0 0 24 24"><path d="M17.5 3h3l-7 8 8 10h-6l-4.7-6.2L5.5 21h-3l7.5-8.6L2.5 3h6l4.3 5.7z"/></svg>'],
   ].filter(d=>d[1]);
-  $('#socials').innerHTML = defs.map(([n,u,c,svg])=>`<a class="social" style="--c:${c}" href="${esc(u)}" target="_blank" rel="noopener"><span class="ic" ${n==='X'?'style="color:#111"':''}>${svg}</span><span><b>${n}</b><small>${esc(u.replace(/^https?:\/\/(www\.)?/,''))}</small></span><span class="go">↗</span></a>`).join('');
+  $('#socials').innerHTML = defs.map(([n,u,c,svg])=>`<a class="social" style="--c:${c}" href="${esc(u)}" target="_blank" rel="noopener"><span class="ic" ${n==='X'?'style="color:#111"':''}>${svg}</span><span><b>${n}</b><small>${n==='DISCORD' && CONFIG.discordDown ? 'Temporarily offline' : esc(u.replace(/^https?:\/\/(www\.)?/,''))}</small></span><span class="go">↗</span></a>`).join('');
+  markDiscord();
 
   const live = EVENTS.filter(e=>status(e)==="live");
   // every number counts badges (an event can hold several) — same numbers as the Timeline sections
