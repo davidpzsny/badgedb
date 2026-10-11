@@ -128,6 +128,11 @@ paste into the box → **Save popularity**.
 **Actions → Check Twitch badges → Run workflow.** The log of step *Detect new badges and post*
 shows new badges, `twitch campaigns: …`, `global emotes: …`, `popularity: …`, `channel badges: …`.
 
+### Discord temporarily down
+`assets/app.js` → `CONFIG` → `discordDown: true` shows a notice at the top of every page ("Our Discord server is
+temporarily unavailable. It will be back soon!"), dims every Discord link and shows a short message instead of
+opening the invite. When Discord works again, set it to `false` and upload `app.js` (then Ctrl+F5).
+
 ### Other
 - Extra channels for channel badges: add them to `channels.txt`.
 - X post text / image: `bot/check_badges.py` → `post_to_x()` / `make_card()`.
