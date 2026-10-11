@@ -50,7 +50,7 @@
   "name": "CrossWorlds World Championship 2026",
   "category": "Sonic Racing: CrossWorlds",
   "start": "2026-10-09T16:00:00Z",
-  "end": "2026-10-16T15:59:00Z",
+  "end": "2026-10-11T03:58:00Z",
   "badges": [
    {
     "name": "CrossWorlds World Championship 2026",
@@ -62,7 +62,7 @@
   ],
   "dates_src": "twitch",
   "name_src": "manual",
-  "about": "Sonic Racing: CrossWorlds World Championship 2026 finals in New York on October 9. Twitch hasn't announced the end date yet — the end shown is an estimate."
+  "about": "Sonic Racing: CrossWorlds World Championship 2026 finals in New York on October 9."
  },
  {
   "id": "gastly",
@@ -150,9 +150,10 @@
    {
     "name": "TheDragonsDogma",
     "img": "f699b4ab-8952-46a1-88ff-a5515406f0a5",
-    "how": "Watch 60 minutes.",
+    "how": "Watch 60 minutes in the category.",
     "cost": "free",
-    "desc": "This badge was earned by watching Dragon's Dogma 2: Dark Arisen for 1 hour"
+    "desc": "This badge was earned by watching Dragon's Dogma 2: Dark Arisen for 1 hour",
+    "how_src": "manual"
    },
    {
     "name": "FrekiFriend",
@@ -351,16 +352,18 @@
   "name": "Rematch Blue Lock",
   "category": "REMATCH",
   "start": "2026-09-23T23:01:00Z",
-  "end": "2026-10-22T10:58:00Z",
+  "end": "2026-10-21T22:58:00Z",
   "badges": [
    {
     "name": "Rematch Blue Lock",
     "img": "13afe621-edd4-48b6-a09b-453a2dee52e9",
-    "how": "Watch a stream in the category.",
+    "how": "Watch 30 minutes in the category.",
     "cost": "free",
-    "desc": "This badge was earned by watching a streamer in the Rematch category for 30 minutes"
+    "desc": "This badge was earned by watching a streamer in the Rematch category for 30 minutes",
+    "how_src": "manual"
    }
-  ]
+  ],
+  "dates_src": "twitch"
  },
  {
   "id": "control-resonant",
@@ -419,9 +422,10 @@
    {
     "name": "d20",
     "img": "263a5bf1-c1ea-4f26-8bf8-db42ea2ebc7c",
-    "how": "Watch a stream.",
+    "how": "Watch twitch.tv/dnd for 30 minutes.",
     "cost": "free",
-    "desc": "This badge was earned by watching Dungeon Masters on Twitch."
+    "desc": "This badge was earned by watching Dungeon Masters on Twitch.",
+    "how_src": "manual"
    },
    {
     "name": "Ampersand",
@@ -807,8 +811,8 @@
   "id": "elden-q2",
   "name": "Questline 2: Path of the Cardinal Sin",
   "category": "ELDEN RING",
-  "start": "2026-10-01T00:00:00Z",
-  "end": "2026-10-28T23:59:00Z",
+  "start": "2026-10-01T07:00:00Z",
+  "end": "2026-10-29T06:59:00Z",
   "badges": [
    {
     "name": "Bloody Finger ELDEN RING",
@@ -817,7 +821,8 @@
     "cost": "paid",
     "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the ELDEN RING category."
    }
-  ]
+  ],
+  "dates_src": "twitch"
  },
  {
   "id": "ffxiv",
