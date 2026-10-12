@@ -634,6 +634,74 @@ def announce_live(events, live):
         json.dump(posts, open(POSTS_DB, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
         status("now_available", f"{ev['name']} at {ev['start']} -> tweet {tweet_id}")
 
+# ---------- where to watch right now: live streams for every running badge event (official Helix API) ----------
+LIVE_DB = os.path.join(ROOT, "live.json")
+OUR_CHANNEL = (os.environ.get("OUR_CHANNEL") or "badge_db").strip().lower()
+GENERIC_CATEGORY = ("any", "various", "multiple", "eligible", "categories", "unknown", "twitchcon")
+
+def update_live_channels(token, events, per_event=8):
+    """live.json: the biggest live streams of each running event, from its own channel list or else its Twitch category.
+    Our own channel goes first when it is live in that category (or in the event's channel list)."""
+    now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    prev = load_json(LIVE_DB, {})
+    game_ids = dict(prev.get("game_ids") or {})                 # category name -> Twitch game id (cached between runs)
+
+    def game_id(name):
+        key = name.strip().lower()
+        if key in game_ids: return game_ids[key]
+        gid = ""
+        try:
+            hit = helix_get(token, "games", {"name": name.strip()})
+            if hit: gid = hit[0]["id"]
+            else:                                                # e.g. "ACE COMBAT 8" -> "ACE COMBAT 8: WINGS OF THEVE"
+                for g in helix_get(token, "search/categories", {"query": name.strip(), "first": 5}):
+                    if g.get("name", "").lower() == key or g.get("name", "").lower().startswith(key):
+                        gid = g["id"]; break
+        except Exception as e:
+            print("live channels: category lookup failed for", name, "->", e)
+        game_ids[key] = gid
+        return gid
+
+    def row(s):
+        return {"login": s.get("user_login", ""), "name": s.get("user_name", ""), "viewers": s.get("viewer_count", 0),
+                "title": (s.get("title") or "")[:100], "lang": s.get("language", ""), "game": s.get("game_name", "")}
+
+    ours = None
+    try:
+        hit = helix_get(token, "streams", {"user_login": OUR_CHANNEL, "type": "live"})
+        if hit: ours = hit[0]
+    except Exception as e:
+        print("live channels: own channel check failed ->", e)
+
+    out = {}
+    for ev in events:
+        if not ev.get("start") or not ev.get("end") or not (ev["start"] <= now < ev["end"]): continue
+        chans = [c.strip().lower() for c in (ev.get("channels") or []) if c and c.strip()]
+        streams, gid = [], ""
+        try:
+            if chans:                                            # the event names its channels: show the live ones
+                for i in range(0, len(chans), 100):
+                    streams += helix_get(token, "streams", [("user_login", c) for c in chans[i:i + 100]] + [("first", "100")])
+            else:
+                cat = (ev.get("category") or "").strip()
+                if not cat or any(w in cat.lower() for w in GENERIC_CATEGORY) or "," in cat: continue
+                gid = game_id(cat)
+                if not gid: continue
+                streams = helix_get(token, "streams", {"game_id": gid, "first": 20, "type": "live"})
+        except Exception as e:
+            print("live channels: lookup failed for", ev.get("id"), "->", e); continue
+        streams = sorted(streams, key=lambda x: -x.get("viewer_count", 0))
+        rows = [row(s) for s in streams if s.get("user_login", "").lower() != OUR_CHANNEL][:per_event]
+        if ours and ((gid and ours.get("game_id") == gid) or OUR_CHANNEL in chans):
+            rows.insert(0, dict(row(ours), ours=True))
+        out[ev["id"]] = {"category": ev.get("category", ""), "game_id": gid, "streams": rows}
+    json.dump({"updated": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"), "our_channel": OUR_CHANNEL,
+               "our_live": bool(ours), "events": out, "game_ids": game_ids},
+              open(LIVE_DB, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+    n = sum(len(v["streams"]) for v in out.values())
+    status("live_channels", f"{len(out)} running events, {n} live streams" + (f", {OUR_CHANNEL} live" if ours else ""))
+    print(f"live channels: {len(out)} running events, {n} streams" + (f" (our channel live in {ours.get('game_name')})" if ours else ""))
+
 # ---------- top Twitch categories right now (official Helix API) ----------
 TOPCAT_DB = os.path.join(ROOT, "top-categories.json")
 def helix_page(token, path, params):
@@ -964,6 +1032,8 @@ def main():
     if tok:
         try: update_top_categories(tok)
         except Exception as e: print("top categories: skipped ->", e)
+        try: update_live_channels(tok, load_events())
+        except Exception as e: print("live channels: skipped ->", e); status("live_channels", f"crashed: {e!r}")
         try: sync_emotes(tok)
         except Exception as e: print("global emotes: skipped ->", e)
         try: crawl_channel_badges(tok)
