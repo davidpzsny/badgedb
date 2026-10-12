@@ -30,7 +30,7 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#0C0B11">
 <link rel="preload" href="/assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.css?v=d53a9f1e3d">
+<link rel="stylesheet" href="/assets/app.css?v=5aa4e0e66a">
 <meta name="twitch-client-id" content="nqfd84n7ko17trxgtfepmsw5ys3375">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://badgedatabase.com/"}, {"@type": "ListItem", "position": 2, "name": "Global Badges", "item": "https://badgedatabase.com/badges/"}, {"@type": "ListItem", "position": 3, "name": "Football Fest 2026"}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Football Fest 2026 – Twitch Global Badge", "description": "Football Fest 2026 is a Twitch global badge. Watching 15 minutes of any of the participating Football Fest channels during Football Fest 2026!", "url": "https://badgedatabase.com/badges/football-fest-2026/", "primaryImageOfPage": {"@type": "ImageObject", "url": "https://static-cdn.jtvnw.net/badges/v1/2b195857-8531-4487-a998-62fb9dbbe0e5/3"}, "isPartOf": {"@type": "WebSite", "name": "Badge Database", "url": "https://badgedatabase.com/"}, "datePublished": "2026-06-08"}</script>
@@ -58,6 +58,7 @@
       <a href="/categories/" data-route="categories"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Top Categories</a>
       <a href="/stats/" data-route="stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-6"/></svg>Statistics</a>
       <a href="/popularity/" data-route="popularity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Badge Popularity</a>
+      <a href="/leaderboard/" data-route="leaderboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>Leaderboard</a>
     </nav>
     <nav class="nav group" aria-label="Help">
       <h6>Help</h6>
@@ -350,6 +351,20 @@
       <p class="ct-note">Content removal requests are handled as described in the <a href="/legal/">Legal Notice</a>. Badge Database is not Twitch — for problems with your Twitch account or a badge you didn't receive, contact <a href="https://help.twitch.tv" target="_blank" rel="noopener">Twitch Support</a>.</p>
     </section>
 
+    <!-- LEADERBOARD -->
+    <section data-page="leaderboard" hidden>
+      <div class="crumbs"><a href="/">Home</a><span>/</span>Leaderboard</div>
+      <div class="page-head"><div><h1>Badge Leaderboard</h1><p class="lead">How many badges do you have? Log in with Twitch to count your Twitch, 7TV, BetterTTV, FrankerFaceZ and Chatterino badges.</p></div></div>
+      <div id="lbMe"></div>
+      <div class="sec"><span class="dot" style="background:var(--amber)"></span>Top collectors</div>
+      <div id="lbTop"></div>
+      <div class="faq-page lb-faq">
+        <details><summary>Why do I have to log in?</summary><div class="a">Twitch only shows a badge collection to its owner. Logging in lets this page ask Twitch for <b>your own</b> badge list, the same list you see under Chat Identity on Twitch. No permissions are requested and nothing is posted.</div></details>
+        <details><summary>Which badges count?</summary><div class="a">The ranking counts account-wide Twitch global badges. Channel badges (subscriber, moderator, VIP, broadcaster) are not part of your collection. 7TV, BetterTTV, FrankerFaceZ and Chatterino badges are shown separately.</div></details>
+        <details><summary>Is anything stored?</summary><div class="a">Counting happens in your browser. Your login stays on this device and is only sent to Twitch. You can log out at any time, which also revokes the login.</div></details>
+      </div>
+    </section>
+
     <!-- CHANGELOG -->
     <section data-page="changelog" hidden>
       <div class="crumbs"><a href="/">Home</a><span>/</span>Changelog</div>
@@ -414,6 +429,7 @@
         <h2 id="p5">5. Cookies and local storage</h2>
         <p>Badge Database itself does <b>not</b> set cookies. Third-party embeds described in section 4 (in particular the Twitch player) may set their own cookies. You can block or delete cookies in your browser settings at any time.</p>
         <p><b>Optional “Log in with Twitch”.</b> On badge pages you can log in with Twitch to preview a badge next to your own name. This uses Twitch's own login page and requests no permissions: the resulting token can only read your public profile. The site uses it to read your <b>display name, profile picture and chat color</b> from Twitch. The token and these details are stored only in your browser's local storage and are sent only to Twitch — Badge Database has no server and never receives them. “Log out” deletes them and revokes the token; you can also revoke access any time under Twitch → Settings → Connections.</p>
+        <p><b>Badge Leaderboard.</b> When you are logged in, the <a href="/leaderboard/">Leaderboard</a> page uses the same token to ask Twitch for your own list of badges, and loads the public badge lists of 7TV, BetterTTV, FrankerFaceZ and Chatterino to find yours. This happens in your browser; the results are not sent to Badge Database.</p>
         <p>The event editor at <b>/admin/</b> is used only by the site operator. If a GitHub access token is entered there, it is stored in that browser’s local storage on that device only and is sent solely to the GitHub API to save changes. Regular visitors never use this feature.</p>
 
         <h2 id="p6">6. Public Twitch data we publish</h2>
@@ -518,7 +534,7 @@
           <a href="/timeline/">Timeline</a><a href="/badges/">Global Badges</a><a href="/channel/">Channel Badges</a><a href="/emotes/">Global Emotes</a>
         </nav>
         <nav class="sf-col" aria-label="Insights"><h6>Insights</h6>
-          <a href="/categories/">Top Categories</a><a href="/stats/">Statistics</a><a href="/popularity/">Badge Popularity</a>
+          <a href="/categories/">Top Categories</a><a href="/stats/">Statistics</a><a href="/popularity/">Badge Popularity</a><a href="/leaderboard/">Leaderboard</a>
         </nav>
         <nav class="sf-col" aria-label="Help"><h6>Help</h6>
           <a href="/faq/">FAQ</a><a href="/contact/">Contact</a><a href="/changelog/">Changelog</a>
@@ -561,6 +577,6 @@
   </div>
 </div>
 
-<script src="/assets/app.js?v=d53a9f1e3d"></script>
+<script src="/assets/app.js?v=5aa4e0e66a"></script>
 </body>
 </html>
