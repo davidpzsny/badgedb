@@ -3,6 +3,7 @@
   "date": "2026-10-12",
   "title": "Changelog and Discord upgrades",
   "items": [
+   {"type": "improved", "text": "New logo with a transparent background across the site and in the browser tab."},
    {"type": "improved", "text": "The header shows the full name, Badge Database, on one line."},
    {"type": "new", "text": "Light, dark and system themes: pick one in the top right corner (on phones: at the bottom of the menu)."},
    {"type": "new", "text": "Changelog page: every update to Badge Database in one place."},

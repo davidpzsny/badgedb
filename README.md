@@ -111,7 +111,10 @@ bot/build_pages.py        builds the pages from index.html
 bot/requirements.txt
 .github/workflows/badges.yml        runs everything every 15 minutes
 
-favicon*, icon-*, apple-touch-icon.png, site.webmanifest, logo*.png, og-image.png, CNAME
+logo.svg                  logo source (hexagon, transparent)
+logo.png, logo-192.png, favicon*  transparent PNGs rendered from logo.svg (site, browser tab, X post image)
+icon-192/512.png, apple-touch-icon.png  phone home screen icons (solid background on purpose)
+site.webmanifest, og-image.png, CNAME
 ```
 
 ---
