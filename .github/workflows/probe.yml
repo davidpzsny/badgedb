@@ -1,0 +1,38 @@
+name: Badge probe
+
+# Run by hand only (Actions -> Badge probe -> Run workflow). Writes probe.json to the repo.
+on:
+  workflow_dispatch:
+    inputs:
+      logins:
+        description: "Twitch logins to test (space separated)"
+        required: false
+        default: "1zull badge_db"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: badges
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install requests
+      - name: Probe badge collections
+        env:
+          TWITCH_GQL_OAUTH: ${{ secrets.TWITCH_GQL_OAUTH }}
+        run: python bot/badge_probe.py ${{ github.event.inputs.logins }}
+      - name: Save probe.json
+        run: |
+          git config user.name "badgedb-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add probe.json
+          git commit -q -m "Badge probe $(date -u +%F)" || exit 0
+          git pull -q --rebase && git push -q && echo "Saved."
