@@ -288,6 +288,22 @@ def timeline_page(events, by_img, now):
                 f"{n} Twitch global badges can be earned right now. See what each one needs, when it ends, and which badges are coming next.",
                 "timeline", fills=fills, jsonld=[crumbs_ld(("Home", "/"), ("Timeline", None))])
 
+CL_TAG = {"new": "New", "improved": "Improved", "fixed": "Fixed"}
+def changelog_page(rows):
+    """/changelog/ from changelog.json (same markup as app.js renderChangelog)."""
+    rows = sorted([r for r in rows if isinstance(r, dict) and r.get("date")], key=lambda r: r["date"], reverse=True)
+    arts = "".join(
+        f'<article class="cl-entry" id="v{e(r["date"])}"><div class="cl-date"><time datetime="{e(r["date"])}">{day(r["date"])}</time></div>'
+        f'<div class="cl-body"><h2>{e(r.get("title"))}</h2><ul>'
+        + "".join(f'<li><span class="cl-tag {e(i.get("type"))}">{CL_TAG.get(i.get("type"), e(i.get("type")))}</span><span>{e(i.get("text"))}</span></li>' for i in r.get("items", []))
+        + "</ul></div></article>" for r in rows)
+    since = f" since {day(rows[-1]['date'])}" if rows else ""
+    return page("/changelog/", "Changelog | Badge Database",
+                "Every update to Badge Database: new pages, improvements and fixes, newest first.", "changelog",
+                fills={'<div class="cl-list" id="clList"></div>': f'<div class="cl-list" id="clList">{arts}</div>',
+                       '<div class="count-line" id="clCount"></div>': f'<div class="count-line" id="clCount">{len(rows)} updates{since}</div>'},
+                jsonld=[crumbs_ld(("Home", "/"), ("Changelog", None))])
+
 def channel_page(rows):
     shown = rows[:240]
     items = "".join(f'<a class="brow" href="/channel/{e(r[1])}/" data-cbadge="{e(r[1])}">{tile(r[1], r[0])}<span class="t"><span class="n">{e(r[0])}</span>'
@@ -425,10 +441,13 @@ def main():
     changed += write("404.html", page("/404.html", "Page not found | Badge Database", "This page does not exist on Badge Database.", "notfound", noindex=True))
     changed += write("contact/index.html", page("/contact/", "Contact | Badge Database",
                      "Contact Badge Database: report a wrong date or missing badge, suggest a feature or send a content removal request.", "contact"))
+    changelog = load("changelog.json", [])
+    changed += write("changelog/index.html", changelog_page(changelog))
     changed += write("legal/index.html", page("/legal/", "Legal Notice | Badge Database",
                      "Operator, contact, hosting, trademark notice, content removal requests and data sources of Badge Database.", "legal"))
     urls = [("/", now[:10], "hourly", "1.0"), ("/timeline/", now[:10], "hourly", "0.9"), ("/badges/", now[:10], "daily", "0.9"),
-            ("/channel/", now[:10], "daily", "0.8"), ("/emotes/", now[:10], "daily", "0.8"), ("/popularity/", now[:10], "daily", "0.8"), ("/stats/", now[:10], "daily", "0.7"), ("/categories/", now[:10], "hourly", "0.7"), ("/faq/", None, "monthly", "0.5"), ("/legal/", None, "yearly", "0.2"), ("/contact/", None, "yearly", "0.3")]
+            ("/channel/", now[:10], "daily", "0.8"), ("/emotes/", now[:10], "daily", "0.8"), ("/popularity/", now[:10], "daily", "0.8"), ("/stats/", now[:10], "daily", "0.7"), ("/categories/", now[:10], "hourly", "0.7"), ("/faq/", None, "monthly", "0.5"), ("/legal/", None, "yearly", "0.2"), ("/contact/", None, "yearly", "0.3"),
+            ("/changelog/", max((r.get("date", "") for r in changelog if isinstance(r, dict)), default="") or None, "weekly", "0.4")]
     urls += [(f"/badges/{s['set']}/", s["added"] or None, "weekly", "0.7") for s in sets]
     sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for u, lm, cf, pr in urls:
