@@ -30,7 +30,7 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#0C0B11">
 <link rel="preload" href="/assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.css?v=30daef4f09">
+<link rel="stylesheet" href="/assets/app.css?v=d53a9f1e3d">
 <meta name="twitch-client-id" content="nqfd84n7ko17trxgtfepmsw5ys3375">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://badgedatabase.com/"}, {"@type": "ListItem", "position": 2, "name": "Global Badges", "item": "https://badgedatabase.com/badges/"}, {"@type": "ListItem", "position": 3, "name": "Homo Tenta"}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Homo Tenta – Twitch Global Badge", "description": "Homo Tenta is a Twitch global badge. Subscribe (Tier 1) or gift a Tier 1 sub in the category. Available Sep 24, 2026 – Oct 11, 2026.", "url": "https://badgedatabase.com/badges/homo-tenta/", "primaryImageOfPage": {"@type": "ImageObject", "url": "https://static-cdn.jtvnw.net/badges/v1/3ec6f155-ebc7-4624-89d9-ead63122dc52/3"}, "isPartOf": {"@type": "WebSite", "name": "Badge Database", "url": "https://badgedatabase.com/"}, "datePublished": "2026-09-17"}</script>
@@ -63,6 +63,7 @@
       <h6>Help</h6>
       <a href="/faq/" data-route="faq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .8-1 1.5V14M12 17.5v.01"/></svg>FAQ</a>
       <a href="/contact/" data-route="contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Contact</a>
+      <a href="/changelog/" data-route="changelog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5"/><path d="M12 7.5V12l3 2"/></svg>Changelog</a>
     </nav>
     <nav class="nav group" aria-label="Legal">
       <h6>Legal</h6>
@@ -349,6 +350,16 @@
       <p class="ct-note">Content removal requests are handled as described in the <a href="/legal/">Legal Notice</a>. Badge Database is not Twitch — for problems with your Twitch account or a badge you didn't receive, contact <a href="https://help.twitch.tv" target="_blank" rel="noopener">Twitch Support</a>.</p>
     </section>
 
+    <!-- CHANGELOG -->
+    <section data-page="changelog" hidden>
+      <div class="crumbs"><a href="/">Home</a><span>/</span>Changelog</div>
+      <div class="page-head"><div><h1>Changelog</h1><p class="lead">Every update to Badge Database, newest first.</p></div>
+        <div class="seg" id="clFilter"><button data-v="all" class="on">All</button><button data-v="new">New</button><button data-v="improved">Improved</button><button data-v="fixed">Fixed</button></div></div>
+      <div class="count-line" id="clCount"></div>
+      <div class="cl-list" id="clList"></div>
+      <p class="cl-note">Found a bug or have an idea? <a href="/contact/?topic=idea">Tell us</a>. New badges are announced on <a href="https://x.com/BadgeDatabase" target="_blank" rel="noopener">X @BadgeDatabase</a>.</p>
+    </section>
+
     <!-- FAQ -->
     <section data-page="faq" hidden>
       <div class="crumbs"><a href="/">Home</a><span>/</span>FAQ</div>
@@ -510,7 +521,7 @@
           <a href="/categories/">Top Categories</a><a href="/stats/">Statistics</a><a href="/popularity/">Badge Popularity</a>
         </nav>
         <nav class="sf-col" aria-label="Help"><h6>Help</h6>
-          <a href="/faq/">FAQ</a><a href="/contact/">Contact</a>
+          <a href="/faq/">FAQ</a><a href="/contact/">Contact</a><a href="/changelog/">Changelog</a>
         </nav>
         <nav class="sf-col" aria-label="Community"><h6>Community</h6>
           <a href="https://twitch.tv/badge_db" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2 2 6v14h5v3h3l3-3h4l5-5V2H4zm16 12-3 3h-5l-3 3v-3H6V4h14v10zm-4-7h-2v5h2V7zm-5 0H9v5h2V7z"/></svg>24/7 Stream</a>
@@ -550,6 +561,6 @@
   </div>
 </div>
 
-<script src="/assets/app.js?v=30daef4f09"></script>
+<script src="/assets/app.js?v=d53a9f1e3d"></script>
 </body>
 </html>
