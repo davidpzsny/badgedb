@@ -3,6 +3,11 @@
   "date": "2026-10-12",
   "title": "Changelog and Discord upgrades",
   "items": [
+   {"type": "new", "text": "Watch now on badge pages: the biggest live streams where a running badge can be earned, updated every 15 minutes. Our own stream comes first when it is live in that category."},
+   {"type": "new", "text": "Last chance: badges that end within 48 hours, at the top of the home page."},
+   {"type": "new", "text": "Bottom navigation bar on phones: Home, Timeline, Badges, Search and Live."},
+   {"type": "new", "text": "Share button on badge pages (the share menu on phones, a post on X on desktop)."},
+   {"type": "new", "text": "A dot next to Changelog when there is something new since your last visit."},
    {"type": "improved", "text": "New logo with a transparent background across the site and in the browser tab."},
    {"type": "improved", "text": "The header shows the full name, Badge Database, on one line."},
    {"type": "new", "text": "Light, dark and system themes: pick one in the top right corner (on phones: at the bottom of the menu)."},

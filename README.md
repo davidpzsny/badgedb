@@ -16,10 +16,10 @@ channel campaign badges, global emotes, badge popularity and statistics. New bad
 
 | Page | URL | What it shows |
 |---|---|---|
-| Home | `/` | Stat tiles (Active now · Upcoming · Date TBA · Free today — click one to jump to that part of the timeline), "Badges available right now" calendar, 24/7 stream (loads on click), top categories, most popular badges, recently added |
+| Home | `/` | **Last chance** strip (badges ending within 48 h), stat tiles (Active now · Upcoming · Date TBA · Free today — click one to jump to that part of the timeline), "Badges available right now" calendar, 24/7 stream (loads on click), top categories, most popular badges, recently added |
 | Timeline | `/timeline/` | Active now · Coming up · Date not announced, with a week / 4-week calendar (finished badges are hidden) |
 | Global Badges | `/badges/` | Every global badge set — filters: Free, Paid, Active, Ends soon, Upcoming, No date yet |
-| Badge page | `/badges/<set-id>/` | Images, objective, category, channels, start/end, Twitch description, chat preview with your own name, **Add to calendar** |
+| Badge page | `/badges/<set-id>/` | **Watch now** (live streams where a running badge can be earned, our channel first when live in that category), images, objective, category, channels, start/end, Twitch description, chat preview with your own name, **Add to calendar**, **Share** |
 | Channel Badges | `/channel/` · `/channel/<image-id>/` | Campaign badges (sub / watch / top supporter) collected from live channels |
 | Global Emotes | `/emotes/` | All global emotes; new ones get a date, removed ones move to "Removed" |
 | Top Categories | `/categories/` | Top 150 Twitch categories right now: viewers, live channels, biggest stream, badges you can earn there |
@@ -33,6 +33,8 @@ channel campaign badges, global emotes, badge popularity and statistics. New bad
 | Event editor | `/admin/` | Owner only — dates, objectives, channels, popularity update |
 
 Also on every page:
+- **Phones:** bottom bar with Home / Timeline / Badges / Search / Live (red dot while our channel is live).
+- **Changelog dot:** appears next to Changelog (and on the phone menu button) when the newest changelog date is newer than the visitor's last visit (the build writes it into `<meta name="changelog-latest">`).
 - **Theme** — Light / Dark / System switch top right (phones: bottom of the menu). Saved in the browser (`badgedb_theme`); default Dark. Colours are CSS variables in `app.css` (`:root` = dark, `:root[data-theme="light"]` = light).
 - **Quick search** — `Ctrl+K` / `⌘K` or `/` (or the search button): badges, events, channel badges, emotes and pages.
 - **Log in with Twitch** (optional, top right; on phones the icon next to search) — previews badges next to your own name and chat colour. No permissions are requested; everything stays in the visitor's browser.
@@ -67,6 +69,8 @@ Static site on GitHub Pages + a bot in GitHub Actions that runs **every 15 minut
 6. **Popularity** — tries PotatBotat once a day. potat.app blocks requests from GitHub's servers, so for now
    it is updated by hand (see below).
 7. **Channel badges** — collected from the top live channels and from `channels.txt`.
+   **Watch now** — for every running event: the live streams of its channel list, or the 8 biggest live streams of its
+   category, into `live.json`. Our own channel (`badge_db`, or variable `OUR_CHANNEL`) goes first when it is live in that category.
 8. **Pages** — builds a real, pre-filled page for every URL above (same design as the live site),
    plus `sitemap.xml`, `robots.txt` and `404.html`. Asset links get a version number (`?v=…`) so
    browsers never keep an old `app.js` / `app.css`.
@@ -98,6 +102,7 @@ emotes.json               global emotes                   ← bot
 popularity.json           badge user counts               ← /admin/ (bot when potat allows it)
 posts.json                X posts awaiting a link reply   ← bot
 changelog.json            site updates shown on /changelog/   ← by hand (see below)
+live.json                 live streams per running event (Watch now) ← bot
 status.json               last run report (popularity, emotes, drop campaigns) — check this first when debugging
 top-categories.json       top 150 Twitch categories        ← bot
 channels-state.json       crawler bookkeeping             ← bot
