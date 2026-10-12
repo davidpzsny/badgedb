@@ -31,7 +31,7 @@
   .side{background:var(--bg-2);border-right:1px solid var(--line);padding:20px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:22px;overflow-y:auto}
   .brand{display:flex;align-items:center;gap:12px;padding:2px 6px}
   .brand img{width:40px;height:40px;border-radius:11px;box-shadow:0 0 0 1px var(--line-2),0 8px 24px -8px var(--purple-glow)}
-  .brand b{font-weight:800;font-size:20px;letter-spacing:-.02em;display:block;line-height:1.1}
+  .brand b{font-weight:800;font-size:19px;letter-spacing:-.02em;display:block;line-height:1.1;white-space:nowrap}
   .brand small{color:var(--muted);font-size:12px;font-weight:600}
   .group{display:flex;flex-direction:column;gap:2px}
   .group h6{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);padding:4px 12px 6px}
@@ -440,6 +440,7 @@
     .side{position:sticky;top:0;height:60px;flex-direction:row;align-items:center;justify-content:space-between;gap:10px;padding:0 14px;border-right:0;border-bottom:1px solid var(--line);z-index:30;overflow:visible;background:var(--bg-2);backdrop-filter:none}
     .brand{padding:0;gap:10px}.brand img{width:36px;height:36px;border-radius:10px}
     .brand b{font-size:17px}.brand small{display:none}
+    @media (max-width:380px){ .brand b{font-size:15px} .brand{gap:8px} }
     .menu-btn{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:var(--panel);border:1px solid var(--line);color:var(--text)}
     .menu-btn svg{width:22px;height:22px}.menu-btn path{transition:transform .2s,opacity .2s;transform-origin:12px 12px}
     .side.open .menu-btn .l1{transform:translateY(5px) rotate(45deg)}.side.open .menu-btn .l2{opacity:0}.side.open .menu-btn .l3{transform:translateY(-5px) rotate(-45deg)}
