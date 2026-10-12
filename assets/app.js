@@ -626,23 +626,19 @@ const LB_SRC = {
     .filter(b => (b.users || []).includes(id)).map(b => ({ title: b.tooltip, img: b.image2 || b.image1 || "" })),
 };
 async function lbCount(){
+  // Twitch only shares a global badge collection with twitch.tv itself (other sites get 401), so the login is used for the
+  // Twitch user id only; 7TV / BetterTTV / FrankerFaceZ / Chatterino badges are matched by that id.
   let token; try{ token = localStorage.getItem("badgedb_tw_token"); }catch(_){}
   if(!token || !TW_CID){ LB = { state: "idle" }; renderLeaderboard(); return; }
   LB = { state: "loading" }; renderLeaderboard();
-  try{
-    const r = await fetch("https://gql.twitch.tv/gql", { method: "POST", headers: { "Client-Id": TW_CID, "Authorization": "OAuth " + token },
-      body: JSON.stringify({ query: "query { currentUser { id login displayName availableBadges { setID version title } } }" }) });
-    if(r.status === 401){ LB = { state: "relogin" }; renderLeaderboard(); return; }
-    const j = await r.json().catch(() => null), cu = j && j.data && j.data.currentUser;
-    if(!cu || !Array.isArray(cu.availableBadges)) throw new Error((j && j.errors && j.errors[0] && j.errors[0].message) || (j && j.message) || ("HTTP " + r.status));
-    const seen = new Set(), list = cu.availableBadges.filter(b => { const k = b.setID + "/" + b.version; return !seen.has(k) && seen.add(k); });
-    LB = { state: "done", id: String(cu.id), login: cu.login, name: cu.displayName || cu.login, twitch: list, others: {} };
-    renderLeaderboard();
-    await Promise.all(Object.entries(LB_SRC).map(async ([k, fn]) => {
-      try{ LB.others[k] = await fn(LB.id); }catch(_){ LB.others[k] = null; }
-      if(LB.state === "done") renderLeaderboard();
-    }));
-  }catch(e){ LB = { state: "error", err: String((e && e.message) || e).slice(0, 160) }; renderLeaderboard(); }
+  if(!TW_USER || !TW_USER.id) await twFetchUser();          // official API; logs out by itself if the login expired
+  if(!TW_USER){ LB = { state: "relogin" }; renderLeaderboard(); return; }
+  if(!TW_USER.id){ LB = { state: "error", err: "Could not read your Twitch account. Please try again." }; renderLeaderboard(); return; }
+  LB = { state: "done", id: String(TW_USER.id), name: TW_USER.name, twitch: null, others: {} }; renderLeaderboard();
+  await Promise.all(Object.entries(LB_SRC).map(async ([k, fn]) => {
+    try{ LB.others[k] = await fn(LB.id); }catch(_){ LB.others[k] = null; }
+    if(LB.state === "done") renderLeaderboard();
+  }));
 }
 function lbTwitchBadge(b){                         // our archive entry for a Twitch badge (image + page)
   const g = globalBadges.find(x => x.set === b.setID); if(!g) return { title: b.title || b.setID, img: "", set: "" };
@@ -654,12 +650,12 @@ function renderLeaderboard(){
   const tw = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2 2 6v14h5v3h3l3-3h4l5-5V2H4zm16 12-3 3h-5l-3 3v-3H6V4h14v10zm-4-7h-2v5h2V7zm-5 0H9v5h2V7z"/></svg>';
   const card = inner => `<div class="card2 lb-me">${inner}</div>`;
   if(!TW_CID) me.innerHTML = card('<p class="lb-msg">Twitch login is not set up on this site yet.</p>');
-  else if(!TW_USER) me.innerHTML = card(`<div class="lb-cta"><div><h3>Count your badges</h3><p>Log in with Twitch and this page counts every badge you own: Twitch global badges plus 7TV, BetterTTV, FrankerFaceZ and Chatterino. No permissions are requested.</p></div><button class="btn tw" data-twlogin>${tw}Log in with Twitch</button></div>`);
+  else if(!TW_USER) me.innerHTML = card(`<div class="lb-cta"><div><h3>Count your badges</h3><p>Log in with Twitch and this page counts your badges on 7TV, BetterTTV, FrankerFaceZ and Chatterino. No permissions are requested.</p></div><button class="btn tw" data-twlogin>${tw}Log in with Twitch</button></div>`);
   else if(LB.state === "loading") me.innerHTML = card(`<p class="lb-msg"><span class="lb-spin"></span>Counting the badges of <b>${esc(TW_USER.name)}</b>…</p>`);
   else if(LB.state === "relogin") me.innerHTML = card(`<div class="lb-cta"><p class="lb-msg">Your Twitch login has expired. Log in again to count your badges.</p><button class="btn tw" data-twlogin>${tw}Log in again</button></div>`);
-  else if(LB.state === "error") me.innerHTML = card(`<div class="lb-cta"><p class="lb-msg">Twitch did not return your badge list.<small>${esc(LB.err)}</small></p><button class="btn ghost" data-lbcount>Try again</button></div>`);
+  else if(LB.state === "error") me.innerHTML = card(`<div class="lb-cta"><p class="lb-msg">${esc(LB.err)}</p><button class="btn ghost" data-lbcount>Try again</button></div>`);
   else if(LB.state === "done"){
-    const tws = LB.twitch.map(lbTwitchBadge).sort((a, b) => a.title.localeCompare(b.title));
+    const tws = LB.twitch ? LB.twitch.map(lbTwitchBadge).sort((a, b) => a.title.localeCompare(b.title)) : null;
     const o = LB.others || {}, otherN = Object.values(o).reduce((n, l) => n + (l ? l.length : 0), 0);
     const chip = (k, l) => `<span class="lb-chip ${l === undefined ? 'wait' : ''}"><b>${l === undefined ? '…' : l === null ? '?' : l.length}</b>${LB_NAMES[k]}</span>`;
     const tile = (b, href) => { const im = b.img ? `<img src="${esc(b.img)}" alt="" loading="lazy">` : `<span class="ph">${esc((b.title || "?")[0])}</span>`;
@@ -667,11 +663,11 @@ function renderLeaderboard(){
     const otherGrids = Object.keys(LB_SRC).map(k => [k, o[k]]).filter(([, l]) => l && l.length).map(([k, l]) => `<h4>${LB_NAMES[k]} <span>${l.length}</span></h4><div class="lb-grid">${l.map(b => tile(b)).join("")}</div>`).join("");
     me.innerHTML = card(`<div class="lb-head">${TW_USER.avatar ? `<img class="lb-av" src="${esc(TW_USER.avatar)}" alt="">` : ""}
         <div class="lb-who"><b>${esc(LB.name)}</b><small>Counted just now · <button class="linkish" data-lbcount>Recount</button> · <button class="linkish" data-twlogout>Log out</button></small></div>
-        <div class="lb-total"><b>${tws.length}</b><span>Twitch badges</span></div></div>
-      <div class="lb-chips">${Object.keys(LB_SRC).map(k => chip(k, o[k])).join("")}${otherN ? `<span class="lb-chip sum"><b>${tws.length + otherN}</b>All platforms</span>` : ""}</div>
-      <h4>Twitch <span>${tws.length}</span></h4>
-      <div class="lb-grid">${tws.map(b => tile(b, b.set ? "/badges/" + encodeURIComponent(b.set) + "/" : "")).join("") || '<p class="lb-msg">No global badges yet.</p>'}</div>
-      ${otherGrids}`);
+        <div class="lb-total"><b>${tws ? tws.length : otherN}</b><span>${tws ? "Twitch badges" : "Badges found"}</span></div></div>
+      <div class="lb-chips">${Object.keys(LB_SRC).map(k => chip(k, o[k])).join("")}${tws && otherN ? `<span class="lb-chip sum"><b>${tws.length + otherN}</b>All platforms</span>` : ""}</div>
+      ${otherGrids || (Object.keys(LB_SRC).every(k => o[k] !== undefined) ? '<p class="lb-msg lb-none">No 7TV, BetterTTV, FrankerFaceZ or Chatterino badges on this account.</p>' : '')}
+      ${tws ? `<h4>Twitch <span>${tws.length}</span></h4><div class="lb-grid">${tws.map(b => tile(b, b.set ? "/badges/" + encodeURIComponent(b.set) + "/" : "")).join("")}</div>`
+            : `<div class="lb-note"><b>Twitch global badges can't be counted here yet.</b> Twitch shows your badge collection only on twitch.tv and doesn't share it with other websites, even when you log in here.</div>`}`);
   }
   else me.innerHTML = card(`<div class="lb-cta"><div><h3>Hi ${esc(TW_USER.name)}!</h3><p>Count every badge on your account.</p></div><button class="btn" data-lbcount>Count my badges</button></div>`);
   if(top) top.innerHTML = `<div class="card2 lb-soon"><b>The top collectors list is coming soon.</b><p>Count your badges now; the ranking will list collectors who join with their Twitch login.</p></div>`;
