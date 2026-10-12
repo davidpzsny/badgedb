@@ -1,6 +1,20 @@
 [
  {
   "date": "2026-10-12",
+  "title": "Remind me and faster pages",
+  "items": [
+   {"type": "new", "text": "Remind me: get a browser notification when a badge's dates are announced, when it starts and a day before it ends (2 hours before for short events). Find the button on badge pages and in the event details."},
+   {"type": "new", "text": "Notification links open the right badge page or event directly."},
+   {"type": "improved", "text": "Faster pages: the large channel badge list (about 440 KB) now loads only on the Channel Badges pages and when you search."},
+   {"type": "improved", "text": "Returning visitors download data only when it has changed since their last visit."},
+   {"type": "improved", "text": "A lighter logo image on the home page and an early connection to Twitch's image server, so badge images appear sooner."},
+   {"type": "improved", "text": "The Changelog dot also lights up for new items added on the same day."},
+   {"type": "fixed", "text": "On phones, the event details panel opened under the top bar, hiding its close button."},
+   {"type": "fixed", "text": "An event panel you opened no longer closes by itself when fresh data arrives a moment later."}
+  ]
+ },
+ {
+  "date": "2026-10-12",
   "title": "Changelog and Discord upgrades",
   "items": [
    {"type": "new", "text": "Watch now on badge pages: the biggest live streams where a running badge can be earned, updated every 15 minutes. Our own stream comes first when it is live in that category."},

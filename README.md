@@ -1,6 +1,6 @@
 # Badge Database
 
-**[badgedatabase.com](https://badgedatabase.com)** — every Twitch badge, and exactly when to get it.
+**[badgedatabase.com](https://badgedatabase.com)**: every Twitch badge, and exactly when to get it.
 
 Live countdowns for badges you can earn right now, upcoming drops, the full global badge archive,
 channel campaign badges, global emotes, badge popularity and statistics. New badges are announced on
@@ -16,10 +16,10 @@ channel campaign badges, global emotes, badge popularity and statistics. New bad
 
 | Page | URL | What it shows |
 |---|---|---|
-| Home | `/` | **Last chance** strip (badges ending within 48 h), stat tiles (Active now · Upcoming · Date TBA · Free today — click one to jump to that part of the timeline), "Badges available right now" calendar, 24/7 stream (loads on click), top categories, most popular badges, recently added |
+| Home | `/` | **Last chance** strip (badges ending within 48 h), stat tiles (Active now · Upcoming · Date TBA · Free today; click one to jump to that part of the timeline), "Badges available right now" calendar, 24/7 stream (loads on click), top categories, most popular badges, recently added |
 | Timeline | `/timeline/` | Active now · Coming up · Date not announced, with a week / 4-week calendar (finished badges are hidden) |
-| Global Badges | `/badges/` | Every global badge set — filters: Free, Paid, Active, Ends soon, Upcoming, No date yet |
-| Badge page | `/badges/<set-id>/` | **Watch now** (live streams where a running badge can be earned, our channel first when live in that category), images, objective, category, channels, start/end, Twitch description, chat preview with your own name, **Add to calendar**, **Share** |
+| Global Badges | `/badges/` | Every global badge set. Filters: Free, Paid, Active, Ends soon, Upcoming, No date yet |
+| Badge page | `/badges/<set-id>/` | **Watch now** (live streams where a running badge can be earned, our channel first when live in that category), images, objective, category, channels, start/end, Twitch description, chat preview with your own name, **Remind me**, **Add to calendar**, **Share** |
 | Channel Badges | `/channel/` · `/channel/<image-id>/` | Campaign badges (sub / watch / top supporter) collected from live channels |
 | Global Emotes | `/emotes/` | All global emotes; new ones get a date, removed ones move to "Removed" |
 | Top Categories | `/categories/` | Top 150 Twitch categories right now: viewers, live channels, biggest stream, badges you can earn there |
@@ -30,14 +30,17 @@ channel campaign badges, global emotes, badge popularity and statistics. New bad
 | Changelog | `/changelog/` | Every update to the site, newest first, filter: New / Improved / Fixed (from `changelog.json`) |
 | FAQ, Privacy, Terms, Legal Notice | `/faq/` `/privacy/` `/terms/` `/legal/` | Legal Notice: operator, hosting, trademarks, content removal, credits |
 | Not found | any unknown URL | Real 404 page (HTTP 404) with "Did you mean" suggestions and search |
-| Event editor | `/admin/` | Owner only — dates, objectives, channels, popularity update |
+| Event editor | `/admin/` | Owner only: dates, objectives, channels, popularity update |
 
 Also on every page:
 - **Phones:** bottom bar with Home / Timeline / Badges / Search / Live (red dot while our channel is live).
-- **Changelog dot:** appears next to Changelog (and on the phone menu button) when the newest changelog date is newer than the visitor's last visit (the build writes it into `<meta name="changelog-latest">`).
-- **Theme** — Light / Dark / System switch top right (phones: bottom of the menu). Saved in the browser (`badgedb_theme`); default Dark. Colours are CSS variables in `app.css` (`:root` = dark, `:root[data-theme="light"]` = light).
-- **Quick search** — `Ctrl+K` / `⌘K` or `/` (or the search button): badges, events, channel badges, emotes and pages.
-- **Log in with Twitch** (optional, top right; on phones the icon next to search) — previews badges next to your own name and chat colour. No permissions are requested; everything stays in the visitor's browser.
+- **Changelog dot:** appears next to Changelog (and on the phone menu button) when `changelog.json` has something new since the visitor's last visit (the build writes the newest date + the number of items into `<meta name="changelog-latest">`, e.g. `2026-10-12.0066`, so items added on the same day count too).
+- **Theme**: Light / Dark / System switch top right (phones: bottom of the menu). Saved in the browser (`badgedb_theme`); default Dark. Colours are CSS variables in `app.css` (`:root` = dark, `:root[data-theme="light"]` = light).
+- **Remind me** (badge pages and event details, for upcoming, undated and running events): browser notification when the
+  dates get announced, when it starts and a day before it ends (2 hours before for short events). Runs on our own
+  push server (`push-server/`, see below). The buttons only appear when that server answers.
+- **Quick search**: `Ctrl+K` / `⌘K` or `/` (or the search button): badges, events, channel badges, emotes and pages.
+- **Log in with Twitch** (optional, top right; on phones the icon next to search): previews badges next to your own name and chat colour. No permissions are requested; everything stays in the visitor's browser.
 
 Old links with `#` (`/#global`, `/#badge/<set>`) redirect to the new URLs automatically.
 
@@ -47,31 +50,31 @@ Old links with `#` (`/#global`, `/#badge/<set>`) redirect to the new URLs automa
 
 Static site on GitHub Pages + a bot in GitHub Actions that runs **every 15 minutes**:
 
-1. **Global badges** (official Twitch API) — new badge → `badges.json`, X post with a generated image,
+1. **Global badges** (official Twitch API): new badge → `badges.json`, X post with a generated image,
    Discord post (if set up), timeline entry. Titles and descriptions are re-read every run.
-2. **Descriptions → details** — from Twitch's description the bot fills in category, objective
+2. **Descriptions → details**: from Twitch's description the bot fills in category, objective
    ("Watch 60 minutes…") and free / paid. Badges of the same campaign are grouped into one event.
    A placeholder badge entered by hand is linked to the real badge once Twitch publishes it.
-3. **Dates** — Twitch's API has no badge dates. The bot takes them from Twitch *reward campaigns* in the
+3. **Dates**: Twitch's API has no badge dates. The bot takes them from Twitch *reward campaigns* in the
    same category when one exists (uses the `TWITCH_GQL_OAUTH` login). It also tries Twitch *Drops campaigns*,
    but Twitch currently blocks automated access to them ("failed integrity check"). The bot does not try to get
    around that: after a failed attempt it waits until the next day. Drops dates are entered in `/admin/`
    (copy them from [twitch.tv/drops/campaigns](https://www.twitch.tv/drops/campaigns)).
-4. **Link reply on X** — after a new badge post, as soon as its page is online the bot replies with the link
+4. **Link reply on X**: after a new badge post, as soon as its page is online the bot replies with the link
    (switch off with variable `X_LINK_REPLY = 0`).
-   **"Now available" posts** — when an event with a known start time begins, the bot posts
-   "🟢 Now available on Twitch: …" (image, objective, end date in UTC — no countdown) to X and Discord,
+   **"Now available" posts**: when an event with a known start time begins, the bot posts
+   "🟢 Now available on Twitch: …" (image, objective, end date in UTC, no countdown) to X and Discord,
    then replies with the link. If the event has several badges, the image shows all of them side by side
    (more than 5: the first 4 and a "+N" tile) and the text lists each badge with its own objective.
    If an event starts within 12 minutes the bot waits and posts right on time; it never posts an event more than
    90 minutes late, never twice, and never for events without dates (switch off with variable `X_LIVE_POSTS = 0`).
-5. **Global emotes** — tracked from the official API (first-seen and removed dates).
-6. **Popularity** — tries PotatBotat once a day. potat.app blocks requests from GitHub's servers, so for now
+5. **Global emotes**: tracked from the official API (first-seen and removed dates).
+6. **Popularity**: tries PotatBotat once a day. potat.app blocks requests from GitHub's servers, so for now
    it is updated by hand (see below).
-7. **Channel badges** — collected from the top live channels and from `channels.txt`.
-   **Watch now** — for every running event: the live streams of its channel list, or the 8 biggest live streams of its
+7. **Channel badges**: collected from the top live channels and from `channels.txt`.
+   **Watch now**: for every running event: the live streams of its channel list, or the 8 biggest live streams of its
    category, into `live.json`. Our own channel (`badge_db`, or variable `OUR_CHANNEL`) goes first when it is live in that category.
-8. **Pages** — builds a real, pre-filled page for every URL above (same design as the live site),
+8. **Pages**: builds a real, pre-filled page for every URL above (same design as the live site),
    plus `sitemap.xml`, `robots.txt` and `404.html`. Asset links get a version number (`?v=…`) so
    browsers never keep an old `app.js` / `app.css`.
 
@@ -84,13 +87,23 @@ Rules the site applies by itself:
 - **All counts are badge counts, not event counts** (an event can hold several badges), so the home tiles and
   the timeline headings always show the same numbers.
 - Anything set by hand in `/admin/` is never overwritten by the bot.
+- **Speed:** `channel-badges.json` (about 440 KB) is loaded only on the Channel Badges pages and when quick search opens;
+  the menu count comes from the build. Data files are fetched with `no-cache`, so returning visitors get a quick
+  "not modified" answer instead of downloading them again.
+
+**Remind me server** (`push-server/server.py`, on the same Oracle VM as the Discord bot, behind Caddy for HTTPS at
+`api.badgedatabase.com`): stores each reminder (the browser's push address + event id), reads `events.json` from the
+site every 5 minutes, checks every minute and sends the notifications. A finished event's reminders are deleted.
+No IP addresses or access logs are kept. The site finds it via `CONFIG.pushApi` in `assets/app.js`; `sw.js` shows the
+notifications in the browser. Notification links open the badge page, or `/timeline/?event=<id>` for events with
+several badges.
 
 ---
 
 ## Repository layout
 
 ```
-index.html                page shell (layout, sidebar, all sections) — edit by hand
+index.html                page shell (layout, sidebar, all sections), edit by hand
 assets/app.css            styles
 assets/app.js             site logic (routing, calendar, search, admin, login, …)
 assets/fonts/             self-hosted Manrope font (SIL Open Font License, OFL.txt)
@@ -103,13 +116,17 @@ popularity.json           badge user counts               ← /admin/ (bot when 
 posts.json                X posts awaiting a link reply   ← bot
 changelog.json            site updates shown on /changelog/   ← by hand (see below)
 live.json                 live streams per running event (Watch now) ← bot
-status.json               last run report (popularity, emotes, drop campaigns) — check this first when debugging
+status.json               last run report (popularity, emotes, drop campaigns), check this first when debugging
 top-categories.json       top 150 Twitch categories        ← bot
 channels-state.json       crawler bookkeeping             ← bot
 channels.txt              extra channels to always check (one per line)
 
 badges/ timeline/ channel/ emotes/ popularity/ stats/ categories/ faq/ contact/ privacy/ terms/ legal/ changelog/ leaderboard/
-404.html sitemap.xml robots.txt     generated by the bot — don't edit
+404.html sitemap.xml robots.txt     generated by the bot, don't edit
+
+sw.js                     service worker: shows Remind me notifications (no offline cache)
+push-server/              Remind me server for the VM: server.py, requirements.txt, install.sh
+discord-bot/              Discord bot for the VM (/active, /soon, /badge)
 
 bot/check_badges.py       the bot
 bot/build_pages.py        builds the pages from index.html
@@ -117,7 +134,7 @@ bot/requirements.txt
 .github/workflows/badges.yml        runs everything every 15 minutes
 
 logo.svg                  logo source (hexagon, transparent)
-logo.png, logo-192.png, favicon*  transparent PNGs rendered from logo.svg (site, browser tab, X post image)
+logo.png, logo-192.png, logo-320.png, favicon*  transparent PNGs rendered from logo.svg (site, browser tab, X post image)
 icon-192/512.png, apple-touch-icon.png  phone home screen icons (solid background on purpose)
 site.webmanifest, og-image.png, CNAME
 ```
@@ -164,13 +181,21 @@ GitHub → `changelog.json` → **Edit this file** → add a block at the top (n
 temporarily unavailable. It will be back soon!"), dims every Discord link and shows a short message instead of
 opening the invite. When Discord works again, set it to `false` and upload `app.js` (then Ctrl+F5).
 
+### Remind me server (VM)
+Status / log on the VM: `sudo systemctl status badgedb-push` · `sudo journalctl -u badgedb-push -n 50`.
+Update to the newest `server.py` from GitHub: run the install command again (reminders and the key are kept):
+`curl -fsSL https://raw.githubusercontent.com/davidpzsny/badgedb/main/push-server/install.sh | sudo bash`.
+Check from anywhere: [api.badgedatabase.com/push/health](https://api.badgedatabase.com/push/health).
+Switch the buttons off: `CONFIG.pushApi = ""` in `assets/app.js`.
+Never delete `/opt/badgedb-push/vapid_private.pem`: with a new key every existing reminder stops working.
+
 ### Other
 - Extra channels for channel badges: add them to `channels.txt`.
 - X post text / image: `bot/check_badges.py` → `post_to_x()` / `make_card()`.
 
 ---
 
-## Setup (done — for reference)
+## Setup (done, for reference)
 
 **Secrets** (Settings → Secrets and variables → Actions → *Secrets*):
 
@@ -179,7 +204,7 @@ opening the invite. When Discord works again, set it to `false` and upload `app.
 | `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET` | Twitch app (dev.twitch.tv/console). The public client ID is also written into the pages for "Log in with Twitch". |
 | `X_API_KEY`, `X_API_SECRET`, `X_ACCESS_TOKEN`, `X_ACCESS_SECRET` | X app keys (Read and write) for @BadgeDatabase |
 | `TWITCH_GQL_OAUTH` | `auth-token` of a **separate** helper Twitch account, used for reward-campaign dates. If it expires: log in in an incognito window, copy a fresh one, don't log out. |
-| `DISCORD_WEBHOOK` | optional — post new badges to a Discord channel |
+| `DISCORD_WEBHOOK` | optional: post new badges to a Discord channel |
 
 **Variables** (*Variables* tab): `SITE_URL` = `https://badgedatabase.com` · optional `X_LINK_REPLY` = `0`
 (no link replies) · optional `X_LIVE_POSTS` = `0` (no "Now available" posts) · optional `DRY_RUN` = `1` (test without posting).
@@ -191,7 +216,13 @@ opening the invite. When Discord works again, set it to `false` and upload `app.
 
 **Hosting**: GitHub Pages (branch `main`, root), custom domain `badgedatabase.com` (Namecheap: 4 A records
 to GitHub Pages + `www` CNAME to `davidpzsny.github.io.`), Enforce HTTPS on. Google Search Console is
-verified with a DNS TXT record — don't delete it. Sitemap: `https://badgedatabase.com/sitemap.xml`.
+verified with a DNS TXT record, don't delete it. Sitemap: `https://badgedatabase.com/sitemap.xml`.
+
+**Remind me server** (one time): Namecheap → Domain List → Manage → Advanced DNS → Add New Record →
+`A Record`, Host `api`, Value = the VM's public IP. Oracle Cloud → Networking → Virtual cloud networks → the VCN →
+Subnets → the subnet → Security → the security list → Add Ingress Rules: Source CIDR `0.0.0.0/0`, TCP, Destination
+Port Range `80,443`. Then on the VM: `curl -fsSL https://raw.githubusercontent.com/davidpzsny/badgedb/main/push-server/install.sh | sudo bash`
+(installs Python, Caddy for the HTTPS certificate, the `badgedb-push` service, and opens ports 80/443 in the VM's own firewall).
 
 **Email**: `support@badgedatabase.com` is a Namecheap email forward (Domain → Redirect Email).
 
@@ -207,13 +238,15 @@ uploaded while the bot runs, that run skips saving and the next run redoes it (n
 | Symptom | Fix |
 |---|---|
 | Site unstyled or old version | Wait for Actions → *pages build and deployment* to finish, then Ctrl+F5 (or run the workflow once so the asset version updates). |
-| Popularity shows old numbers | potat.app blocks the bot — update by hand in `/admin/`. |
+| Popularity shows old numbers | potat.app blocks the bot, update by hand in `/admin/`. |
 | `/admin/` save fails with 403 | The admin token lacks *Contents: Read and write* on `badgedb`. |
 | Log: `TWITCH_GQL_OAUTH token was rejected` | Copy a fresh `auth-token` for the helper account into the secret. |
-| A new badge has no dates, but Twitch shows them | It is a Drops campaign — Twitch blocks reading those automatically. Enter the dates in `/admin/` (`status.json` → `drop_campaigns` shows the bot's last attempt). |
+| A new badge has no dates, but Twitch shows them | It is a Drops campaign. Twitch blocks reading those automatically. Enter the dates in `/admin/` (`status.json` → `drop_campaigns` shows the bot's last attempt). |
 | Log: `posting failed` | Check X credit and that the X app still has *Read and write*. |
 | "Log in with Twitch" missing | `TWITCH_CLIENT_ID` must be passed to the *Build SEO pages* step; run the workflow once. |
-| Something else | Open `status.json` in the repo — the bot writes its last results there. |
+| No Remind me button on badge pages | [api.badgedatabase.com/push/health](https://api.badgedatabase.com/push/health) must answer `{"ok": true…}`. If not: on the VM `sudo systemctl status badgedb-push caddy`, check the `api` DNS record and the 80/443 ingress rules. The button is also hidden for ended badges, badges ending within 3 hours and in browsers without notifications. |
+| Remind me says notifications are blocked | The visitor blocked them for the site: browser → site settings → Notifications → Allow. |
+| Something else | Open `status.json` in the repo: the bot writes its last results there. |
 
 ---
 
