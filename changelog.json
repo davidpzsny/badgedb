@@ -1,0 +1,126 @@
+[
+ {
+  "date": "2026-10-12",
+  "title": "Changelog and Discord upgrades",
+  "items": [
+   {"type": "new", "text": "Changelog page: every update to Badge Database in one place."},
+   {"type": "new", "text": "Discord: separate channels for new badges, events that just started, badges ending soon and new global emotes, each with its own role to get pinged."},
+   {"type": "new", "text": "Discord: every badge event on the timeline also appears in the server's Events list, with start, end and how to get each badge."},
+   {"type": "new", "text": "Discord bot with /active, /soon and /badge commands."},
+   {"type": "improved", "text": "Quick search finds Top Categories, Contact, Changelog and Legal Notice too."},
+   {"type": "fixed", "text": "Dates no longer show one day early for visitors in American time zones."}
+  ]
+ },
+ {
+  "date": "2026-10-11",
+  "title": "Discord notice and date fixes",
+  "items": [
+   {"type": "new", "text": "A notice on every page while our Discord server is temporarily unavailable. Discord links are paused until it is back."},
+   {"type": "fixed", "text": "Corrected dates for CrossWorlds World Championship 2026 (ended Oct 11, 03:58 UTC), Bloody Finger ELDEN RING (Oct 1, 07:00 to Oct 29, 06:59 UTC) and Rematch Blue Lock (ends Oct 21, 22:58 UTC)."},
+   {"type": "fixed", "text": "Clearer objectives for Rematch Blue Lock and d20: watch 30 minutes."}
+  ]
+ },
+ {
+  "date": "2026-10-08",
+  "title": "Newest badges first",
+  "items": [
+   {"type": "improved", "text": "The calendars show the newest badges first, upcoming ones included."},
+   {"type": "new", "text": "Stat tiles on the home page: Active now, Upcoming, Date TBA and Free today. Click a tile to jump to that part of the timeline."},
+   {"type": "improved", "text": "Counts on the home page and the timeline are badge counts instead of event counts, so both always show the same numbers."},
+   {"type": "improved", "text": "\"Now available\" posts on X show every badge of the event side by side and list each badge with its own objective."},
+   {"type": "improved", "text": "\"Now available\" posts show the end date without a countdown."},
+   {"type": "fixed", "text": "Long badge names no longer overlap the bottom of the X post image."},
+   {"type": "fixed", "text": "Start and end dates added for DayZ Yellow King, Dragon's Dogma 2: Dark Arisen and Vaultbreakers."}
+  ]
+ },
+ {
+  "date": "2026-10-06",
+  "title": "\"Now available\" posts",
+  "items": [
+   {"type": "new", "text": "When a badge event starts, @BadgeDatabase posts \"Now available on Twitch\" with the badge image, the objective and the end date, then replies with the link to the badge page."}
+  ]
+ },
+ {
+  "date": "2026-10-05",
+  "title": "Top Categories and sliders",
+  "items": [
+   {"type": "new", "text": "Top Categories page: the 150 biggest Twitch categories right now, with viewers, live channels, the biggest stream and the badges you can earn there."},
+   {"type": "new", "text": "Home page: top categories, the most popular badges, and moving sliders for the badges you can get right now and the recently added ones."},
+   {"type": "new", "text": "Back to top button on long pages, on desktop and mobile."},
+   {"type": "improved", "text": "Cleaner home page: \"What is BadgeDB?\" removed and \"Get notified\" moved to the bottom."}
+  ]
+ },
+ {
+  "date": "2026-10-04",
+  "title": "RuneFest 2026",
+  "items": [
+   {"type": "fixed", "text": "RuneFest 2026 badges (Yellow Party Hat, RuneScape Shrimp): exact start and end times and the participating channels."},
+   {"type": "improved", "text": "Badge pages show up to 100 participating channels."}
+  ]
+ },
+ {
+  "date": "2026-10-02",
+  "title": "Search, statistics and privacy",
+  "items": [
+   {"type": "new", "text": "Quick search on every page (Ctrl+K, ⌘K or /): badges, events, channel badges, emotes and pages."},
+   {"type": "new", "text": "Statistics page: badges per month and year, free vs paid, and the games with the most badges."},
+   {"type": "new", "text": "Add to calendar on badge pages: Google Calendar, Apple Calendar and Outlook, with a reminder at the start and a last-chance reminder."},
+   {"type": "new", "text": "Contact page with a ready-to-send email form. Badge pages got a \"Report a mistake\" link."},
+   {"type": "new", "text": "Legal Notice page: operator, hosting, domain, trademarks and content removal."},
+   {"type": "new", "text": "A real 404 page with suggestions and search, instead of jumping back to the home page."},
+   {"type": "improved", "text": "Better privacy: the 24/7 stream only loads when you click it, and the font is served from our own server instead of Google Fonts."},
+   {"type": "improved", "text": "New sidebar groups (Insights, Help), and the \"DB\" in the logo is now purple."}
+  ]
+ },
+ {
+  "date": "2026-10-01",
+  "title": "Log in with Twitch and channel lists",
+  "items": [
+   {"type": "new", "text": "Log in with Twitch (optional): see how a badge looks next to your own name and chat colour. No permissions are requested and your data stays in your browser."},
+   {"type": "new", "text": "Badge pages list the channels where the badge can be earned."},
+   {"type": "improved", "text": "Badges announced before Twitch published them are linked to the real badge automatically."},
+   {"type": "fixed", "text": "Badge Popularity includes every badge with its full user count."},
+   {"type": "fixed", "text": "Free and paid labels follow the event's own objective."}
+  ]
+ },
+ {
+  "date": "2026-09-30",
+  "title": "A page for every badge",
+  "items": [
+   {"type": "new", "text": "Every badge has its own page, for example badgedatabase.com/badges/wolf-medallion/, and the site has a sitemap for search engines."},
+   {"type": "new", "text": "Global Emotes page: every global emote with the date it appeared, plus the removed ones."},
+   {"type": "new", "text": "Badge Popularity page: badges ranked by how many users wear them (data: PotatBotat)."},
+   {"type": "new", "text": "Status labels and filters: Active, Ends soon, Upcoming, Date not announced and Ended."},
+   {"type": "new", "text": "Badge pages show the objective, the category, the start and end, and Twitch's own description."},
+   {"type": "new", "text": "X posts get a reply with the link to the badge page as soon as it is online."},
+   {"type": "improved", "text": "Dates are filled in automatically from Twitch reward campaigns when Twitch has them."},
+   {"type": "improved", "text": "Finished badges leave the timeline right away. Badges without dates count as ended 21 days after they appeared."},
+   {"type": "improved", "text": "Full Privacy Policy and Terms of Service. Contact: support@badgedatabase.com."}
+  ]
+ },
+ {
+  "date": "2026-09-28",
+  "title": "Calendar and FAQ",
+  "items": [
+   {"type": "new", "text": "\"Badges available right now\" calendar on the home page and the timeline, with week and 4-week views."},
+   {"type": "new", "text": "FAQ page."},
+   {"type": "new", "text": "New site icons for browser tabs and phone home screens."}
+  ]
+ },
+ {
+  "date": "2026-09-17",
+  "title": "Channel badges and events",
+  "items": [
+   {"type": "new", "text": "Channel badges (sub, watch time and top supporter) are collected automatically from live channels."},
+   {"type": "new", "text": "Timeline events with dates and objectives."}
+  ]
+ },
+ {
+  "date": "2026-09-14",
+  "title": "Launch",
+  "items": [
+   {"type": "new", "text": "Badge Database is live on badgedatabase.com: home page, timeline, global badge archive, channel badges, Privacy Policy and Terms."},
+   {"type": "new", "text": "Twitch's global badge list is checked every 15 minutes, and new badges are posted on X @BadgeDatabase with a generated image."}
+  ]
+ }
+]
