@@ -108,6 +108,7 @@ const CONFIG = {
     discord: "https://discord.gg/QkuRDXcZH5",
     reddit:  "",
   },
+  pushApi: "https://api.badgedatabase.com",   // "Remind me" push server (push-server/ on the VM). "" = no Remind me buttons.
   discordDown: true,     // true = notice "Discord is temporarily unavailable" + Discord links paused. Set to false when it works again.
   clientId: "",
   repo: "davidpzsny/badgedb",        // used by the #admin page to save events.json
@@ -138,7 +139,8 @@ const tile = b => `<span class="tile">${b.img ? `<img src="${esc(b.img)}" alt="$
 const fmt = iso => iso ? new Date(/^\d{4}-\d\d-\d\d$/.test(iso) ? iso + "T12:00:00Z" : iso).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}) : "";   // plain dates stay on their day in every time zone
 const fmtFull = iso => iso ? new Date(iso).toLocaleString(undefined,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : "Not announced";
 const num = n => n.toLocaleString();
-const toast = m => { const t=$('#toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); };
+let toastT = 0;
+const toast = (m, ms = 2200) => { const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(()=>t.classList.remove('show'), ms); };
 const status = ev => { if(!ev.start) return "tba"; const n=Date.now(); if(n<Date.parse(ev.start)) return "soon"; if(n>Date.parse(ev.end)) return "ended"; return "live"; };
 function countdown(iso){ let d=Math.max(0,Date.parse(iso)-Date.now()); const days=Math.floor(d/864e5); d-=days*864e5; const h=Math.floor(d/36e5); d-=h*36e5; const m=Math.floor(d/6e4), s=Math.floor((d%6e4)/1e3); return days?`${days}d ${h}h ${m}m`:`${h}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`; }
 const evCost = ev => ev.badges.some(b=>b.cost==="free")?"free":ev.badges.some(b=>b.cost==="paid")?"paid":"na";
@@ -167,6 +169,16 @@ function normalize(rows){
 let globalBadges = normalize(BADGES);
 let READY = false, CH_READY = false;   // true once badges.json + events.json are loaded
 let channelBadges = [], lookupBadges = [], token = null;
+/* channel-badges.json is big (~440 KB), so it is loaded only on the Channel Badges pages and for quick search */
+let chLoad = null;
+function loadChannelBadges(){
+  if(!chLoad) chLoad = fetch('/channel-badges.json', {cache: 'no-cache'}).then(r => r.ok ? r.json() : null).then(rows => {
+    if(!Array.isArray(rows)) return;
+    channelBadges = normChannel(rows); CH_READY = true; renderChannel();
+    if(/^\/channel\//.test(pathKey())) route();
+  }).catch(() => { chLoad = null; });
+  return chLoad;
+}
 const CTYPE = {sub:"Sub badge", watch:"Watch badge", ranking:"Top supporter", other:"Campaign"};
 // channel-badges.json rows: [title, img, first_seen, login, display, set_id, type]
 const normChannel = rows => rows.map(r => ({ set:r[1], name:r[0], img:cdn(r[1]), imgId:r[1], added:r[2], login:r[3], display:r[4], setId:r[5], type:r[6], versions:[{id:"1",title:r[0],img:cdn(r[1])}] }));
@@ -195,6 +207,7 @@ function route(){
   if(!h) h = p === "/" ? "home" : "notfound";
   if(h === "notfound") renderNotFound();
   if(h === "contact") contactPrefill();
+  if((h === "channel" || /^\/channel\//.test(p)) && !CH_READY) loadChannelBadges();
   if(h === "changelog"){ loadChangelog(); clMarkSeen(); }
   if(h==="admin"){ renderAdmin(); if(ADM.token && !ADM.events.length) admLoad(); }
   if(h==="popularity") maybeLivePopularity();
@@ -205,8 +218,10 @@ function route(){
   if(h==="badge"){ const bb = set && globalBadges.find(x=>x.set===set); if(bb) document.title = bb.name+" – Twitch Badge | Badge Database"; }
   else document.title = TITLES[h] || TITLES.home;
   $$('.nav a, .bnav a').forEach(a => a.classList.toggle('on', a.dataset.route === h || (h === 'badge' && a.closest('.bnav') && a.dataset.route === 'global')));
-  closeDrawer();
+  if(p !== routedPath) closeDrawer();          // a new page closes the drawer; data arriving later (live.json, …) re-renders without closing it
+  routedPath = p;
 }
+let routedPath = null;
 window.addEventListener('popstate', route);
 // in-site links: no full page reload
 document.addEventListener('click', e => {
@@ -505,7 +520,7 @@ function renderChannel(){
   $('#gridChannel').innerHTML = list.length ? list.slice(0,cShown).map(channelRow).join('') : `<div class="empty">${channelBadges.length?'No badges match.':(CH_READY?'The bot is still collecting channel badges — check back soon.':'Loading…')}</div>`;
   $('#chCount').textContent = channelBadges.length ? `${list.length} of ${channelBadges.length} campaign badges from ${new Set(channelBadges.map(b=>b.login)).size} channels` : '';
   $('#cMore').innerHTML = list.length>cShown ? `<button class="btn ghost" id="btnCMore">Show ${Math.min(90,list.length-cShown)} more</button>` : '';
-  $('#cChannel').textContent = channelBadges.length || '';
+  if(channelBadges.length) $('#cChannel').textContent = channelBadges.length;   // otherwise keep the count the build wrote into the page
 }
 function renderAll(){ renderLastChance(); renderHome(); renderEvents(); renderTimeline(); renderGlobal(); renderChannel(); renderEmotes(); renderPopularity(); renderStats(); renderSlider(); renderTopCats(); renderTopBadges(); renderCategories(); }
 
@@ -608,6 +623,7 @@ function qsRender(){
       <span class="qs-t"><b>${esc(it.title)}</b>${it.sub ? `<small>${esc(it.sub)}</small>` : ""}</span></button>`; }).join("");
 }
 function qsOpen(){ const el = $('#qs'); if(!el.hidden) return; el.hidden = false; document.body.classList.add('qs-on'); if(typeof setMenu === "function") setMenu(false);
+  if(!CH_READY) loadChannelBadges().then(() => { if(!$('#qs').hidden) qsRender(); });
   $('#qsInput').value = ""; qsActive = 0; qsRender(); setTimeout(() => $('#qsInput').focus(), 0); }
 function qsClose(){ $('#qs').hidden = true; document.body.classList.remove('qs-on'); }
 function qsGo(i){ const it = qsItems[i]; if(!it) return; qsClose(); it.go(); window.scrollTo({top: 0}); }
@@ -647,7 +663,7 @@ let CL = null, clFilter = "all", clLoading = false;
 const CL_TAG = {new: "New", improved: "Improved", fixed: "Fixed"};
 function loadChangelog(){
   if(CL || clLoading) return; clLoading = true;
-  fetch('/changelog.json', {cache: 'no-store'}).then(r => r.ok ? r.json() : null).then(rows => { if(Array.isArray(rows)){ CL = rows; renderChangelog(); } }).catch(() => {}).finally(() => { clLoading = false; });
+  fetch('/changelog.json', {cache: 'no-cache'}).then(r => r.ok ? r.json() : null).then(rows => { if(Array.isArray(rows)){ CL = rows; renderChangelog(); } }).catch(() => {}).finally(() => { clLoading = false; });
 }
 function renderChangelog(){
   const el = $('#clList'); if(!el || !CL) return;
@@ -1023,7 +1039,7 @@ const catUrl = c => `https://www.twitch.tv/directory/category/${encodeURICompone
 let LIVE = null, liveLoading = false;
 function loadLive(){
   if(LIVE || liveLoading) return; liveLoading = true;
-  fetch('/live.json', {cache: 'no-store'}).then(r => r.ok ? r.json() : null).then(j => { LIVE = j || {events: {}}; })
+  fetch('/live.json', {cache: 'no-cache'}).then(r => r.ok ? r.json() : null).then(j => { LIVE = j || {events: {}}; })
     .catch(() => { LIVE = {events: {}}; }).finally(() => { liveLoading = false; if(typeof route === "function") route(); renderBottomNav(); });
 }
 function watchNowHtml(ev){
@@ -1046,7 +1062,7 @@ function openEvent(id){
     ${ev.note?`<p class="hint">${esc(ev.note)}</p>`:''}
     <div class="badgelist">${ev.badges.map(b=>`<div>${tile({...b,img:cdn(b.img)})}<span><b>${esc(b.name)}</b><span>${esc(b.how)}</span></span><span class="pill ${b.cost}" style="margin-left:auto;flex:none">${{free:"Free",paid:"Paid",na:"TBA"}[b.cost]}</span></div>`).join('')}</div>
     ${watchNowHtml(ev)}
-    <div class="actions">${!/any|unknown|twitch|eligible/i.test(ev.category)?`<a class="btn" target="_blank" rel="noopener" href="${catUrl(ev.category)}">Open category on Twitch</a>`:''}<button class="btn ghost" data-copy="${esc(ev.name)} — ${esc(ev.badges.map(b=>b.name+': '+b.how).join(' | '))} (${fmt(ev.start)} – ${fmt(ev.end)})">Copy summary</button>${calendarMenu(ev)}</div>`);
+    <div class="actions">${remindHtml(ev)}${!/any|unknown|twitch|eligible/i.test(ev.category)?`<a class="btn" target="_blank" rel="noopener" href="${catUrl(ev.category)}">Open category on Twitch</a>`:''}<button class="btn ghost" data-copy="${esc(ev.name)} — ${esc(ev.badges.map(b=>b.name+': '+b.how).join(' | '))} (${fmt(ev.start)} – ${fmt(ev.end)})">Copy summary</button>${calendarMenu(ev)}</div>`);
 }
 function openBadge(set,type){
   const b=(type==='global'?globalBadges:lookupBadges).find(x=>x.set===set); if(!b) return;
@@ -1080,6 +1096,89 @@ function shareBadge(url, title){                    // phones: the system share 
   a.href = `https://x.com/intent/post?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}&via=BadgeDatabase`;
   a.target = "_blank"; a.rel = "noopener"; document.body.appendChild(a); a.click(); a.remove();
 }
+/* ---------- Remind me: browser notifications through our push server (CONFIG.pushApi, push-server/ folder) ----------
+   The browser gets a push address from its own push service; our server stores it with the event id and sends
+   a notification when the event starts and before it ends. Which reminders are on is also kept in localStorage. */
+const REM_KEY = "badgedb_reminders";
+let PUSH_KEY = null, PUSH_STATE = "unknown", remSynced = false;      // PUSH_STATE: unknown | checking | ok | off
+const BELL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>';
+function remList(){ try{ const l = JSON.parse(localStorage.getItem(REM_KEY) || "[]"); return Array.isArray(l) ? l : []; }catch(e){ return []; } }
+function remSave(l){ try{ localStorage.setItem(REM_KEY, JSON.stringify(l)); }catch(e){} }
+function pushSupported(){ return "serviceWorker" in navigator && "PushManager" in window && "Notification" in window && window.isSecureContext; }
+function isIOS(){ return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1); }
+function remEligible(ev){
+  if(!ev || !CONFIG.pushApi || /^orphan-/.test(ev.id) || !EVENTS.some(e => e.id === ev.id)) return false;
+  const st = status(ev);
+  if(st === "ended" || (st === "tba" && isStale(ev))) return false;
+  return !(ev.end && Date.parse(ev.end) - Date.now() < 3*36e5);          // less than 3 hours left: too late for a reminder
+}
+function remLabel(id){
+  const on = remList().includes(id), ev = EVENTS.find(e => e.id === id), live = ev && status(ev) === "live";
+  return { on, text: on ? "Reminder on" : "Remind me",
+           title: on ? "Reminder is on. Click to turn it off." : live ? "Get a notification before it ends" : "Get a notification when it starts and before it ends" };
+}
+function remindHtml(ev, cls = ""){
+  if(!remEligible(ev) || !(pushSupported() || isIOS())) return "";
+  if(PUSH_STATE === "unknown") setTimeout(pushCheck, 0);
+  const l = remLabel(ev.id);
+  return `<button class="btn ghost rm-btn ${cls} ${l.on ? "on" : ""}" data-remind="${esc(ev.id)}" title="${esc(l.title)}" aria-pressed="${l.on}" ${PUSH_STATE === "ok" ? "" : "hidden"}>${BELL}<span>${l.text}</span></button>`;
+}
+function remPaint(){
+  $$('[data-remind]').forEach(b => { const l = remLabel(b.dataset.remind);
+    b.hidden = PUSH_STATE !== "ok"; b.classList.toggle("on", l.on); b.title = l.title; b.setAttribute("aria-pressed", l.on); b.querySelector("span").textContent = l.text; });
+}
+function pushCheck(){                                   // one small request, only on pages with a Remind me button
+  if(PUSH_STATE !== "unknown" || !CONFIG.pushApi) return;
+  let cached = null; try{ cached = sessionStorage.getItem("badgedb_push_key"); }catch(e){}
+  const ready = key => { PUSH_KEY = key; PUSH_STATE = "ok"; remPaint(); remSync(); };
+  if(cached){ ready(cached); return; }
+  PUSH_STATE = "checking";
+  fetch(CONFIG.pushApi + "/push/key", {cache: "no-store"}).then(r => r.ok ? r.json() : null).then(j => {
+    if(j && j.key){ try{ sessionStorage.setItem("badgedb_push_key", j.key); }catch(e){} ready(j.key); } else PUSH_STATE = "off";
+  }).catch(() => { PUSH_STATE = "off"; });
+}
+async function remApi(path, body){
+  const r = await fetch(CONFIG.pushApi + path, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)});
+  const j = await r.json().catch(() => ({}));
+  if(!r.ok){ const e = new Error(j.error || "Server error"); e.api = true; throw e; }
+  return j;
+}
+function remSync(){                                     // once per visit: the server's list wins (finished reminders disappear)
+  if(remSynced || !remList().length || !pushSupported()) return; remSynced = true;
+  navigator.serviceWorker.getRegistration("/").then(reg => reg ? reg.pushManager.getSubscription() : null).then(sub => {
+    if(!sub){ remSave([]); remPaint(); return; }
+    return remApi("/push/list", {endpoint: sub.endpoint}).then(j => { if(Array.isArray(j.events)){ remSave(j.events); remPaint(); } });
+  }).catch(() => {});
+}
+const b64u8 = s => { s = s.replace(/-/g, "+").replace(/_/g, "/"); s += "=".repeat((4 - s.length % 4) % 4); return Uint8Array.from(atob(s), c => c.charCodeAt(0)); };
+const sameKey = (a, b) => { const x = new Uint8Array(a); return x.length === b.length && x.every((v, i) => v === b[i]); };
+async function remToggle(btn){
+  const id = btn.dataset.remind, on = remList().includes(id);
+  if(!pushSupported()){ toast("On iPhone and iPad: tap Share, then Add to Home Screen. Open Badge Database from your Home Screen and tap Remind me there.", 7000); return; }
+  if(!on && Notification.permission === "denied"){ toast("Notifications are blocked for this site. Allow them in your browser's site settings, then try again.", 5000); return; }
+  const perm = on || Notification.permission === "granted" ? null : Notification.requestPermission();   // asked right away (Safari wants it inside the click)
+  btn.disabled = true;
+  try{
+    if(on){
+      const reg = await navigator.serviceWorker.getRegistration("/"), sub = reg && await reg.pushManager.getSubscription();
+      const j = sub ? await remApi("/push/remind", {sub: sub.toJSON(), event: id, on: false}) : {};
+      remSave(Array.isArray(j.events) ? j.events : remList().filter(x => x !== id)); toast("Reminder turned off");
+    } else {
+      if(perm && await perm !== "granted"){ toast("Notifications were not allowed, so no reminder was set.", 4000); return; }
+      const reg = await navigator.serviceWorker.register("/sw.js"); await navigator.serviceWorker.ready;
+      const key = b64u8(PUSH_KEY); let sub = await reg.pushManager.getSubscription();
+      if(sub && sub.options && sub.options.applicationServerKey && !sameKey(sub.options.applicationServerKey, key)){ await sub.unsubscribe(); sub = null; }
+      if(!sub) sub = await reg.pushManager.subscribe({userVisibleOnly: true, applicationServerKey: key});
+      const j = await remApi("/push/remind", {sub: sub.toJSON(), event: id, on: true});
+      remSave(Array.isArray(j.events) ? j.events : remList().concat(id));
+      const ev = EVENTS.find(e => e.id === id);
+      toast(ev && status(ev) === "live" ? "Reminder on: you get a notification before it ends." : "Reminder on: you get a notification when it starts and before it ends.", 4500);
+    }
+  }catch(e){ toast(e && e.api && e.message.length < 100 ? e.message : "Could not set the reminder. Please try again later.", 4500); }
+  finally{ btn.disabled = false; remPaint(); }
+}
+document.addEventListener('click', e => { const rm = e.target.closest('[data-remind]'); if(rm){ e.preventDefault(); remToggle(rm); } });
+
 function renderBadgePage(set){
   if(set !== bpLastSet){ bpVersion = 0; bpLastSet = set; }
   const box=$('#badgePage'); $('.back').setAttribute('href','/badges/'); $('.back').textContent='← All Twitch Global Badges';
@@ -1098,7 +1197,7 @@ function renderBadgePage(set){
   const bg = bpTheme==="dark" ? "#18181b" : "#f7f7f8";
   box.innerHTML = `
     <div class="page-head"><div><h1>${esc(v.title||b.name)}</h1><p class="lead">Everything you need to know about this Twitch global badge.</p></div>
-      <div class="bp-side"><button class="btn ghost bp-share" data-share="${esc(location.origin+'/badges/'+encodeURIComponent(b.set)+'/')}" data-share-title="${esc(v.title||b.name)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Share</button>${isFree(b)?'<span class="pill free">Free</span> ':''}${st==="live"?'<span class="pill live">Active</span>':st==="soon"?'<span class="pill soon">Upcoming</span>':st==="ended"?'<span class="pill na">Ended</span>':''}</div></div>
+      <div class="bp-side">${ev ? remindHtml(ev.ev, "bp-share") : ""}<button class="btn ghost bp-share" data-share="${esc(location.origin+'/badges/'+encodeURIComponent(b.set)+'/')}" data-share-title="${esc(v.title||b.name)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Share</button>${isFree(b)?'<span class="pill free">Free</span> ':''}${st==="live"?'<span class="pill live">Active</span>':st==="soon"?'<span class="pill soon">Upcoming</span>':st==="ended"?'<span class="pill na">Ended</span>':''}</div></div>
     ${ev ? watchNowHtml(ev.ev) : ""}
     ${previewCard(v.img)}
     <div class="bp-grid">
@@ -1397,20 +1496,19 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDrawer(); });
 if(!document.body.dataset.ssr) renderAll();
 route(); setInterval(tick,1000);
 renderSideUser(); if(TW_USER) twFetchUser();
-const getJSON = u => fetch(u, {cache:'no-store'}).then(r => r.ok ? r.json() : null);
+const getJSON = u => fetch(u, {cache:'no-cache'}).then(r => r.ok ? r.json() : null);   // no-cache = ask the server, reuse the copy when unchanged (304)
 Promise.allSettled([getJSON('/badges.json'), getJSON('/events.json'), getJSON('/popularity.json')]).then(([b, e, pp]) => {
   if(pp.status === 'fulfilled' && pp.value && pp.value.counts) POP = pp.value;
   if(b.status === 'fulfilled' && Array.isArray(b.value) && b.value.length) globalBadges = normalize(b.value);
   if(e.status === 'fulfilled' && Array.isArray(e.value) && e.value.length){ EVENTS = e.value; indexEvents(); }
   applyPopularity();
   READY = true; renderAll(); route();
+  const evq = new URLSearchParams(location.search).get("event");          // /timeline/?event=<id> opens that event (links in notifications)
+  if(evq && allEvents().some(e => e.id === evq)){ history.replaceState(null, "", location.pathname); openEvent(evq); }
+  if(remList().length) pushCheck();
   if(pathKey() === "/popularity/") maybeLivePopularity();
 });
 getJSON('/top-categories.json').then(j => { TOPCATS = j || {games: []}; renderTopCats(); renderCategories(); }).catch(() => { TOPCATS = {games: []}; renderTopCats(); renderCategories(); });
 loadLive();
 getJSON('/emotes.json').then(rows => { if(Array.isArray(rows)) EMOTES = rows; E_READY = true; renderEmotes(); renderStats(); }).catch(() => { E_READY = true; renderEmotes(); });
-getJSON('/channel-badges.json').then(rows => {
-  if(!Array.isArray(rows)) return;
-  channelBadges = normChannel(rows); CH_READY = true; renderChannel();
-  if(/^\/channel\/[^/]+\/$/.test(pathKey())) route();
-}).catch(()=>{});
+if(/^\/channel\//.test(pathKey())) loadChannelBadges();

@@ -1017,3 +1017,11 @@ main{grid-column:2;grid-row:2}
 .bp-side{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .bp-share{padding:7px 12px;font-size:13px;gap:6px}
 .bp-share svg{width:15px;height:15px}
+
+/* ---------- Remind me (push notifications) ---------- */
+.rm-btn.on{background:rgba(139,92,246,.16);border-color:var(--purple);color:var(--text)}
+.rm-btn.on svg{fill:currentColor}
+.rm-btn:disabled{cursor:progress}
+.toast{max-width:min(92vw,480px);text-align:center;line-height:1.4;white-space:normal;z-index:70}
+@media (max-width:880px){.toast{bottom:calc(86px + env(safe-area-inset-bottom))}
+  .scrim{z-index:44} .drawer{z-index:45}}      /* phones: the details panel covers the top bar, so its close button is visible */
