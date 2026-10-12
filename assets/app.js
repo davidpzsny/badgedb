@@ -28,7 +28,7 @@ async function twFetchUser(){
     let color = "";
     try{ color = (((await (await fetch("https://api.twitch.tv/helix/chat/color?user_id=" + me.id, {headers: h})).json()).data || [])[0] || {}).color || ""; }catch(_){}
     const before = JSON.stringify(TW_USER);
-    TW_USER = { login: me.login, name: me.display_name || me.login, color, avatar: me.profile_image_url };
+    TW_USER = { id: me.id, login: me.login, name: me.display_name || me.login, color, avatar: me.profile_image_url };
     try{ localStorage.setItem("badgedb_tw_user", JSON.stringify(TW_USER)); }catch(_){}
     if(JSON.stringify(TW_USER) !== before){ renderSideUser(); if(typeof route === "function") route(); }
   }catch(_){}
@@ -145,7 +145,7 @@ const isFile = location.protocol === "file:";
 const redirectUri = () => location.origin + location.pathname;
 
 /* ---------- routing (real URLs, no #) ---------- */
-const PATHS = {"/":"home","/timeline/":"timeline","/badges/":"global","/channel/":"channel","/categories/":"categories","/stats/":"stats","/emotes/":"emotes","/popularity/":"popularity","/faq/":"faq","/legal/":"legal","/contact/":"contact","/changelog/":"changelog","/privacy/":"privacy","/terms/":"terms","/admin/":"admin"};
+const PATHS = {"/":"home","/timeline/":"timeline","/badges/":"global","/channel/":"channel","/categories/":"categories","/stats/":"stats","/emotes/":"emotes","/popularity/":"popularity","/faq/":"faq","/legal/":"legal","/contact/":"contact","/changelog/":"changelog","/leaderboard/":"leaderboard","/privacy/":"privacy","/terms/":"terms","/admin/":"admin"};
 const LEGACY = {home:"/",timeline:"/timeline/",global:"/badges/",channel:"/channel/",faq:"/faq/",privacy:"/privacy/",terms:"/terms/",admin:"/admin/"};
 function pathKey(){ let p = location.pathname.replace(/index\.html$/,''); if(!p.endsWith('/')) p += '/'; return p; }
 // old #links keep working: /#global -> /badges/, /#badge/x -> /badges/x/
@@ -166,10 +166,11 @@ function route(){
   if(h === "notfound") renderNotFound();
   if(h === "contact") contactPrefill();
   if(h === "changelog") loadChangelog();
+  if(h === "leaderboard"){ if(TW_USER && LB.state === "idle") lbCount(); renderLeaderboard(); }
   if(h==="admin"){ renderAdmin(); if(ADM.token && !ADM.events.length) admLoad(); }
   if(h==="popularity") maybeLivePopularity();
   $$('[data-page]').forEach(s => s.hidden = s.dataset.page !== h);
-  const TITLES = {categories:"Top Twitch Categories Right Now | Badge Database", contact:"Contact | Badge Database", changelog:"Changelog | Badge Database", notfound:"Page not found | Badge Database", legal:"Legal Notice | Badge Database", stats:"Twitch Badge Statistics | Badge Database", emotes:"Twitch Global Emotes – Full List | Badge Database", popularity:"Twitch Badge Popularity – Most Used Badges | Badge Database", home:"Badge Database – Every Twitch Badge & When to Get It", timeline:"Timeline – Twitch Badges Available Now | Badge Database",
+  const TITLES = {categories:"Top Twitch Categories Right Now | Badge Database", contact:"Contact | Badge Database", changelog:"Changelog | Badge Database", leaderboard:"Badge Leaderboard – Count Your Twitch Badges | Badge Database", notfound:"Page not found | Badge Database", legal:"Legal Notice | Badge Database", stats:"Twitch Badge Statistics | Badge Database", emotes:"Twitch Global Emotes – Full List | Badge Database", popularity:"Twitch Badge Popularity – Most Used Badges | Badge Database", home:"Badge Database – Every Twitch Badge & When to Get It", timeline:"Timeline – Twitch Badges Available Now | Badge Database",
     global:"All Twitch Global Badges | Badge Database", channel:"Twitch Channel Badges | Badge Database", faq:"FAQ – Twitch Badges | Badge Database",
     privacy:"Privacy Policy | Badge Database", terms:"Terms of Service | Badge Database", admin:"Admin | Badge Database"};
   if(h==="badge"){ const bb = set && globalBadges.find(x=>x.set===set); if(bb) document.title = bb.name+" – Twitch Badge | Badge Database"; }
@@ -477,7 +478,7 @@ function renderChannel(){
   $('#cMore').innerHTML = list.length>cShown ? `<button class="btn ghost" id="btnCMore">Show ${Math.min(90,list.length-cShown)} more</button>` : '';
   $('#cChannel').textContent = channelBadges.length || '';
 }
-function renderAll(){ renderHome(); renderEvents(); renderTimeline(); renderGlobal(); renderChannel(); renderEmotes(); renderPopularity(); renderStats(); renderSlider(); renderTopCats(); renderTopBadges(); renderCategories(); }
+function renderAll(){ renderLeaderboard(); renderHome(); renderEvents(); renderTimeline(); renderGlobal(); renderChannel(); renderEmotes(); renderPopularity(); renderStats(); renderSlider(); renderTopCats(); renderTopBadges(); renderCategories(); }
 
 
 /* ---------- "Add to calendar": .ics file (Apple / Outlook / most apps) and Google Calendar links ---------- */
@@ -522,7 +523,7 @@ function calendarMenu(ev){
 
 /* ---------- quick search (Ctrl+K / "/") ---------- */
 const QS_PAGES = [["Home","/"],["Timeline","/timeline/"],["Global Badges","/badges/"],["Channel Badges","/channel/"],["Global Emotes","/emotes/"],
-  ["Badge Popularity","/popularity/"],["Statistics","/stats/"],["Top Categories","/categories/"],["FAQ","/faq/"],["Contact","/contact/"],["Changelog","/changelog/"],["Privacy Policy","/privacy/"],["Terms of Service","/terms/"],["Legal Notice","/legal/"]];
+  ["Badge Popularity","/popularity/"],["Statistics","/stats/"],["Top Categories","/categories/"],["FAQ","/faq/"],["Contact","/contact/"],["Changelog","/changelog/"],["Leaderboard","/leaderboard/"],["Privacy Policy","/privacy/"],["Terms of Service","/terms/"],["Legal Notice","/legal/"]];
 let qsItems = [], qsActive = 0;
 const qsNorm = t => String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 function qsScore(title, extra, q){
@@ -601,6 +602,81 @@ document.addEventListener('click', e => {
 /* ---------- contact (opens a pre-filled email; no server needed) ---------- */
 const CT_MAIL = "support@badgedatabase.com";
 const CT_TOPICS = {question: "Question", fix: "Badge info correction", idea: "Suggestion", removal: "Content removal request", other: "Message"};
+/* ---------- badge leaderboard (/leaderboard/): count your own badges ----------
+   Twitch shows a badge collection only to its owner, so the logged-in visitor's own token asks Twitch for it.
+   7TV / BetterTTV / FrankerFaceZ / Chatterino publish who has which badge; those lists are matched by Twitch user id.
+   Everything runs in the browser; nothing is sent to Badge Database. */
+let LB = { state: "idle" };
+const LB_NAMES = { seventv: "7TV", bttv: "BetterTTV", ffz: "FrankerFaceZ", chatterino: "Chatterino" };
+const lbJSON = (u, o) => fetch(u, o).then(r => r.ok ? r.json() : (r.status === 404 ? null : Promise.reject(new Error("HTTP " + r.status))));
+const LB_SRC = {
+  seventv: async id => {
+    const u = await lbJSON("https://7tv.io/v3/users/twitch/" + id); const uid = u && u.user && u.user.id; if(!uid) return [];
+    const gql = (query, variables) => lbJSON("https://7tv.io/v3/gql", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({query, variables})}).then(j => j && j.data);
+    const d = await gql("query($id: ObjectID!){ user(id: $id){ cosmetics { id kind } } }", {id: uid});
+    const ids = ((d && d.user && d.user.cosmetics) || []).filter(c => c.kind === "BADGE").map(c => c.id); if(!ids.length) return [];
+    const c = await gql("query($list: [ObjectID!]){ cosmetics(list: $list){ badges { id name tooltip host { url } } } }", {list: ids});
+    return ((c && c.cosmetics && c.cosmetics.badges) || []).map(b => ({ title: b.tooltip || b.name, img: b.host && b.host.url ? "https://" + b.host.url.replace(/^(https?:)?\/\//, "") + "/2x.webp" : "" }));
+  },
+  bttv: async id => ((await lbJSON("https://api.betterttv.net/3/cached/badges/twitch")) || [])
+    .filter(x => String(x.providerId) === id).map(x => ({ title: (x.badge || {}).description || "BetterTTV", img: (x.badge || {}).svg || "" })),
+  ffz: async id => { const j = (await lbJSON("https://api.frankerfacez.com/v1/badges/ids")) || {};
+    return (j.badges || []).filter(b => ((j.users || {})[b.id] || []).map(String).includes(id)).map(b => ({ title: b.title || b.name, img: (b.urls || {})["2"] || b.image || "" })); },
+  chatterino: async id => (((await lbJSON("https://api.chatterino.com/badges")) || {}).badges || [])
+    .filter(b => (b.users || []).includes(id)).map(b => ({ title: b.tooltip, img: b.image2 || b.image1 || "" })),
+};
+async function lbCount(){
+  let token; try{ token = localStorage.getItem("badgedb_tw_token"); }catch(_){}
+  if(!token || !TW_CID){ LB = { state: "idle" }; renderLeaderboard(); return; }
+  LB = { state: "loading" }; renderLeaderboard();
+  try{
+    const r = await fetch("https://gql.twitch.tv/gql", { method: "POST", headers: { "Client-Id": TW_CID, "Authorization": "OAuth " + token },
+      body: JSON.stringify({ query: "query { currentUser { id login displayName availableBadges { setID version title } } }" }) });
+    if(r.status === 401){ LB = { state: "relogin" }; renderLeaderboard(); return; }
+    const j = await r.json().catch(() => null), cu = j && j.data && j.data.currentUser;
+    if(!cu || !Array.isArray(cu.availableBadges)) throw new Error((j && j.errors && j.errors[0] && j.errors[0].message) || (j && j.message) || ("HTTP " + r.status));
+    const seen = new Set(), list = cu.availableBadges.filter(b => { const k = b.setID + "/" + b.version; return !seen.has(k) && seen.add(k); });
+    LB = { state: "done", id: String(cu.id), login: cu.login, name: cu.displayName || cu.login, twitch: list, others: {} };
+    renderLeaderboard();
+    await Promise.all(Object.entries(LB_SRC).map(async ([k, fn]) => {
+      try{ LB.others[k] = await fn(LB.id); }catch(_){ LB.others[k] = null; }
+      if(LB.state === "done") renderLeaderboard();
+    }));
+  }catch(e){ LB = { state: "error", err: String((e && e.message) || e).slice(0, 160) }; renderLeaderboard(); }
+}
+function lbTwitchBadge(b){                         // our archive entry for a Twitch badge (image + page)
+  const g = globalBadges.find(x => x.set === b.setID); if(!g) return { title: b.title || b.setID, img: "", set: "" };
+  const v = g.versions.find(x => x.title === b.title) || (g.versions.length === 1 ? g.versions[0] : null);
+  return { title: b.title || g.name, img: (v || g).img, set: g.set };
+}
+function renderLeaderboard(){
+  const me = $('#lbMe'), top = $('#lbTop'); if(!me) return;
+  const tw = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2 2 6v14h5v3h3l3-3h4l5-5V2H4zm16 12-3 3h-5l-3 3v-3H6V4h14v10zm-4-7h-2v5h2V7zm-5 0H9v5h2V7z"/></svg>';
+  const card = inner => `<div class="card2 lb-me">${inner}</div>`;
+  if(!TW_CID) me.innerHTML = card('<p class="lb-msg">Twitch login is not set up on this site yet.</p>');
+  else if(!TW_USER) me.innerHTML = card(`<div class="lb-cta"><div><h3>Count your badges</h3><p>Log in with Twitch and this page counts every badge you own: Twitch global badges plus 7TV, BetterTTV, FrankerFaceZ and Chatterino. No permissions are requested.</p></div><button class="btn tw" data-twlogin>${tw}Log in with Twitch</button></div>`);
+  else if(LB.state === "loading") me.innerHTML = card(`<p class="lb-msg"><span class="lb-spin"></span>Counting the badges of <b>${esc(TW_USER.name)}</b>…</p>`);
+  else if(LB.state === "relogin") me.innerHTML = card(`<div class="lb-cta"><p class="lb-msg">Your Twitch login has expired. Log in again to count your badges.</p><button class="btn tw" data-twlogin>${tw}Log in again</button></div>`);
+  else if(LB.state === "error") me.innerHTML = card(`<div class="lb-cta"><p class="lb-msg">Twitch did not return your badge list.<small>${esc(LB.err)}</small></p><button class="btn ghost" data-lbcount>Try again</button></div>`);
+  else if(LB.state === "done"){
+    const tws = LB.twitch.map(lbTwitchBadge).sort((a, b) => a.title.localeCompare(b.title));
+    const o = LB.others || {}, otherN = Object.values(o).reduce((n, l) => n + (l ? l.length : 0), 0);
+    const chip = (k, l) => `<span class="lb-chip ${l === undefined ? 'wait' : ''}"><b>${l === undefined ? '…' : l === null ? '?' : l.length}</b>${LB_NAMES[k]}</span>`;
+    const tile = (b, href) => { const im = b.img ? `<img src="${esc(b.img)}" alt="" loading="lazy">` : `<span class="ph">${esc((b.title || "?")[0])}</span>`;
+      return href ? `<a class="lb-b" href="${esc(href)}" title="${esc(b.title)}">${im}</a>` : `<span class="lb-b" title="${esc(b.title)}">${im}</span>`; };
+    const otherGrids = Object.keys(LB_SRC).map(k => [k, o[k]]).filter(([, l]) => l && l.length).map(([k, l]) => `<h4>${LB_NAMES[k]} <span>${l.length}</span></h4><div class="lb-grid">${l.map(b => tile(b)).join("")}</div>`).join("");
+    me.innerHTML = card(`<div class="lb-head">${TW_USER.avatar ? `<img class="lb-av" src="${esc(TW_USER.avatar)}" alt="">` : ""}
+        <div class="lb-who"><b>${esc(LB.name)}</b><small>Counted just now · <button class="linkish" data-lbcount>Recount</button> · <button class="linkish" data-twlogout>Log out</button></small></div>
+        <div class="lb-total"><b>${tws.length}</b><span>Twitch badges</span></div></div>
+      <div class="lb-chips">${Object.keys(LB_SRC).map(k => chip(k, o[k])).join("")}${otherN ? `<span class="lb-chip sum"><b>${tws.length + otherN}</b>All platforms</span>` : ""}</div>
+      <h4>Twitch <span>${tws.length}</span></h4>
+      <div class="lb-grid">${tws.map(b => tile(b, b.set ? "/badges/" + encodeURIComponent(b.set) + "/" : "")).join("") || '<p class="lb-msg">No global badges yet.</p>'}</div>
+      ${otherGrids}`);
+  }
+  else me.innerHTML = card(`<div class="lb-cta"><div><h3>Hi ${esc(TW_USER.name)}!</h3><p>Count every badge on your account.</p></div><button class="btn" data-lbcount>Count my badges</button></div>`);
+  if(top) top.innerHTML = `<div class="card2 lb-soon"><b>The top collectors list is coming soon.</b><p>Count your badges now; the ranking will list collectors who join with their Twitch login.</p></div>`;
+}
+
 /* ---------- changelog (/changelog.json: newest first; type = new | improved | fixed) ---------- */
 let CL = null, clFilter = "all", clLoading = false;
 const CL_TAG = {new: "New", improved: "Improved", fixed: "Fixed"};
@@ -1062,6 +1138,7 @@ document.addEventListener('click', e => {
   const icsB = e.target.closest('[data-ics]'); if(icsB){ const ev = EVENTS.find(x => x.id === icsB.dataset.ics); if(ev) downloadIcs(ev); icsB.closest('details')?.removeAttribute('open'); return; }
   if(e.target.closest('[data-playhome]')){ $('#homeStream').innerHTML = `<iframe src="https://player.twitch.tv/?channel=${CONFIG.channel}&${PARENTS()}&muted=false&autoplay=true" allowfullscreen allow="autoplay; fullscreen"></iframe>`; return; }
   if(e.target.closest('[data-twlogin]')){ twLogin(); return; }
+  if(e.target.closest('[data-lbcount]')){ lbCount(); return; }
   if(e.target.closest('[data-twlogout]')){ twLogout(); return; }
   const vv=e.target.closest('[data-ver]'); if(vv){ e.preventDefault(); bpVersion=+vv.dataset.ver; route(); }
 });
