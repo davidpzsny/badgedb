@@ -26,7 +26,7 @@ channel campaign badges, global emotes, badge popularity and statistics. New bad
 | Badge Popularity | `/popularity/` | Badges ranked by users seen wearing them (data: PotatBotat) |
 | Statistics | `/stats/` | Badges per month / year, free vs paid, games with the most badges |
 | Contact | `/contact/` | Email / Discord / X, and a form that opens a pre-filled email (badge pages link here with "Report a mistake") |
-| Leaderboard (beta) | `/leaderboard/` | Log in with Twitch → counts your 7TV / BTTV / FFZ / Chatterino badges (matched by Twitch user ID, runs in the browser). Twitch global badges: Twitch returns 401 to other websites (tested 2026-10-12), so they need another data source; the top collectors list too |
+| Leaderboard | `/leaderboard/` | **Coming soon** page. Twitch only shares a badge collection with twitch.tv itself (other sites get 401 / forbidden, tested 2026-10-12), so the ranking needs another data source first |
 | Changelog | `/changelog/` | Every update to the site, newest first, filter: New / Improved / Fixed (from `changelog.json`) |
 | FAQ, Privacy, Terms, Legal Notice | `/faq/` `/privacy/` `/terms/` `/legal/` | Legal Notice: operator, hosting, trademarks, content removal, credits |
 | Not found | any unknown URL | Real 404 page (HTTP 404) with "Did you mean" suggestions and search |
@@ -34,7 +34,7 @@ channel campaign badges, global emotes, badge popularity and statistics. New bad
 
 Also on every page:
 - **Quick search** — `Ctrl+K` / `⌘K` or `/` (or the search button): badges, events, channel badges, emotes and pages.
-- **Log in with Twitch** (optional) — previews badges next to your own name and chat colour. No permissions are requested; everything stays in the visitor's browser.
+- **Log in with Twitch** (optional, top right; on phones the icon next to search) — previews badges next to your own name and chat colour. No permissions are requested; everything stays in the visitor's browser.
 
 Old links with `#` (`/#global`, `/#badge/<set>`) redirect to the new URLs automatically.
 

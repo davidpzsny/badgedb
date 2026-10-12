@@ -4,7 +4,8 @@
   "title": "Changelog and Discord upgrades",
   "items": [
    {"type": "new", "text": "Changelog page: every update to Badge Database in one place."},
-   {"type": "new", "text": "Badge Leaderboard (beta): log in with Twitch to count your 7TV, BetterTTV, FrankerFaceZ and Chatterino badges. Twitch global badges and the top collectors list follow later."},
+   {"type": "new", "text": "Coming soon: a Badge Leaderboard for Twitch's top badge collectors (see Leaderboard in the menu)."},
+   {"type": "improved", "text": "\"Log in with Twitch\" moved to the top right corner (on phones: the icon next to search). When logged in, click your picture to log out."},
    {"type": "new", "text": "Discord: separate channels for new badges, events that just started, badges ending soon and new global emotes, each with its own role to get pinged."},
    {"type": "new", "text": "Discord: every badge event on the timeline also appears in the server's Events list, with start, end and how to get each badge."},
    {"type": "new", "text": "Discord bot with /active, /soon and /badge commands."},
