@@ -30,8 +30,7 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#0C0B11">
 <link rel="preload" href="/assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.css?v=5aa4e0e66a">
-<meta name="twitch-client-id" content="nqfd84n7ko17trxgtfepmsw5ys3375">
+<link rel="stylesheet" href="/assets/app.css">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -346,13 +345,13 @@
     <!-- LEADERBOARD -->
     <section data-page="leaderboard" hidden>
       <div class="crumbs"><a href="/">Home</a><span>/</span>Leaderboard</div>
-      <div class="page-head"><div><h1>Badge Leaderboard</h1><p class="lead">How many badges do you have? Log in with Twitch to count your Twitch, 7TV, BetterTTV, FrankerFaceZ and Chatterino badges.</p></div></div>
+      <div class="page-head"><div><h1>Badge Leaderboard</h1><p class="lead">How many badges do you have? Log in with Twitch to count your 7TV, BetterTTV, FrankerFaceZ and Chatterino badges. Twitch global badges and the top collectors list are coming.</p></div></div>
       <div id="lbMe"></div>
       <div class="sec"><span class="dot" style="background:var(--amber)"></span>Top collectors</div>
       <div id="lbTop"></div>
       <div class="faq-page lb-faq">
-        <details><summary>Why do I have to log in?</summary><div class="a">Twitch only shows a badge collection to its owner. Logging in lets this page ask Twitch for <b>your own</b> badge list, the same list you see under Chat Identity on Twitch. No permissions are requested and nothing is posted.</div></details>
-        <details><summary>Which badges count?</summary><div class="a">The ranking counts account-wide Twitch global badges. Channel badges (subscriber, moderator, VIP, broadcaster) are not part of your collection. 7TV, BetterTTV, FrankerFaceZ and Chatterino badges are shown separately.</div></details>
+        <details><summary>Why do I have to log in?</summary><div class="a">Logging in tells this page which Twitch account is yours, so it can find your badges in the public 7TV, BetterTTV, FrankerFaceZ and Chatterino lists. No permissions are requested and nothing is posted.</div></details>
+        <details><summary>Which badges count?</summary><div class="a">For now: 7TV, BetterTTV, FrankerFaceZ and Chatterino badges linked to your Twitch account. Twitch global badges can't be counted here yet: Twitch shows a badge collection only to its owner on twitch.tv and doesn't share it with other websites.</div></details>
         <details><summary>Is anything stored?</summary><div class="a">Counting happens in your browser. Your login stays on this device and is only sent to Twitch. You can log out at any time, which also revokes the login.</div></details>
       </div>
     </section>
@@ -421,7 +420,7 @@
         <h2 id="p5">5. Cookies and local storage</h2>
         <p>Badge Database itself does <b>not</b> set cookies. Third-party embeds described in section 4 (in particular the Twitch player) may set their own cookies. You can block or delete cookies in your browser settings at any time.</p>
         <p><b>Optional “Log in with Twitch”.</b> On badge pages you can log in with Twitch to preview a badge next to your own name. This uses Twitch's own login page and requests no permissions: the resulting token can only read your public profile. The site uses it to read your <b>display name, profile picture and chat color</b> from Twitch. The token and these details are stored only in your browser's local storage and are sent only to Twitch — Badge Database has no server and never receives them. “Log out” deletes them and revokes the token; you can also revoke access any time under Twitch → Settings → Connections.</p>
-        <p><b>Badge Leaderboard.</b> When you are logged in, the <a href="/leaderboard/">Leaderboard</a> page uses the same token to ask Twitch for your own list of badges, and loads the public badge lists of 7TV, BetterTTV, FrankerFaceZ and Chatterino to find yours. This happens in your browser; the results are not sent to Badge Database.</p>
+        <p><b>Badge Leaderboard.</b> When you are logged in, the <a href="/leaderboard/">Leaderboard</a> page uses your Twitch user ID to find your badges in the public badge lists of 7TV, BetterTTV, FrankerFaceZ and Chatterino. This happens in your browser; the results are not sent to Badge Database.</p>
         <p>The event editor at <b>/admin/</b> is used only by the site operator. If a GitHub access token is entered there, it is stored in that browser’s local storage on that device only and is sent solely to the GitHub API to save changes. Regular visitors never use this feature.</p>
 
         <h2 id="p6">6. Public Twitch data we publish</h2>
@@ -569,6 +568,6 @@
   </div>
 </div>
 
-<script src="/assets/app.js?v=5aa4e0e66a"></script>
+<script src="/assets/app.js"></script>
 </body>
 </html>
