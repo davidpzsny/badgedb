@@ -30,7 +30,8 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#0C0B11">
 <link rel="preload" href="/assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.css?v=302579f9a8">
+<script>/* theme before first paint: badgedb_theme = light | dark | system (default dark) */(function(){try{var t=localStorage.getItem("badgedb_theme")||"dark",l=t==="light"||(t==="system"&&matchMedia("(prefers-color-scheme: light)").matches);document.documentElement.setAttribute("data-theme",l?"light":"dark");if(l){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content","#F5F4F9");}}catch(e){}})();</script>
+<link rel="stylesheet" href="/assets/app.css?v=17bf7e71ef">
 <meta name="twitch-client-id" content="nqfd84n7ko17trxgtfepmsw5ys3375">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://badgedatabase.com/"}, {"@type": "ListItem", "position": 2, "name": "Global Badges", "item": "https://badgedatabase.com/badges/"}, {"@type": "ListItem", "position": 3, "name": "Pikachu"}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Pikachu – Twitch Global Badge", "description": "Pikachu is a Twitch global badge. Evolves from the Pichu badge (Pichu had to be unlocked before Oct 1).", "url": "https://badgedatabase.com/badges/pikachu/", "primaryImageOfPage": {"@type": "ImageObject", "url": "https://static-cdn.jtvnw.net/badges/v1/b9dd6905-474f-45d1-a4ff-8ba138208afc/3"}, "isPartOf": {"@type": "WebSite", "name": "Badge Database", "url": "https://badgedatabase.com/"}, "datePublished": "2026-10-06"}</script>
@@ -74,6 +75,7 @@
       <a href="/legal/" data-route="legal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v5h1"/></svg>Legal Notice</a>
     </nav>
     <div class="side-foot">
+      <div class="theme-row"><span>Theme</span><div class="theme-sw" id="themeMenu" role="group" aria-label="Theme"></div></div>
       <a class="watch" href="https://twitch.tv/badge_db" target="_blank" rel="noopener"><img src="/logo-192.png" alt=""><span><b>Watch on Twitch</b><small>twitch.tv/badge_db</small></span></a>
       <div class="side-social">
         <a class="dc" href="https://discord.gg/QkuRDXcZH5" target="_blank" rel="noopener" title="Join the Discord"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.5 5.5A16 16 0 0 0 15.6 4l-.5 1a15 15 0 0 0-6.2 0l-.5-1a16 16 0 0 0-3.9 1.5C2 9.3 1.3 13 1.6 16.6A16 16 0 0 0 6.5 19l1-1.6a10 10 0 0 1-1.6-.8l.4-.3a11.5 11.5 0 0 0 11.4 0l.4.3-1.6.8 1 1.6a16 16 0 0 0 4.9-2.4c.4-4.2-.7-7.8-2.9-11.1zM8.7 14.4c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2zm6.6 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2z"/></svg><span>Join the Discord</span></a>
@@ -84,7 +86,7 @@
   </aside>
 
   <main id="main">
-    <div class="topbar" id="topbar"><div class="tu" id="topUser"></div></div>
+    <div class="topbar" id="topbar"><div class="theme-sw" id="themeTop" role="group" aria-label="Theme"></div><div class="tu" id="topUser"></div></div>
     <!-- HOME -->
     <section data-page="home" hidden>
       <div class="hero2">
@@ -575,6 +577,6 @@
   </div>
 </div>
 
-<script src="/assets/app.js?v=302579f9a8"></script>
+<script src="/assets/app.js?v=17bf7e71ef"></script>
 </body>
 </html>
