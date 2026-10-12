@@ -955,3 +955,65 @@ main{grid-column:2;grid-row:2}
   .theme-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px}
   .theme-row > span{font-size:13px;font-weight:700;color:var(--muted)}
 }
+
+/* ---------- Watch now (live streams of a running event) ---------- */
+.wn{margin:6px 0 16px}
+.wn-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.wn-head h3{display:flex;align-items:center;gap:9px;font-size:17px}
+.wn-sub{font-size:12.5px;color:var(--muted);font-weight:600}
+.wn-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px}
+.wn-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--panel-2);border:1px solid var(--line);color:var(--text);transition:border-color .15s,transform .15s;min-width:0}
+.wn-row:hover{border-color:var(--line-2);transform:translateY(-1px)}
+.wn-row.ours{border-color:rgba(139,92,246,.55);background:linear-gradient(90deg,rgba(139,92,246,.16),transparent 70%),var(--panel-2)}
+.wn-dot{flex:none;width:8px;height:8px;border-radius:50%;background:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.18)}
+.wn-t{flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px}
+.wn-t b{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.wn-t small{flex-basis:100%;font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wn-t .pill{font-size:10.5px}
+.wn-v{flex:none;display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.wn-v svg{width:14px;height:14px}
+.wn-note{margin:12px 0 0;font-size:12.5px;color:var(--muted)}
+.drawer .wn{margin-top:18px;padding:16px}
+.drawer .wn-list{grid-template-columns:1fr}
+
+/* ---------- phones: bottom navigation bar (replaces the stream bar) ---------- */
+.bnav{display:none}
+@media (max-width:880px){
+  .streambar{display:none}
+  .bnav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:12;
+    padding:6px 6px calc(6px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--bg-2) 94%,transparent);backdrop-filter:blur(12px);border-top:1px solid var(--line)}
+  .bnav a,.bnav button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 2px;border-radius:12px;color:var(--muted);font-size:11px;font-weight:700}
+  .bnav svg{width:22px;height:22px}
+  .bnav a.on{color:var(--purple-2);background:rgba(139,92,246,.12)}
+  .bnav button i{display:none;position:absolute;top:6px;right:calc(50% - 16px);width:8px;height:8px;border-radius:50%;background:#ef4444;box-shadow:0 0 0 2px var(--bg-2)}
+  .bnav button.is-live i{display:block}
+  .player{bottom:calc(76px + env(safe-area-inset-bottom))}
+}
+
+/* ---------- home: Last chance ---------- */
+.lastc{margin:26px 0 4px;padding:14px 16px;border-radius:16px;border:1px solid rgba(248,113,113,.35);
+  background:linear-gradient(90deg,rgba(248,113,113,.12),rgba(251,191,36,.06) 60%,transparent),var(--panel)}
+.lc-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.lc-ic{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:rgba(248,113,113,.16);color:var(--red)}
+.lc-ic svg{width:16px;height:16px}
+.lc-head b{font-size:16px;font-weight:800}
+.lc-head > span:last-child{font-size:13px;color:var(--muted);font-weight:600}
+.lc-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.lc-it{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:var(--panel-2);border:1px solid var(--line);min-width:0;transition:border-color .15s,transform .15s}
+.lc-it:hover{border-color:rgba(248,113,113,.5);transform:translateY(-1px)}
+.lc-it .tile{width:40px;height:40px;border-radius:10px}
+.lc-it > span{min-width:0}
+.lc-it b{display:block;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lc-it small{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--red);font-weight:700;font-variant-numeric:tabular-nums}
+.lc-it small i{font-style:normal;font-size:10.5px;padding:1px 6px;border-radius:999px}
+.lc-it small i.f{background:rgba(52,211,153,.14);color:var(--mint)} .lc-it small i.p{background:rgba(139,92,246,.18);color:var(--purple-2)}
+[data-theme="light"] .lc-it small{color:#DC2626}
+
+/* ---------- "New" dot on Changelog (sidebar) and on the menu button (phones) ---------- */
+.nav .new-dot{margin-left:auto;width:8px;height:8px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 3px rgba(52,211,153,.2)}
+@media (max-width:880px){ .cl-new .menu-btn{position:relative} .cl-new .menu-btn::after{content:"";position:absolute;top:7px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 2px var(--bg-2)} }
+
+/* ---------- Share on badge pages ---------- */
+.bp-side{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.bp-share{padding:7px 12px;font-size:13px;gap:6px}
+.bp-share svg{width:15px;height:15px}

@@ -38,6 +38,9 @@ function twLogout(){
   if(token && TW_CID) fetch("https://id.twitch.tv/oauth2/revoke", {method: "POST", body: new URLSearchParams({client_id: TW_CID, token})}).catch(()=>{});
   TW_USER = null; renderSideUser(); if(typeof route === "function") route();
 }
+function renderBottomNav(){                        // phones: green dot on "Live" while our channel streams
+  const d = document.querySelector('.bnav [data-bnplay]'); if(d) d.classList.toggle('is-live', !!(LIVE && LIVE.our_live));
+}
 function renderSideUser(){                         // "Log in with Twitch": top right (desktop) and in the header bar (mobile)
   const tw = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2 2 6v14h5v3h3l3-3h4l5-5V2H4zm16 12-3 3h-5l-3 3v-3H6V4h14v10zm-4-7h-2v5h2V7zm-5 0H9v5h2V7z"/></svg>';
   const av = TW_USER && (TW_USER.avatar ? `<img src="${esc(TW_USER.avatar)}" alt="">` : `<span class="tu-av">${esc((TW_USER.name || "?")[0])}</span>`);
@@ -192,7 +195,7 @@ function route(){
   if(!h) h = p === "/" ? "home" : "notfound";
   if(h === "notfound") renderNotFound();
   if(h === "contact") contactPrefill();
-  if(h === "changelog") loadChangelog();
+  if(h === "changelog"){ loadChangelog(); clMarkSeen(); }
   if(h==="admin"){ renderAdmin(); if(ADM.token && !ADM.events.length) admLoad(); }
   if(h==="popularity") maybeLivePopularity();
   $$('[data-page]').forEach(s => s.hidden = s.dataset.page !== h);
@@ -201,7 +204,7 @@ function route(){
     privacy:"Privacy Policy | Badge Database", terms:"Terms of Service | Badge Database", admin:"Admin | Badge Database"};
   if(h==="badge"){ const bb = set && globalBadges.find(x=>x.set===set); if(bb) document.title = bb.name+" – Twitch Badge | Badge Database"; }
   else document.title = TITLES[h] || TITLES.home;
-  $$('.nav a').forEach(a => a.classList.toggle('on', a.dataset.route === h));
+  $$('.nav a, .bnav a').forEach(a => a.classList.toggle('on', a.dataset.route === h || (h === 'badge' && a.closest('.bnav') && a.dataset.route === 'global')));
   closeDrawer();
 }
 window.addEventListener('popstate', route);
@@ -504,7 +507,7 @@ function renderChannel(){
   $('#cMore').innerHTML = list.length>cShown ? `<button class="btn ghost" id="btnCMore">Show ${Math.min(90,list.length-cShown)} more</button>` : '';
   $('#cChannel').textContent = channelBadges.length || '';
 }
-function renderAll(){ renderHome(); renderEvents(); renderTimeline(); renderGlobal(); renderChannel(); renderEmotes(); renderPopularity(); renderStats(); renderSlider(); renderTopCats(); renderTopBadges(); renderCategories(); }
+function renderAll(){ renderLastChance(); renderHome(); renderEvents(); renderTimeline(); renderGlobal(); renderChannel(); renderEmotes(); renderPopularity(); renderStats(); renderSlider(); renderTopCats(); renderTopBadges(); renderCategories(); }
 
 
 /* ---------- "Add to calendar": .ics file (Apple / Outlook / most apps) and Google Calendar links ---------- */
@@ -620,7 +623,7 @@ document.addEventListener('keydown', e => {
 });
 document.addEventListener('input', e => { if(e.target.id === 'qsInput'){ qsActive = 0; qsRender(); } });
 document.addEventListener('click', e => {
-  if(e.target.closest('#qsBtn')){ qsOpen(); return; }
+  if(e.target.closest('#qsBtn') || e.target.closest('[data-qsopen]')){ qsOpen(); return; }
   const it = e.target.closest('[data-qs]'); if(it){ qsGo(+it.dataset.qs); return; }
   if(e.target.id === 'qs'){ qsClose(); }
 });
@@ -628,6 +631,17 @@ document.addEventListener('click', e => {
 /* ---------- contact (opens a pre-filled email; no server needed) ---------- */
 const CT_MAIL = "support@badgedatabase.com";
 const CT_TOPICS = {question: "Question", fix: "Badge info correction", idea: "Suggestion", removal: "Content removal request", other: "Message"};
+/* "New" dot on Changelog: the build writes the newest changelog date into <meta name="changelog-latest"> */
+const CL_LATEST = (document.querySelector('meta[name="changelog-latest"]') || {}).content || "";
+function clSeen(){ try{ return localStorage.getItem("badgedb_cl_seen") || ""; }catch(_){ return ""; } }
+function clMarkSeen(){ if(CL_LATEST){ try{ localStorage.setItem("badgedb_cl_seen", CL_LATEST); }catch(_){} } clDot(); }
+function clDot(){
+  if(CL_LATEST && !clSeen()){ try{ localStorage.setItem("badgedb_cl_seen", CL_LATEST); }catch(_){} }   // first visit: nothing is "new" yet
+  const isNew = !!CL_LATEST && CL_LATEST > clSeen(), d = document.getElementById("clDot");
+  if(d) d.hidden = !isNew; document.body.classList.toggle("cl-new", isNew);
+}
+clDot();
+
 /* ---------- changelog (/changelog.json: newest first; type = new | improved | fixed) ---------- */
 let CL = null, clFilter = "all", clLoading = false;
 const CL_TAG = {new: "New", improved: "Improved", fixed: "Fixed"};
@@ -724,6 +738,18 @@ function fillSlider(el, cards, secPerItem = 3.2){
   el.style.setProperty("--sl-dur", (cards.length * secPerItem) + "s");
   el.innerHTML = `<div class="sl-track">${html}${animate ? `<span class="sl-dup" aria-hidden="true">${html}</span>` : ""}</div>`;
 }
+/* ---------- home: "Last chance" (badges ending within 48 hours) ---------- */
+function renderLastChance(){
+  const el = $('#lastChance'); if(!el || !READY) return;
+  const list = globalBadges.filter(b => badgeState(b) === "ending").sort((a, b) => Date.parse(EV_BY_IMG[a.imgId].ev.end) - Date.parse(EV_BY_IMG[b.imgId].ev.end));
+  el.hidden = !list.length; if(!list.length){ el.innerHTML = ""; return; }
+  el.innerHTML = `<div class="lc-head"><span class="lc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12M6 22h12M7 2v4a5 5 0 0 0 10 0V2M7 22v-4a5 5 0 0 1 10 0v4"/></svg></span>
+      <b>Last chance</b><span>${list.length} badge${list.length > 1 ? "s" : ""} ${list.length > 1 ? "end" : "ends"} within 48 hours</span></div>
+    <div class="lc-list">${list.slice(0, 8).map(b => { const ev = EV_BY_IMG[b.imgId].ev;
+      return `<a class="lc-it" href="/badges/${encodeURIComponent(b.set)}/" title="${esc(b.name)}">${tile(b)}<span><b>${esc(b.name)}</b><small><i class="${isFree(b) ? "f" : "p"}">${isFree(b) ? "Free" : "Sub"}</i><span data-cd="${ev.end}">${countdown(ev.end)}</span> left</small></span></a>`; }).join("")}</div>`;
+}
+setInterval(() => { if(READY) renderLastChance(); }, 60000);
+
 function renderSlider(){
   const el = $('#badgeSlider'); if(!el) return;
   if(!READY){ return; }
@@ -993,6 +1019,25 @@ function channelsHtml(ev, cat){
   return hasCat ? `Any channel in the category with Drops enabled — <a href="${drops}" target="_blank" rel="noopener">see live channels ↗</a>` : "Any";
 }
 const catUrl = c => `https://www.twitch.tv/directory/category/${encodeURIComponent(c.toLowerCase().replace(/[:'’]/g,'').replace(/\s+/g,'-'))}`;
+/* ---------- "Watch now": live streams for a running event (live.json, written by the bot every 15 min) ---------- */
+let LIVE = null, liveLoading = false;
+function loadLive(){
+  if(LIVE || liveLoading) return; liveLoading = true;
+  fetch('/live.json', {cache: 'no-store'}).then(r => r.ok ? r.json() : null).then(j => { LIVE = j || {events: {}}; })
+    .catch(() => { LIVE = {events: {}}; }).finally(() => { liveLoading = false; if(typeof route === "function") route(); renderBottomNav(); });
+}
+function watchNowHtml(ev){
+  if(!ev || status(ev) !== "live") return "";
+  if(!LIVE){ loadLive(); return ""; }
+  const d = (LIVE.events || {})[ev.id]; if(!d || !d.streams || !d.streams.length) return "";
+  const age = LIVE.updated ? Math.max(0, Math.round((Date.now() - Date.parse(LIVE.updated)) / 60000)) : null;
+  const watchBadge = ev.badges.some(b => b.cost === "free"), listed = evChannels(ev).length > 0;
+  const rows = d.streams.map(s => `<a class="wn-row${s.ours ? " ours" : ""}" href="https://www.twitch.tv/${esc(s.login)}" target="_blank" rel="noopener">
+      <span class="wn-dot"></span><span class="wn-t"><b>${esc(s.name || s.login)}</b>${s.ours ? '<span class="pill paid">Our stream</span>' : ""}<small>${esc(s.title || "")}</small></span>
+      <span class="wn-v"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>${num(s.viewers || 0)}</span></a>`).join("");
+  return `<div class="card2 wn"><div class="wn-head"><h3><span class="st live"></span>Watch now</h3><span class="wn-sub">${listed ? "Live participating channels" : `Live in ${esc(d.category || ev.category)}`}${age !== null ? ` · updated ${age < 1 ? "just now" : age + " min ago"}` : ""}</span></div>
+    <div class="wn-list">${rows}</div>${watchBadge && !listed ? '<p class="wn-note">Watch badges only count on streams that have Drops enabled. Look for the Drops tag on the stream.</p>' : ""}</div>`;
+}
 function openEvent(id){
   const ev=allEvents().find(e=>e.id===id); if(!ev) return; const st=status(ev);
   const cd = st==="live"?`<div class="cd" data-cd="${ev.end}">${countdown(ev.end)}<small>until it ends</small></div>`:st==="soon"?`<div class="cd" data-cd="${ev.start}">${countdown(ev.start)}<small>until it starts</small></div>`:"";
@@ -1000,6 +1045,7 @@ function openEvent(id){
     <dl class="kv"><dt>Status</dt><dd>${{live:"Active now",soon:"Upcoming",ended:"Ended",tba:"Date not announced"}[st]}</dd><dt>Starts</dt><dd>${fmtFull(ev.start)}</dd><dt>Ends</dt><dd>${fmtFull(ev.end)}</dd></dl>
     ${ev.note?`<p class="hint">${esc(ev.note)}</p>`:''}
     <div class="badgelist">${ev.badges.map(b=>`<div>${tile({...b,img:cdn(b.img)})}<span><b>${esc(b.name)}</b><span>${esc(b.how)}</span></span><span class="pill ${b.cost}" style="margin-left:auto;flex:none">${{free:"Free",paid:"Paid",na:"TBA"}[b.cost]}</span></div>`).join('')}</div>
+    ${watchNowHtml(ev)}
     <div class="actions">${!/any|unknown|twitch|eligible/i.test(ev.category)?`<a class="btn" target="_blank" rel="noopener" href="${catUrl(ev.category)}">Open category on Twitch</a>`:''}<button class="btn ghost" data-copy="${esc(ev.name)} — ${esc(ev.badges.map(b=>b.name+': '+b.how).join(' | '))} (${fmt(ev.start)} – ${fmt(ev.end)})">Copy summary</button>${calendarMenu(ev)}</div>`);
 }
 function openBadge(set,type){
@@ -1027,6 +1073,13 @@ function descInfo(d){
   return out;
 }
 let bpLastSet = null;
+function shareBadge(url, title){                    // phones: the system share sheet; desktop: post on X
+  const text = `${title}: how to get this Twitch badge and when it is available`;
+  if(navigator.share && window.matchMedia("(hover: none)").matches){ navigator.share({title: `${title} | Badge Database`, text, url}).catch(() => {}); return; }
+  const a = document.createElement("a");               // (window.open is taken by the drawer's open() in this file)
+  a.href = `https://x.com/intent/post?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}&via=BadgeDatabase`;
+  a.target = "_blank"; a.rel = "noopener"; document.body.appendChild(a); a.click(); a.remove();
+}
 function renderBadgePage(set){
   if(set !== bpLastSet){ bpVersion = 0; bpLastSet = set; }
   const box=$('#badgePage'); $('.back').setAttribute('href','/badges/'); $('.back').textContent='← All Twitch Global Badges';
@@ -1045,7 +1098,8 @@ function renderBadgePage(set){
   const bg = bpTheme==="dark" ? "#18181b" : "#f7f7f8";
   box.innerHTML = `
     <div class="page-head"><div><h1>${esc(v.title||b.name)}</h1><p class="lead">Everything you need to know about this Twitch global badge.</p></div>
-      <div class="bp-side">${isFree(b)?'<span class="pill free">Free</span> ':''}${st==="live"?'<span class="pill live">Active</span>':st==="soon"?'<span class="pill soon">Upcoming</span>':st==="ended"?'<span class="pill na">Ended</span>':''}</div></div>
+      <div class="bp-side"><button class="btn ghost bp-share" data-share="${esc(location.origin+'/badges/'+encodeURIComponent(b.set)+'/')}" data-share-title="${esc(v.title||b.name)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Share</button>${isFree(b)?'<span class="pill free">Free</span> ':''}${st==="live"?'<span class="pill live">Active</span>':st==="soon"?'<span class="pill soon">Upcoming</span>':st==="ended"?'<span class="pill na">Ended</span>':''}</div></div>
+    ${ev ? watchNowHtml(ev.ev) : ""}
     ${previewCard(v.img)}
     <div class="bp-grid">
       <div class="card2"><h3>Images <span class="seg mini" id="bpTheme"><button data-t="dark" class="${bpTheme==='dark'?'on':''}">Dark</button><button data-t="light" class="${bpTheme==='light'?'on':''}">Light</button></span></h3>
@@ -1086,6 +1140,7 @@ function renderBadgePage(set){
 }
 document.addEventListener('click', e => {
   const t=e.target.closest('#bpTheme button'); if(t){ bpTheme=t.dataset.t; route(); e.preventDefault(); return; }
+  const sh=e.target.closest('[data-share]'); if(sh){ shareBadge(sh.dataset.share, sh.dataset.shareTitle); return; }
   const icsB = e.target.closest('[data-ics]'); if(icsB){ const ev = EVENTS.find(x => x.id === icsB.dataset.ics); if(ev) downloadIcs(ev); icsB.closest('details')?.removeAttribute('open'); return; }
   if(e.target.closest('[data-playhome]')){ $('#homeStream').innerHTML = `<iframe src="https://player.twitch.tv/?channel=${CONFIG.channel}&${PARENTS()}&muted=false&autoplay=true" allowfullscreen allow="autoplay; fullscreen"></iframe>`; return; }
   if(e.target.closest('[data-twlogin]')){ twLogin(); return; }
@@ -1335,7 +1390,7 @@ $('#qE').addEventListener('input',e=>{eQuery=e.target.value.trim().toLowerCase()
 $('#qP').addEventListener('input',e=>{pQuery=e.target.value.trim().toLowerCase();pShown=100;renderPopularity();});
 $('#qT').addEventListener('input',e=>{tQuery=qsNorm(e.target.value.trim());tShown=60;renderCategories();});
 $('#scrim').addEventListener('click',closeDrawer); $('#closeDrawer').addEventListener('click',closeDrawer);
-$('#btnPlayer').addEventListener('click',togglePlayer); $('#btnPlayerX').addEventListener('click',togglePlayer);
+$('#btnPlayer').addEventListener('click',togglePlayer); document.addEventListener('click', e => { if(e.target.closest('[data-bnplay]')) togglePlayer(); }); $('#btnPlayerX').addEventListener('click',togglePlayer);
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDrawer(); });
 
 // Pages built by the bot arrive pre-filled (data-ssr): keep that content until live data is loaded.
@@ -1352,6 +1407,7 @@ Promise.allSettled([getJSON('/badges.json'), getJSON('/events.json'), getJSON('/
   if(pathKey() === "/popularity/") maybeLivePopularity();
 });
 getJSON('/top-categories.json').then(j => { TOPCATS = j || {games: []}; renderTopCats(); renderCategories(); }).catch(() => { TOPCATS = {games: []}; renderTopCats(); renderCategories(); });
+loadLive();
 getJSON('/emotes.json').then(rows => { if(Array.isArray(rows)) EMOTES = rows; E_READY = true; renderEmotes(); renderStats(); }).catch(() => { E_READY = true; renderEmotes(); });
 getJSON('/channel-badges.json').then(rows => {
   if(!Array.isArray(rows)) return;
