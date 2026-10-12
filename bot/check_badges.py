@@ -947,6 +947,11 @@ def main():
     try: announce_ending(load_events(), live)
     except Exception as e: print("ending soon: skipped ->", e)
 
+    try:
+        from discord_events import sync_discord_events
+        sync_discord_events(load_events(), live, site_url(), make_card=make_card, status=status, root=ROOT)
+    except Exception as e: print("discord events: skipped ->", e); status("discord_events", f"crashed: {e!r}")
+
     try: reply_with_links()
     except Exception as e: print("x link reply: skipped ->", e)
 

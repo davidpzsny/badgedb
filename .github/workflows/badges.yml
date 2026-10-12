@@ -38,6 +38,8 @@ jobs:
           DISCORD_ROLE_BADGE_INFO: ${{ vars.DISCORD_ROLE_BADGE_INFO }}
           DISCORD_ROLE_ENDING_SOON: ${{ vars.DISCORD_ROLE_ENDING_SOON }}
           DISCORD_ROLE_EMOTE_ADDED: ${{ vars.DISCORD_ROLE_EMOTE_ADDED }}
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          DISCORD_GUILD_ID: ${{ vars.DISCORD_GUILD_ID }}
           TWITCH_GQL_OAUTH: ${{ secrets.TWITCH_GQL_OAUTH }}
           X_LINK_REPLY: ${{ vars.X_LINK_REPLY }}
           X_LIVE_POSTS: ${{ vars.X_LIVE_POSTS }}
@@ -53,7 +55,7 @@ jobs:
         run: |
           git config user.name "badgedb-bot"
           git config user.email "bot@users.noreply.github.com"
-          for f in index.html badges.json events.json channel-badges.json channels-state.json emotes.json popularity.json posts.json status.json top-categories.json \
+          for f in index.html badges.json events.json channel-badges.json channels-state.json emotes.json popularity.json posts.json status.json top-categories.json discord-events.json \
                    badges timeline channel emotes popularity stats categories faq privacy terms legal contact assets sitemap.xml robots.txt 404.html; do
             if [ -e "$f" ]; then git add "$f"; fi
           done
