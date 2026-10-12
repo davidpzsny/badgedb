@@ -105,7 +105,7 @@ const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAl
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const initials = n => n.split(/\s+/).slice(0,2).map(w=>w[0]||"").join("").toUpperCase();
 const tile = b => `<span class="tile">${b.img ? `<img src="${esc(b.img)}" alt="${esc(b.name)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'ph',textContent:'${esc(initials(b.name))}'}))">` : `<span class="ph">${esc(initials(b.name))}</span>`}</span>`;
-const fmt = iso => iso ? new Date(iso).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}) : "";
+const fmt = iso => iso ? new Date(/^\d{4}-\d\d-\d\d$/.test(iso) ? iso + "T12:00:00Z" : iso).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}) : "";   // plain dates stay on their day in every time zone
 const fmtFull = iso => iso ? new Date(iso).toLocaleString(undefined,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : "Not announced";
 const num = n => n.toLocaleString();
 const toast = m => { const t=$('#toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); };
@@ -145,7 +145,7 @@ const isFile = location.protocol === "file:";
 const redirectUri = () => location.origin + location.pathname;
 
 /* ---------- routing (real URLs, no #) ---------- */
-const PATHS = {"/":"home","/timeline/":"timeline","/badges/":"global","/channel/":"channel","/categories/":"categories","/stats/":"stats","/emotes/":"emotes","/popularity/":"popularity","/faq/":"faq","/legal/":"legal","/contact/":"contact","/privacy/":"privacy","/terms/":"terms","/admin/":"admin"};
+const PATHS = {"/":"home","/timeline/":"timeline","/badges/":"global","/channel/":"channel","/categories/":"categories","/stats/":"stats","/emotes/":"emotes","/popularity/":"popularity","/faq/":"faq","/legal/":"legal","/contact/":"contact","/changelog/":"changelog","/privacy/":"privacy","/terms/":"terms","/admin/":"admin"};
 const LEGACY = {home:"/",timeline:"/timeline/",global:"/badges/",channel:"/channel/",faq:"/faq/",privacy:"/privacy/",terms:"/terms/",admin:"/admin/"};
 function pathKey(){ let p = location.pathname.replace(/index\.html$/,''); if(!p.endsWith('/')) p += '/'; return p; }
 // old #links keep working: /#global -> /badges/, /#badge/x -> /badges/x/
@@ -165,10 +165,11 @@ function route(){
   if(!h) h = p === "/" ? "home" : "notfound";
   if(h === "notfound") renderNotFound();
   if(h === "contact") contactPrefill();
+  if(h === "changelog") loadChangelog();
   if(h==="admin"){ renderAdmin(); if(ADM.token && !ADM.events.length) admLoad(); }
   if(h==="popularity") maybeLivePopularity();
   $$('[data-page]').forEach(s => s.hidden = s.dataset.page !== h);
-  const TITLES = {categories:"Top Twitch Categories Right Now | Badge Database", contact:"Contact | Badge Database", notfound:"Page not found | Badge Database", legal:"Legal Notice | Badge Database", stats:"Twitch Badge Statistics | Badge Database", emotes:"Twitch Global Emotes – Full List | Badge Database", popularity:"Twitch Badge Popularity – Most Used Badges | Badge Database", home:"Badge Database – Every Twitch Badge & When to Get It", timeline:"Timeline – Twitch Badges Available Now | Badge Database",
+  const TITLES = {categories:"Top Twitch Categories Right Now | Badge Database", contact:"Contact | Badge Database", changelog:"Changelog | Badge Database", notfound:"Page not found | Badge Database", legal:"Legal Notice | Badge Database", stats:"Twitch Badge Statistics | Badge Database", emotes:"Twitch Global Emotes – Full List | Badge Database", popularity:"Twitch Badge Popularity – Most Used Badges | Badge Database", home:"Badge Database – Every Twitch Badge & When to Get It", timeline:"Timeline – Twitch Badges Available Now | Badge Database",
     global:"All Twitch Global Badges | Badge Database", channel:"Twitch Channel Badges | Badge Database", faq:"FAQ – Twitch Badges | Badge Database",
     privacy:"Privacy Policy | Badge Database", terms:"Terms of Service | Badge Database", admin:"Admin | Badge Database"};
   if(h==="badge"){ const bb = set && globalBadges.find(x=>x.set===set); if(bb) document.title = bb.name+" – Twitch Badge | Badge Database"; }
@@ -521,7 +522,7 @@ function calendarMenu(ev){
 
 /* ---------- quick search (Ctrl+K / "/") ---------- */
 const QS_PAGES = [["Home","/"],["Timeline","/timeline/"],["Global Badges","/badges/"],["Channel Badges","/channel/"],["Global Emotes","/emotes/"],
-  ["Badge Popularity","/popularity/"],["Statistics","/stats/"],["FAQ","/faq/"],["Privacy Policy","/privacy/"],["Terms of Service","/terms/"]];
+  ["Badge Popularity","/popularity/"],["Statistics","/stats/"],["Top Categories","/categories/"],["FAQ","/faq/"],["Contact","/contact/"],["Changelog","/changelog/"],["Privacy Policy","/privacy/"],["Terms of Service","/terms/"],["Legal Notice","/legal/"]];
 let qsItems = [], qsActive = 0;
 const qsNorm = t => String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 function qsScore(title, extra, q){
@@ -600,6 +601,29 @@ document.addEventListener('click', e => {
 /* ---------- contact (opens a pre-filled email; no server needed) ---------- */
 const CT_MAIL = "support@badgedatabase.com";
 const CT_TOPICS = {question: "Question", fix: "Badge info correction", idea: "Suggestion", removal: "Content removal request", other: "Message"};
+/* ---------- changelog (/changelog.json: newest first; type = new | improved | fixed) ---------- */
+let CL = null, clFilter = "all", clLoading = false;
+const CL_TAG = {new: "New", improved: "Improved", fixed: "Fixed"};
+function loadChangelog(){
+  if(CL || clLoading) return; clLoading = true;
+  fetch('/changelog.json', {cache: 'no-store'}).then(r => r.ok ? r.json() : null).then(rows => { if(Array.isArray(rows)){ CL = rows; renderChangelog(); } }).catch(() => {}).finally(() => { clLoading = false; });
+}
+function renderChangelog(){
+  const el = $('#clList'); if(!el || !CL) return;
+  const list = [...CL].sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  let shown = 0;
+  el.innerHTML = list.map(r => {
+    const items = (r.items || []).filter(i => clFilter === "all" || i.type === clFilter); if(!items.length) return "";
+    shown += items.length;
+    return `<article class="cl-entry" id="v${esc(r.date)}"><div class="cl-date"><time datetime="${esc(r.date)}">${fmt(r.date)}</time></div>
+      <div class="cl-body"><h2>${esc(r.title)}</h2><ul>${items.map(i => `<li><span class="cl-tag ${esc(i.type)}">${CL_TAG[i.type] || esc(i.type)}</span><span>${esc(i.text)}</span></li>`).join("")}</ul></div></article>`;
+  }).join("") || '<div class="empty">Nothing here yet.</div>';
+  const first = list.length ? list[list.length - 1].date : "";
+  $('#clCount').textContent = clFilter === "all"
+    ? `${list.length} updates since ${first ? fmt(first) : "launch"}`
+    : `${shown} ${CL_TAG[clFilter].toLowerCase()} item${shown === 1 ? "" : "s"}`;
+}
+
 function contactPrefill(){
   const q = new URLSearchParams(location.search);
   if(q.get("topic") && CT_TOPICS[q.get("topic")]) $('#ctTopic').value = q.get("topic");
@@ -1264,7 +1288,7 @@ function togglePlayer(){
 /* ---------- wiring ---------- */
 document.addEventListener('click', e => {
   const seg=e.target.closest('.seg button'); if(seg){ const id=seg.parentElement.id; seg.parentElement.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===seg)); const v=seg.dataset.v;
-    if(id==='evFilter') evFilter=v; if(id==='gSort') gSort=v; if(id==='gDir') gDir=v; if(id==='gFilter') gFilter=v; if(id==='cFilter') cFilter=v; if(id==='eSort') eSort=v; if(id==='eFilter') eFilter=v; if(id==='pFilter') pFilter=v; if(id==='tFilter'){ tFilter=v; tShown=60; renderCategories(); } eShown=120; pShown=100; renderEmotes(); renderPopularity(); gShown=90; renderEvents(); renderGlobal(); renderChannel(); return; }
+    if(id==='clFilter'){ clFilter=v; renderChangelog(); return; } if(id==='evFilter') evFilter=v; if(id==='gSort') gSort=v; if(id==='gDir') gDir=v; if(id==='gFilter') gFilter=v; if(id==='cFilter') cFilter=v; if(id==='eSort') eSort=v; if(id==='eFilter') eFilter=v; if(id==='pFilter') pFilter=v; if(id==='tFilter'){ tFilter=v; tShown=60; renderCategories(); } eShown=120; pShown=100; renderEmotes(); renderPopularity(); gShown=90; renderEvents(); renderGlobal(); renderChannel(); return; }
   if(e.target.id==='btnMore'){ gShown+=90; renderGlobal(); return; }
   if(e.target.id==='btnCMore'){ cShown+=90; renderChannel(); return; }
   if(e.target.id==='btnEMore'){ eShown+=120; renderEmotes(); return; }
