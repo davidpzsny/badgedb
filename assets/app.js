@@ -38,16 +38,22 @@ function twLogout(){
   if(token && TW_CID) fetch("https://id.twitch.tv/oauth2/revoke", {method: "POST", body: new URLSearchParams({client_id: TW_CID, token})}).catch(()=>{});
   TW_USER = null; renderSideUser(); if(typeof route === "function") route();
 }
-function renderSideUser(){
-  const el = document.getElementById("sideUser"); if(!el) return;
-  if(!TW_CID){ el.innerHTML = ""; return; }
+function renderSideUser(){                         // "Log in with Twitch": top right (desktop) and in the header bar (mobile)
   const tw = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2 2 6v14h5v3h3l3-3h4l5-5V2H4zm16 12-3 3h-5l-3 3v-3H6V4h14v10zm-4-7h-2v5h2V7zm-5 0H9v5h2V7z"/></svg>';
-  el.innerHTML = TW_USER
-    ? `<div class="su-in">${TW_USER.avatar ? `<img src="${esc(TW_USER.avatar)}" alt="">` : `<span class="su-av">${esc((TW_USER.name||"?")[0])}</span>`}
-         <span class="su-t"><b style="color:${esc(TW_USER.color || "inherit")}">${esc(TW_USER.name)}</b><small>Badge previews use your name</small></span>
-         <button class="linkish" data-twlogout title="Log out">Log out</button></div>`
-    : `<button class="su-login" data-twlogin>${tw}<span><b>Log in with Twitch</b><small>See badges next to your name</small></span></button>`;
+  const av = TW_USER && (TW_USER.avatar ? `<img src="${esc(TW_USER.avatar)}" alt="">` : `<span class="tu-av">${esc((TW_USER.name || "?")[0])}</span>`);
+  const html = !TW_CID ? "" : TW_USER
+    ? `<button class="tu-btn" data-tumenu aria-haspopup="true" aria-expanded="false" title="${esc(TW_USER.name)}">${av}<b style="color:${esc(TW_USER.color || "inherit")}">${esc(TW_USER.name)}</b><svg class="tu-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+       <div class="tu-menu" role="menu"><div class="tu-who">${av}<span><b>${esc(TW_USER.name)}</b><small>Badge previews use your name and chat color</small></span></div>
+         <button class="tu-out" data-twlogout role="menuitem">Log out</button></div>`
+    : `<button class="tu-login" data-twlogin title="Log in with Twitch">${tw}<span>Log in with Twitch</span></button>`;
+  ["topUser", "topUserM"].forEach(id => { const el = document.getElementById(id); if(el){ el.innerHTML = html; el.classList.remove("open"); } });
 }
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-tumenu]');
+  document.querySelectorAll('.tu.open').forEach(t => { if(!b || !t.contains(b)){ t.classList.remove('open'); const x = t.querySelector('[data-tumenu]'); if(x) x.setAttribute('aria-expanded', 'false'); } });
+  if(b){ const t = b.closest('.tu'), open = !t.classList.contains('open'); t.classList.toggle('open', open); b.setAttribute('aria-expanded', String(open)); }
+});
+document.addEventListener('keydown', e => { if(e.key === 'Escape') document.querySelectorAll('.tu.open').forEach(t => t.classList.remove('open')); });
 function chatPreview(imgHtml, text){
   const name = TW_USER ? TW_USER.name : "YourName", color = (TW_USER && TW_USER.color) || "#9146FF";
   const line = `<span class="pv-line">${imgHtml}<b style="color:${esc(color)}">${esc(name)}</b><span>${text}</span></span>`;
@@ -166,11 +172,10 @@ function route(){
   if(h === "notfound") renderNotFound();
   if(h === "contact") contactPrefill();
   if(h === "changelog") loadChangelog();
-  if(h === "leaderboard"){ if(TW_USER && LB.state === "idle") lbCount(); renderLeaderboard(); }
   if(h==="admin"){ renderAdmin(); if(ADM.token && !ADM.events.length) admLoad(); }
   if(h==="popularity") maybeLivePopularity();
   $$('[data-page]').forEach(s => s.hidden = s.dataset.page !== h);
-  const TITLES = {categories:"Top Twitch Categories Right Now | Badge Database", contact:"Contact | Badge Database", changelog:"Changelog | Badge Database", leaderboard:"Badge Leaderboard – Count Your Twitch Badges | Badge Database", notfound:"Page not found | Badge Database", legal:"Legal Notice | Badge Database", stats:"Twitch Badge Statistics | Badge Database", emotes:"Twitch Global Emotes – Full List | Badge Database", popularity:"Twitch Badge Popularity – Most Used Badges | Badge Database", home:"Badge Database – Every Twitch Badge & When to Get It", timeline:"Timeline – Twitch Badges Available Now | Badge Database",
+  const TITLES = {categories:"Top Twitch Categories Right Now | Badge Database", contact:"Contact | Badge Database", changelog:"Changelog | Badge Database", leaderboard:"Badge Leaderboard (Coming Soon) | Badge Database", notfound:"Page not found | Badge Database", legal:"Legal Notice | Badge Database", stats:"Twitch Badge Statistics | Badge Database", emotes:"Twitch Global Emotes – Full List | Badge Database", popularity:"Twitch Badge Popularity – Most Used Badges | Badge Database", home:"Badge Database – Every Twitch Badge & When to Get It", timeline:"Timeline – Twitch Badges Available Now | Badge Database",
     global:"All Twitch Global Badges | Badge Database", channel:"Twitch Channel Badges | Badge Database", faq:"FAQ – Twitch Badges | Badge Database",
     privacy:"Privacy Policy | Badge Database", terms:"Terms of Service | Badge Database", admin:"Admin | Badge Database"};
   if(h==="badge"){ const bb = set && globalBadges.find(x=>x.set===set); if(bb) document.title = bb.name+" – Twitch Badge | Badge Database"; }
@@ -207,7 +212,7 @@ function discordNotice(){
   const n = document.createElement('div'); n.id = 'dcNote'; n.className = 'dc-note'; n.setAttribute('role', 'status');
   n.innerHTML = `<span class="ic">${DC_ICON}</span><p><b>Our Discord server is temporarily unavailable.</b> <span>It will be back soon! Until then, new badges are posted on <a href="${esc(CONFIG.socials.x)}" target="_blank" rel="noopener">X @BadgeDatabase</a>.</span></p><button type="button" aria-label="Hide this notice" title="Hide">×</button>`;
   n.querySelector('button').addEventListener('click', () => { n.remove(); try{ sessionStorage.setItem('badgedb_dc_note', 'hidden'); }catch(_){} });
-  $('#main').prepend(n);
+  const bar = $('#topbar'); if(bar) bar.prepend(n); else $('#main').prepend(n);   // left of the login button
 }
 let dcToastT;
 document.addEventListener('click', e => {                 // paused Discord links: show a short message instead of a dead invite
@@ -478,7 +483,7 @@ function renderChannel(){
   $('#cMore').innerHTML = list.length>cShown ? `<button class="btn ghost" id="btnCMore">Show ${Math.min(90,list.length-cShown)} more</button>` : '';
   $('#cChannel').textContent = channelBadges.length || '';
 }
-function renderAll(){ renderLeaderboard(); renderHome(); renderEvents(); renderTimeline(); renderGlobal(); renderChannel(); renderEmotes(); renderPopularity(); renderStats(); renderSlider(); renderTopCats(); renderTopBadges(); renderCategories(); }
+function renderAll(){ renderHome(); renderEvents(); renderTimeline(); renderGlobal(); renderChannel(); renderEmotes(); renderPopularity(); renderStats(); renderSlider(); renderTopCats(); renderTopBadges(); renderCategories(); }
 
 
 /* ---------- "Add to calendar": .ics file (Apple / Outlook / most apps) and Google Calendar links ---------- */
@@ -602,77 +607,6 @@ document.addEventListener('click', e => {
 /* ---------- contact (opens a pre-filled email; no server needed) ---------- */
 const CT_MAIL = "support@badgedatabase.com";
 const CT_TOPICS = {question: "Question", fix: "Badge info correction", idea: "Suggestion", removal: "Content removal request", other: "Message"};
-/* ---------- badge leaderboard (/leaderboard/): count your own badges ----------
-   Twitch shows a badge collection only to its owner, so the logged-in visitor's own token asks Twitch for it.
-   7TV / BetterTTV / FrankerFaceZ / Chatterino publish who has which badge; those lists are matched by Twitch user id.
-   Everything runs in the browser; nothing is sent to Badge Database. */
-let LB = { state: "idle" };
-const LB_NAMES = { seventv: "7TV", bttv: "BetterTTV", ffz: "FrankerFaceZ", chatterino: "Chatterino" };
-const lbJSON = (u, o) => fetch(u, o).then(r => r.ok ? r.json() : (r.status === 404 ? null : Promise.reject(new Error("HTTP " + r.status))));
-const LB_SRC = {
-  seventv: async id => {
-    const u = await lbJSON("https://7tv.io/v3/users/twitch/" + id); const uid = u && u.user && u.user.id; if(!uid) return [];
-    const gql = (query, variables) => lbJSON("https://7tv.io/v3/gql", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({query, variables})}).then(j => j && j.data);
-    const d = await gql("query($id: ObjectID!){ user(id: $id){ cosmetics { id kind } } }", {id: uid});
-    const ids = ((d && d.user && d.user.cosmetics) || []).filter(c => c.kind === "BADGE").map(c => c.id); if(!ids.length) return [];
-    const c = await gql("query($list: [ObjectID!]){ cosmetics(list: $list){ badges { id name tooltip host { url } } } }", {list: ids});
-    return ((c && c.cosmetics && c.cosmetics.badges) || []).map(b => ({ title: b.tooltip || b.name, img: b.host && b.host.url ? "https://" + b.host.url.replace(/^(https?:)?\/\//, "") + "/2x.webp" : "" }));
-  },
-  bttv: async id => ((await lbJSON("https://api.betterttv.net/3/cached/badges/twitch")) || [])
-    .filter(x => String(x.providerId) === id).map(x => ({ title: (x.badge || {}).description || "BetterTTV", img: (x.badge || {}).svg || "" })),
-  ffz: async id => { const j = (await lbJSON("https://api.frankerfacez.com/v1/badges/ids")) || {};
-    return (j.badges || []).filter(b => ((j.users || {})[b.id] || []).map(String).includes(id)).map(b => ({ title: b.title || b.name, img: (b.urls || {})["2"] || b.image || "" })); },
-  chatterino: async id => (((await lbJSON("https://api.chatterino.com/badges")) || {}).badges || [])
-    .filter(b => (b.users || []).includes(id)).map(b => ({ title: b.tooltip, img: b.image2 || b.image1 || "" })),
-};
-async function lbCount(){
-  // Twitch only shares a global badge collection with twitch.tv itself (other sites get 401), so the login is used for the
-  // Twitch user id only; 7TV / BetterTTV / FrankerFaceZ / Chatterino badges are matched by that id.
-  let token; try{ token = localStorage.getItem("badgedb_tw_token"); }catch(_){}
-  if(!token || !TW_CID){ LB = { state: "idle" }; renderLeaderboard(); return; }
-  LB = { state: "loading" }; renderLeaderboard();
-  if(!TW_USER || !TW_USER.id) await twFetchUser();          // official API; logs out by itself if the login expired
-  if(!TW_USER){ LB = { state: "relogin" }; renderLeaderboard(); return; }
-  if(!TW_USER.id){ LB = { state: "error", err: "Could not read your Twitch account. Please try again." }; renderLeaderboard(); return; }
-  LB = { state: "done", id: String(TW_USER.id), name: TW_USER.name, twitch: null, others: {} }; renderLeaderboard();
-  await Promise.all(Object.entries(LB_SRC).map(async ([k, fn]) => {
-    try{ LB.others[k] = await fn(LB.id); }catch(_){ LB.others[k] = null; }
-    if(LB.state === "done") renderLeaderboard();
-  }));
-}
-function lbTwitchBadge(b){                         // our archive entry for a Twitch badge (image + page)
-  const g = globalBadges.find(x => x.set === b.setID); if(!g) return { title: b.title || b.setID, img: "", set: "" };
-  const v = g.versions.find(x => x.title === b.title) || (g.versions.length === 1 ? g.versions[0] : null);
-  return { title: b.title || g.name, img: (v || g).img, set: g.set };
-}
-function renderLeaderboard(){
-  const me = $('#lbMe'), top = $('#lbTop'); if(!me) return;
-  const tw = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2 2 6v14h5v3h3l3-3h4l5-5V2H4zm16 12-3 3h-5l-3 3v-3H6V4h14v10zm-4-7h-2v5h2V7zm-5 0H9v5h2V7z"/></svg>';
-  const card = inner => `<div class="card2 lb-me">${inner}</div>`;
-  if(!TW_CID) me.innerHTML = card('<p class="lb-msg">Twitch login is not set up on this site yet.</p>');
-  else if(!TW_USER) me.innerHTML = card(`<div class="lb-cta"><div><h3>Count your badges</h3><p>Log in with Twitch and this page counts your badges on 7TV, BetterTTV, FrankerFaceZ and Chatterino. No permissions are requested.</p></div><button class="btn tw" data-twlogin>${tw}Log in with Twitch</button></div>`);
-  else if(LB.state === "loading") me.innerHTML = card(`<p class="lb-msg"><span class="lb-spin"></span>Counting the badges of <b>${esc(TW_USER.name)}</b>…</p>`);
-  else if(LB.state === "relogin") me.innerHTML = card(`<div class="lb-cta"><p class="lb-msg">Your Twitch login has expired. Log in again to count your badges.</p><button class="btn tw" data-twlogin>${tw}Log in again</button></div>`);
-  else if(LB.state === "error") me.innerHTML = card(`<div class="lb-cta"><p class="lb-msg">${esc(LB.err)}</p><button class="btn ghost" data-lbcount>Try again</button></div>`);
-  else if(LB.state === "done"){
-    const tws = LB.twitch ? LB.twitch.map(lbTwitchBadge).sort((a, b) => a.title.localeCompare(b.title)) : null;
-    const o = LB.others || {}, otherN = Object.values(o).reduce((n, l) => n + (l ? l.length : 0), 0);
-    const chip = (k, l) => `<span class="lb-chip ${l === undefined ? 'wait' : ''}"><b>${l === undefined ? '…' : l === null ? '?' : l.length}</b>${LB_NAMES[k]}</span>`;
-    const tile = (b, href) => { const im = b.img ? `<img src="${esc(b.img)}" alt="" loading="lazy">` : `<span class="ph">${esc((b.title || "?")[0])}</span>`;
-      return href ? `<a class="lb-b" href="${esc(href)}" title="${esc(b.title)}">${im}</a>` : `<span class="lb-b" title="${esc(b.title)}">${im}</span>`; };
-    const otherGrids = Object.keys(LB_SRC).map(k => [k, o[k]]).filter(([, l]) => l && l.length).map(([k, l]) => `<h4>${LB_NAMES[k]} <span>${l.length}</span></h4><div class="lb-grid">${l.map(b => tile(b)).join("")}</div>`).join("");
-    me.innerHTML = card(`<div class="lb-head">${TW_USER.avatar ? `<img class="lb-av" src="${esc(TW_USER.avatar)}" alt="">` : ""}
-        <div class="lb-who"><b>${esc(LB.name)}</b><small>Counted just now · <button class="linkish" data-lbcount>Recount</button> · <button class="linkish" data-twlogout>Log out</button></small></div>
-        <div class="lb-total"><b>${tws ? tws.length : otherN}</b><span>${tws ? "Twitch badges" : "Badges found"}</span></div></div>
-      <div class="lb-chips">${Object.keys(LB_SRC).map(k => chip(k, o[k])).join("")}${tws && otherN ? `<span class="lb-chip sum"><b>${tws.length + otherN}</b>All platforms</span>` : ""}</div>
-      ${otherGrids || (Object.keys(LB_SRC).every(k => o[k] !== undefined) ? '<p class="lb-msg lb-none">No 7TV, BetterTTV, FrankerFaceZ or Chatterino badges on this account.</p>' : '')}
-      ${tws ? `<h4>Twitch <span>${tws.length}</span></h4><div class="lb-grid">${tws.map(b => tile(b, b.set ? "/badges/" + encodeURIComponent(b.set) + "/" : "")).join("")}</div>`
-            : `<div class="lb-note"><b>Twitch global badges can't be counted here yet.</b> Twitch shows your badge collection only on twitch.tv and doesn't share it with other websites, even when you log in here.</div>`}`);
-  }
-  else me.innerHTML = card(`<div class="lb-cta"><div><h3>Hi ${esc(TW_USER.name)}!</h3><p>Count every badge on your account.</p></div><button class="btn" data-lbcount>Count my badges</button></div>`);
-  if(top) top.innerHTML = `<div class="card2 lb-soon"><b>The top collectors list is coming soon.</b><p>Count your badges now; the ranking will list collectors who join with their Twitch login.</p></div>`;
-}
-
 /* ---------- changelog (/changelog.json: newest first; type = new | improved | fixed) ---------- */
 let CL = null, clFilter = "all", clLoading = false;
 const CL_TAG = {new: "New", improved: "Improved", fixed: "Fixed"};
@@ -1134,7 +1068,6 @@ document.addEventListener('click', e => {
   const icsB = e.target.closest('[data-ics]'); if(icsB){ const ev = EVENTS.find(x => x.id === icsB.dataset.ics); if(ev) downloadIcs(ev); icsB.closest('details')?.removeAttribute('open'); return; }
   if(e.target.closest('[data-playhome]')){ $('#homeStream').innerHTML = `<iframe src="https://player.twitch.tv/?channel=${CONFIG.channel}&${PARENTS()}&muted=false&autoplay=true" allowfullscreen allow="autoplay; fullscreen"></iframe>`; return; }
   if(e.target.closest('[data-twlogin]')){ twLogin(); return; }
-  if(e.target.closest('[data-lbcount]')){ lbCount(); return; }
   if(e.target.closest('[data-twlogout]')){ twLogout(); return; }
   const vv=e.target.closest('[data-ver]'); if(vv){ e.preventDefault(); bpVersion=+vv.dataset.ver; route(); }
 });
