@@ -441,8 +441,8 @@ def main():
     changed += write("404.html", page("/404.html", "Page not found | Badge Database", "This page does not exist on Badge Database.", "notfound", noindex=True))
     changed += write("contact/index.html", page("/contact/", "Contact | Badge Database",
                      "Contact Badge Database: report a wrong date or missing badge, suggest a feature or send a content removal request.", "contact"))
-    changed += write("leaderboard/index.html", page("/leaderboard/", "Badge Leaderboard – Count Your Twitch Badges | Badge Database",
-                     "Log in with Twitch to count your Twitch global badges plus your 7TV, BetterTTV, FrankerFaceZ and Chatterino badges.", "leaderboard",
+    changed += write("leaderboard/index.html", page("/leaderboard/", "Badge Leaderboard (Coming Soon) | Badge Database",
+                     "A ranking of Twitch's top badge collectors is coming soon to Badge Database.", "leaderboard",
                      jsonld=[crumbs_ld(("Home", "/"), ("Leaderboard", None))]))
     changelog = load("changelog.json", [])
     changed += write("changelog/index.html", changelog_page(changelog))
