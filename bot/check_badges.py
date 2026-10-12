@@ -462,6 +462,14 @@ def sync_emotes(token):
     out = json.dumps(rows, ensure_ascii=False, separators=(",", ":"))
     if out != before:
         open(EMOTES_DB, "w", encoding="utf-8").write(out)
+    for r in [by_id[x] for x in by_id if by_id[x][1] in new][:5]:      # at most 5 Discord posts per run
+        fmt = "animated" if r[3] else "static"
+        try:
+            discord_send("emote", {"title": f"New Twitch global emote: {r[1]}",
+                "description": f"All global emotes: {site_url()}/emotes/", "url": f"{site_url()}/emotes/",
+                "thumbnail": {"url": f"https://static-cdn.jtvnw.net/emoticons/v2/{r[0]}/{fmt}/dark/3.0"}, "color": 0x8B5CF6})
+        except Exception as e:
+            print(f"global emotes: Discord post failed for {r[1]} ->", e)
     status("emotes", f"{len(data)} live, {len(new)} new, {len(removed)} removed")
     print(f"global emotes: {len(data)} live, {len(new)} new, {len(removed)} removed" + (f" -> new: {', '.join(new[:10])}" if new else "")
           + (f" -> removed: {', '.join(removed[:10])}" if removed else "") + (" (first run: baseline saved)" if first_run else ""))
@@ -612,12 +620,9 @@ def announce_live(events, live):
         except Exception as e:
             print(f"now-available: X post failed for {ev['name']} ->", e)
         try:
-            hook = os.environ.get("DISCORD_WEBHOOK")
-            if hook:
-                site = (os.environ.get("SITE_URL") or "https://badgedatabase.com").rstrip("/")
-                requests.post(hook, json={"embeds": [{"title": f"🟢 Now available: {' & '.join(m['title'] for m in meta[:3])}",
-                    "description": text.split("\n\n", 1)[-1].replace("#Twitch #TwitchBadges", "").strip(),
-                    "url": f"{site}/badges/{first['set']}/", "thumbnail": {"url": first["url"]}, "color": 0x34D399}]}, timeout=30)
+            discord_send("live", {"title": f"🟢 Now available: {' & '.join(m['title'] for m in meta[:3])}",
+                "description": text.split("\n\n", 1)[-1].replace("#Twitch #TwitchBadges", "").strip(),
+                "url": f"{site_url()}/badges/{first['set']}/", "thumbnail": {"url": first["url"]}, "color": 0x34D399})
         except Exception as e:
             print("now-available: Discord post failed ->", e)
         # remember it (also when X failed, so it's never posted twice); the link reply follows like for new badges
@@ -798,18 +803,72 @@ def reply_with_links(max_per_run=3):
     json.dump(posts, open(POSTS_DB, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
 # ---------- Discord (free) ----------
+# One webhook per Discord channel (repo secrets) and one role to ping per channel (repo variables, numeric role IDs).
+#   kind      webhook secret            role variable              Discord channel
+#   badge     DISCORD_WEBHOOK_BADGES    DISCORD_ROLE_BADGE_ADDED   #global-badge-added   (falls back to DISCORD_WEBHOOK)
+#   live      DISCORD_WEBHOOK_INFO      DISCORD_ROLE_BADGE_INFO    #global-badge-info    (event started)
+#   ending    DISCORD_WEBHOOK_ENDING    DISCORD_ROLE_ENDING_SOON   #ending-soon
+#   emote     DISCORD_WEBHOOK_EMOTES    DISCORD_ROLE_EMOTE_ADDED   #global-emote-added
+DISCORD_KINDS = {
+    "badge":  ("DISCORD_WEBHOOK_BADGES", "DISCORD_ROLE_BADGE_ADDED"),
+    "live":   ("DISCORD_WEBHOOK_INFO",   "DISCORD_ROLE_BADGE_INFO"),
+    "ending": ("DISCORD_WEBHOOK_ENDING", "DISCORD_ROLE_ENDING_SOON"),
+    "emote":  ("DISCORD_WEBHOOK_EMOTES", "DISCORD_ROLE_EMOTE_ADDED"),
+}
+def site_url(): return (os.environ.get("SITE_URL") or "https://badgedatabase.com").rstrip("/")
+
+def discord_send(kind, embed):
+    """Post one embed to the channel of `kind`, pinging its role. Silently skipped when no webhook is set."""
+    hook_var, role_var = DISCORD_KINDS[kind]
+    hook = (os.environ.get(hook_var) or (os.environ.get("DISCORD_WEBHOOK") if kind == "badge" else "") or "").strip()
+    if not hook: return False
+    role = re.sub(r"\D", "", os.environ.get(role_var) or "")
+    payload = {"username": "BadgeDatabase", "embeds": [embed],
+               "allowed_mentions": {"parse": [], "roles": [role] if role else []}}
+    if role: payload["content"] = f"<@&{role}>"
+    if DRY_RUN:
+        print(f"DRY_RUN Discord {kind}: {embed.get('title')}"); return True
+    requests.post(hook, json=payload, timeout=30).raise_for_status()
+    print(f"posted to Discord ({kind}): {embed.get('title')}")
+    return True
+
 def post_to_discord(badge):
-    hook = os.environ.get("DISCORD_WEBHOOK")
-    if not hook:
-        return
-    site = os.environ.get("SITE_URL", "")
-    requests.post(hook, json={"embeds": [{
+    discord_send("badge", {
         "title": f"New Twitch global badge: {badge['title']}",
-        "description": badge["desc"] or "Availability and objective TBA.",
-        "url": f"{site}#global" if site else None,
+        "description": f"Details, dates and how to get it: {site_url()}/badges/{badge['set']}/",
+        "url": f"{site_url()}/badges/{badge['set']}/",
         "thumbnail": {"url": badge["url"]},
-        "color": 0x8B5CF6}]}, timeout=30).raise_for_status()
-    print("posted to Discord")
+        "footer": {"text": "badgedatabase.com"},
+        "color": 0x8B5CF6})
+
+ENDING_SOON_HOURS = 24      # remind once when an event has less than this many hours left
+def announce_ending(events, live):
+    by_img = {b["img"]: b for b in live}
+    posts = load_json(POSTS_DB, {})
+    now = datetime.datetime.now(datetime.timezone.utc)
+    changed = False
+    for ev in events:
+        key = f"ending:{ev.get('id')}"
+        if not ev.get("end") or key in posts: continue
+        left = (_dt(ev["end"]) - now).total_seconds() / 3600
+        if not (0 < left <= ENDING_SOON_HOURS): continue
+        meta = [by_img[b["img"]] for b in ev.get("badges", []) if b.get("img") in by_img]
+        if not meta: continue
+        end_ts = int(_dt(ev["end"]).timestamp())
+        try:
+            sent = discord_send("ending", {
+                "title": f"⏳ Ending soon: {live_title(meta)}",
+                "description": f"Ends <t:{end_ts}:R> (<t:{end_ts}:f>)\n{site_url()}/badges/{meta[0]['set']}/",
+                "url": f"{site_url()}/badges/{meta[0]['set']}/",
+                "thumbnail": {"url": meta[0]["url"]}, "color": 0xF59E0B})
+        except Exception as e:
+            print(f"ending soon: Discord post failed for {ev.get('name')} ->", e); continue
+        if sent and not DRY_RUN:
+            posts[key] = {"tweet": "", "title": meta[0]["title"], "set": meta[0]["set"], "replied": "discord only",
+                          "posted": now.isoformat(timespec="seconds")}
+            changed = True
+    if changed:
+        json.dump(posts, open(POSTS_DB, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
 # ---------- main ----------
 # badges.json rows: [title, img, added, free, users, set_id, description]
@@ -884,6 +943,9 @@ def main():
 
     try: announce_live(load_events(), live)
     except Exception as e: print("now-available: skipped ->", e)
+
+    try: announce_ending(load_events(), live)
+    except Exception as e: print("ending soon: skipped ->", e)
 
     try: reply_with_links()
     except Exception as e: print("x link reply: skipped ->", e)
