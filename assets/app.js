@@ -54,6 +54,27 @@ document.addEventListener('click', e => {
   if(b){ const t = b.closest('.tu'), open = !t.classList.contains('open'); t.classList.toggle('open', open); b.setAttribute('aria-expanded', String(open)); }
 });
 document.addEventListener('keydown', e => { if(e.key === 'Escape') document.querySelectorAll('.tu.open').forEach(t => t.classList.remove('open')); });
+/* ---------- theme: light / dark / system (the <head> script applies it before the first paint) ---------- */
+const THEME_KEY = "badgedb_theme", THEME_MQ = window.matchMedia("(prefers-color-scheme: light)");
+const THEME_ICONS = {
+  light: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
+  dark: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>',
+  system: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>',
+};
+function themePref(){ try{ return localStorage.getItem(THEME_KEY) || "dark"; }catch(_){ return "dark"; } }
+function applyTheme(pref){
+  const light = pref === "light" || (pref === "system" && THEME_MQ.matches);
+  document.documentElement.setAttribute("data-theme", light ? "light" : "dark");
+  const m = document.querySelector('meta[name="theme-color"]'); if(m) m.setAttribute("content", light ? "#F5F4F9" : "#0C0B11");
+  const html = ["light", "dark", "system"].map(k => { const t = k[0].toUpperCase() + k.slice(1);
+    return `<button type="button" data-theme-set="${k}" class="${pref === k ? "on" : ""}" aria-pressed="${pref === k}" title="${t} theme">${THEME_ICONS[k]}<span>${t}</span></button>`; }).join("");
+  ["themeTop", "themeMenu"].forEach(id => { const el = document.getElementById(id); if(el) el.innerHTML = html; });
+}
+function setTheme(pref){ try{ localStorage.setItem(THEME_KEY, pref); }catch(_){} applyTheme(pref); }
+THEME_MQ.addEventListener("change", () => { if(themePref() === "system") applyTheme("system"); });
+document.addEventListener("click", e => { const b = e.target.closest("[data-theme-set]"); if(b) setTheme(b.dataset.themeSet); });
+applyTheme(themePref());
+
 function chatPreview(imgHtml, text){
   const name = TW_USER ? TW_USER.name : "YourName", color = (TW_USER && TW_USER.color) || "#9146FF";
   const line = `<span class="pv-line">${imgHtml}<b style="color:${esc(color)}">${esc(name)}</b><span>${text}</span></span>`;
