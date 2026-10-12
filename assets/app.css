@@ -818,7 +818,7 @@
   @media (max-width:640px){.cat-grid{grid-template-columns:1fr}.catc{grid-template-columns:78px minmax(0,1fr)}}
 
 /* ---------- Discord temporarily unavailable (CONFIG.discordDown in app.js) ---------- */
-.dc-note{display:flex;align-items:center;gap:12px;margin:0;flex:1;min-width:0;padding:10px 10px 10px 12px;border:1px solid rgba(88,101,242,.45);border-radius:14px;
+.dc-note{display:flex;align-items:center;gap:12px;margin:4px 0 0;padding:10px 10px 10px 12px;border:1px solid rgba(88,101,242,.45);border-radius:14px;
   background:linear-gradient(90deg,rgba(88,101,242,.18),rgba(88,101,242,.05));font-size:14px;line-height:1.45;color:var(--text)}
 .dc-note .ic{flex:none;width:34px;height:34px;border-radius:10px;background:#5865F2;color:#fff;display:grid;place-items:center;box-shadow:0 6px 18px -8px rgba(88,101,242,.9)}
 .dc-note .ic svg{width:19px;height:19px}
@@ -871,7 +871,11 @@ a.dc-off:hover{transform:none !important}
 
 
 /* ---------- top bar: Discord notice (left) + Log in with Twitch (right) ---------- */
-.topbar{display:flex;align-items:center;justify-content:flex-end;gap:14px;padding:16px 0 0;min-height:58px;position:relative;z-index:20}
+/* the bar is its own row of the page grid, full width, so theme + login sit in the window's top right corner */
+.app{grid-template-rows:auto 1fr}
+.side{grid-row:1 / span 2}
+main{grid-column:2;grid-row:2}
+.topbar{grid-column:2;grid-row:1;display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:14px 24px 0;min-height:58px;position:relative;z-index:20}
 @media (min-width:881px){ main > section > .crumbs:first-child{padding-top:6px} .hero2{padding-top:14px} }
 .tu{position:relative;flex:none}
 .tu-m{display:none}
@@ -895,9 +899,10 @@ a.dc-off:hover{transform:none !important}
 .tu-out:hover{background:var(--panel-2)}
 @keyframes menuIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 @media (max-width:880px){
-  .topbar{min-height:0;padding:0}
-  .topbar .tu{display:none}
-  .topbar .dc-note{margin-top:14px}
+  .topbar{display:none}
+  .side{grid-row:auto}
+  main{grid-column:1;grid-row:auto}
+  .dc-note{margin-top:14px}
   .tu-m{display:block;margin-left:auto}
   .tu-m + .qs-btn{margin-left:0}
   .tu-m .tu-login{width:42px;height:42px;padding:0;justify-content:center;border-radius:12px;box-shadow:none}

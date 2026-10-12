@@ -233,7 +233,7 @@ function discordNotice(){
   const n = document.createElement('div'); n.id = 'dcNote'; n.className = 'dc-note'; n.setAttribute('role', 'status');
   n.innerHTML = `<span class="ic">${DC_ICON}</span><p><b>Our Discord server is temporarily unavailable.</b> <span>It will be back soon! Until then, new badges are posted on <a href="${esc(CONFIG.socials.x)}" target="_blank" rel="noopener">X @BadgeDatabase</a>.</span></p><button type="button" aria-label="Hide this notice" title="Hide">×</button>`;
   n.querySelector('button').addEventListener('click', () => { n.remove(); try{ sessionStorage.setItem('badgedb_dc_note', 'hidden'); }catch(_){} });
-  const bar = $('#topbar'); if(bar) bar.prepend(n); else $('#main').prepend(n);   // left of the login button
+  $('#main').prepend(n);
 }
 let dcToastT;
 document.addEventListener('click', e => {                 // paused Discord links: show a short message instead of a dead invite
