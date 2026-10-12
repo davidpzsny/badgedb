@@ -104,9 +104,13 @@ def _asset_version():
     return h.hexdigest()[:10]
 ASSET_V = _asset_version()
 CLIENT_ID = (os.environ.get("TWITCH_CLIENT_ID") or "").strip()      # public app id, used by "Log in with Twitch"
-try: CL_LATEST = max(str(r.get("date", "")) for r in json.load(open(os.path.join(ROOT, "changelog.json"), encoding="utf-8")) if isinstance(r, dict))
+try:                                     # newest date + number of items, so items added on the same day also light the "New" dot
+    _cl = [r for r in json.load(open(os.path.join(ROOT, "changelog.json"), encoding="utf-8")) if isinstance(r, dict)]
+    CL_LATEST = f'{max(str(r.get("date", "")) for r in _cl)}.{sum(len(r.get("items") or []) for r in _cl):04d}'
 except Exception: CL_LATEST = ""
-if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", CL_LATEST or ""): CL_LATEST = ""
+if not re.fullmatch(r"\d{4}-\d{2}-\d{2}\.\d{4}", CL_LATEST or ""): CL_LATEST = ""
+try: CH_COUNT = len(json.load(open(os.path.join(ROOT, "channel-badges.json"), encoding="utf-8")))   # the site loads that big file only on the Channel pages
+except Exception: CH_COUNT = 0
 def _versioned(html_text):
     html_text = re.sub(r'(/assets/app\.(?:css|js))(\?v=[0-9a-f]*)?"', lambda m: f'{m.group(1)}?v={ASSET_V}"', html_text)
     if CLIENT_ID and re.fullmatch(r"[a-z0-9]{10,64}", CLIENT_ID):
@@ -115,6 +119,8 @@ def _versioned(html_text):
             html_text = re.sub(r'<meta name="twitch-client-id" content="[^"]*">', tag, html_text, count=1)
         else:
             html_text = html_text.replace("</head>", tag + "\n</head>", 1)
+    if CH_COUNT:                                                     # Channel Badges count in the menu without loading the list
+        html_text = re.sub(r'(<span class="count" id="cChannel">)[^<]*(</span>)', lambda m: f"{m.group(1)}{CH_COUNT}{m.group(2)}", html_text, count=1)
     if CL_LATEST:                                                    # newest changelog date, for the "New" dot on Changelog
         tag = f'<meta name="changelog-latest" content="{CL_LATEST}">'
         if 'name="changelog-latest"' in html_text:
