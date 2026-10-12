@@ -1,0 +1,253 @@
+{
+ "at": "2026-10-12T11:50:37+00:00",
+ "logins": [
+  "1zull",
+  "badge_db"
+ ],
+ "results": [
+  {
+   "status": 200,
+   "errors": [],
+   "count": 1,
+   "sample": [
+    {
+     "setID": "volume-up",
+     "version": "1",
+     "title": "Volume Up"
+    }
+   ],
+   "auth": "anonymous",
+   "login": "1zull",
+   "field": "displayBadges"
+  },
+  {
+   "status": 200,
+   "errors": [
+    "Cannot query field \"earnedBadges\" on type \"User\"."
+   ],
+   "value": null,
+   "raw": null,
+   "auth": "anonymous",
+   "login": "1zull",
+   "field": "earnedBadges"
+  },
+  {
+   "status": 200,
+   "errors": [],
+   "value": {
+    "setID": "volume-up",
+    "version": "1",
+    "title": "Volume Up"
+   },
+   "raw": null,
+   "auth": "anonymous",
+   "login": "1zull",
+   "field": "selectedBadge"
+  },
+  {
+   "status": 200,
+   "errors": [
+    "unauthenticated"
+   ],
+   "value": null,
+   "raw": null,
+   "auth": "anonymous",
+   "login": "1zull",
+   "field": "availableBadges"
+  },
+  {
+   "status": 200,
+   "errors": [
+    "Cannot query field \"badges\" on type \"User\"."
+   ],
+   "value": null,
+   "raw": null,
+   "auth": "anonymous",
+   "login": "1zull",
+   "field": "badges"
+  },
+  {
+   "status": 200,
+   "errors": [],
+   "count": 0,
+   "sample": [],
+   "auth": "anonymous",
+   "login": "badge_db",
+   "field": "displayBadges"
+  },
+  {
+   "status": 200,
+   "errors": [
+    "Cannot query field \"earnedBadges\" on type \"User\"."
+   ],
+   "value": null,
+   "raw": null,
+   "auth": "anonymous",
+   "login": "badge_db",
+   "field": "earnedBadges"
+  },
+  {
+   "status": 200,
+   "errors": [],
+   "value": null,
+   "raw": "{'data': {'user': {'id': '1539904445', 'login': 'badge_db', 'selectedBadge': None}}, 'extensions': {'durationMilliseconds': 38, 'requestID': '01M4QZ6MKG6QMMFBJT54SDG8M9'}}",
+   "auth": "anonymous",
+   "login": "badge_db",
+   "field": "selectedBadge"
+  },
+  {
+   "status": 200,
+   "errors": [
+    "unauthenticated"
+   ],
+   "value": null,
+   "raw": null,
+   "auth": "anonymous",
+   "login": "badge_db",
+   "field": "availableBadges"
+  },
+  {
+   "status": 200,
+   "errors": [
+    "Cannot query field \"badges\" on type \"User\"."
+   ],
+   "value": null,
+   "raw": null,
+   "auth": "anonymous",
+   "login": "badge_db",
+   "field": "badges"
+  },
+  {
+   "status": 200,
+   "errors": [],
+   "count": 1,
+   "sample": [
+    {
+     "setID": "volume-up",
+     "version": "1",
+     "title": "Volume Up"
+    }
+   ],
+   "auth": "helper-account",
+   "login": "1zull",
+   "field": "displayBadges"
+  },
+  {
+   "status": 200,
+   "errors": [
+    "Cannot query field \"earnedBadges\" on type \"User\"."
+   ],
+   "value": null,
+   "raw": null,
+   "auth": "helper-account",
+   "login": "1zull",
+   "field": "earnedBadges"
+  },
+  {
+   "status": 200,
+   "errors": [],
+   "value": {
+    "setID": "volume-up",
+    "version": "1",
+    "title": "Volume Up"
+   },
+   "raw": null,
+   "auth": "helper-account",
+   "login": "1zull",
+   "field": "selectedBadge"
+  },
+  {
+   "status": 200,
+   "errors": [
+    "forbidden"
+   ],
+   "value": null,
+   "raw": null,
+   "auth": "helper-account",
+   "login": "1zull",
+   "field": "availableBadges"
+  },
+  {
+   "status": 200,
+   "errors": [
+    "Cannot query field \"badges\" on type \"User\"."
+   ],
+   "value": null,
+   "raw": null,
+   "auth": "helper-account",
+   "login": "1zull",
+   "field": "badges"
+  },
+  {
+   "status": 200,
+   "errors": [],
+   "count": 0,
+   "sample": [],
+   "auth": "helper-account",
+   "login": "badge_db",
+   "field": "displayBadges"
+  },
+  {
+   "status": 200,
+   "errors": [
+    "Cannot query field \"earnedBadges\" on type \"User\"."
+   ],
+   "value": null,
+   "raw": null,
+   "auth": "helper-account",
+   "login": "badge_db",
+   "field": "earnedBadges"
+  },
+  {
+   "status": 200,
+   "errors": [],
+   "value": null,
+   "raw": "{'data': {'user': {'id': '1539904445', 'login': 'badge_db', 'selectedBadge': None}}, 'extensions': {'durationMilliseconds': 40, 'requestID': '01M4QZ6NH7SK5AEM1JJCM86E0P'}}",
+   "auth": "helper-account",
+   "login": "badge_db",
+   "field": "selectedBadge"
+  },
+  {
+   "status": 200,
+   "errors": [
+    "forbidden"
+   ],
+   "value": null,
+   "raw": null,
+   "auth": "helper-account",
+   "login": "badge_db",
+   "field": "availableBadges"
+  },
+  {
+   "status": 200,
+   "errors": [
+    "Cannot query field \"badges\" on type \"User\"."
+   ],
+   "value": null,
+   "raw": null,
+   "auth": "helper-account",
+   "login": "badge_db",
+   "field": "badges"
+  },
+  {
+   "status": 200,
+   "errors": [],
+   "count": 2,
+   "sample": [
+    {
+     "setID": "no_audio",
+     "version": "1",
+     "title": "Watching without audio"
+    },
+    {
+     "setID": "no_video",
+     "version": "1",
+     "title": "Listening only"
+    }
+   ],
+   "auth": "helper-account",
+   "login": "(self)",
+   "field": "currentUser.availableBadges"
+  }
+ ]
+}
