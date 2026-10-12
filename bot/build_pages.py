@@ -441,12 +441,16 @@ def main():
     changed += write("404.html", page("/404.html", "Page not found | Badge Database", "This page does not exist on Badge Database.", "notfound", noindex=True))
     changed += write("contact/index.html", page("/contact/", "Contact | Badge Database",
                      "Contact Badge Database: report a wrong date or missing badge, suggest a feature or send a content removal request.", "contact"))
+    changed += write("leaderboard/index.html", page("/leaderboard/", "Badge Leaderboard – Count Your Twitch Badges | Badge Database",
+                     "Log in with Twitch to count your Twitch global badges plus your 7TV, BetterTTV, FrankerFaceZ and Chatterino badges.", "leaderboard",
+                     jsonld=[crumbs_ld(("Home", "/"), ("Leaderboard", None))]))
     changelog = load("changelog.json", [])
     changed += write("changelog/index.html", changelog_page(changelog))
     changed += write("legal/index.html", page("/legal/", "Legal Notice | Badge Database",
                      "Operator, contact, hosting, trademark notice, content removal requests and data sources of Badge Database.", "legal"))
     urls = [("/", now[:10], "hourly", "1.0"), ("/timeline/", now[:10], "hourly", "0.9"), ("/badges/", now[:10], "daily", "0.9"),
             ("/channel/", now[:10], "daily", "0.8"), ("/emotes/", now[:10], "daily", "0.8"), ("/popularity/", now[:10], "daily", "0.8"), ("/stats/", now[:10], "daily", "0.7"), ("/categories/", now[:10], "hourly", "0.7"), ("/faq/", None, "monthly", "0.5"), ("/legal/", None, "yearly", "0.2"), ("/contact/", None, "yearly", "0.3"),
+            ("/leaderboard/", None, "weekly", "0.5"),
             ("/changelog/", max((r.get("date", "") for r in changelog if isinstance(r, dict)), default="") or None, "weekly", "0.4")]
     urls += [(f"/badges/{s['set']}/", s["added"] or None, "weekly", "0.7") for s in sets]
     sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
