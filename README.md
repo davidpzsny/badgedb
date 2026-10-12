@@ -33,6 +33,7 @@ channel campaign badges, global emotes, badge popularity and statistics. New bad
 | Event editor | `/admin/` | Owner only — dates, objectives, channels, popularity update |
 
 Also on every page:
+- **Theme** — Light / Dark / System switch top right (phones: bottom of the menu). Saved in the browser (`badgedb_theme`); default Dark. Colours are CSS variables in `app.css` (`:root` = dark, `:root[data-theme="light"]` = light).
 - **Quick search** — `Ctrl+K` / `⌘K` or `/` (or the search button): badges, events, channel badges, emotes and pages.
 - **Log in with Twitch** (optional, top right; on phones the icon next to search) — previews badges next to your own name and chat colour. No permissions are requested; everything stays in the visitor's browser.
 
