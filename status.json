@@ -1,18 +1,18 @@
 {
  "popularity_http": {
-  "at": "2026-10-12T06:58:30+00:00",
-  "msg": "HTTP 403, 4830 bytes, starts with: <!DOCTYPE html>\n<!--[if lt IE 7]> <html class=\"no-js ie6 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 7]>    <html class=\"no-js ie7 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 8]>    <html class=\"no-js ie8 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if gt IE 8]><!--> <html class=\"no-js\" lang=\"en-US\"> <!"
+  "at": "2026-10-12T07:07:09+00:00",
+  "msg": "HTTP 403, 4829 bytes, starts with: <!DOCTYPE html>\n<!--[if lt IE 7]> <html class=\"no-js ie6 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 7]>    <html class=\"no-js ie7 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 8]>    <html class=\"no-js ie8 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if gt IE 8]><!--> <html class=\"no-js\" lang=\"en-US\"> <!"
  },
  "popularity": {
-  "at": "2026-10-12T06:58:30+00:00",
+  "at": "2026-10-12T07:07:09+00:00",
   "msg": "request failed: Expecting value: line 1 column 1 (char 0)"
  },
  "emotes": {
-  "at": "2026-10-12T06:58:34+00:00",
+  "at": "2026-10-12T07:07:13+00:00",
   "msg": "302 live, 0 new, 0 removed"
  },
  "top_categories": {
-  "at": "2026-10-12T06:58:34+00:00",
+  "at": "2026-10-12T07:07:13+00:00",
   "msg": "150 categories, #1 Just Chatting"
  },
  "drop_campaigns": {
@@ -22,5 +22,9 @@
  "now_available": {
   "at": "2026-10-09T16:00:27+00:00",
   "msg": "CrossWorlds World Championship 2026 at 2026-10-09T16:00:00Z -> tweet 2108588410910695877"
+ },
+ "discord_events": {
+  "at": "2026-10-12T07:07:09+00:00",
+  "msg": "6 created, 0 started, 0 updated, 0 closed"
  }
 }

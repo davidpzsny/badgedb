@@ -1,0 +1,26 @@
+{
+ "vaultbreakers": {
+  "id": "1559100042248196146",
+  "sig": "[{\"description\": \"\\u2022 Vaultbreakers: Watch 60 minutes in the category.\\n\\u2022 Vaultbreakers Golden: Subscribe (Tier 1) or gift a Tier 1 sub in the category.\\n\\nDetails and all dates: https://badgedatabase.com/badges/vaultbreakers/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/vaultbreakers/\"}, \"name\": \"Vaultbreakers release\", \"scheduled_end_time\": \"2026-11-05T16:59:00Z\"}, \"2026-10-08T17:00:00Z\"]"
+ },
+ "dayz": {
+  "id": "1559100044680896524",
+  "sig": "[{\"description\": \"\\u2022 DayZ Yellow King: Subscribe (Tier 1) or gift a Tier 1 sub in the category.\\n\\nDetails and all dates: https://badgedatabase.com/badges/dayz-yellow-king/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/dayz-yellow-king/\"}, \"name\": \"DayZ Badlands launch\", \"scheduled_end_time\": \"2026-10-19T08:59:00Z\"}, \"2026-10-08T11:00:00Z\"]"
+ },
+ "dragon-s-dogma-ii": {
+  "id": "1559100047797387294",
+  "sig": "[{\"description\": \"\\u2022 TheDragonsDogma: Watch 60 minutes in the category.\\n\\u2022 FrekiFriend: Subscribe (Tier 1) or gift a Tier 1 sub in the category.\\n\\nDetails and all dates: https://badgedatabase.com/badges/thedragonsdogma/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/thedragonsdogma/\"}, \"name\": \"Dragon's Dogma 2: Dark Arisen\", \"scheduled_end_time\": \"2026-10-31T22:58:00Z\"}, \"2026-10-08T12:00:00Z\"]"
+ },
+ "witcher-3": {
+  "id": "1559100049898606612",
+  "sig": "[{\"description\": \"\\u2022 Wolf Medallion: Subscribe (Tier 1) or gift a Tier 1 sub in the category.\\n\\nDetails and all dates: https://badgedatabase.com/badges/wolf-medallion/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/wolf-medallion/\"}, \"name\": \"Witcher 3\", \"scheduled_end_time\": \"2026-10-27T09:59:00Z\"}, \"2026-09-29T10:00:00Z\"]"
+ },
+ "ace-combat-8-nugget": {
+  "id": "1559100053249986580",
+  "sig": "[{\"description\": \"\\u2022 ACE COMBAT 8 Nugget: Subscribe (Tier 1) or gift a Tier 1 sub in the category.\\n\\nDetails and all dates: https://badgedatabase.com/badges/ace-combat-8-nugget/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/ace-combat-8-nugget/\"}, \"name\": \"ACE COMBAT 8 Nugget\", \"scheduled_end_time\": \"2026-10-26T06:59:00Z\"}, \"2026-09-28T22:00:00Z\"]"
+ },
+ "rematch-blue-lock": {
+  "id": "1559100095243231305",
+  "sig": "[{\"description\": \"\\u2022 Rematch Blue Lock: Watch 30 minutes in the category.\\n\\nDetails and all dates: https://badgedatabase.com/badges/rematch-blue-lock/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/rematch-blue-lock/\"}, \"name\": \"Rematch Blue Lock\", \"scheduled_end_time\": \"2026-10-21T22:58:00Z\"}, \"2026-09-23T23:01:00Z\"]"
+ }
+}
