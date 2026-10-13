@@ -163,5 +163,40 @@
   "set": "dron-e",
   "replied": "discord only",
   "posted": "2026-10-12T14:20:41+00:00"
+ },
+ "heartsteel-fan": {
+  "tweet": "2110143120826413287",
+  "title": "Heartsteel Fan",
+  "set": "heartsteel-fan",
+  "posted": "2026-10-13T22:58:19+00:00",
+  "replied": false
+ },
+ "kda-fan": {
+  "tweet": "2110143126174093517",
+  "title": "K/DA Fan",
+  "set": "kda-fan",
+  "posted": "2026-10-13T22:58:20+00:00",
+  "replied": false
+ },
+ "pentakill-fan": {
+  "tweet": "2110143130821329168",
+  "title": "Pentakill Fan",
+  "set": "pentakill-fan",
+  "posted": "2026-10-13T22:58:21+00:00",
+  "replied": false
+ },
+ "true-damage-fan": {
+  "tweet": "2110143135355421024",
+  "title": "True Damage Fan",
+  "set": "true-damage-fan",
+  "posted": "2026-10-13T22:58:22+00:00",
+  "replied": false
+ },
+ "worlds-2026-supporter": {
+  "tweet": "2110143139759468690",
+  "title": "Worlds 2026 Supporter",
+  "set": "worlds-2026-supporter",
+  "posted": "2026-10-13T22:58:23+00:00",
+  "replied": false
  }
 }
