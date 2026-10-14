@@ -3,8 +3,8 @@
   "id": "castlevania-belmont-s-curse",
   "name": "Castlevania: Belmont's Curse",
   "category": "Castlevania: Belmont's Curse",
-  "start": "",
-  "end": "",
+  "start": "2026-10-15T04:00:00Z",
+  "end": "2026-11-02T03:59:00Z",
   "badges": [
    {
     "name": "Castlevania Belmont's Curse",
@@ -13,7 +13,8 @@
     "cost": "paid",
     "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Castlevania: Belmont's Curse category during the game launch!"
    }
-  ]
+  ],
+  "dates_src": "manual"
  },
  {
   "id": "worlds-2026-supporter",
