@@ -32,7 +32,7 @@
 <link rel="preload" href="/assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://static-cdn.jtvnw.net">
 <script>/* theme before first paint: badgedb_theme = light | dark | system (default dark) */(function(){try{var t=localStorage.getItem("badgedb_theme")||"dark",l=t==="light"||(t==="system"&&matchMedia("(prefers-color-scheme: light)").matches);document.documentElement.setAttribute("data-theme",l?"light":"dark");if(l){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content","#F5F4F9");}}catch(e){}})();</script>
-<link rel="stylesheet" href="/assets/app.css?v=75b12cb6e7">
+<link rel="stylesheet" href="/assets/app.css?v=f6b4f3781b">
 <meta name="twitch-client-id" content="nqfd84n7ko17trxgtfepmsw5ys3375">
 <meta name="changelog-latest" content="2026-10-14.0079">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://badgedatabase.com/"}, {"@type": "ListItem", "position": 2, "name": "Global Badges", "item": "https://badgedatabase.com/badges/"}, {"@type": "ListItem", "position": 3, "name": "Dream Con 2024"}]}</script>
@@ -417,7 +417,7 @@
           <li>We do <b>not</b> use advertising or tracking cookies, and we do not sell or share personal data. Visits are counted with <b>GoatCounter</b>, a privacy-friendly statistics service that uses no cookies and does not store IP addresses (see <a href="#p4">section 4</a>).</li>
           <li>“Remind me” notifications are optional. If you turn one on, our reminder server stores your browser's push address and the event you chose, only until the event ends or you turn the reminder off. See <a href="#p5">section 5</a>.</li>
           <li>Like any website, your browser necessarily sends technical data (such as your IP address) to the services that deliver the page and its content (see <a href="#p3">sections 3</a> and <a href="#p4">4</a>).</li>
-          <li>On the home page the Twitch player of our 24/7 stream starts by itself, muted; on other pages the player and chat only load when you click them. Twitch may then set its own cookies (see <a href="#p4">section 4</a>).</li>
+          <li>On the home page the Twitch player of our 24/7 stream starts by itself, muted, and keeps playing as a small player while you browse the site (until you close it). Twitch may then set its own cookies (see <a href="#p4">section 4</a>).</li>
         </ul>
 
         <h2 id="p3">3. Data processed when you visit</h2>
@@ -431,7 +431,7 @@
           <li><b>Badge Database reminder server</b> (api.badgedatabase.com, a virtual server we rent from Oracle Cloud Infrastructure, Oracle Corporation) handles the optional “Remind me” notifications. On pages with a Remind me button your browser asks it once per visit whether reminders are available. The server keeps <b>no access logs</b> and does not store IP addresses. <a href="https://www.oracle.com/legal/privacy/" target="_blank" rel="noopener">Oracle Privacy Policy</a>.</li>
           <li><b>GoatCounter</b> (goatcounter.com, operated by Martin Tournoij in Ireland, servers in Finland and Germany) counts page views so we can see which pages are used and where visitors come from. For each page view your browser sends the page address and title, the referring page, your screen size and standard request data (IP address, browser). GoatCounter derives the country, browser and system from it and keeps only aggregated numbers: it does not store IP addresses, the full browser identification or any tracker ID, sets no cookies and stores nothing in your browser. To tell repeat page views apart, it keeps a random ID for up to 8 hours in memory only. Nothing is counted on the event editor (/admin/). <a href="https://www.goatcounter.com/help/privacy" target="_blank" rel="noopener">GoatCounter Privacy Policy</a>.</li>
           <li><b>Your browser's push service</b> delivers reminders you turn on: Google for Chrome, Edge, Opera, Brave and most Android browsers, Mozilla for Firefox, Apple for Safari. The notification text is encrypted so that only your browser can read it.</li>
-          <li><b>Twitch</b> (Twitch Interactive, Inc., USA): badge and emote images, game box art and the homepage stream preview image are loaded from Twitch's image servers. On the home page the <b>Twitch video player</b> of our 24/7 stream is embedded automatically and plays muted (not on connections with data saver turned on; it is removed when you leave the home page). On other pages the player and chat are only embedded after you click “Load stream &amp; chat”. Twitch may set cookies and collect usage data in that embed. <a href="https://www.twitch.tv/p/legal/privacy-notice/" target="_blank" rel="noopener">Twitch Privacy Notice</a>.</li>
+          <li><b>Twitch</b> (Twitch Interactive, Inc., USA): badge and emote images, game box art and the homepage stream preview image are loaded from Twitch's image servers. On the home page the <b>Twitch video player</b> of our 24/7 stream is embedded automatically and plays muted (not on connections with data saver turned on). It keeps playing as a small player on the other pages of the site until you close it; after closing, it does not start by itself again during that visit. The player with chat is only embedded after you click “Load stream &amp; chat”. Twitch may set cookies and collect usage data in that embed. <a href="https://www.twitch.tv/p/legal/privacy-notice/" target="_blank" rel="noopener">Twitch Privacy Notice</a>.</li>
           </ul>
         <p>The site's typeface (Manrope) is served from badgedatabase.com itself, so no font service receives your data.</p>
         <p>Links to external websites such as X (Twitter), Discord and Twitch only transfer data to those services when you click them. Their own privacy policies apply once you are on their sites.</p>
@@ -593,6 +593,6 @@
   </div>
 </div>
 
-<script src="/assets/app.js?v=75b12cb6e7"></script>
+<script src="/assets/app.js?v=f6b4f3781b"></script>
 </body>
 </html>
