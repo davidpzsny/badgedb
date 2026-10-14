@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=1920, height=1080">
+<title>BadgeDB stream overlay</title>
+<!-- OBS Browser Source for twitch.tv/badge_db: 1920 x 1080. Not linked from the site.
+     After every change bump OVERLAY_V below AND version.json to the same new value:
+     the overlay checks version.json every 30 seconds and reloads itself. -->
+<style>
+@font-face{font-family:'Barlow';font-weight:400;font-display:swap;src:url(fonts/barlow-400-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Barlow';font-weight:400;font-display:swap;src:url(fonts/barlow-400-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Barlow';font-weight:600;font-display:swap;src:url(fonts/barlow-600-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Barlow';font-weight:600;font-display:swap;src:url(fonts/barlow-600-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Barlow';font-weight:700;font-display:swap;src:url(fonts/barlow-700-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Barlow';font-weight:700;font-display:swap;src:url(fonts/barlow-700-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Barlow';font-weight:800;font-display:swap;src:url(fonts/barlow-800-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Barlow';font-weight:800;font-display:swap;src:url(fonts/barlow-800-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Barlow Condensed';font-weight:600;font-display:swap;src:url(fonts/barlow-condensed-600-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Barlow Condensed';font-weight:600;font-display:swap;src:url(fonts/barlow-condensed-600-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Barlow Condensed';font-weight:700;font-display:swap;src:url(fonts/barlow-condensed-700-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Barlow Condensed';font-weight:700;font-display:swap;src:url(fonts/barlow-condensed-700-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Barlow Condensed';font-weight:800;font-display:swap;src:url(fonts/barlow-condensed-800-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Barlow Condensed';font-weight:800;font-display:swap;src:url(fonts/barlow-condensed-800-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Barlow Semi Condensed';font-weight:600;font-display:swap;src:url(fonts/barlow-semi-condensed-600-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Barlow Semi Condensed';font-weight:600;font-display:swap;src:url(fonts/barlow-semi-condensed-600-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Barlow Semi Condensed';font-weight:700;font-display:swap;src:url(fonts/barlow-semi-condensed-700-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Barlow Semi Condensed';font-weight:700;font-display:swap;src:url(fonts/barlow-semi-condensed-700-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+
+html,body{margin:0;padding:0;background:#000;overflow:hidden}
+*{box-sizing:border-box}
+@keyframes scrollY{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+.b{font-family:'Barlow',sans-serif} .bc{font-family:'Barlow Condensed',sans-serif} .bsc{font-family:'Barlow Semi Condensed',sans-serif}
+.slot{display:block;flex:none;object-fit:contain}
+
+.stage{width:1920px;height:1080px;background:#000;color:#efeff1;font-family:'Barlow',sans-serif;display:flex;flex-direction:column;overflow:hidden;position:relative}
+
+/* top bar */
+.top{height:104px;flex:none;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 30px;border-bottom:1px solid #1c1c20}
+.clock{display:flex;flex-direction:column;justify-content:center;line-height:1}
+.clock .date{font-weight:700;font-size:23px;letter-spacing:1.5px;color:#7d7d86}
+.clock .time{font-weight:700;font-size:40px;letter-spacing:1px;color:#efeff1;font-variant-numeric:tabular-nums;margin-top:4px}
+.clock .time span{font-size:24px;color:#9146ff;font-weight:600}
+.brand{display:flex;align-items:center;gap:14px}
+.brand .logo{width:72px;height:72px;border-radius:16px;object-fit:cover;display:block;flex:none}
+.brand .name{font-weight:800;font-size:46px;letter-spacing:-1px;line-height:1;display:flex}
+.brand .twitch{width:42px;height:42px;display:block;flex:none}
+.avail{display:flex;align-items:center;justify-content:flex-end;gap:18px;min-width:0}
+.avail .head{text-align:right;line-height:1;flex:0 1 auto;min-width:0;max-width:300px}
+.avail .k{font-weight:700;font-size:15px;letter-spacing:2.5px;text-transform:uppercase;color:#7d7d86}
+.avail .t{font-weight:800;font-size:24px;letter-spacing:.5px;text-transform:uppercase;color:#efeff1;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.avail .sep{width:1px;height:46px;background:#26262b;flex:none}
+.avail .list{display:flex;align-items:center;gap:10px}
+.chip{display:flex;align-items:center;gap:11px;padding:7px 14px 7px 7px;background:#121214;border:1px solid #232328;border-radius:12px}
+.chip .imgs{display:flex;align-items:center;gap:4px}
+.chip .imgs img{width:44px;height:44px;border-radius:9px}
+.chip .l{font-weight:700;font-size:17px;color:#efeff1;white-space:nowrap}
+.chip .a{font-weight:700;font-size:13px;letter-spacing:1.2px;text-transform:uppercase;white-space:nowrap;margin-top:5px}
+
+/* body */
+.body{flex:1;display:flex;gap:24px;padding:24px 30px;min-height:0}
+.colL{width:470px;flex:none;display:flex;flex-direction:column;min-height:0}
+.colR{flex:1;display:flex;flex-direction:column;min-height:0}
+.h{font-weight:800;font-size:30px;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px}
+.win{flex:1;min-height:0;overflow:hidden;position:relative;-webkit-mask-image:linear-gradient(to bottom,transparent,#000 24px,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(to bottom,transparent,#000 24px,#000 calc(100% - 24px),transparent)}
+.roll{display:flex;flex-direction:column;will-change:transform}
+.evcols{flex:1;min-height:0;display:flex;gap:16px}
+
+.item{background:#121214;border:1px solid #1f1f23;border-radius:8px;overflow:hidden;margin-bottom:10px;flex:none}
+.item .bar{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:#0c0c0e;border-bottom:1px solid #1f1f23}
+.item .added{font-weight:700;font-size:14px;letter-spacing:.8px;color:#a970ff;white-space:nowrap}
+.item .right{display:flex;align-items:center;gap:8px;flex:none}
+.pill{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:1px;text-transform:uppercase;border-radius:5px;padding:2px 7px;line-height:1;white-space:nowrap}
+.item .users{font-weight:600;font-size:14px;letter-spacing:.8px;color:#6b6b73;white-space:nowrap}
+.item .main{display:flex;align-items:center;gap:14px;padding:12px 14px}
+.item .main img{width:42px;height:42px;border-radius:8px}
+.item .ttl{display:flex;align-items:center;gap:8px}
+.item .title{font-weight:700;font-size:20px;letter-spacing:.3px}
+.item .sub{font-weight:600;font-size:15px;letter-spacing:1px;color:#6b6b73;text-transform:uppercase;margin-top:2px}
+
+.ev{background:#121214;border:1px solid #1f1f23;border-radius:8px;overflow:hidden;margin-bottom:16px;flex:none}
+.ev .bar{display:flex;align-items:center;justify-content:space-between;padding:8px 16px}
+.ev .st{font-weight:800;font-size:17px;letter-spacing:1.5px}
+.ev .cd{font-weight:700;font-size:15px;letter-spacing:1px;opacity:.92;font-variant-numeric:tabular-nums}
+.ev .in{padding:14px 16px 16px}
+.ev .row{display:flex;align-items:center;gap:12px}
+.ev .imgs{display:flex;gap:6px;flex:none}
+.ev .imgs img{width:34px;height:34px;border-radius:7px}
+.ev .title{font-weight:800;font-size:22px;letter-spacing:.5px;text-transform:uppercase;line-height:1.02}
+.ev .desc{font-weight:400;font-size:15px;line-height:1.35;color:#b6b6bf;margin-top:11px}
+.ev .dates{display:flex;gap:28px;margin-top:14px;padding-top:12px;border-top:1px solid #1f1f23}
+.ev .dk{font-weight:700;font-size:13px;letter-spacing:1.2px;color:#6b6b73}
+.ev .dv{font-weight:700;font-size:15px;color:#dedee3;font-variant-numeric:tabular-nums;margin-top:2px}
+
+/* footer */
+.foot{height:64px;flex:none;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 30px;border-top:2px solid #9146ff;background:#09090b}
+.foot .x{display:flex;align-items:center;gap:12px}
+.foot .xi{width:32px;height:32px;border-radius:7px;background:#000;border:1px solid #2a2a2e;display:flex;align-items:center;justify-content:center;flex:none}
+.foot .big{font-weight:700;font-size:26px;letter-spacing:1px;color:#efeff1}
+.foot .counts{display:flex;align-items:center;gap:48px}
+.foot .c{display:flex;align-items:center;gap:13px}
+.foot .dot{width:11px;height:11px;border-radius:50%;flex:none}
+.foot .ck{font-weight:700;font-size:23px;letter-spacing:1.5px;color:#7d7d86;text-transform:uppercase}
+.foot .cv{font-weight:800;font-size:30px;color:#efeff1;font-variant-numeric:tabular-nums;line-height:1}
+.foot .vsep{width:1px;height:30px;background:#26262b}
+.foot .site{display:flex;align-items:center;justify-content:flex-end;gap:12px}
+.foot .site img{width:32px;height:32px;border-radius:7px;object-fit:cover;display:block;flex:none}
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- ================= TOP BAR ================= -->
+  <div class="top">
+    <div class="clock">
+      <span class="date bc" id="date"></span>
+      <span class="time b"><span id="time" style="font-size:inherit;color:inherit;font-weight:inherit"></span> <span>UTC</span></span>
+    </div>
+    <div class="brand">
+      <img class="logo" src="logo.png" alt="">
+      <div class="name"><span style="color:#f2f2f5">Badge</span><span style="color:#9c6cff">DB</span></div>
+      <img class="twitch" src="twitch.png" alt="Twitch">
+    </div>
+    <div class="avail">
+      <div class="head">
+        <div class="k bc">Available Here</div>
+        <div class="t bc" id="availTitle"></div>
+      </div>
+      <span class="sep"></span>
+      <div class="list" id="available"></div>
+    </div>
+  </div>
+
+  <!-- ================= BODY ================= -->
+  <div class="body">
+    <div class="colL">
+      <div class="h bc">Added in the last 14 days</div>
+      <div class="win"><div class="roll" id="items" style="animation:scrollY 130s linear infinite"></div></div>
+    </div>
+    <div class="colR">
+      <div class="h bc">Events</div>
+      <div class="evcols">
+        <div class="win"><div class="roll" id="eventsA" style="animation:scrollY 84s linear infinite"></div></div>
+        <div class="win"><div class="roll" id="eventsB" style="animation:scrollY 84s linear infinite;animation-delay:-42s"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= FOOTER COUNTERS ================= -->
+  <div class="foot">
+    <div class="x">
+      <span class="xi"><svg viewBox="0 0 24 24" width="17" height="17" fill="#fff" aria-label="X"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></span>
+      <span class="big bc">@BadgeDatabase</span>
+    </div>
+    <div class="counts">
+      <div class="c"><span class="dot" style="background:#3ba55d;box-shadow:0 0 10px rgba(59,165,93,.8)"></span><span class="ck bc">Active Now</span><span class="cv b" id="cActive"></span></div>
+      <span class="vsep"></span>
+      <div class="c"><span class="dot" style="background:#d99e1e;box-shadow:0 0 10px rgba(217,158,30,.7)"></span><span class="ck bc">Upcoming</span><span class="cv b" id="cUpcoming"></span></div>
+      <span class="vsep"></span>
+      <div class="c"><span class="dot" style="background:#8b8b96;box-shadow:0 0 10px rgba(139,139,150,.6)"></span><span class="ck bc">TBA</span><span class="cv b" id="cTba"></span></div>
+      <span class="vsep"></span>
+      <div class="c"><span class="dot" style="background:#9146ff;box-shadow:0 0 10px rgba(145,70,255,.8)"></span><span class="ck bc">Free</span><span class="cv b" id="cFree"></span></div>
+    </div>
+    <div class="site">
+      <img src="logo.png" alt="">
+      <span class="big bc">BADGEDATABASE.COM</span>
+    </div>
+  </div>
+</div>
+
+<script>
+const OVERLAY_V = "2026-10-14.1";   // bump together with version.json after every change
+
+/* =========================== EDIT YOUR CONTENT HERE ===========================
+   Left column: filled automatically from badgedatabase.com (every badge set added in the
+   last 14 days). ITEMS below is only the fallback when the site can't be reached.
+   img = Twitch badge UUID (static-cdn.jtvnw.net/badges/v1/UUID/3) or a full image URL. */
+const ITEMS = [
+  { slot: 'bmw4', added: 'OCTOBER 10, 2026', users: '0', cost: 'paid', ev: 'emw4', title: 'Modern Warfare 4', sub: 'Global Badge', img: '41505da3-121e-4d81-985f-95185a79186c' },
+  { slot: 'bcwwc', added: 'OCTOBER 7, 2026', users: '0', cost: 'paid', ev: 'ecwwc', title: 'CrossWorlds World Championship 2026', sub: 'Global Badge', img: '97062b99-1125-4f41-91df-b98687176d8e' },
+  { slot: 'bgstamp', added: 'OCTOBER 7, 2026', users: '0', cost: 'free', ev: 'ewitch', title: 'Gold Stamp (Witchspire)', sub: 'Global Badge', img: 'https://badgebase.co/wp-content/themes/badgebase/assets/images/badges/gold-stamp_v1.png' },
+  { slot: 'bwlogo', added: 'OCTOBER 7, 2026', users: '0', cost: 'free', ev: 'ewitch', title: 'Witchspire Logo', sub: 'Global Badge', img: 'https://badgebase.co/wp-content/themes/badgebase/assets/images/badges/witchspire-logo_v1.png' },
+  { slot: 'bwhat', added: 'OCTOBER 7, 2026', users: '0', cost: 'paid', ev: 'ewitch', title: 'Witch Hat (Witchspire)', sub: 'Global Badge', img: 'https://badgebase.co/wp-content/themes/badgebase/assets/images/badges/witch-hat_v1.png' },
+  { slot: 'bivy', added: 'OCTOBER 6, 2026', users: '0', cost: '', ev: 'epevo', title: 'Ivysaur (Pokémon Evolution)', sub: 'Global Badge', img: '6de326e8-643f-4043-beb6-3ad135385708' },
+  { slot: 'bvenu', added: 'OCTOBER 6, 2026', users: '0', cost: '', ev: 'epevo', title: 'Venusaur (Pokémon Evolution)', sub: 'Global Badge', img: 'ad14f7e4-1ca6-476b-acaf-250da22388ec' },
+  { slot: 'bchml', added: 'OCTOBER 6, 2026', users: '0', cost: '', ev: 'epevo', title: 'Charmeleon (Pokémon Evolution)', sub: 'Global Badge', img: 'd9698627-aff7-434c-8002-1351b2c59984' },
+  { slot: 'bchzd', added: 'OCTOBER 6, 2026', users: '0', cost: '', ev: 'epevo', title: 'Charizard (Pokémon Evolution)', sub: 'Global Badge', img: 'ac097350-add0-44c4-b405-e70aa746389b' },
+  { slot: 'bwart', added: 'OCTOBER 6, 2026', users: '0', cost: '', ev: 'epevo', title: 'Wartortle (Pokémon Evolution)', sub: 'Global Badge', img: '15a0db5d-bef1-49bb-8594-e3925e1ec248' },
+  { slot: 'bblst', added: 'OCTOBER 6, 2026', users: '0', cost: '', ev: 'epevo', title: 'Blastoise (Pokémon Evolution)', sub: 'Global Badge', img: '2b975e12-fd49-4e54-85c4-6cc042453dbb' },
+  { slot: 'bpika', added: 'OCTOBER 6, 2026', users: '0', cost: '', ev: 'epevo', title: 'Pikachu (Pokémon Evolution)', sub: 'Global Badge', img: 'b9dd6905-474f-45d1-a4ff-8ba138208afc' },
+  { slot: 'bgast', added: 'OCTOBER 5, 2026', users: '0', cost: '', ev: 'enight', title: 'Gastly (Pokémon Night Out)', sub: 'Global Badge', img: '602335f3-4d73-40f9-b8e2-5c5e25f32d62' },
+  { slot: 'bhaun', added: 'OCTOBER 5, 2026', users: '0', cost: '', ev: 'enight', title: 'Haunter (Pokémon Night Out)', sub: 'Global Badge', img: 'ddfbf317-aa77-482e-a99d-eb975deb2fe7' },
+  { slot: 'bgeng', added: 'OCTOBER 5, 2026', users: '0', cost: '', ev: 'enight', title: 'Gengar (Pokémon Night Out)', sub: 'Global Badge', img: 'f68e567f-67cf-4d4a-8c3e-a0dcee42f095' },
+  { slot: 'bvaultg', added: 'OCTOBER 5, 2026', users: '128', cost: 'paid', ev: 'evault', title: 'Vaultbreakers Golden', sub: 'Global Badge', img: '29e7e185-e4c3-4cd4-ac5b-63e16c90d401' },
+  { slot: 'bvault', added: 'OCTOBER 5, 2026', users: '236', cost: 'free', ev: 'evault', title: 'Vaultbreakers', sub: 'Global Badge', img: 'cce20332-b825-4008-8a8c-9b75e7a67e79' },
+  { slot: 'bdayz', added: 'OCTOBER 5, 2026', users: '182', cost: 'paid', ev: 'edayz', title: 'DayZ Yellow King (Badlands)', sub: 'Global Badge', img: '739379da-c982-4294-9bfd-75c3cc4187d3' },
+  { slot: 'bfreki', added: 'OCTOBER 1, 2026', users: '217', cost: 'paid', ev: 'edd2', title: "FrekiFriend (Dragon's Dogma 2)", sub: 'Global Badge', img: '2d1bfde9-94a9-4ed1-84a5-4aeb85911f1d' },
+  { slot: 'bddog', added: 'OCTOBER 1, 2026', users: '452', cost: 'free', ev: 'edd2', title: "TheDragonsDogma (Dragon's Dogma 2)", sub: 'Global Badge', img: 'f699b4ab-8952-46a1-88ff-a5515406f0a5' },
+  { slot: 'bbfe', added: 'SEPTEMBER 30, 2026', users: '615', cost: 'paid', ev: 'eq2', title: 'Bloody Finger (ELDEN RING)', sub: 'Global Badge', img: '12266c73-c6bc-433a-ab66-dc021bb8159f' },
+  { slot: 'bwolfm', added: 'SEPTEMBER 28, 2026', users: '877', cost: 'paid', ev: 'ewolfm', title: 'Wolf Medallion (The Witcher 3)', sub: 'Global Badge', img: '3e008d8a-4a24-4858-9e8f-74e8a3808955' },
+];
+
+/* Events column: all ACTIVE and UPCOMING badge events. start/end are UTC (check the times on
+   streamdatabase.com/events); start: null = date TBA. imgs = badge UUIDs shown on the card.
+   Status, countdown and the STARTS/ENDS stamps are worked out automatically; ended events disappear. */
+const EVENTS = [
+  // ---- ACTIVE ----
+  { slot: 'ectrlr', imgs: ['f1617a53-9e8f-4bd4-b440-ab44f6f8f650','755022bc-26e1-47a4-8d6f-961224713355'], title: 'CONTROL Resonant', desc: "Watch 60 minutes (Don't Eat The Mold) or sub/gift a Tier 1 sub (The Inverted Man) in CONTROL Resonant to earn both badges.", start: '2026-09-22T14:00:00Z', end: '2026-10-13T13:59:00Z' },
+  { slot: 'e15', imgs: ['b3f69c97-a9a7-4360-bb9e-485ec8db72bb','aea5244a-3fb5-48f9-a17c-a377760df226'], title: 'TwitchCon 2026 San Diego', desc: "Purchase a TwitchCon San Diego ticket: 1-day ticket earns BeachBall, 3-day ticket earns Taco.", start: '2026-07-22T17:00:00Z', end: '2026-11-15T00:00:00Z' },
+  // ---- UPCOMING ----
+  { slot: 'eq2', imgs: ['12266c73-c6bc-433a-ab66-dc021bb8159f'], title: 'Elden Ring · Path of the Cardinal Sin', desc: "Sub or gift a Tier 1 sub to any channel live in ELDEN RING to earn the Bloody Finger badge.", start: '2026-10-01T07:00:00Z', end: '2026-10-29T06:59:00Z' },
+  { slot: 'e14', imgs: ['1826cb5f-32a9-409a-9829-f6f47ea68239','e7d696ad-4479-4e44-bceb-5643f80bef38'], title: 'FFXIV Fan Festival 2026 JP', desc: "Watch a FFXIV creator for 60 minutes during Fan Fest 2026 - JP.", start: '2026-10-30T00:00:00Z', end: '2026-11-01T00:00:00Z' },
+  { slot: 'eq3', imgs: [], title: 'Questline 3: Path of the Elden Lord', desc: "The Warrior Jar Alexander badge will be available in the ELDEN RING category.", start: '2026-11-02T00:00:00Z', end: '2026-11-28T23:59:00Z' },
+  { slot: 'eq4', imgs: [], title: 'Questline 4: Path of Shadows', desc: "The St. Trina badge will be available in the ELDEN RING category.", start: '2026-12-01T00:00:00Z', end: '2026-12-28T23:59:00Z' },
+  { slot: 'edd2', imgs: ['2d1bfde9-94a9-4ed1-84a5-4aeb85911f1d','f699b4ab-8952-46a1-88ff-a5515406f0a5'], title: "Dragon's Dogma 2", desc: "Sub or gift a Tier 1 sub (FrekiFriend) or watch 1 hour (TheDragonsDogma) in Dragon's Dogma II.", start: '2026-10-08T12:00:00Z', end: '2026-10-31T22:58:00Z' },
+  { slot: 'enight', imgs: ['602335f3-4d73-40f9-b8e2-5c5e25f32d62','ddfbf317-aa77-482e-a99d-eb975deb2fe7','f68e567f-67cf-4d4a-8c3e-a0dcee42f095'], title: 'Pokémon Night Out 2026', desc: "Gastly, Haunter and Gengar badges are coming for Pokémon Night Out 2026. Objectives to be announced.", start: null, end: null },
+  { slot: 'evault', imgs: ['29e7e185-e4c3-4cd4-ac5b-63e16c90d401','cce20332-b825-4008-8a8c-9b75e7a67e79'], title: 'Vaultbreakers', desc: "Sub or gift a Tier 1 sub (Golden) or watch 1 hour (Vaultbreakers) in the Vaultbreakers category.", start: '2026-10-08T17:00:00Z', end: '2026-11-05T16:59:00Z' },
+  { slot: 'edayz', imgs: ['739379da-c982-4294-9bfd-75c3cc4187d3'], title: 'DayZ · Badlands', desc: "Sub or gift a Tier 1 sub to any channel live in DayZ during the Badlands launch to earn the Yellow King badge.", start: '2026-10-08T11:00:00Z', end: '2026-10-19T08:59:00Z' },
+  { slot: 'emw4', imgs: ['41505da3-121e-4d81-985f-95185a79186c'], title: 'Call of Duty: Modern Warfare 4', desc: "Sub or gift a sub to any channel live in Call of Duty: Modern Warfare 4 during the launch to earn the Modern Warfare 4 badge.", start: null, end: null },
+  { slot: 'ehunt', imgs: [], title: 'Hunt: Showdown 1896', desc: "Two new badges arrive with Twitch Frightfest. Starts Oct 26.", start: '2026-10-26T00:00:00Z', end: null },
+  { slot: 'ewitch', imgs: ['https://badgebase.co/wp-content/themes/badgebase/assets/images/badges/witchspire-logo_v1.png','https://badgebase.co/wp-content/themes/badgebase/assets/images/badges/gold-stamp_v1.png','https://badgebase.co/wp-content/themes/badgebase/assets/images/badges/witch-hat_v1.png'], title: 'Witchspire · Haunted Magick', desc: "Watch 1 hour (Witchspire Logo) or 4 hours (Gold Stamp) in the Witchspire category. Witch Hat objective to be announced.", start: null, end: null },
+  { slot: 'e16', imgs: [], title: 'TwitchCon 2027 Berlin', desc: "TwitchCon events come with their own badges — expected again this year. Stay tuned.", start: '2027-05-22T00:00:00Z', end: '2027-05-23T00:00:00Z' },
+  { slot: 'epevo', imgs: ['6de326e8-643f-4043-beb6-3ad135385708','ad14f7e4-1ca6-476b-acaf-250da22388ec','d9698627-aff7-434c-8002-1351b2c59984','ac097350-add0-44c4-b405-e70aa746389b','15a0db5d-bef1-49bb-8594-e3925e1ec248','2b975e12-fd49-4e54-85c4-6cc042453dbb','b9dd6905-474f-45d1-a4ff-8ba138208afc'], title: 'Pokémon Evolution Badges', desc: "Ivysaur, Venusaur, Charmeleon, Charizard, Wartortle, Blastoise and Pikachu. Only unlockable if you earned the starter badges before Oct 1.", start: null, end: null },
+  { slot: 'eultra', imgs: ['12cb6b16-063b-4fcf-b312-c5c8f01e49ac'], title: 'Warhammer 40,000: Space Marine II', desc: "Sub or gift a Tier 1 sub to any channel live in Warhammer 40,000: Space Marine II to earn the Ultramarine badge.", start: '2026-10-01T08:00:00Z', end: '2026-10-29T06:59:00Z' },
+  { slot: 'ewast', imgs: ['70e9e169-1fbf-4279-b23c-a714ccb0c9ef'], title: 'Wasteland Circuit', desc: "Sub or gift a Tier 1 sub to any channel live in Rainbow Six Siege during Wasteland Circuit to earn DRON-E.", start: '2026-09-23T14:00:00Z', end: '2026-10-13T13:59:00Z' },
+  { slot: 'eblue', imgs: ['13afe621-edd4-48b6-a09b-453a2dee52e9'], title: 'Rematch', desc: "Watch 30 minutes of any channel live in REMATCH to earn the Rematch Blue Lock badge.", start: '2026-09-23T23:01:00Z', end: '2026-10-21T22:58:00Z' },
+  { slot: 'edndm', imgs: ['263a5bf1-c1ea-4f26-8bf8-db42ea2ebc7c','b17f6b68-4a2d-4d2a-9967-aa8ff26012a0'], title: 'Dungeons & Dragons: Dungeon Masters', desc: "Watch /dnd (official D&D channel) for the d20 badge, or sub/gift a Tier 1 sub in Dungeons & Dragons: Dungeon Masters for the Ampersand.", start: '2026-09-24T01:15:00Z', end: '2026-10-21T06:58:00Z' },
+  { slot: 'ewolfm', imgs: ['3e008d8a-4a24-4858-9e8f-74e8a3808955'], title: 'The Witcher 3: Wild Hunt – Complete Edition', desc: "Sub or gift a Tier 1 sub to any channel live in The Witcher 3: Wild Hunt Remastered to earn the Wolf Medallion badge.", start: '2026-09-29T10:00:00Z', end: '2026-10-27T09:59:00Z' },
+  { slot: 'eace', imgs: ['8468fb6c-1d33-4482-85ef-fa1898288ee2'], title: 'ACE COMBAT 8: WINGS OF THEVE', desc: "Sub or gift a Tier 1 sub to any channel live in ACE COMBAT 8 to earn the ACE COMBAT 8 Nugget badge.", start: '2026-09-28T22:00:00Z', end: '2026-10-26T06:59:00Z' },
+  { slot: 'ealien', imgs: ['4709f62b-9cd9-4759-8953-c096527401c7','a6a681a9-3253-42de-b09a-7bda7c05c342'], title: 'Alien Isolation', desc: "Watch 30 minutes (SEEGSON Synthetics) or sub/gift a Tier 1 sub (Sevastopol Station) in Alien: Isolation to earn both badges.", start: '2026-10-01T09:00:00Z', end: '2026-10-29T08:58:00Z' },
+];
+
+/* Top bar "Available here": badges you can earn on this stream right now.
+   ev = event slot from EVENTS: shown while that event is ACTIVE (showSoon: true = also while UPCOMING,
+   with a countdown). hideWhen = event slot that hides this chip while it is active or upcoming. */
+const AVAILABLE = [
+  { slot: 'a1', action: 'Sub or Gift', label: 'Yellow King', game: 'DayZ · Badlands', imgs: ['739379da-c982-4294-9bfd-75c3cc4187d3'], ev: 'edayz' },
+];
+
+/* Footer counters: read live from badgedatabase.com every 10 minutes; these are only the fallback. */
+const FALLBACK_COUNTS = { active: 19, upcoming: 5, tba: 16, free: 6 };
+/* ============================================================================== */
+
+const M  = ['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
+const MS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = n => String(n).padStart(2, '0');
+const badgeUrl = u => !u ? '' : u.startsWith('http') ? u : 'https://static-cdn.jtvnw.net/badges/v1/' + u + '/3';
+const stamp = ts => { const d = new Date(ts); return `${MS[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}, ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())} UTC`; };
+function countdown(ms, prefix){
+  if(ms <= 0) return 'JUST NOW';
+  const days = Math.floor(ms / 864e5), hrs = Math.floor((ms % 864e5) / 36e5), mins = Math.floor((ms % 36e5) / 6e4);
+  if(days > 0) return `${prefix} ${days}D ${hrs}H`;
+  if(hrs > 0) return `${prefix} ${hrs}H ${mins}M`;
+  return `${prefix} ${mins}M`;
+}
+
+/* ---------- live data from badgedatabase.com (left column + footer counters) ---------- */
+let site = { events: null, badges: null, pop: null };
+async function getJson(file){
+  for(const base of ['https://raw.githubusercontent.com/davidpzsny/badgedb/main/', 'https://badgedatabase.com/']){
+    try{ const r = await fetch(base + file + '?t=' + Date.now(), {cache: 'no-store'}); if(r.ok) return await r.json(); }catch(e){}
+  }
+  return null;
+}
+async function loadStats(){
+  const [evs, badges, pop] = await Promise.all([getJson('events.json'), getJson('badges.json'), getJson('popularity.json')]);
+  if(Array.isArray(evs)) site.events = evs;
+  if(Array.isArray(badges)) site.badges = groupBadges(badges);
+  if(pop && pop.counts) site.pop = pop.counts;
+  render();
+}
+// badges.json rows: [title, img, added, free, users, set, desc]
+function groupBadges(rows){
+  const groups = new Map();
+  rows.forEach(r => { const k = r[5] || r[1]; if(!groups.has(k)) groups.set(k, []); groups.get(k).push(r); });
+  return [...groups.entries()].map(([set, rs]) => { const p = rs[rs.length - 1];
+    return { set, name: p[0], img: p[1], added: p[2] || '', free: rs.some(x => x[3] === 1), users: Math.max(...rs.map(x => x[4] || 0)), imgs: rs.map(x => x[1]) }; });
+}
+function evByImg(){ const map = {}; (site.events || []).forEach(ev => (ev.badges || []).forEach(b => { if(b.img) map[b.img] = { ev, b }; })); return map; }
+function siteCounts(now){                     // same rules as the site: badge counts, TBA older than 21 days = ended
+  const evs = site.events; if(!evs) return null;
+  const STALE = 21 * 864e5, badges = site.badges || [], byImg = evByImg();
+  const st = e => !e.start ? 'tba' : now < Date.parse(e.start) ? 'soon' : now > Date.parse(e.end) ? 'ended' : 'live';
+  const added = ev => (ev.badges || []).map(b => (badges.find(g => g.imgs.includes(b.img)) || {}).added).filter(Boolean).sort()[0];
+  const stale = ev => { if(ev.start) return false; const a = added(ev); return !!a && now - Date.parse(a) > STALE; };
+  const orphans = badges.filter(b => !b.imgs.some(i => byImg[i]) && b.added && now - Date.parse(b.added) < STALE);
+  const live = evs.filter(e => st(e) === 'live'), n = list => list.reduce((s, e) => s + (e.badges || []).length, 0);
+  return { active: n(live), upcoming: n(evs.filter(e => st(e) === 'soon')), tba: n(evs.filter(e => st(e) === 'tba' && !stale(e))) + orphans.length,
+           free: live.reduce((s, e) => s + (e.badges || []).filter(b => b.cost === 'free').length, 0) };
+}
+function siteItems(now){                      // every badge set added in the last 14 days, newest first
+  const badges = site.badges; if(!badges) return null;
+  const pop = site.pop || {}, byImg = evByImg(), cutoff = now - 14 * 864e5;
+  const list = badges.filter(b => b.added && Date.parse(b.added) >= cutoff).sort((a, b) => b.added.localeCompare(a.added));
+  if(!list.length) return null;
+  return list.map(b => { const e = b.imgs.map(i => byImg[i]).find(Boolean);
+    const cost = e && e.b.cost && e.b.cost !== 'na' ? e.b.cost : b.free ? 'free' : '';
+    const d = new Date(b.added + 'T00:00:00Z'), users = pop[b.set] || b.users || 0;
+    return { slot: 'auto-' + b.set, added: `${M[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`, users: users.toLocaleString('en-US'), cost, title: b.name, sub: 'Global Badge', img: b.img }; });
+}
+
+/* ---------- rendering: lists are rebuilt only when their content changes (so the scrolling never jumps);
+   clock and countdowns are updated in place every second ---------- */
+const lastSig = {};
+function setList(id, html){ if(lastSig[id] !== html){ lastSig[id] = html; $(id).innerHTML = html; } }
+const img = (u, cls) => u ? `<img class="slot${cls ? ' ' + cls : ''}" src="${esc(badgeUrl(u))}" alt="">` : '';
+
+function eventView(e, now){
+  const start = e.start ? Date.parse(e.start) : null, end = e.end ? Date.parse(e.end) : null;
+  if(start === null) return { e, status: 'UPCOMING', bg: '#d99e1e', fg: '#1a1205', cdTo: null, cdText: 'DATE TBA', startLabel: 'STARTS' };
+  if(now < start)    return { e, status: 'UPCOMING', bg: '#d99e1e', fg: '#1a1205', cdTo: start, prefix: 'STARTS IN', startLabel: 'STARTS' };
+  if(end === null || now < end) return { e, status: 'ACTIVE', bg: '#3ba55d', fg: '#06160c', cdTo: end, prefix: 'ENDS IN', cdText: end === null ? 'LIVE' : '', startLabel: 'STARTED' };
+  return { e, status: 'ENDED' };
+}
+function eventCard(v){
+  const e = v.e, cd = v.cdTo ? `<span class="cd bsc" style="color:${v.fg}" data-to="${v.cdTo}" data-prefix="${v.prefix}"></span>` : `<span class="cd bsc" style="color:${v.fg}">${v.cdText}</span>`;
+  return `<div class="ev"><div class="bar" style="background:${v.bg}"><span class="st bc" style="color:${v.fg}">${v.status}</span>${cd}</div>
+    <div class="in"><div class="row">${e.imgs.length ? `<div class="imgs">${e.imgs.map(u => img(u)).join('')}</div>` : ''}<div class="title bc">${esc(e.title)}</div></div>
+      <div class="desc b">${esc(e.desc)}</div>
+      <div class="dates"><div><div class="dk bc">${v.startLabel}</div><div class="dv b">${e.start ? stamp(Date.parse(e.start)) : 'To be announced'}</div></div>
+        <div><div class="dk bc">ENDS</div><div class="dv b">${e.end ? stamp(Date.parse(e.end)) : 'To be announced'}</div></div></div></div></div>`;
+}
+function itemCard(it, now){
+  const isNew = Date.parse(it.added) >= now - 14 * 864e5;
+  const cost = it.cost ? `<span class="pill" style="color:${it.cost === 'free' ? '#4ade80' : '#c4a1ff'};background:${it.cost === 'free' ? '#123920' : '#2d1a4d'}">${esc(it.cost.toUpperCase())}</span>` : '';
+  return `<div class="item"><div class="bar"><span class="added bsc">ADDED: ${esc(it.added)}</span><span class="right">${cost}<span class="users bsc">USERS: ${esc(it.users)}</span></span></div>
+    <div class="main">${img(it.img)}<div style="line-height:1.1"><div class="ttl"><div class="title b">${esc(it.title)}</div>${isNew ? '<span class="pill" style="color:#fff;background:#9146ff">New</span>' : ''}</div>
+      <div class="sub bc">${esc(it.sub)}</div></div></div></div>`;
+}
+
+function render(){
+  const now = Date.now(), d = new Date(now);
+  $('date').textContent = `${M[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`;
+  $('time').textContent = `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`;
+
+  const views = EVENTS.map(e => eventView(e, now)), bySlot = {};
+  views.forEach(v => { bySlot[v.e.slot] = v; });
+  const visible = views.filter(v => v.status !== 'ENDED'), half = Math.ceil(visible.length / 2);
+  const loop = arr => arr.concat(arr);                  // doubled list = seamless scroll loop
+  setList('eventsA', loop(visible.slice(0, half)).map(eventCard).join(''));
+  setList('eventsB', loop(visible.slice(half)).map(eventCard).join(''));
+
+  const items = siteItems(now) || ITEMS;
+  setList('items', loop(items).map(it => itemCard(it, now)).join(''));
+
+  const isActive = k => !!(bySlot[k] && bySlot[k].status === 'ACTIVE'), isSoon = k => !!(bySlot[k] && bySlot[k].status === 'UPCOMING');
+  const evStart = k => { const e = EVENTS.find(x => x.slot === k); return e && e.start ? Date.parse(e.start) : null; };
+  const avail = AVAILABLE.filter(a => (!a.ev || isActive(a.ev) || (a.showSoon && isSoon(a.ev))) && !(a.hideWhen && (isActive(a.hideWhen) || isSoon(a.hideWhen))));
+  setList('available', avail.map(a => { const soon = a.ev && isSoon(a.ev) && evStart(a.ev);
+    const action = soon ? `<div class="a bc" style="color:#f5b83d" data-to="${evStart(a.ev)}" data-prefix="STARTS IN"></div>`
+                        : `<div class="a bc" style="color:${/watch/i.test(a.action) ? '#4ade80' : '#c4a1ff'}">${esc(a.action)}</div>`;
+    return `<div class="chip"><div class="imgs">${a.imgs.map(u => img(u)).join('')}</div><div style="line-height:1"><div class="l b">${esc(a.label)}</div>${action}</div></div>`; }).join(''));
+  $('availTitle').textContent = [...new Set(avail.map(a => a.game).filter(Boolean))].join(' · ');
+
+  const sc = siteCounts(now) || FALLBACK_COUNTS;
+  $('cActive').textContent = sc.active; $('cUpcoming').textContent = sc.upcoming; $('cTba').textContent = sc.tba; $('cFree').textContent = sc.free;
+
+  document.querySelectorAll('[data-to]').forEach(el => { el.textContent = countdown(+el.dataset.to - now, el.dataset.prefix); });
+}
+
+/* ---------- reload by itself when a new version is uploaded (version.json) ---------- */
+async function checkVersion(){
+  try{
+    const r = await fetch('version.json?t=' + Date.now(), {cache: 'no-store'}); if(!r.ok) return;
+    const v = String((await r.json()).v || '');
+    if(v && v !== OVERLAY_V && new URLSearchParams(location.search).get('v') !== v)
+      location.replace(location.pathname + '?v=' + encodeURIComponent(v));   // new query = fresh copy, past every cache
+  }catch(e){}
+}
+
+render();
+setInterval(render, 1000);
+loadStats(); setInterval(loadStats, 600000);
+setInterval(checkVersion, 30000); setTimeout(checkVersion, 5000);
+</script>
+</body>
+</html>
