@@ -7,7 +7,8 @@
    {"type": "fixed", "text": "Castlevania: Belmont's Curse dates added: Oct 15, 04:00 to Nov 2, 03:59 UTC."},
    {"type": "fixed", "text": "Warhammer 40,000: Space Marine II (Ultramarine) ends Oct 29 at 06:59 UTC."},
    {"type": "improved", "text": "LoL 2026 World Championship: Worlds 2026 Supporter and the Heartsteel, K/DA, Pentakill and True Damage Fan badges are one event, with the objective: sub or gift a Tier 1 sub in League of Legends."},
-   {"type": "improved", "text": "Privacy Policy, Terms of Service and Legal Notice updated: live stream data on Watch now and Top Categories, Remind me notifications, the Discord bot, our servers and data sources."}
+   {"type": "improved", "text": "Privacy Policy, Terms of Service and Legal Notice updated: live stream data on Watch now and Top Categories, Remind me notifications, the Discord bot, our servers and data sources."},
+   {"type": "improved", "text": "Home page sliders: bigger cards, long badge names use two lines, and the date reads \"Added today\", \"yesterday\" or \"3 days ago\", so nothing breaks onto extra lines."}
   ]
  },
  {

@@ -304,7 +304,7 @@ function renderHome(){
   const recent = [...globalBadges].filter(b=>b.added).sort((a,b)=>b.added.localeCompare(a.added)||a.name.localeCompare(b.name)).slice(0,20);
   const newCut = new Date(Date.now() - 3*864e5).toISOString().slice(0,10);
   fillSlider($('#recent'), recent.map(b => `<a class="sl-it" href="/badges/${encodeURIComponent(b.set)}/" title="${esc(b.name)}">${tile(b)}<span class="sl-t"><b>${esc(b.name)}</b>
-    <small>${b.added >= newCut ? '<i class="n">New</i>' : ''}Added ${fmt(b.added)}</small></span></a>`), 3.6);
+    <small>${b.added >= newCut ? '<i class="n">New</i>' : ''}<span>Added ${addedAgo(b.added)}</span></small></span></a>`), 3.6);
 
   const strip = list => list.slice(0,6).map(b=>`<img src="${esc(b.img)}" alt="" loading="lazy">`).join('') + (list.length>6?`<span class="more">+${list.length-6}</span>`:'');
   const evBadges = live.flatMap(e=>e.badges.filter(b=>b.img).map(b=>({img:cdn(b.img)})));
@@ -754,6 +754,13 @@ document.addEventListener('click', e => { if(e.target.closest('#nfSearch')){ qsO
 
 /* ---------- home: badge slider, top categories, most popular badges ---------- */
 let TOPCATS = null;
+/* short "added" text for the sliders: today, yesterday, 3 days ago, Oct 2 (English like the rest of the page, never wraps) */
+function addedAgo(d){
+  const days = Math.round((Date.parse(new Date().toISOString().slice(0, 10)) - Date.parse(d)) / 864e5);
+  if(days <= 0) return "today"; if(days === 1) return "yesterday"; if(days < 14) return days + " days ago";
+  const dt = new Date(d + "T12:00:00Z");
+  return dt.toLocaleDateString("en-US", {month: "short", day: "numeric", timeZone: "UTC", ...(dt.getUTCFullYear() !== new Date().getUTCFullYear() ? {year: "numeric"} : {})});
+}
 function fillSlider(el, cards, secPerItem = 3.2){
   const html = cards.join("");
   const animate = cards.length >= 5 && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -783,7 +790,7 @@ function renderSlider(){
   const card = b => { const ev = EV_BY_IMG[b.imgId].ev, st = badgeState(b);
     const when = st === "soon" ? `starts in ${countdown(ev.start).split(" ").slice(0, 2).join(" ")}` : `${countdown(ev.end).split(" ").slice(0, 2).join(" ")} left`;
     return `<a class="sl-it ${st}" href="/badges/${encodeURIComponent(b.set)}/" title="${esc(b.name)}">${tile(b)}<span class="sl-t"><b>${esc(b.name)}</b>
-      <small>${isFree(b) ? '<i class="f">Free</i>' : '<i class="p">Sub</i>'}${esc(when)}</small></span></a>`; };
+      <small>${isFree(b) ? '<i class="f">Free</i>' : '<i class="p">Sub</i>'}<span>${esc(when)}</span></small></span></a>`; };
   fillSlider(el, items.map(card));
 }
 const catKey = t => qsNorm(t).replace(/[^a-z0-9]/g, "");
