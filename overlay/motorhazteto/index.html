@@ -75,8 +75,9 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 .item .users{font-weight:600;font-size:14px;letter-spacing:.8px;color:#6b6b73;white-space:nowrap}
 .item .main{display:flex;align-items:center;gap:14px;padding:12px 14px}
 .item .main img{width:42px;height:42px;border-radius:8px}
-.item .ttl{display:flex;align-items:center;gap:8px}
 .item .title{font-weight:700;font-size:20px;letter-spacing:.3px}
+.item .title .nw{white-space:nowrap}                 /* the last word and NEW never get separated */
+.item .title .pill{display:inline-block;margin-left:8px;vertical-align:3px}
 .item .sub{font-weight:600;font-size:15px;letter-spacing:1px;color:#6b6b73;text-transform:uppercase;margin-top:2px}
 
 .ev{background:#121214;border:1px solid #1f1f23;border-radius:8px;overflow:hidden;margin-bottom:16px;flex:none}
@@ -170,7 +171,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-10-14.5";   // bump together with version.json after every change
+const OVERLAY_V = "2026-10-14.6";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -448,11 +449,17 @@ function eventCard(v){
       <div class="dates"><div><div class="dk bc">${v.startLabel}</div><div class="dv b">${e.start ? stamp(Date.parse(e.start)) : 'To be announced'}</div></div>
         <div><div class="dk bc">ENDS</div><div class="dv b">${e.end ? stamp(Date.parse(e.end)) : 'To be announced'}</div></div></div></div></div>`;
 }
+// the NEW label always sits right after the name, also when a long name wraps to a second line
+function titleNew(title, isNew){
+  const t = String(title || '').trim(); if(!isNew) return esc(t);
+  const i = t.lastIndexOf(' '), pill = '<span class="pill" style="color:#fff;background:#9146ff">New</span>';
+  return `${i > 0 ? esc(t.slice(0, i + 1)) : ''}<span class="nw">${esc(t.slice(i + 1))}${pill}</span>`;
+}
 function itemCard(it, now){
   const isNew = Date.parse(it.added) >= now - 14 * 864e5;
   const cost = it.cost ? `<span class="pill" style="color:${it.cost === 'free' ? '#4ade80' : '#c4a1ff'};background:${it.cost === 'free' ? '#123920' : '#2d1a4d'}">${esc(it.cost.toUpperCase())}</span>` : '';
   return `<div class="item"><div class="bar"><span class="added bsc">ADDED: ${esc(it.added)}</span><span class="right">${cost}<span class="users bsc">USERS: ${esc(it.users)}</span></span></div>
-    <div class="main">${img(it.img)}<div style="line-height:1.1"><div class="ttl"><div class="title b">${esc(it.title)}</div>${isNew ? '<span class="pill" style="color:#fff;background:#9146ff">New</span>' : ''}</div>
+    <div class="main">${img(it.img)}<div style="line-height:1.1;min-width:0"><div class="title b">${titleNew(it.title, isNew)}</div>
       <div class="sub bc">${esc(it.sub)}</div></div></div></div>`;
 }
 
