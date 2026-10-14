@@ -696,7 +696,7 @@ def update_live_channels(token, events, per_event=8):
             rows.insert(0, dict(row(ours), ours=True))
         out[ev["id"]] = {"category": ev.get("category", ""), "game_id": gid, "streams": rows}
     json.dump({"updated": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"), "our_channel": OUR_CHANNEL,
-               "our_live": bool(ours), "events": out, "game_ids": game_ids},
+               "our_live": bool(ours), "our_game": (ours or {}).get("game_name", ""), "events": out, "game_ids": game_ids},
               open(LIVE_DB, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     n = sum(len(v["streams"]) for v in out.values())
     status("live_channels", f"{len(out)} running events, {n} live streams" + (f", {OUR_CHANNEL} live" if ours else ""))

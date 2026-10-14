@@ -199,6 +199,9 @@ OBS → Sources → + → Browser, URL above, Width `1920`, Height `1080`. It is
 (the folder is still visible in this public repo).
 - `overlay/motorhazteto/index.html` → `EVENTS` (Events column, UTC times from streamdatabase.com/events, `start: null` = TBA),
   `AVAILABLE` (top bar chips), `ITEMS` (left column fallback). Ended events disappear by themselves.
+- `HIDE_AVAILABLE_IN` (default `Always On`): while badge_db streams in one of these categories, the whole "Available here"
+  part of the header is hidden. The category is checked every minute via decapi.me, with the bot's `live.json`
+  (`our_game`, every 15 minutes) as backup.
 - The left column ("Added in the last 14 days") and the footer counters come from `badges.json` / `events.json` every 10 minutes.
 - **After every change** set `OVERLAY_V` in `index.html` and `v` in `version.json` to the same new value. The overlay checks
   `version.json` every 30 seconds and reloads itself, so the stream PC needs no action (about 1 to 2 minutes after the commit).

@@ -170,7 +170,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-10-14.2";   // bump together with version.json after every change
+const OVERLAY_V = "2026-10-14.3";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -243,6 +243,11 @@ const AVAILABLE = [
   { slot: 'a1', action: 'Sub or Gift', label: 'Yellow King', game: 'DayZ · Badlands', imgs: ['739379da-c982-4294-9bfd-75c3cc4187d3'], ev: 'edayz' },
 ];
 
+/* Stream categories where the whole "Available here" part of the header is hidden.
+   The overlay checks badge_db's current category every minute. */
+const HIDE_AVAILABLE_IN = ['Always On'];
+const CHANNEL = 'badge_db';
+
 /* Footer counters: read live from badgedatabase.com every 10 minutes; these are only the fallback. */
 const FALLBACK_COUNTS = { active: 16, upcoming: 6, tba: 19, free: 5 };
 /* ============================================================================== */
@@ -307,6 +312,18 @@ function siteItems(now){                      // every badge set added in the la
     return { slot: 'auto-' + b.set, added: `${M[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`, users: users ? users.toLocaleString('en-US') : 'N/A', cost, title: b.name, sub: 'Global Badge', img: b.img }; });
 }
 
+/* ---------- current stream category: DecAPI (about a minute fresh), else the site bot's live.json (15 min) ---------- */
+let streamCat = null;                         // null = unknown, then the header works as before
+async function loadCategory(){
+  try{
+    const r = await fetch('https://decapi.me/twitch/game/' + CHANNEL + '?t=' + Date.now(), {cache: 'no-store'});
+    const t = r.ok ? (await r.text()).trim() : '';
+    if(t && t.length < 80 && !/not found|error|invalid|rate limit/i.test(t)){ streamCat = t; render(); return; }
+  }catch(e){}
+  const j = await getJson('live.json');
+  if(j && j.our_live && j.our_game){ streamCat = j.our_game; render(); }
+}
+
 /* ---------- rendering: lists are rebuilt only when their content changes (so the scrolling never jumps);
    clock and countdowns are updated in place every second ---------- */
 const lastSig = {};
@@ -353,7 +370,9 @@ function render(){
 
   const isActive = k => !!(bySlot[k] && bySlot[k].status === 'ACTIVE'), isSoon = k => !!(bySlot[k] && bySlot[k].status === 'UPCOMING');
   const evStart = k => { const e = EVENTS.find(x => x.slot === k); return e && e.start ? Date.parse(e.start) : null; };
-  const avail = AVAILABLE.filter(a => (!a.ev || isActive(a.ev) || (a.showSoon && isSoon(a.ev))) && !(a.hideWhen && (isActive(a.hideWhen) || isSoon(a.hideWhen))));
+  const hideAll = streamCat && HIDE_AVAILABLE_IN.some(c => c.toLowerCase() === streamCat.toLowerCase());
+  const avail = hideAll ? [] : AVAILABLE.filter(a => (!a.ev || isActive(a.ev) || (a.showSoon && isSoon(a.ev))) && !(a.hideWhen && (isActive(a.hideWhen) || isSoon(a.hideWhen))));
+  document.querySelector('.avail').style.visibility = avail.length ? '' : 'hidden';   // nothing to show: no label, no line
   setList('available', avail.map(a => { const soon = a.ev && isSoon(a.ev) && evStart(a.ev);
     const action = soon ? `<div class="a bc" style="color:#f5b83d" data-to="${evStart(a.ev)}" data-prefix="STARTS IN"></div>`
                         : `<div class="a bc" style="color:${/watch/i.test(a.action) ? '#4ade80' : '#c4a1ff'}">${esc(a.action)}</div>`;
@@ -379,6 +398,7 @@ async function checkVersion(){
 render();
 setInterval(render, 1000);
 loadStats(); setInterval(loadStats, 600000);
+loadCategory(); setInterval(loadCategory, 60000);
 setInterval(checkVersion, 30000); setTimeout(checkVersion, 5000);
 </script>
 </body>
