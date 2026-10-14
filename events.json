@@ -1,5 +1,21 @@
 [
  {
+  "id": "enshrouded",
+  "name": "Enshrouded",
+  "category": "Enshrouded",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Flameborn Sigil",
+    "img": "66ccfcbb-8b82-4746-8b61-2c38f69731c7",
+    "how": "Watch a stream in the category.",
+    "cost": "free",
+    "desc": "This badge was earned by watching a streamer in the Enshrouded category during the v1.0 game launch"
+   }
+  ]
+ },
+ {
   "id": "castlevania-belmont-s-curse",
   "name": "Castlevania: Belmont's Curse",
   "category": "Castlevania: Belmont's Curse",
