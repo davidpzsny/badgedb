@@ -1,6 +1,13 @@
 [
  {
   "date": "2026-10-14",
+  "title": "Emote dates",
+  "items": [
+   {"type": "improved", "text": "Global Emotes: every emote card shows when it was added (English date format). Emotes added since February 2025 have their exact date, so \"Added this year\" and \"Last 6 months\" work properly; older emotes are marked \"Before Feb 2025\", because Twitch publishes no dates for them."}
+  ]
+ },
+ {
+  "date": "2026-10-14",
   "title": "UTC times and date fixes",
   "items": [
    {"type": "improved", "text": "Badge pages and event details show the exact UTC time next to your local time, for example Oct 15, 06:00 (04:00 UTC)."},

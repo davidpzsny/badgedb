@@ -815,6 +815,7 @@ document.addEventListener('click', e => { if(e.target.closest('#nfSearch')){ qsO
 /* ---------- home: badge slider, top categories, most popular badges ---------- */
 let TOPCATS = null;
 /* short "added" text for the sliders: today, yesterday, 3 days ago, Oct 2 (English like the rest of the page, never wraps) */
+const fmtDay = d => new Date(d + "T12:00:00Z").toLocaleDateString("en-US", {month: "short", day: "numeric", year: "numeric", timeZone: "UTC"});   // "Oct 13, 2026"
 function addedAgo(d){
   const days = Math.round((Date.parse(new Date().toISOString().slice(0, 10)) - Date.parse(d)) / 864e5);
   if(days <= 0) return "today"; if(days === 1) return "yesterday"; if(days < 14) return days + " days ago";
@@ -976,8 +977,9 @@ function renderEmotes(){
   if(eFilter === "year") list = list.filter(e => (e[2] || "").startsWith(yr));
   if(eFilter === "6m") list = list.filter(e => (e[2] || "") >= halfYear);
   if(eQuery) list = list.filter(e => e[1].toLowerCase().includes(eQuery));
-  // Twitch doesn't publish emote dates. Tracked emotes use their first-seen date; the rest keep Twitch's own
-  // list order, which is chronological (emotes.json stores it oldest → newest).
+  // Twitch doesn't publish emote dates. Emotes added since Feb 2025 have their date (StreamDatabase's history until our
+  // own tracking started, then the bot's first-seen date); older ones keep Twitch's own list order, which is chronological
+  // (emotes.json stores it oldest → newest) and show "Before Feb 2025".
   const pos = e => EMOTES.indexOf(e);
   const newest = (a, b) => (b[2] || "").localeCompare(a[2] || "") || pos(b) - pos(a);
   const oldest = (a, b) => (a[2] || "0000").localeCompare(b[2] || "0000") || pos(a) - pos(b);
@@ -987,7 +989,7 @@ function renderEmotes(){
   $('#eCount').textContent = E_READY ? `${list.length} of ${live.length} global emotes · checked against Twitch every 15 minutes` : '';
   grid.innerHTML = list.length ? list.slice(0, eShown).map(e => `<button class="emo ${e[4]===0?'retired':''}" data-emote="${esc(e[0])}">
       <span class="pic"><img src="${emoteUrl(e[0])}" alt="${esc(e[1])}" loading="lazy"></span><b>${esc(e[1])}</b>
-      <small>${e[3]===1?'<span class="pill anim">Animated</span>':''}${e[2]?`Added ${fmt(e[2])}`:''}${e[4]===0&&e[5]?`<span class="rm">Removed ${fmt(e[5])}</span>`:''}</small></button>`).join('')
+      <small>${e[3]===1?'<span class="pill anim">Animated</span>':''}<span class="ad">${e[2]?`Added ${fmtDay(e[2])}`:'Before Feb 2025'}</span>${e[4]===0&&e[5]?`<span class="rm">Removed ${fmtDay(e[5])}</span>`:''}</small></button>`).join('')
     : `<div class="empty">${E_READY ? 'No emotes match.' : 'Loading…'}</div>`;
   $('#eMore').innerHTML = list.length > eShown ? `<button class="btn ghost" id="btnEMore">Show ${Math.min(120, list.length - eShown)} more</button>` : '';
 }
@@ -1001,7 +1003,7 @@ function openEmote(id){
        return `<div class="pv-chats one"><div class="pv dark">${line}</div><div class="pv light">${line}</div></div>`; })()}
     <h3 style="margin-top:16px">Dark</h3><div class="emote-sizes">${sizes('dark')}</div><h3 style="margin-top:14px">Light</h3><div class="emote-sizes light">${sizes('light')}</div>
     <dl class="kv" style="margin-top:18px"><dt>Name</dt><dd><code>${esc(e[1])}</code></dd><dt>Emote ID</dt><dd><code>${esc(e[0])}</code></dd>
-    <dt>Type</dt><dd>${e[3]===1?'Animated':'Static'}</dd><dt>First seen</dt><dd>${e[2]?fmt(e[2]):'Before tracking started'}</dd>${e[4]===0?`<dt>Removed</dt><dd>${e[5]?fmt(e[5]):'Yes'}</dd>`:''}</dl>
+    <dt>Type</dt><dd>${e[3]===1?'Animated':'Static'}</dd><dt>Added</dt><dd>${e[2]?fmtDay(e[2]):'Before Feb 2025 (Twitch publishes no dates for older emotes)'}</dd>${e[4]===0?`<dt>Removed</dt><dd>${e[5]?fmtDay(e[5]):'Yes'}</dd>`:''}</dl>
     <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap"><button class="btn" data-copy="${esc(e[1])}">Copy name</button><a class="btn ghost" href="${emoteUrl(e[0],'3.0')}" target="_blank" rel="noopener">Open image</a></div>`);
 }
 

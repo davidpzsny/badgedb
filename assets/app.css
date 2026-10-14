@@ -567,6 +567,7 @@
   .emo small{font-size:11px;color:var(--dim);display:flex;gap:5px;align-items:center;justify-content:center;flex-wrap:wrap}
   .emo.retired{opacity:.6}
   .emo small .rm{flex-basis:100%;color:#FCA5A5}
+  .emo small .ad{flex-basis:100%;white-space:nowrap}
   .pill.anim{background:rgba(139,92,246,.2);color:var(--purple-2)}
   .emote-sizes{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;padding:16px;border-radius:14px;background:var(--bg)}
   .emote-sizes.light{background:#f4f4f5}
