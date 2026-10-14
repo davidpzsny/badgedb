@@ -1,5 +1,21 @@
 [
  {
+  "id": "castlevania-belmont-s-curse",
+  "name": "Castlevania: Belmont's Curse",
+  "category": "Castlevania: Belmont's Curse",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Castlevania Belmont's Curse",
+    "img": "e073c4ac-2d87-4f4b-8239-a2081f4a06e1",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Castlevania: Belmont's Curse category during the game launch!"
+   }
+  ]
+ },
+ {
   "id": "worlds-2026-supporter",
   "name": "Worlds 2026 Supporter",
   "category": "Unknown",
