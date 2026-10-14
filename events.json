@@ -17,84 +17,54 @@
   "dates_src": "manual"
  },
  {
-  "id": "worlds-2026-supporter",
-  "name": "Worlds 2026 Supporter",
-  "category": "Unknown",
+  "id": "lol-worlds-2026",
+  "name": "LoL 2026 World Championship",
+  "category": "League of Legends",
   "start": "",
   "end": "",
   "badges": [
    {
     "name": "Worlds 2026 Supporter",
     "img": "031a4882-d8e6-4dd6-97d8-40620f59d288",
-    "how": "Objective not announced yet.",
-    "cost": "na",
-    "desc": "This Chat Badge was earned by supporting the 2026 League of Legends World Championship!"
-   }
-  ]
- },
- {
-  "id": "true-damage-fan",
-  "name": "True Damage Fan",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "True Damage Fan",
-    "img": "06c27674-9c56-479d-8acf-a3dfd5680425",
-    "how": "Objective not announced yet.",
-    "cost": "na",
-    "desc": "This Chat Badge was earned by supporting the 2026 League of Legends World Championship!"
-   }
-  ]
- },
- {
-  "id": "pentakill-fan",
-  "name": "Pentakill Fan",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "Pentakill Fan",
-    "img": "721fe947-d819-4b13-9b7a-92debcd9393b",
-    "how": "Objective not announced yet.",
-    "cost": "na",
-    "desc": "This Chat Badge was earned by supporting the 2026 League of Legends World Championship!"
-   }
-  ]
- },
- {
-  "id": "kda-fan",
-  "name": "K/DA Fan",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "K/DA Fan",
-    "img": "cf6ff3ab-9153-483b-bdac-f07577e6e202",
-    "how": "Objective not announced yet.",
-    "cost": "na",
-    "desc": "This Chat Badge was earned by supporting the 2026 League of Legends World Championship!"
-   }
-  ]
- },
- {
-  "id": "heartsteel-fan",
-  "name": "Heartsteel Fan",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid",
+    "desc": "This Chat Badge was earned by supporting the 2026 League of Legends World Championship!",
+    "how_src": "manual"
+   },
    {
     "name": "Heartsteel Fan",
     "img": "e97f6718-9d36-4b35-8a6f-a36545ab81ff",
-    "how": "Objective not announced yet.",
-    "cost": "na",
-    "desc": "This Chat Badge was earned by supporting the 2026 League of Legends World Championship!"
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid",
+    "desc": "This Chat Badge was earned by supporting the 2026 League of Legends World Championship!",
+    "how_src": "manual"
+   },
+   {
+    "name": "K/DA Fan",
+    "img": "cf6ff3ab-9153-483b-bdac-f07577e6e202",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid",
+    "desc": "This Chat Badge was earned by supporting the 2026 League of Legends World Championship!",
+    "how_src": "manual"
+   },
+   {
+    "name": "Pentakill Fan",
+    "img": "721fe947-d819-4b13-9b7a-92debcd9393b",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid",
+    "desc": "This Chat Badge was earned by supporting the 2026 League of Legends World Championship!",
+    "how_src": "manual"
+   },
+   {
+    "name": "True Damage Fan",
+    "img": "06c27674-9c56-479d-8acf-a3dfd5680425",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid",
+    "desc": "This Chat Badge was earned by supporting the 2026 League of Legends World Championship!",
+    "how_src": "manual"
    }
-  ]
+  ],
+  "name_src": "manual"
  },
  {
   "id": "call-of-duty-modern-warfare-4",

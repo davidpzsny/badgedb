@@ -170,35 +170,40 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-10-14.1";   // bump together with version.json after every change
+const OVERLAY_V = "2026-10-14.2";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
    last 14 days). ITEMS below is only the fallback when the site can't be reached.
    img = Twitch badge UUID (static-cdn.jtvnw.net/badges/v1/UUID/3) or a full image URL. */
 const ITEMS = [
-  { slot: 'bmw4', added: 'OCTOBER 10, 2026', users: '0', cost: 'paid', ev: 'emw4', title: 'Modern Warfare 4', sub: 'Global Badge', img: '41505da3-121e-4d81-985f-95185a79186c' },
-  { slot: 'bcwwc', added: 'OCTOBER 7, 2026', users: '0', cost: 'paid', ev: 'ecwwc', title: 'CrossWorlds World Championship 2026', sub: 'Global Badge', img: '97062b99-1125-4f41-91df-b98687176d8e' },
-  { slot: 'bgstamp', added: 'OCTOBER 7, 2026', users: '0', cost: 'free', ev: 'ewitch', title: 'Gold Stamp (Witchspire)', sub: 'Global Badge', img: 'https://badgebase.co/wp-content/themes/badgebase/assets/images/badges/gold-stamp_v1.png' },
-  { slot: 'bwlogo', added: 'OCTOBER 7, 2026', users: '0', cost: 'free', ev: 'ewitch', title: 'Witchspire Logo', sub: 'Global Badge', img: 'https://badgebase.co/wp-content/themes/badgebase/assets/images/badges/witchspire-logo_v1.png' },
-  { slot: 'bwhat', added: 'OCTOBER 7, 2026', users: '0', cost: 'paid', ev: 'ewitch', title: 'Witch Hat (Witchspire)', sub: 'Global Badge', img: 'https://badgebase.co/wp-content/themes/badgebase/assets/images/badges/witch-hat_v1.png' },
-  { slot: 'bivy', added: 'OCTOBER 6, 2026', users: '0', cost: '', ev: 'epevo', title: 'Ivysaur (Pokémon Evolution)', sub: 'Global Badge', img: '6de326e8-643f-4043-beb6-3ad135385708' },
-  { slot: 'bvenu', added: 'OCTOBER 6, 2026', users: '0', cost: '', ev: 'epevo', title: 'Venusaur (Pokémon Evolution)', sub: 'Global Badge', img: 'ad14f7e4-1ca6-476b-acaf-250da22388ec' },
-  { slot: 'bchml', added: 'OCTOBER 6, 2026', users: '0', cost: '', ev: 'epevo', title: 'Charmeleon (Pokémon Evolution)', sub: 'Global Badge', img: 'd9698627-aff7-434c-8002-1351b2c59984' },
-  { slot: 'bchzd', added: 'OCTOBER 6, 2026', users: '0', cost: '', ev: 'epevo', title: 'Charizard (Pokémon Evolution)', sub: 'Global Badge', img: 'ac097350-add0-44c4-b405-e70aa746389b' },
-  { slot: 'bwart', added: 'OCTOBER 6, 2026', users: '0', cost: '', ev: 'epevo', title: 'Wartortle (Pokémon Evolution)', sub: 'Global Badge', img: '15a0db5d-bef1-49bb-8594-e3925e1ec248' },
-  { slot: 'bblst', added: 'OCTOBER 6, 2026', users: '0', cost: '', ev: 'epevo', title: 'Blastoise (Pokémon Evolution)', sub: 'Global Badge', img: '2b975e12-fd49-4e54-85c4-6cc042453dbb' },
-  { slot: 'bpika', added: 'OCTOBER 6, 2026', users: '0', cost: '', ev: 'epevo', title: 'Pikachu (Pokémon Evolution)', sub: 'Global Badge', img: 'b9dd6905-474f-45d1-a4ff-8ba138208afc' },
-  { slot: 'bgast', added: 'OCTOBER 5, 2026', users: '0', cost: '', ev: 'enight', title: 'Gastly (Pokémon Night Out)', sub: 'Global Badge', img: '602335f3-4d73-40f9-b8e2-5c5e25f32d62' },
-  { slot: 'bhaun', added: 'OCTOBER 5, 2026', users: '0', cost: '', ev: 'enight', title: 'Haunter (Pokémon Night Out)', sub: 'Global Badge', img: 'ddfbf317-aa77-482e-a99d-eb975deb2fe7' },
-  { slot: 'bgeng', added: 'OCTOBER 5, 2026', users: '0', cost: '', ev: 'enight', title: 'Gengar (Pokémon Night Out)', sub: 'Global Badge', img: 'f68e567f-67cf-4d4a-8c3e-a0dcee42f095' },
-  { slot: 'bvaultg', added: 'OCTOBER 5, 2026', users: '128', cost: 'paid', ev: 'evault', title: 'Vaultbreakers Golden', sub: 'Global Badge', img: '29e7e185-e4c3-4cd4-ac5b-63e16c90d401' },
-  { slot: 'bvault', added: 'OCTOBER 5, 2026', users: '236', cost: 'free', ev: 'evault', title: 'Vaultbreakers', sub: 'Global Badge', img: 'cce20332-b825-4008-8a8c-9b75e7a67e79' },
-  { slot: 'bdayz', added: 'OCTOBER 5, 2026', users: '182', cost: 'paid', ev: 'edayz', title: 'DayZ Yellow King (Badlands)', sub: 'Global Badge', img: '739379da-c982-4294-9bfd-75c3cc4187d3' },
-  { slot: 'bfreki', added: 'OCTOBER 1, 2026', users: '217', cost: 'paid', ev: 'edd2', title: "FrekiFriend (Dragon's Dogma 2)", sub: 'Global Badge', img: '2d1bfde9-94a9-4ed1-84a5-4aeb85911f1d' },
-  { slot: 'bddog', added: 'OCTOBER 1, 2026', users: '452', cost: 'free', ev: 'edd2', title: "TheDragonsDogma (Dragon's Dogma 2)", sub: 'Global Badge', img: 'f699b4ab-8952-46a1-88ff-a5515406f0a5' },
-  { slot: 'bbfe', added: 'SEPTEMBER 30, 2026', users: '615', cost: 'paid', ev: 'eq2', title: 'Bloody Finger (ELDEN RING)', sub: 'Global Badge', img: '12266c73-c6bc-433a-ab66-dc021bb8159f' },
-  { slot: 'bwolfm', added: 'SEPTEMBER 28, 2026', users: '877', cost: 'paid', ev: 'ewolfm', title: 'Wolf Medallion (The Witcher 3)', sub: 'Global Badge', img: '3e008d8a-4a24-4858-9e8f-74e8a3808955' },
+  { slot: 'f-castlevania-belmonts-curse', added: 'OCTOBER 14, 2026', users: 'N/A', cost: 'paid', title: "Castlevania Belmont's Curse", sub: 'Global Badge', img: 'e073c4ac-2d87-4f4b-8239-a2081f4a06e1' },
+  { slot: 'f-worlds-2026-supporter', added: 'OCTOBER 13, 2026', users: 'N/A', cost: '', title: "Worlds 2026 Supporter", sub: 'Global Badge', img: '031a4882-d8e6-4dd6-97d8-40620f59d288' },
+  { slot: 'f-true-damage-fan', added: 'OCTOBER 13, 2026', users: 'N/A', cost: '', title: "True Damage Fan", sub: 'Global Badge', img: '06c27674-9c56-479d-8acf-a3dfd5680425' },
+  { slot: 'f-pentakill-fan', added: 'OCTOBER 13, 2026', users: 'N/A', cost: '', title: "Pentakill Fan", sub: 'Global Badge', img: '721fe947-d819-4b13-9b7a-92debcd9393b' },
+  { slot: 'f-kda-fan', added: 'OCTOBER 13, 2026', users: 'N/A', cost: '', title: "K/DA Fan", sub: 'Global Badge', img: 'cf6ff3ab-9153-483b-bdac-f07577e6e202' },
+  { slot: 'f-heartsteel-fan', added: 'OCTOBER 13, 2026', users: 'N/A', cost: '', title: "Heartsteel Fan", sub: 'Global Badge', img: 'e97f6718-9d36-4b35-8a6f-a36545ab81ff' },
+  { slot: 'f-modern-warfare-4', added: 'OCTOBER 10, 2026', users: 'N/A', cost: 'paid', title: "Modern Warfare 4", sub: 'Global Badge', img: '41505da3-121e-4d81-985f-95185a79186c' },
+  { slot: 'f-witchspire-logo', added: 'OCTOBER 7, 2026', users: 'N/A', cost: 'paid', title: "Witch Hat", sub: 'Global Badge', img: '52fc3c6b-f177-4f68-8334-4172d0555923' },
+  { slot: 'f-witch-hat', added: 'OCTOBER 7, 2026', users: 'N/A', cost: 'free', title: "Witchspire Logo", sub: 'Global Badge', img: '9be56234-70e5-414f-a6a0-78ec9cbb08f7' },
+  { slot: 'f-gold-stamp', added: 'OCTOBER 7, 2026', users: 'N/A', cost: 'free', title: "Gold Stamp", sub: 'Global Badge', img: '94f4c9cb-de1d-44a0-a3fd-5e0b205451c0' },
+  { slot: 'f-crossworlds-world-championship-2026', added: 'OCTOBER 7, 2026', users: '2,970', cost: 'paid', title: "CrossWorlds World Championship 2026", sub: 'Global Badge', img: '97062b99-1125-4f41-91df-b98687176d8e' },
+  { slot: 'f-wartortle', added: 'OCTOBER 6, 2026', users: 'N/A', cost: '', title: "Wartortle", sub: 'Global Badge', img: '15a0db5d-bef1-49bb-8594-e3925e1ec248' },
+  { slot: 'f-venusaur', added: 'OCTOBER 6, 2026', users: 'N/A', cost: '', title: "Venusaur", sub: 'Global Badge', img: 'ad14f7e4-1ca6-476b-acaf-250da22388ec' },
+  { slot: 'f-pikachu', added: 'OCTOBER 6, 2026', users: '1', cost: '', title: "Pikachu", sub: 'Global Badge', img: 'b9dd6905-474f-45d1-a4ff-8ba138208afc' },
+  { slot: 'f-ivysaur', added: 'OCTOBER 6, 2026', users: 'N/A', cost: '', title: "Ivysaur", sub: 'Global Badge', img: '6de326e8-643f-4043-beb6-3ad135385708' },
+  { slot: 'f-charmeleon', added: 'OCTOBER 6, 2026', users: 'N/A', cost: '', title: "Charmeleon", sub: 'Global Badge', img: 'd9698627-aff7-434c-8002-1351b2c59984' },
+  { slot: 'f-charizard', added: 'OCTOBER 6, 2026', users: 'N/A', cost: '', title: "Charizard", sub: 'Global Badge', img: 'ac097350-add0-44c4-b405-e70aa746389b' },
+  { slot: 'f-blastoise', added: 'OCTOBER 6, 2026', users: 'N/A', cost: '', title: "Blastoise", sub: 'Global Badge', img: '2b975e12-fd49-4e54-85c4-6cc042453dbb' },
+  { slot: 'f-gengar', added: 'OCTOBER 5, 2026', users: 'N/A', cost: '', title: "Gengar", sub: 'Global Badge', img: 'f68e567f-67cf-4d4a-8c3e-a0dcee42f095' },
+  { slot: 'f-haunter', added: 'OCTOBER 5, 2026', users: '1', cost: '', title: "Haunter", sub: 'Global Badge', img: 'ddfbf317-aa77-482e-a99d-eb975deb2fe7' },
+  { slot: 'f-gastly', added: 'OCTOBER 5, 2026', users: '1', cost: '', title: "Gastly", sub: 'Global Badge', img: '602335f3-4d73-40f9-b8e2-5c5e25f32d62' },
+  { slot: 'f-vaultbreakers-golden', added: 'OCTOBER 5, 2026', users: '78', cost: 'paid', title: "Vaultbreakers Golden", sub: 'Global Badge', img: '29e7e185-e4c3-4cd4-ac5b-63e16c90d401' },
+  { slot: 'f-vaultbreakers', added: 'OCTOBER 5, 2026', users: '1,911', cost: 'free', title: "Vaultbreakers", sub: 'Global Badge', img: 'cce20332-b825-4008-8a8c-9b75e7a67e79' },
+  { slot: 'f-dayz-yellow-king', added: 'OCTOBER 5, 2026', users: '1,845', cost: 'paid', title: "DayZ Yellow King", sub: 'Global Badge', img: '739379da-c982-4294-9bfd-75c3cc4187d3' },
+  { slot: 'f-thedragonsdogma', added: 'OCTOBER 1, 2026', users: '8,954', cost: 'free', title: "TheDragonsDogma", sub: 'Global Badge', img: 'f699b4ab-8952-46a1-88ff-a5515406f0a5' },
+  { slot: 'f-frekifriend', added: 'OCTOBER 1, 2026', users: '1,186', cost: 'paid', title: "FrekiFriend", sub: 'Global Badge', img: '2d1bfde9-94a9-4ed1-84a5-4aeb85911f1d' },
+  { slot: 'f-bloody-finger-elden-ring', added: 'SEPTEMBER 30, 2026', users: '3,930', cost: 'paid', title: "Bloody Finger ELDEN RING", sub: 'Global Badge', img: '12266c73-c6bc-433a-ab66-dc021bb8159f' },
 ];
 
 /* Events column: all ACTIVE and UPCOMING badge events. start/end are UTC (check the times on
@@ -206,9 +211,10 @@ const ITEMS = [
    Status, countdown and the STARTS/ENDS stamps are worked out automatically; ended events disappear. */
 const EVENTS = [
   // ---- ACTIVE ----
-  { slot: 'ectrlr', imgs: ['f1617a53-9e8f-4bd4-b440-ab44f6f8f650','755022bc-26e1-47a4-8d6f-961224713355'], title: 'CONTROL Resonant', desc: "Watch 60 minutes (Don't Eat The Mold) or sub/gift a Tier 1 sub (The Inverted Man) in CONTROL Resonant to earn both badges.", start: '2026-09-22T14:00:00Z', end: '2026-10-13T13:59:00Z' },
   { slot: 'e15', imgs: ['b3f69c97-a9a7-4360-bb9e-485ec8db72bb','aea5244a-3fb5-48f9-a17c-a377760df226'], title: 'TwitchCon 2026 San Diego', desc: "Purchase a TwitchCon San Diego ticket: 1-day ticket earns BeachBall, 3-day ticket earns Taco.", start: '2026-07-22T17:00:00Z', end: '2026-11-15T00:00:00Z' },
   // ---- UPCOMING ----
+  { slot: 'ecastle', imgs: ['e073c4ac-2d87-4f4b-8239-a2081f4a06e1'], title: "Castlevania: Belmont's Curse", desc: "Sub or gift a Tier 1 sub to any channel live in Castlevania: Belmont's Curse during the launch to earn the Castlevania Belmont's Curse badge.", start: '2026-10-15T04:00:00Z', end: '2026-11-02T03:59:00Z' },
+  { slot: 'eworlds', imgs: ['031a4882-d8e6-4dd6-97d8-40620f59d288','e97f6718-9d36-4b35-8a6f-a36545ab81ff','cf6ff3ab-9153-483b-bdac-f07577e6e202','721fe947-d819-4b13-9b7a-92debcd9393b','06c27674-9c56-479d-8acf-a3dfd5680425'], title: 'LoL 2026 World Championship', desc: "Sub or gift a Tier 1 sub in League of Legends for Worlds 2026 Supporter and the Heartsteel, K/DA, Pentakill and True Damage Fan badges.", start: null, end: null },
   { slot: 'eq2', imgs: ['12266c73-c6bc-433a-ab66-dc021bb8159f'], title: 'Elden Ring · Path of the Cardinal Sin', desc: "Sub or gift a Tier 1 sub to any channel live in ELDEN RING to earn the Bloody Finger badge.", start: '2026-10-01T07:00:00Z', end: '2026-10-29T06:59:00Z' },
   { slot: 'e14', imgs: ['1826cb5f-32a9-409a-9829-f6f47ea68239','e7d696ad-4479-4e44-bceb-5643f80bef38'], title: 'FFXIV Fan Festival 2026 JP', desc: "Watch a FFXIV creator for 60 minutes during Fan Fest 2026 - JP.", start: '2026-10-30T00:00:00Z', end: '2026-11-01T00:00:00Z' },
   { slot: 'eq3', imgs: [], title: 'Questline 3: Path of the Elden Lord', desc: "The Warrior Jar Alexander badge will be available in the ELDEN RING category.", start: '2026-11-02T00:00:00Z', end: '2026-11-28T23:59:00Z' },
@@ -218,12 +224,11 @@ const EVENTS = [
   { slot: 'evault', imgs: ['29e7e185-e4c3-4cd4-ac5b-63e16c90d401','cce20332-b825-4008-8a8c-9b75e7a67e79'], title: 'Vaultbreakers', desc: "Sub or gift a Tier 1 sub (Golden) or watch 1 hour (Vaultbreakers) in the Vaultbreakers category.", start: '2026-10-08T17:00:00Z', end: '2026-11-05T16:59:00Z' },
   { slot: 'edayz', imgs: ['739379da-c982-4294-9bfd-75c3cc4187d3'], title: 'DayZ · Badlands', desc: "Sub or gift a Tier 1 sub to any channel live in DayZ during the Badlands launch to earn the Yellow King badge.", start: '2026-10-08T11:00:00Z', end: '2026-10-19T08:59:00Z' },
   { slot: 'emw4', imgs: ['41505da3-121e-4d81-985f-95185a79186c'], title: 'Call of Duty: Modern Warfare 4', desc: "Sub or gift a sub to any channel live in Call of Duty: Modern Warfare 4 during the launch to earn the Modern Warfare 4 badge.", start: null, end: null },
-  { slot: 'ehunt', imgs: [], title: 'Hunt: Showdown 1896', desc: "Two new badges arrive with Twitch Frightfest. Starts Oct 26.", start: '2026-10-26T00:00:00Z', end: null },
-  { slot: 'ewitch', imgs: ['https://badgebase.co/wp-content/themes/badgebase/assets/images/badges/witchspire-logo_v1.png','https://badgebase.co/wp-content/themes/badgebase/assets/images/badges/gold-stamp_v1.png','https://badgebase.co/wp-content/themes/badgebase/assets/images/badges/witch-hat_v1.png'], title: 'Witchspire · Haunted Magick', desc: "Watch 1 hour (Witchspire Logo) or 4 hours (Gold Stamp) in the Witchspire category. Witch Hat objective to be announced.", start: null, end: null },
-  { slot: 'e16', imgs: [], title: 'TwitchCon 2027 Berlin', desc: "TwitchCon events come with their own badges — expected again this year. Stay tuned.", start: '2027-05-22T00:00:00Z', end: '2027-05-23T00:00:00Z' },
+  { slot: 'ehunt', imgs: [], title: 'Hunt: Showdown 1896', desc: "Two new badges will be available as part of Twitch Frightfest. Starts Oct 26.", start: '2026-10-26T00:00:00Z', end: null },
+  { slot: 'ewitch', imgs: ['9be56234-70e5-414f-a6a0-78ec9cbb08f7','94f4c9cb-de1d-44a0-a3fd-5e0b205451c0','52fc3c6b-f177-4f68-8334-4172d0555923'], title: 'Witchspire · Haunted Magick', desc: "Watch 1 hour (Witchspire Logo) or 4 hours (Gold Stamp), or sub/gift a Tier 1 sub (Witch Hat) in the Witchspire category.", start: null, end: null },
+  { slot: 'e16', imgs: [], title: 'TwitchCon 2027 Berlin', desc: "TwitchCon events come with their own badges, expected again this year. Stay tuned.", start: '2027-05-22T00:00:00Z', end: '2027-05-23T00:00:00Z' },
   { slot: 'epevo', imgs: ['6de326e8-643f-4043-beb6-3ad135385708','ad14f7e4-1ca6-476b-acaf-250da22388ec','d9698627-aff7-434c-8002-1351b2c59984','ac097350-add0-44c4-b405-e70aa746389b','15a0db5d-bef1-49bb-8594-e3925e1ec248','2b975e12-fd49-4e54-85c4-6cc042453dbb','b9dd6905-474f-45d1-a4ff-8ba138208afc'], title: 'Pokémon Evolution Badges', desc: "Ivysaur, Venusaur, Charmeleon, Charizard, Wartortle, Blastoise and Pikachu. Only unlockable if you earned the starter badges before Oct 1.", start: null, end: null },
   { slot: 'eultra', imgs: ['12cb6b16-063b-4fcf-b312-c5c8f01e49ac'], title: 'Warhammer 40,000: Space Marine II', desc: "Sub or gift a Tier 1 sub to any channel live in Warhammer 40,000: Space Marine II to earn the Ultramarine badge.", start: '2026-10-01T08:00:00Z', end: '2026-10-29T06:59:00Z' },
-  { slot: 'ewast', imgs: ['70e9e169-1fbf-4279-b23c-a714ccb0c9ef'], title: 'Wasteland Circuit', desc: "Sub or gift a Tier 1 sub to any channel live in Rainbow Six Siege during Wasteland Circuit to earn DRON-E.", start: '2026-09-23T14:00:00Z', end: '2026-10-13T13:59:00Z' },
   { slot: 'eblue', imgs: ['13afe621-edd4-48b6-a09b-453a2dee52e9'], title: 'Rematch', desc: "Watch 30 minutes of any channel live in REMATCH to earn the Rematch Blue Lock badge.", start: '2026-09-23T23:01:00Z', end: '2026-10-21T22:58:00Z' },
   { slot: 'edndm', imgs: ['263a5bf1-c1ea-4f26-8bf8-db42ea2ebc7c','b17f6b68-4a2d-4d2a-9967-aa8ff26012a0'], title: 'Dungeons & Dragons: Dungeon Masters', desc: "Watch /dnd (official D&D channel) for the d20 badge, or sub/gift a Tier 1 sub in Dungeons & Dragons: Dungeon Masters for the Ampersand.", start: '2026-09-24T01:15:00Z', end: '2026-10-21T06:58:00Z' },
   { slot: 'ewolfm', imgs: ['3e008d8a-4a24-4858-9e8f-74e8a3808955'], title: 'The Witcher 3: Wild Hunt – Complete Edition', desc: "Sub or gift a Tier 1 sub to any channel live in The Witcher 3: Wild Hunt Remastered to earn the Wolf Medallion badge.", start: '2026-09-29T10:00:00Z', end: '2026-10-27T09:59:00Z' },
@@ -239,7 +244,7 @@ const AVAILABLE = [
 ];
 
 /* Footer counters: read live from badgedatabase.com every 10 minutes; these are only the fallback. */
-const FALLBACK_COUNTS = { active: 19, upcoming: 5, tba: 16, free: 6 };
+const FALLBACK_COUNTS = { active: 16, upcoming: 6, tba: 19, free: 5 };
 /* ============================================================================== */
 
 const M  = ['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
@@ -298,8 +303,8 @@ function siteItems(now){                      // every badge set added in the la
   if(!list.length) return null;
   return list.map(b => { const e = b.imgs.map(i => byImg[i]).find(Boolean);
     const cost = e && e.b.cost && e.b.cost !== 'na' ? e.b.cost : b.free ? 'free' : '';
-    const d = new Date(b.added + 'T00:00:00Z'), users = pop[b.set] || b.users || 0;
-    return { slot: 'auto-' + b.set, added: `${M[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`, users: users.toLocaleString('en-US'), cost, title: b.name, sub: 'Global Badge', img: b.img }; });
+    const d = new Date(b.added + 'T00:00:00Z'), users = pop[b.set] || b.users || 0;   // 0 = PotatBotat has no count yet
+    return { slot: 'auto-' + b.set, added: `${M[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`, users: users ? users.toLocaleString('en-US') : 'N/A', cost, title: b.name, sub: 'Global Badge', img: b.img }; });
 }
 
 /* ---------- rendering: lists are rebuilt only when their content changes (so the scrolling never jumps);
