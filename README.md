@@ -198,10 +198,14 @@ The badge_db 24/7 stream shows **[badgedatabase.com/overlay/motorhazteto/](https
 OBS → Sources → + → Browser, URL above, Width `1920`, Height `1080`. It is not linked from the site and has `noindex`
 (the folder is still visible in this public repo).
 - `overlay/motorhazteto/index.html` → `EVENTS` (Events column, UTC times from streamdatabase.com/events, `start: null` = TBA),
-  `AVAILABLE` (top bar chips), `ITEMS` (left column fallback). Ended events disappear by themselves.
-- `HIDE_AVAILABLE_IN` (default `Always On`): while badge_db streams in one of these categories, the whole "Available here"
-  part of the header is hidden. The category is checked every minute via decapi.me, with the bot's `live.json`
-  (`our_game`, every 15 minutes) as backup.
+  `EXTRA_AVAILABLE` (header chips added by hand), `ITEMS` (left column fallback). Ended events disappear by themselves.
+- **Header "Available here" is automatic:** every minute the overlay reads badge_db's current Twitch category (decapi.me,
+  backup: the bot's `live.json`) and shows the badges of running events in that category from `events.json`
+  ("Watch 60 min" / "Sub or Gift"; upcoming ones: "Coming here" + countdown). Badges that need another channel
+  (e.g. "watch twitch.tv/dnd") or a ticket are left out. Matching uses Twitch category ids: the bot writes
+  `our_game_id`, `upcoming` (event → game id, next 14 days) and `game_names` (id → Twitch's own name) into `live.json`.
+- `HIDE_AVAILABLE_IN` (default `Always On`): in these categories the whole "Available here" part is hidden
+  (it also hides itself when there is nothing to show).
 - The left column ("Added in the last 14 days") and the footer counters come from `badges.json` / `events.json` every 10 minutes.
 - **After every change** set `OVERLAY_V` in `index.html` and `v` in `version.json` to the same new value. The overlay checks
   `version.json` every 30 seconds and reloads itself, so the stream PC needs no action (about 1 to 2 minutes after the commit).

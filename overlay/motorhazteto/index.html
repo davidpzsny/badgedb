@@ -51,7 +51,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 .avail .k{font-weight:700;font-size:15px;letter-spacing:2.5px;text-transform:uppercase;color:#7d7d86}
 .avail .t{font-weight:800;font-size:24px;letter-spacing:.5px;text-transform:uppercase;color:#efeff1;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .avail .sep{width:1px;height:46px;background:#26262b;flex:none}
-.avail .list{display:flex;align-items:center;gap:10px}
+.avail .list{display:flex;align-items:center;gap:10px;min-width:0;overflow:hidden}
 .chip{display:flex;align-items:center;gap:11px;padding:7px 14px 7px 7px;background:#121214;border:1px solid #232328;border-radius:12px}
 .chip .imgs{display:flex;align-items:center;gap:4px}
 .chip .imgs img{width:44px;height:44px;border-radius:9px}
@@ -124,7 +124,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
     </div>
     <div class="avail">
       <div class="head">
-        <div class="k bc">Available Here</div>
+        <div class="k bc" id="availHead">Available Here</div>
         <div class="t bc" id="availTitle"></div>
       </div>
       <span class="sep"></span>
@@ -170,7 +170,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-10-14.3";   // bump together with version.json after every change
+const OVERLAY_V = "2026-10-14.4";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -236,11 +236,13 @@ const EVENTS = [
   { slot: 'ealien', imgs: ['4709f62b-9cd9-4759-8953-c096527401c7','a6a681a9-3253-42de-b09a-7bda7c05c342'], title: 'Alien Isolation', desc: "Watch 30 minutes (SEEGSON Synthetics) or sub/gift a Tier 1 sub (Sevastopol Station) in Alien: Isolation to earn both badges.", start: '2026-10-01T09:00:00Z', end: '2026-10-29T08:58:00Z' },
 ];
 
-/* Top bar "Available here": badges you can earn on this stream right now.
-   ev = event slot from EVENTS: shown while that event is ACTIVE (showSoon: true = also while UPCOMING,
-   with a countdown). hideWhen = event slot that hides this chip while it is active or upcoming. */
-const AVAILABLE = [
-  { slot: 'a1', action: 'Sub or Gift', label: 'Yellow King', game: 'DayZ · Badlands', imgs: ['739379da-c982-4294-9bfd-75c3cc4187d3'], ev: 'edayz' },
+/* Top bar "Available here": filled AUTOMATICALLY with the badges you can earn in badge_db's current Twitch
+   category (running events from badgedatabase.com; upcoming ones in that category show "STARTS IN ..."). Badges
+   that need a specific channel (e.g. "watch twitch.tv/dnd") are left out.
+   EXTRA_AVAILABLE: chips added by hand on top of that (same format as before: ev = event slot from EVENTS, shown
+   while that event is ACTIVE; showSoon: true = also while UPCOMING; hideWhen = event slot that hides it). */
+const EXTRA_AVAILABLE = [
+  // { slot: 'x1', action: 'Sub or Gift', label: 'Yellow King', game: 'DayZ', imgs: ['739379da-c982-4294-9bfd-75c3cc4187d3'], ev: 'edayz' },
 ];
 
 /* Stream categories where the whole "Available here" part of the header is hidden.
@@ -313,15 +315,65 @@ function siteItems(now){                      // every badge set added in the la
 }
 
 /* ---------- current stream category: DecAPI (about a minute fresh), else the site bot's live.json (15 min) ---------- */
-let streamCat = null;                         // null = unknown, then the header works as before
+let streamCat = null, live = null;            // streamCat null = unknown: only the EXTRA_AVAILABLE chips show
 async function loadCategory(){
-  try{
-    const r = await fetch('https://decapi.me/twitch/game/' + CHANNEL + '?t=' + Date.now(), {cache: 'no-store'});
-    const t = r.ok ? (await r.text()).trim() : '';
-    if(t && t.length < 80 && !/not found|error|invalid|rate limit/i.test(t)){ streamCat = t; render(); return; }
-  }catch(e){}
-  const j = await getJson('live.json');
-  if(j && j.our_live && j.our_game){ streamCat = j.our_game; render(); }
+  const [dec, j] = await Promise.all([
+    fetch('https://decapi.me/twitch/game/' + CHANNEL + '?t=' + Date.now(), {cache: 'no-store'}).then(r => r.ok ? r.text() : '').catch(() => ''),
+    getJson('live.json')]);
+  if(j && typeof j === 'object') live = j;
+  const t = String(dec || '').trim();
+  if(t && t.length < 80 && !/not found|error|invalid|rate limit|<html/i.test(t)) streamCat = t;
+  else if(live && live.our_live && live.our_game) streamCat = live.our_game;
+  render();
+}
+
+/* badges of the current category: matched by Twitch category id (the bot writes the ids and Twitch's own names into
+   live.json), else by the exact category name */
+const GENERIC_CAT = ['any', 'various', 'multiple', 'eligible', 'categories', 'unknown', 'twitchcon'];
+const normCat = t => String(t || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+function inStreamCategory(ev){
+  const cat = String(ev.category || '');
+  if(!streamCat || !cat || cat.includes(',') || GENERIC_CAT.some(w => cat.toLowerCase().includes(w))) return false;
+  const chans = (ev.channels || []).map(c => String(c).trim().toLowerCase()).filter(Boolean);
+  if(chans.length && !chans.includes(CHANNEL)) return false;              // only on certain channels, not ours
+  const gid = live && ((live.events && live.events[ev.id] && live.events[ev.id].game_id) || (live.upcoming && live.upcoming[ev.id]));
+  if(gid){
+    const name = live.game_names && live.game_names[gid];
+    if(name) return normCat(name) === normCat(streamCat);
+    if(live.our_game_id && normCat(live.our_game) === normCat(streamCat)) return gid === live.our_game_id;
+  }
+  return normCat(cat) === normCat(streamCat);
+}
+const OTHER_CHANNEL = /twitch\.tv\/|(^|\s)\/[a-z0-9_]{3,}/i, OUR_CHANNEL_RE = new RegExp('(twitch\\.tv)?/' + CHANNEL + '\\b', 'i');
+function badgeAction(b){
+  const how = String(b.how || '');
+  if(OTHER_CHANNEL.test(how) && !OUR_CHANNEL_RE.test(how)) return null;      // must be earned on another channel
+  if(b.cost === 'paid') return /ticket/i.test(how) ? null : { text: 'Sub or Gift', color: '#c4a1ff' };
+  const m = how.match(/watch[^0-9]*(\d+)\s*(minutes?|mins?|hours?|h)\b/i);
+  if(m) return { text: 'Watch ' + m[1] + (/^h/i.test(m[2]) ? (m[1] === '1' ? ' hour' : ' hours') : ' min'), color: '#4ade80' };
+  if(b.cost === 'free' || /watch/i.test(how)) return { text: 'Watch', color: '#4ade80' };
+  return { text: 'Objective TBA', color: '#9a9aa3' };
+}
+function autoAvailable(now){
+  if(!streamCat || !site.events) return [];
+  const chips = [];
+  site.events.forEach(ev => {
+    if(!ev.start || !ev.end) return;
+    const start = Date.parse(ev.start), end = Date.parse(ev.end);
+    if(!(now < end) || !inStreamCategory(ev)) return;
+    const groups = new Map();                  // badges of one event with the same objective share a chip (e.g. 5 LoL badges)
+    (ev.badges || []).forEach(b => {
+      const act = badgeAction(b); if(!act) return;
+      const key = now < start ? 'soon' : act.text;
+      if(!groups.has(key)) groups.set(key, { act, badges: [] });
+      groups.get(key).badges.push(b);
+    });
+    groups.forEach(({act, badges}) => {
+      const label = badges.length === 1 ? badges[0].name : ev.name, imgs = badges.slice(0, 5).map(b => b.img);
+      chips.push(now < start ? { imgs, label, cdTo: start, soon: true } : { imgs, label, action: act.text, actionColor: act.color });
+    });
+  });
+  return chips;
 }
 
 /* ---------- rendering: lists are rebuilt only when their content changes (so the scrolling never jumps);
@@ -371,13 +423,17 @@ function render(){
   const isActive = k => !!(bySlot[k] && bySlot[k].status === 'ACTIVE'), isSoon = k => !!(bySlot[k] && bySlot[k].status === 'UPCOMING');
   const evStart = k => { const e = EVENTS.find(x => x.slot === k); return e && e.start ? Date.parse(e.start) : null; };
   const hideAll = streamCat && HIDE_AVAILABLE_IN.some(c => c.toLowerCase() === streamCat.toLowerCase());
-  const avail = hideAll ? [] : AVAILABLE.filter(a => (!a.ev || isActive(a.ev) || (a.showSoon && isSoon(a.ev))) && !(a.hideWhen && (isActive(a.hideWhen) || isSoon(a.hideWhen))));
+  const extra = EXTRA_AVAILABLE.filter(a => (!a.ev || isActive(a.ev) || (a.showSoon && isSoon(a.ev))) && !(a.hideWhen && (isActive(a.hideWhen) || isSoon(a.hideWhen))))
+    .map(a => { const soon = a.ev && isSoon(a.ev) && evStart(a.ev);
+      return soon ? { ...a, cdTo: evStart(a.ev), soon: true } : { ...a, actionColor: /watch/i.test(a.action) ? '#4ade80' : '#c4a1ff' }; });
+  const auto = hideAll ? [] : autoAvailable(now), avail = hideAll ? [] : auto.concat(extra);
   document.querySelector('.avail').style.visibility = avail.length ? '' : 'hidden';   // nothing to show: no label, no line
-  setList('available', avail.map(a => { const soon = a.ev && isSoon(a.ev) && evStart(a.ev);
-    const action = soon ? `<div class="a bc" style="color:#f5b83d" data-to="${evStart(a.ev)}" data-prefix="STARTS IN"></div>`
-                        : `<div class="a bc" style="color:${/watch/i.test(a.action) ? '#4ade80' : '#c4a1ff'}">${esc(a.action)}</div>`;
-    return `<div class="chip"><div class="imgs">${a.imgs.map(u => img(u)).join('')}</div><div style="line-height:1"><div class="l b">${esc(a.label)}</div>${action}</div></div>`; }).join(''));
-  $('availTitle').textContent = [...new Set(avail.map(a => a.game).filter(Boolean))].join(' · ');
+  setList('available', avail.map(a => {
+    const action = a.soon ? `<div class="a bc" style="color:#f5b83d" data-to="${a.cdTo}" data-prefix="STARTS IN"></div>`
+                          : `<div class="a bc" style="color:${a.actionColor}">${esc(a.action)}</div>`;
+    return `<div class="chip"><div class="imgs">${a.imgs.map(u => img(u)).join('')}</div><div style="line-height:1;min-width:0"><div class="l b">${esc(a.label)}</div>${action}</div></div>`; }).join(''));
+  $('availHead').textContent = avail.length && avail.every(a => a.soon) ? 'Coming Here' : 'Available Here';
+  $('availTitle').textContent = auto.length ? streamCat : [...new Set(extra.map(a => a.game).filter(Boolean))].join(' · ');
 
   const sc = siteCounts(now) || FALLBACK_COUNTS;
   $('cActive').textContent = sc.active; $('cUpcoming').textContent = sc.upcoming; $('cTba').textContent = sc.tba; $('cFree').textContent = sc.free;

@@ -695,8 +695,28 @@ def update_live_channels(token, events, per_event=8):
         if ours and ((gid and ours.get("game_id") == gid) or OUR_CHANNEL in chans):
             rows.insert(0, dict(row(ours), ours=True))
         out[ev["id"]] = {"category": ev.get("category", ""), "game_id": gid, "streams": rows}
+
+    # the stream overlay shows the badges of the category badge_db streams in: Twitch ids of upcoming events' categories
+    # (next 14 days) and Twitch's own name for every id, so the overlay can match the channel's category exactly
+    soon = (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=14)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    upcoming = {}
+    for ev in events:
+        if not ev.get("start") or not (now < ev["start"] <= soon): continue
+        cat = (ev.get("category") or "").strip()
+        if not cat or any(w in cat.lower() for w in GENERIC_CATEGORY) or "," in cat: continue
+        gid = game_id(cat)
+        if gid: upcoming[ev["id"]] = gid
+    ids = sorted({v["game_id"] for v in out.values() if v.get("game_id")} | set(upcoming.values()))
+    game_names = {}
+    try:
+        for i in range(0, len(ids), 100):
+            for g in helix_get(token, "games", [("id", x) for x in ids[i:i + 100]]): game_names[g["id"]] = g.get("name", "")
+    except Exception as e:
+        print("live channels: game names failed ->", e)
+
     json.dump({"updated": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"), "our_channel": OUR_CHANNEL,
-               "our_live": bool(ours), "our_game": (ours or {}).get("game_name", ""), "events": out, "game_ids": game_ids},
+               "our_live": bool(ours), "our_game": (ours or {}).get("game_name", ""), "our_game_id": (ours or {}).get("game_id", ""),
+               "events": out, "upcoming": upcoming, "game_names": game_names, "game_ids": game_ids},
               open(LIVE_DB, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     n = sum(len(v["streams"]) for v in out.values())
     status("live_channels", f"{len(out)} running events, {n} live streams" + (f", {OUR_CHANNEL} live" if ours else ""))
