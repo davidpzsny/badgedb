@@ -1030,3 +1030,22 @@ main{grid-column:2;grid-row:2}
 
 /* ---------- UTC time next to the local time (badge pages, event details) ---------- */
 .utc{color:var(--muted);font-weight:500;font-size:.92em;white-space:nowrap}
+
+/* ---------- 24/7 stream that keeps playing across pages (home: over the stream card, elsewhere: small player) ---------- */
+.hs-dock{position:absolute;z-index:5;background:#000}
+.hs-dock .hd-bar{display:none}
+.hs-dock .hd-v{position:absolute;inset:0}
+.hs-dock iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.hs-dock.mini{position:fixed;top:auto;left:auto;right:24px;bottom:72px;width:340px;z-index:15;border-radius:14px;overflow:hidden;
+  background:var(--bg-2);border:1px solid var(--line-2);box-shadow:0 30px 60px -20px var(--sh)}
+.hs-dock.mini .hd-bar{display:flex;align-items:center;gap:8px;height:34px;padding:0 5px 0 12px;font-size:12.5px;color:var(--text)}
+.hs-dock.mini .hd-v{position:relative;inset:auto;aspect-ratio:16/9}
+.hd-bar .sp{flex:1}
+.hd-btn{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;color:var(--muted);font-size:18px;line-height:1}
+.hd-btn:hover{background:rgba(var(--ink),.08);color:var(--text)}
+.hd-btn svg{width:14px;height:14px}
+body.dock-mini .to-top{bottom:calc(72px + 34px + 340px * 9 / 16 + 14px)}
+@media (max-width:880px){
+  .hs-dock.mini{right:12px;bottom:calc(76px + env(safe-area-inset-bottom));width:min(240px,62vw)}
+  body.dock-mini .to-top{bottom:calc(76px + env(safe-area-inset-bottom) + 34px + min(240px,62vw) * 9 / 16 + 12px)}
+}

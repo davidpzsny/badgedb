@@ -231,21 +231,49 @@ function route(){
   countView(); homeStreamSync();
 }
 let routedPath = null;
-/* ---------- home: the 24/7 stream starts by itself, muted, once the page has loaded. Not on data-saver connections;
-   leaving the home page removes the player again (no video running in the background). ---------- */
-let hsTimer = 0;
+/* ---------- the 24/7 stream: starts by itself (muted) on the home page and keeps playing while you browse the site.
+   One player that is never reloaded: it sits in the stream card on the home page and becomes a small player in the
+   corner on every other page. Not on data-saver connections; closing the small player stops it for this visit. ---------- */
+let hsTimer = 0, hsRO = null;
 const hsFrame = muted => `<iframe src="https://player.twitch.tv/?channel=${CONFIG.channel}&${PARENTS()}&muted=${muted}&autoplay=true" allowfullscreen allow="autoplay; fullscreen" title="twitch.tv/${esc(CONFIG.channel)} 24/7 stream"></iframe>`;
 function homeStreamCover(){
   return `<button class="sc-play" data-playhome style="background-image:url('https://static-cdn.jtvnw.net/previews-ttv/live_user_${esc(CONFIG.channel)}-640x360.jpg')">
     <span class="sc-play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
     <span class="sc-play-t"><b>Watch the 24/7 stream</b><small>Click to play</small></span></button>`;
 }
+function dockOff(v){ try{ if(v === undefined) return sessionStorage.getItem("badgedb_dock_off") === "1";
+  if(v) sessionStorage.setItem("badgedb_dock_off", "1"); else sessionStorage.removeItem("badgedb_dock_off"); }catch(e){ return false; } }
+function dockOpen(muted){
+  if(document.getElementById('hsDock')) return;
+  const d = document.createElement('div'); d.id = 'hsDock'; d.className = 'hs-dock';
+  d.innerHTML = `<div class="hd-bar"><span class="live-dot"></span><b>24/7 stream</b><span class="sp"></span>
+      <a class="hd-btn" href="/" title="Back to the home page" aria-label="Back to the home page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></a>
+      <button class="hd-btn" data-dockclose title="Close the player" aria-label="Close the player">×</button></div>
+    <div class="hd-v">${hsFrame(muted)}</div>`;
+  document.body.appendChild(d);
+  if(window.ResizeObserver){ hsRO = new ResizeObserver(dockPlace); hsRO.observe(document.body); }
+  dockPlace();
+}
+function dockClose(){
+  const d = document.getElementById('hsDock'); if(d) d.remove();
+  if(hsRO){ hsRO.disconnect(); hsRO = null; }
+  document.body.classList.remove('dock-mini');
+}
+function dockPlace(){                      // over the stream card on the home page, small in the corner everywhere else
+  const d = document.getElementById('hsDock'); if(!d) return;
+  const slot = document.getElementById('homeStream');
+  const inline = pathKey() === '/' && !!slot && slot.offsetParent !== null;
+  d.classList.toggle('mini', !inline); document.body.classList.toggle('dock-mini', !inline);
+  if(inline){ const r = slot.getBoundingClientRect(); d.style.cssText = `top:${r.top + scrollY}px;left:${r.left + scrollX}px;width:${r.width}px;height:${r.height}px`; }
+  else d.style.cssText = '';
+}
+addEventListener('resize', () => dockPlace());
 function homeStreamSync(){
   const box = document.getElementById('homeStream'); if(!box || isFile || !box.dataset.done) return;
-  const playing = !!box.querySelector('iframe');
-  if(pathKey() !== '/'){ clearTimeout(hsTimer); hsTimer = 0; if(playing) box.innerHTML = homeStreamCover(); return; }
-  if(playing || hsTimer || (navigator.connection && navigator.connection.saveData)) return;
-  const start = () => { hsTimer = 0; if(pathKey() === '/' && !box.querySelector('iframe')) box.innerHTML = hsFrame(true); };
+  dockPlace();
+  if(pathKey() !== '/' || document.getElementById('hsDock') || hsTimer || dockOff() || (navigator.connection && navigator.connection.saveData)) return;
+  if(document.getElementById('player') && !document.getElementById('player').hidden) return;   // stream & chat panel is open
+  const start = () => { hsTimer = 0; if(pathKey() === '/' && !dockOff()) dockOpen(true); };
   hsTimer = setTimeout(() => { if(document.readyState === 'complete') start(); else addEventListener('load', start, {once: true}); }, 600);
 }
 /* ---------- visitor statistics: GoatCounter (EU-hosted, no cookies, nothing stored in the browser, no IP addresses kept).
@@ -1287,7 +1315,8 @@ document.addEventListener('click', e => {
   const t=e.target.closest('#bpTheme button'); if(t){ bpTheme=t.dataset.t; route(); e.preventDefault(); return; }
   const sh=e.target.closest('[data-share]'); if(sh){ shareBadge(sh.dataset.share, sh.dataset.shareTitle); return; }
   const icsB = e.target.closest('[data-ics]'); if(icsB){ const ev = EVENTS.find(x => x.id === icsB.dataset.ics); if(ev) downloadIcs(ev); icsB.closest('details')?.removeAttribute('open'); return; }
-  if(e.target.closest('[data-playhome]')){ clearTimeout(hsTimer); hsTimer = 0; $('#homeStream').innerHTML = hsFrame(false); return; }
+  if(e.target.closest('[data-playhome]')){ clearTimeout(hsTimer); hsTimer = 0; dockOff(false); dockClose(); dockOpen(false); return; }
+  if(e.target.closest('[data-dockclose]')){ dockOff(true); dockClose(); return; }
   if(e.target.closest('[data-twlogin]')){ twLogin(); return; }
   if(e.target.closest('[data-twlogout]')){ twLogout(); return; }
   const vv=e.target.closest('[data-ver]'); if(vv){ e.preventDefault(); bpVersion=+vv.dataset.ver; route(); }
@@ -1509,6 +1538,7 @@ function togglePlayer(){
   const ch=CONFIG.channel;
   $('#playerBody').innerHTML = isFile ? `<div class="ph2">The embedded player only works when the site is hosted over http(s).<br><a class="btn" style="margin-top:12px" href="https://twitch.tv/${ch}" target="_blank" rel="noopener">Open twitch.tv/${ch} ↗</a></div>`
     : `<iframe src="https://player.twitch.tv/?channel=${ch}&${PARENTS()}&muted=true" allowfullscreen></iframe><iframe src="https://www.twitch.tv/embed/${ch}/chat?${PARENTS()}&darkpopout" style="height:300px"></iframe>`;
+  dockClose();                                    // one stream at a time
   p.hidden=false; $('#btnPlayer').innerHTML='Hide stream';
 }
 
