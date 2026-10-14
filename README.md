@@ -48,7 +48,8 @@ Old links with `#` (`/#global`, `/#badge/<set>`) redirect to the new URLs automa
 
 ## How it works
 
-Static site on GitHub Pages + a bot in GitHub Actions that runs **every 15 minutes**:
+Static site on GitHub Pages + a bot in GitHub Actions that runs **every 5 minutes** (started by cron-job.org, see
+"Bot schedule" below; GitHub's own every-15-minutes schedule is the backup):
 
 1. **Global badges** (official Twitch API): new badge → `badges.json`, X post with a generated image,
    Discord post (if set up), timeline entry. Titles and descriptions are re-read every run.
@@ -137,7 +138,7 @@ discord-bot/              Discord bot for the VM (/active, /soon, /badge)
 bot/check_badges.py       the bot
 bot/build_pages.py        builds the pages from index.html
 bot/requirements.txt
-.github/workflows/badges.yml        runs everything every 15 minutes
+.github/workflows/badges.yml        runs everything (every 5 min via cron-job.org, every 15 min by GitHub as backup)
 
 logo.svg                  logo source (hexagon, transparent)
 logo.png, logo-192.png, logo-320.png, favicon*  transparent PNGs rendered from logo.svg (site, browser tab, X post image)
@@ -163,6 +164,14 @@ paste into the box → **Save popularity**.
 ### Run the bot now
 **Actions → Check Twitch badges → Run workflow.** The log of step *Detect new badges and post*
 shows new badges, `twitch campaigns: …`, `global emotes: …`, `popularity: …`, `channel badges: …`.
+
+### Bot schedule (cron-job.org)
+GitHub's own schedule (`cron` in `badges.yml`) is often delayed by an hour or more, so the bot is started every
+5 minutes by a job on **cron-job.org**: `POST https://api.github.com/repos/davidpzsny/badgedb/actions/workflows/badges.yml/dispatches`
+with body `{"ref":"main"}` and headers `Authorization: Bearer <token>`, `Accept: application/vnd.github+json`.
+The token is a fine-grained GitHub token for this repository only, with **Actions: Read and write**; it lives only in
+cron-job.org (never in the repo). When it expires, make a new one and paste it into the job's header. If the job fails,
+the bot still runs on GitHub's schedule, just less often. Runs never overlap (`concurrency` in the workflow).
 
 ### Add a changelog entry
 Every change to the site gets a line on [badgedatabase.com/changelog/](https://badgedatabase.com/changelog/).
@@ -200,8 +209,12 @@ Never delete `/opt/badgedb-push/vapid_private.pem`: with a new key every existin
 The badge_db 24/7 stream shows **[badgedatabase.com/overlay/motorhazteto/](https://badgedatabase.com/overlay/motorhazteto/)**:
 OBS → Sources → + → Browser, URL above, Width `1920`, Height `1080`. It is not linked from the site and has `noindex`
 (the folder is still visible in this public repo).
-- `overlay/motorhazteto/index.html` → `EVENTS` (Events column, UTC times from streamdatabase.com/events, `start: null` = TBA),
-  `EXTRA_AVAILABLE` (header chips added by hand), `ITEMS` (left column fallback). Ended events disappear by themselves.
+- **Events column is automatic:** every running, upcoming and date-TBA event from `events.json` (same rules as the site:
+  ended events and date-TBA events older than 21 days drop out), with badge images, UTC times and a description written
+  from the badges' objectives. A new badge on the site shows up on the stream within about 5 minutes.
+  In `overlay/motorhazteto/index.html`: `EVENT_TITLES` / `EVENT_DESC` (own title or description by event id),
+  `EXTRA_EVENTS` (events not on the site yet, UTC times from streamdatabase.com/events, `start: null` = TBA),
+  `EXTRA_AVAILABLE` (header chips added by hand), `ITEMS` (left column fallback).
 - **Header "Available here" is automatic:** every minute the overlay reads badge_db's current Twitch category (decapi.me,
   backup: the bot's `live.json`) and shows the badges of running events in that category from `events.json`
   ("Watch 60 min" / "Sub or Gift"; upcoming ones: "Coming here" + countdown). Badges that need another channel
@@ -209,7 +222,8 @@ OBS → Sources → + → Browser, URL above, Width `1920`, Height `1080`. It is
   `our_game_id`, `upcoming` (event → game id, next 14 days) and `game_names` (id → Twitch's own name) into `live.json`.
 - `HIDE_AVAILABLE_IN` (default `Always On`): in these categories the whole "Available here" part is hidden
   (it also hides itself when there is nothing to show).
-- The left column ("Added in the last 14 days") and the footer counters come from `badges.json` / `events.json` every 10 minutes.
+- The left column ("Added in the last 14 days") and the footer counters come from `badges.json` / `events.json` every 5 minutes.
+  The last good copy is kept in the browser source, so the overlay stays filled if the data can't be loaded.
 - **After every change** set `OVERLAY_V` in `index.html` and `v` in `version.json` to the same new value. The overlay checks
   `version.json` every 30 seconds and reloads itself, so the stream PC needs no action (about 1 to 2 minutes after the commit).
 

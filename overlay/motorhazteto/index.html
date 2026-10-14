@@ -170,7 +170,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-10-14.4";   // bump together with version.json after every change
+const OVERLAY_V = "2026-10-14.5";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -206,43 +206,33 @@ const ITEMS = [
   { slot: 'f-bloody-finger-elden-ring', added: 'SEPTEMBER 30, 2026', users: '3,930', cost: 'paid', title: "Bloody Finger ELDEN RING", sub: 'Global Badge', img: '12266c73-c6bc-433a-ab66-dc021bb8159f' },
 ];
 
-/* Events column: all ACTIVE and UPCOMING badge events. start/end are UTC (check the times on
-   streamdatabase.com/events); start: null = date TBA. imgs = badge UUIDs shown on the card.
-   Status, countdown and the STARTS/ENDS stamps are worked out automatically; ended events disappear. */
-const EVENTS = [
-  // ---- ACTIVE ----
-  { slot: 'e15', imgs: ['b3f69c97-a9a7-4360-bb9e-485ec8db72bb','aea5244a-3fb5-48f9-a17c-a377760df226'], title: 'TwitchCon 2026 San Diego', desc: "Purchase a TwitchCon San Diego ticket: 1-day ticket earns BeachBall, 3-day ticket earns Taco.", start: '2026-07-22T17:00:00Z', end: '2026-11-15T00:00:00Z' },
-  // ---- UPCOMING ----
-  { slot: 'ecastle', imgs: ['e073c4ac-2d87-4f4b-8239-a2081f4a06e1'], title: "Castlevania: Belmont's Curse", desc: "Sub or gift a Tier 1 sub to any channel live in Castlevania: Belmont's Curse during the launch to earn the Castlevania Belmont's Curse badge.", start: '2026-10-15T04:00:00Z', end: '2026-11-02T03:59:00Z' },
-  { slot: 'eworlds', imgs: ['031a4882-d8e6-4dd6-97d8-40620f59d288','e97f6718-9d36-4b35-8a6f-a36545ab81ff','cf6ff3ab-9153-483b-bdac-f07577e6e202','721fe947-d819-4b13-9b7a-92debcd9393b','06c27674-9c56-479d-8acf-a3dfd5680425'], title: 'LoL 2026 World Championship', desc: "Sub or gift a Tier 1 sub in League of Legends for Worlds 2026 Supporter and the Heartsteel, K/DA, Pentakill and True Damage Fan badges.", start: null, end: null },
-  { slot: 'eq2', imgs: ['12266c73-c6bc-433a-ab66-dc021bb8159f'], title: 'Elden Ring · Path of the Cardinal Sin', desc: "Sub or gift a Tier 1 sub to any channel live in ELDEN RING to earn the Bloody Finger badge.", start: '2026-10-01T07:00:00Z', end: '2026-10-29T06:59:00Z' },
-  { slot: 'e14', imgs: ['1826cb5f-32a9-409a-9829-f6f47ea68239','e7d696ad-4479-4e44-bceb-5643f80bef38'], title: 'FFXIV Fan Festival 2026 JP', desc: "Watch a FFXIV creator for 60 minutes during Fan Fest 2026 - JP.", start: '2026-10-30T00:00:00Z', end: '2026-11-01T00:00:00Z' },
-  { slot: 'eq3', imgs: [], title: 'Questline 3: Path of the Elden Lord', desc: "The Warrior Jar Alexander badge will be available in the ELDEN RING category.", start: '2026-11-02T00:00:00Z', end: '2026-11-28T23:59:00Z' },
-  { slot: 'eq4', imgs: [], title: 'Questline 4: Path of Shadows', desc: "The St. Trina badge will be available in the ELDEN RING category.", start: '2026-12-01T00:00:00Z', end: '2026-12-28T23:59:00Z' },
-  { slot: 'edd2', imgs: ['2d1bfde9-94a9-4ed1-84a5-4aeb85911f1d','f699b4ab-8952-46a1-88ff-a5515406f0a5'], title: "Dragon's Dogma 2", desc: "Sub or gift a Tier 1 sub (FrekiFriend) or watch 1 hour (TheDragonsDogma) in Dragon's Dogma II.", start: '2026-10-08T12:00:00Z', end: '2026-10-31T22:58:00Z' },
-  { slot: 'enight', imgs: ['602335f3-4d73-40f9-b8e2-5c5e25f32d62','ddfbf317-aa77-482e-a99d-eb975deb2fe7','f68e567f-67cf-4d4a-8c3e-a0dcee42f095'], title: 'Pokémon Night Out 2026', desc: "Gastly, Haunter and Gengar badges are coming for Pokémon Night Out 2026. Objectives to be announced.", start: null, end: null },
-  { slot: 'evault', imgs: ['29e7e185-e4c3-4cd4-ac5b-63e16c90d401','cce20332-b825-4008-8a8c-9b75e7a67e79'], title: 'Vaultbreakers', desc: "Sub or gift a Tier 1 sub (Golden) or watch 1 hour (Vaultbreakers) in the Vaultbreakers category.", start: '2026-10-08T17:00:00Z', end: '2026-11-05T16:59:00Z' },
-  { slot: 'edayz', imgs: ['739379da-c982-4294-9bfd-75c3cc4187d3'], title: 'DayZ · Badlands', desc: "Sub or gift a Tier 1 sub to any channel live in DayZ during the Badlands launch to earn the Yellow King badge.", start: '2026-10-08T11:00:00Z', end: '2026-10-19T08:59:00Z' },
-  { slot: 'emw4', imgs: ['41505da3-121e-4d81-985f-95185a79186c'], title: 'Call of Duty: Modern Warfare 4', desc: "Sub or gift a sub to any channel live in Call of Duty: Modern Warfare 4 during the launch to earn the Modern Warfare 4 badge.", start: null, end: null },
+/* Events column: filled AUTOMATICALLY from badgedatabase.com (events.json, refreshed every 5 minutes): every running,
+   upcoming and date-TBA event with its badges, objectives and UTC times, so a new badge appears here by itself as
+   soon as it is on the site. Ended events disappear by themselves.
+   The description is written from the badges' objectives on the site.
+   EVENT_TITLES / EVENT_DESC: your own title or description for an event (by its id on the site, e.g. 'dayz').
+   EXTRA_EVENTS: events that are not on the site yet. */
+const EVENT_TITLES = {
+  'twitchcon-sd': 'TwitchCon 2026 San Diego', 'elden-q2': 'Elden Ring · Path of the Cardinal Sin', 'ffxiv': 'FFXIV Fan Festival 2026 JP',
+  'dragon-s-dogma-ii': "Dragon's Dogma 2", 'gastly': 'Pokémon Night Out 2026', 'vaultbreakers': 'Vaultbreakers', 'dayz': 'DayZ · Badlands',
+  'call-of-duty-modern-warfare-4': 'Call of Duty: Modern Warfare 4', 'witchspire': 'Witchspire · Haunted Magick', 'pokemon-evo': 'Pokémon Evolution Badges',
+  'ultramarine': 'Warhammer 40,000: Space Marine II', 'rematch-blue-lock': 'Rematch', 'dnd-dungeon-masters': 'Dungeons & Dragons: Dungeon Masters',
+  'witcher-3': 'The Witcher 3: Wild Hunt', 'ace-combat-8-nugget': 'ACE COMBAT 8: WINGS OF THEVE', 'alien-isolation': 'Alien: Isolation',
+};
+const EVENT_DESC = {
+  // 'dayz': 'Sub or gift a Tier 1 sub to any channel live in DayZ during the Badlands launch.',
+};
+const EXTRA_EVENTS = [
   { slot: 'ehunt', imgs: [], title: 'Hunt: Showdown 1896', desc: "Two new badges will be available as part of Twitch Frightfest. Starts Oct 26.", start: '2026-10-26T00:00:00Z', end: null },
-  { slot: 'ewitch', imgs: ['9be56234-70e5-414f-a6a0-78ec9cbb08f7','94f4c9cb-de1d-44a0-a3fd-5e0b205451c0','52fc3c6b-f177-4f68-8334-4172d0555923'], title: 'Witchspire · Haunted Magick', desc: "Watch 1 hour (Witchspire Logo) or 4 hours (Gold Stamp), or sub/gift a Tier 1 sub (Witch Hat) in the Witchspire category.", start: null, end: null },
-  { slot: 'e16', imgs: [], title: 'TwitchCon 2027 Berlin', desc: "TwitchCon events come with their own badges, expected again this year. Stay tuned.", start: '2027-05-22T00:00:00Z', end: '2027-05-23T00:00:00Z' },
-  { slot: 'epevo', imgs: ['6de326e8-643f-4043-beb6-3ad135385708','ad14f7e4-1ca6-476b-acaf-250da22388ec','d9698627-aff7-434c-8002-1351b2c59984','ac097350-add0-44c4-b405-e70aa746389b','15a0db5d-bef1-49bb-8594-e3925e1ec248','2b975e12-fd49-4e54-85c4-6cc042453dbb','b9dd6905-474f-45d1-a4ff-8ba138208afc'], title: 'Pokémon Evolution Badges', desc: "Ivysaur, Venusaur, Charmeleon, Charizard, Wartortle, Blastoise and Pikachu. Only unlockable if you earned the starter badges before Oct 1.", start: null, end: null },
-  { slot: 'eultra', imgs: ['12cb6b16-063b-4fcf-b312-c5c8f01e49ac'], title: 'Warhammer 40,000: Space Marine II', desc: "Sub or gift a Tier 1 sub to any channel live in Warhammer 40,000: Space Marine II to earn the Ultramarine badge.", start: '2026-10-01T08:00:00Z', end: '2026-10-29T06:59:00Z' },
-  { slot: 'eblue', imgs: ['13afe621-edd4-48b6-a09b-453a2dee52e9'], title: 'Rematch', desc: "Watch 30 minutes of any channel live in REMATCH to earn the Rematch Blue Lock badge.", start: '2026-09-23T23:01:00Z', end: '2026-10-21T22:58:00Z' },
-  { slot: 'edndm', imgs: ['263a5bf1-c1ea-4f26-8bf8-db42ea2ebc7c','b17f6b68-4a2d-4d2a-9967-aa8ff26012a0'], title: 'Dungeons & Dragons: Dungeon Masters', desc: "Watch /dnd (official D&D channel) for the d20 badge, or sub/gift a Tier 1 sub in Dungeons & Dragons: Dungeon Masters for the Ampersand.", start: '2026-09-24T01:15:00Z', end: '2026-10-21T06:58:00Z' },
-  { slot: 'ewolfm', imgs: ['3e008d8a-4a24-4858-9e8f-74e8a3808955'], title: 'The Witcher 3: Wild Hunt – Complete Edition', desc: "Sub or gift a Tier 1 sub to any channel live in The Witcher 3: Wild Hunt Remastered to earn the Wolf Medallion badge.", start: '2026-09-29T10:00:00Z', end: '2026-10-27T09:59:00Z' },
-  { slot: 'eace', imgs: ['8468fb6c-1d33-4482-85ef-fa1898288ee2'], title: 'ACE COMBAT 8: WINGS OF THEVE', desc: "Sub or gift a Tier 1 sub to any channel live in ACE COMBAT 8 to earn the ACE COMBAT 8 Nugget badge.", start: '2026-09-28T22:00:00Z', end: '2026-10-26T06:59:00Z' },
-  { slot: 'ealien', imgs: ['4709f62b-9cd9-4759-8953-c096527401c7','a6a681a9-3253-42de-b09a-7bda7c05c342'], title: 'Alien Isolation', desc: "Watch 30 minutes (SEEGSON Synthetics) or sub/gift a Tier 1 sub (Sevastopol Station) in Alien: Isolation to earn both badges.", start: '2026-10-01T09:00:00Z', end: '2026-10-29T08:58:00Z' },
 ];
 
 /* Top bar "Available here": filled AUTOMATICALLY with the badges you can earn in badge_db's current Twitch
    category (running events from badgedatabase.com; upcoming ones in that category show "STARTS IN ..."). Badges
    that need a specific channel (e.g. "watch twitch.tv/dnd") are left out.
-   EXTRA_AVAILABLE: chips added by hand on top of that (same format as before: ev = event slot from EVENTS, shown
-   while that event is ACTIVE; showSoon: true = also while UPCOMING; hideWhen = event slot that hides it). */
+   EXTRA_AVAILABLE: chips added by hand on top of that (ev = event id on the site, or a slot from EXTRA_EVENTS; shown
+   while that event is ACTIVE; showSoon: true = also while UPCOMING; hideWhen = event id that hides it). */
 const EXTRA_AVAILABLE = [
-  // { slot: 'x1', action: 'Sub or Gift', label: 'Yellow King', game: 'DayZ', imgs: ['739379da-c982-4294-9bfd-75c3cc4187d3'], ev: 'edayz' },
+  // { slot: 'x1', action: 'Sub or Gift', label: 'Yellow King', game: 'DayZ', imgs: ['739379da-c982-4294-9bfd-75c3cc4187d3'], ev: 'dayz' },
 ];
 
 /* Stream categories where the whole "Available here" part of the header is hidden.
@@ -250,7 +240,7 @@ const EXTRA_AVAILABLE = [
 const HIDE_AVAILABLE_IN = ['Always On'];
 const CHANNEL = 'badge_db';
 
-/* Footer counters: read live from badgedatabase.com every 10 minutes; these are only the fallback. */
+/* Footer counters: read live from badgedatabase.com every 5 minutes; these are only the fallback. */
 const FALLBACK_COUNTS = { active: 16, upcoming: 6, tba: 19, free: 5 };
 /* ============================================================================== */
 
@@ -269,7 +259,7 @@ function countdown(ms, prefix){
   return `${prefix} ${mins}M`;
 }
 
-/* ---------- live data from badgedatabase.com (left column + footer counters) ---------- */
+/* ---------- live data from badgedatabase.com (events, left column, footer counters) ---------- */
 let site = { events: null, badges: null, pop: null };
 async function getJson(file){
   for(const base of ['https://raw.githubusercontent.com/davidpzsny/badgedb/main/', 'https://badgedatabase.com/']){
@@ -277,12 +267,73 @@ async function getJson(file){
   }
   return null;
 }
+const cacheGet = k => { try{ return JSON.parse(localStorage.getItem('ov_' + k) || 'null'); }catch(e){ return null; } };
+const cacheSet = (k, v) => { try{ localStorage.setItem('ov_' + k, JSON.stringify(v)); }catch(e){} };
 async function loadStats(){
-  const [evs, badges, pop] = await Promise.all([getJson('events.json'), getJson('badges.json'), getJson('popularity.json')]);
+  let [evs, badges, pop] = await Promise.all([getJson('events.json'), getJson('badges.json'), getJson('popularity.json')]);
+  if(Array.isArray(evs)) cacheSet('events', evs); else evs = site.events || cacheGet('events');      // offline: last good copy
+  if(Array.isArray(badges)) cacheSet('badges', badges); else badges = site.badgesRaw || cacheGet('badges');
+  if(pop && pop.counts) cacheSet('pop', pop); else pop = cacheGet('pop');
   if(Array.isArray(evs)) site.events = evs;
-  if(Array.isArray(badges)) site.badges = groupBadges(badges);
+  if(Array.isArray(badges)){ site.badgesRaw = badges; site.badges = groupBadges(badges); }
   if(pop && pop.counts) site.pop = pop.counts;
   render();
+  if(!site.events) setTimeout(loadStats, 30000);                                                   // nothing yet: try again soon
+}
+
+/* the Events column from the site's events.json, in the shape the cards use */
+const PLACEHOLDER_HOW = /^(objective|details) not (announced|confirmed)/i;
+const andJoin = a => a.length < 2 ? (a[0] || '') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
+const orJoin  = a => a.length < 2 ? (a[0] || '') : a.slice(0, -1).join(', ') + ' or ' + a[a.length - 1];
+const cap = t => t.charAt(0).toUpperCase() + t.slice(1);
+const noLongDash = t => String(t || '').replace(/\s*\u2014\s*/g, ', ');
+function shortHow(how){                        // the usual category objectives in a short form; null = say it as written
+  const h = how.trim().replace(/\.$/, '');
+  if(/^subscribe \(tier 1\) or gift a tier 1 sub in the category$/i.test(h)) return { kind: 'sub', text: 'sub or gift a Tier 1 sub' };
+  const m = h.match(/^watch (\d+) minutes in the category$/i);
+  if(m){ const n = +m[1]; return { kind: 'watch', text: n % 60 ? `watch ${n} minutes` : `watch ${n / 60} hour${n === 60 ? '' : 's'}` }; }
+  if(/^watch a stream in the category$/i.test(h)) return { kind: 'any', text: 'watch' };
+  return null;
+}
+function eventDesc(ev){
+  const cat = String(ev.category || ''), generic = !cat || GENERIC_CAT.some(w => cat.toLowerCase().includes(w));
+  const names = ev.badges.map(b => b.name), hows = ev.badges.map(b => String(b.how || '').trim());
+  const tba = h => !h || PLACEHOLDER_HOW.test(h), inCat = generic ? '' : ' in ' + cat;
+  const where = (ev.channels || []).length ? 'a participating channel' : 'any channel';
+  if(hows.every(tba))
+    return `The ${andJoin(names)} badge${names.length > 1 ? 's' : ''} will be available${inCat}. Objective${names.length > 1 ? 's' : ''} to be announced.`;
+  const sh = hows.map(h => tba(h) ? null : shortHow(h));
+  if(!generic && sh.every(Boolean)){
+    const kinds = [...new Set(sh.map(x => x.text))];
+    if(kinds.length === 1){                    // one objective for every badge
+      const x = sh[0], verb = x.kind === 'any' ? `Watch ${where} live in ${cat}` : x.kind === 'sub' ? `Sub or gift a Tier 1 sub to ${where} live in ${cat}` : `${cap(x.text)} of ${where} live in ${cat}`;
+      return `${verb} to earn the ${andJoin(names)} badge${names.length > 1 ? 's' : ''}.`;
+    }
+    return cap(orJoin(kinds.map(k => `${k} (${andJoin(names.filter((n, i) => sh[i].text === k))})`))) + ` in ${cat}.`;
+  }
+  const groups = new Map();                    // otherwise "Badge: objective." (badges with the same objective together)
+  hows.forEach((h, i) => { const t = tba(h) ? 'Objective to be announced' : h.replace(/\s+in the category(?=\.?$)/i, inCat);
+    if(!groups.has(t)) groups.set(t, []); groups.get(t).push(names[i]); });
+  const end = t => /[.!?)]$/.test(t) ? t : t + '.';
+  if(groups.size === 1 && names.length === 1) return end([...groups.keys()][0]);
+  return [...groups].map(([t, ns]) => `${andJoin(ns)}: ${end(t)}`).join(' ');
+}
+function siteEventCards(now){
+  const evs = site.events; if(!evs) return [];
+  const badges = site.badges || [], STALE = 21 * 864e5;
+  const added = ev => (ev.badges || []).map(b => (badges.find(g => g.imgs.includes(b.img)) || {}).added).filter(Boolean).sort()[0];
+  return evs.filter(ev => {
+    if(!(ev.badges || []).length) return false;
+    if(ev.end && Date.parse(ev.end) <= now) return false;                                    // over
+    if(!ev.start){ const a = added(ev); if(a && now - Date.parse(a) > STALE) return false; }   // no dates for 21+ days: the site counts it as ended
+    return true;
+  }).map(ev => ({ slot: ev.id, imgs: ev.badges.map(b => b.img).filter(Boolean), title: noLongDash(EVENT_TITLES[ev.id] || ev.name),
+                  desc: noLongDash(EVENT_DESC[ev.id] || eventDesc(ev)), start: ev.start || null, end: ev.end || null }));
+}
+function overlayEvents(now){
+  const list = siteEventCards(now).concat(EXTRA_EVENTS), t = x => x ? Date.parse(x) : null;
+  const rank = e => { const s = t(e.start); return s === null ? 2 : now < s ? 1 : 0; };   // running, upcoming, date TBA
+  return list.sort((a, b) => rank(a) - rank(b) || (rank(a) === 0 ? (t(a.end) || 9e15) - (t(b.end) || 9e15) : rank(a) === 1 ? t(a.start) - t(b.start) : 0));
 }
 // badges.json rows: [title, img, added, free, users, set, desc]
 function groupBadges(rows){
@@ -333,7 +384,7 @@ const GENERIC_CAT = ['any', 'various', 'multiple', 'eligible', 'categories', 'un
 const normCat = t => String(t || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
 function inStreamCategory(ev){
   const cat = String(ev.category || '');
-  if(!streamCat || !cat || cat.includes(',') || GENERIC_CAT.some(w => cat.toLowerCase().includes(w))) return false;
+  if(!streamCat || !cat || GENERIC_CAT.some(w => cat.toLowerCase().includes(w))) return false;   // a list like "A, B" never equals one category
   const chans = (ev.channels || []).map(c => String(c).trim().toLowerCase()).filter(Boolean);
   if(chans.length && !chans.includes(CHANNEL)) return false;              // only on certain channels, not ours
   const gid = live && ((live.events && live.events[ev.id] && live.events[ev.id].game_id) || (live.upcoming && live.upcoming[ev.id]));
@@ -410,7 +461,8 @@ function render(){
   $('date').textContent = `${M[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`;
   $('time').textContent = `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`;
 
-  const views = EVENTS.map(e => eventView(e, now)), bySlot = {};
+  const evList = overlayEvents(now);
+  const views = evList.map(e => eventView(e, now)), bySlot = {};
   views.forEach(v => { bySlot[v.e.slot] = v; });
   const visible = views.filter(v => v.status !== 'ENDED'), half = Math.ceil(visible.length / 2);
   const loop = arr => arr.concat(arr);                  // doubled list = seamless scroll loop
@@ -421,7 +473,7 @@ function render(){
   setList('items', loop(items).map(it => itemCard(it, now)).join(''));
 
   const isActive = k => !!(bySlot[k] && bySlot[k].status === 'ACTIVE'), isSoon = k => !!(bySlot[k] && bySlot[k].status === 'UPCOMING');
-  const evStart = k => { const e = EVENTS.find(x => x.slot === k); return e && e.start ? Date.parse(e.start) : null; };
+  const evStart = k => { const e = evList.find(x => x.slot === k); return e && e.start ? Date.parse(e.start) : null; };
   const hideAll = streamCat && HIDE_AVAILABLE_IN.some(c => c.toLowerCase() === streamCat.toLowerCase());
   const extra = EXTRA_AVAILABLE.filter(a => (!a.ev || isActive(a.ev) || (a.showSoon && isSoon(a.ev))) && !(a.hideWhen && (isActive(a.hideWhen) || isSoon(a.hideWhen))))
     .map(a => { const soon = a.ev && isSoon(a.ev) && evStart(a.ev);
@@ -451,9 +503,11 @@ async function checkVersion(){
   }catch(e){}
 }
 
+(function fromCache(){ const e = cacheGet('events'), b = cacheGet('badges'), p = cacheGet('pop');
+  if(Array.isArray(e)) site.events = e; if(Array.isArray(b)){ site.badgesRaw = b; site.badges = groupBadges(b); } if(p && p.counts) site.pop = p.counts; })();
 render();
 setInterval(render, 1000);
-loadStats(); setInterval(loadStats, 600000);
+loadStats(); setInterval(loadStats, 300000);
 loadCategory(); setInterval(loadCategory, 60000);
 setInterval(checkVersion, 30000); setTimeout(checkVersion, 5000);
 </script>
