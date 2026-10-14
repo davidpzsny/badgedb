@@ -10,7 +10,8 @@
    {"type": "improved", "text": "Privacy Policy, Terms of Service and Legal Notice updated: live stream data on Watch now and Top Categories, Remind me notifications, the Discord bot, our servers and data sources."},
    {"type": "improved", "text": "Home page sliders: bigger cards, long badge names use two lines, and the date reads \"Added today\", \"yesterday\" or \"3 days ago\", so nothing breaks onto extra lines."},
    {"type": "new", "text": "@BadgeDatabase on X posts a \"Last chance\" reminder with the badge image one day before a badge event ends (for events that run at least two days)."},
-   {"type": "new", "text": "Privacy-friendly visitor statistics with GoatCounter: no cookies, nothing stored in your browser, no IP addresses kept. The Privacy Policy explains the details."}
+   {"type": "new", "text": "Privacy-friendly visitor statistics with GoatCounter: no cookies, nothing stored in your browser, no IP addresses kept. The Privacy Policy explains the details."},
+   {"type": "improved", "text": "The 24/7 stream on the home page starts by itself, muted (click the player for sound). It stays off on data-saver connections and stops when you leave the home page."}
   ]
  },
  {

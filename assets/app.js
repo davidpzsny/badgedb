@@ -228,9 +228,26 @@ function route(){
   $$('.nav a, .bnav a').forEach(a => a.classList.toggle('on', a.dataset.route === h || (h === 'badge' && a.closest('.bnav') && a.dataset.route === 'global')));
   if(p !== routedPath) closeDrawer();          // a new page closes the drawer; data arriving later (live.json, …) re-renders without closing it
   routedPath = p;
-  countView();
+  countView(); homeStreamSync();
 }
 let routedPath = null;
+/* ---------- home: the 24/7 stream starts by itself, muted, once the page has loaded. Not on data-saver connections;
+   leaving the home page removes the player again (no video running in the background). ---------- */
+let hsTimer = 0;
+const hsFrame = muted => `<iframe src="https://player.twitch.tv/?channel=${CONFIG.channel}&${PARENTS()}&muted=${muted}&autoplay=true" allowfullscreen allow="autoplay; fullscreen" title="twitch.tv/${esc(CONFIG.channel)} 24/7 stream"></iframe>`;
+function homeStreamCover(){
+  return `<button class="sc-play" data-playhome style="background-image:url('https://static-cdn.jtvnw.net/previews-ttv/live_user_${esc(CONFIG.channel)}-640x360.jpg')">
+    <span class="sc-play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+    <span class="sc-play-t"><b>Watch the 24/7 stream</b><small>Click to play</small></span></button>`;
+}
+function homeStreamSync(){
+  const box = document.getElementById('homeStream'); if(!box || isFile || !box.dataset.done) return;
+  const playing = !!box.querySelector('iframe');
+  if(pathKey() !== '/'){ clearTimeout(hsTimer); hsTimer = 0; if(playing) box.innerHTML = homeStreamCover(); return; }
+  if(playing || hsTimer || (navigator.connection && navigator.connection.saveData)) return;
+  const start = () => { hsTimer = 0; if(pathKey() === '/' && !box.querySelector('iframe')) box.innerHTML = hsFrame(true); };
+  hsTimer = setTimeout(() => { if(document.readyState === 'complete') start(); else addEventListener('load', start, {once: true}); }, 600);
+}
 /* ---------- visitor statistics: GoatCounter (EU-hosted, no cookies, nothing stored in the browser, no IP addresses kept).
    One count per page; in-site navigation counts too. Off on localhost, in automated browsers and on /admin/. */
 var gcLast = "", gcFirst = true;
@@ -312,9 +329,8 @@ function renderHome(){
   if(!$('#homeStream').dataset.done){ $('#homeStream').dataset.done=1;
     $('#homeStream').innerHTML = isFile
       ? `<div class="sc-off"><img src="/logo-192.png" alt="">The player appears here once the site is hosted (http/https).<a class="btn" href="https://twitch.tv/${CONFIG.channel}" target="_blank" rel="noopener">Watch on Twitch ↗</a></div>`
-      : `<button class="sc-play" data-playhome style="background-image:url('https://static-cdn.jtvnw.net/previews-ttv/live_user_${esc(CONFIG.channel)}-640x360.jpg')">
-           <span class="sc-play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
-           <span class="sc-play-t"><b>Watch the 24/7 stream</b><small>Click to load the Twitch player (Twitch may set cookies)</small></span></button>`; }
+      : homeStreamCover(); }
+  homeStreamSync();
 
   // recently added badges from the archive
   const recent = [...globalBadges].filter(b=>b.added).sort((a,b)=>b.added.localeCompare(a.added)||a.name.localeCompare(b.name)).slice(0,20);
@@ -1271,7 +1287,7 @@ document.addEventListener('click', e => {
   const t=e.target.closest('#bpTheme button'); if(t){ bpTheme=t.dataset.t; route(); e.preventDefault(); return; }
   const sh=e.target.closest('[data-share]'); if(sh){ shareBadge(sh.dataset.share, sh.dataset.shareTitle); return; }
   const icsB = e.target.closest('[data-ics]'); if(icsB){ const ev = EVENTS.find(x => x.id === icsB.dataset.ics); if(ev) downloadIcs(ev); icsB.closest('details')?.removeAttribute('open'); return; }
-  if(e.target.closest('[data-playhome]')){ $('#homeStream').innerHTML = `<iframe src="https://player.twitch.tv/?channel=${CONFIG.channel}&${PARENTS()}&muted=false&autoplay=true" allowfullscreen allow="autoplay; fullscreen"></iframe>`; return; }
+  if(e.target.closest('[data-playhome]')){ clearTimeout(hsTimer); hsTimer = 0; $('#homeStream').innerHTML = hsFrame(false); return; }
   if(e.target.closest('[data-twlogin]')){ twLogin(); return; }
   if(e.target.closest('[data-twlogout]')){ twLogout(); return; }
   const vv=e.target.closest('[data-ver]'); if(vv){ e.preventDefault(); bpVersion=+vv.dataset.ver; route(); }
