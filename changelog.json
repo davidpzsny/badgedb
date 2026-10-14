@@ -1,5 +1,14 @@
 [
  {
+  "date": "2026-10-14",
+  "title": "UTC times and date fixes",
+  "items": [
+   {"type": "improved", "text": "Badge pages and event details show the exact UTC time next to your local time, for example Oct 15, 06:00 (04:00 UTC)."},
+   {"type": "fixed", "text": "Castlevania: Belmont's Curse dates added: Oct 15, 04:00 to Nov 2, 03:59 UTC."},
+   {"type": "fixed", "text": "Warhammer 40,000: Space Marine II (Ultramarine) ends Oct 29 at 06:59 UTC."}
+  ]
+ },
+ {
   "date": "2026-10-12",
   "title": "Remind me and faster pages",
   "items": [

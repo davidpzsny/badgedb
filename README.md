@@ -87,6 +87,8 @@ Rules the site applies by itself:
 - **All counts are badge counts, not event counts** (an event can hold several badges), so the home tiles and
   the timeline headings always show the same numbers.
 - Anything set by hand in `/admin/` is never overwritten by the bot.
+- Times are shown in the visitor's local time; badge pages and event details add the UTC time in brackets
+  ("Oct 15, 06:00 (04:00 UTC)"), so they can be compared with Twitch and StreamDatabase directly.
 - **Speed:** `channel-badges.json` (about 440 KB) is loaded only on the Channel Badges pages and when quick search opens;
   the menu count comes from the build. Data files are fetched with `no-cache`, so returning visitors get a quick
   "not modified" answer instead of downloading them again.
@@ -144,8 +146,9 @@ site.webmanifest, og-image.png, CNAME
 ## Everyday use
 
 ### A badge has no dates
+Take the exact times from **[streamdatabase.com/events](https://www.streamdatabase.com/events)** (shown in UTC there).
 Open **[badgedatabase.com/admin/](https://badgedatabase.com/admin/)** → **Needs info** → open the event →
-set **Starts / Ends** (your local time), objective, Free / Sub, optional **Channels** (comma separated;
+set **Starts / Ends** (your local time: Hungary is UTC+2 in summer time, UTC+1 in winter), objective, Free / Sub, optional **Channels** (comma separated;
 tick "only part of the participating channels" if the list is incomplete) → **Save changes**.
 A badge from any date can be added to an event with the "+ Add a badge to this event" list.
 

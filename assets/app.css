@@ -1025,3 +1025,6 @@ main{grid-column:2;grid-row:2}
 .toast{max-width:min(92vw,480px);text-align:center;line-height:1.4;white-space:normal;z-index:70}
 @media (max-width:880px){.toast{bottom:calc(86px + env(safe-area-inset-bottom))}
   .scrim{z-index:44} .drawer{z-index:45}}      /* phones: the details panel covers the top bar, so its close button is visible */
+
+/* ---------- UTC time next to the local time (badge pages, event details) ---------- */
+.utc{color:var(--muted);font-weight:500;font-size:.92em;white-space:nowrap}
