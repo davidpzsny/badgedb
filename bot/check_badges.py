@@ -958,6 +958,78 @@ def announce_ending(events, live):
     if changed:
         json.dump(posts, open(POSTS_DB, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
+# ---------- X: "Last chance" post one day before an event ends ----------
+X_ENDING_POSTS = (os.environ.get("X_ENDING_POSTS") or "1").strip().lower() not in ("0", "false", "no", "off")
+X_ENDING_MIN_EVENT_H = 48   # only for events that ran at least this long (short ones just had their "Now available" post)
+X_ENDING_LATE_H = 3         # never post with less than this many hours left (e.g. after the bot was paused)
+
+def ending_post_text(ev, badges_meta, left_h):
+    title = live_title(badges_meta)
+    until = _dt(ev["end"]).strftime("%b %-d, %H:%M UTC")
+    how_of = {b.get("img"): (b.get("how") or "").strip() for b in ev.get("badges", []) if b.get("img")}
+    hows = [how_of.get(m["img"], "") for m in badges_meta]
+    if hows and all(h == hows[0] for h in hows):
+        how = hows[0]
+    else:
+        how = "\n".join(f"• {m['title']}: {h}" for m, h in zip(badges_meta, hows) if h)
+    left = "Less than 24 hours left" if left_h > 20 else f"About {int(left_h)} hours left"
+    head = f"⏳ Last chance on Twitch: {title}"
+    tail = f"\n\n{left}, ends {until}\n#Twitch #TwitchBadges"
+    room = 270 - len(head) - len(tail)
+    if how and room > 20:
+        how = how if len(how) <= room else how[:room - 1].rstrip() + "…"
+        return f"{head}\n\n{how}{tail}"
+    return head + tail
+
+def announce_last_chance_x(events, live, max_per_run=2):
+    """One X post per event when it has less than ENDING_SOON_HOURS left; the link to the badge page follows as a reply."""
+    if not X_ENDING_POSTS: return
+    by_img = {b["img"]: b for b in live}
+    posts = load_json(POSTS_DB, {})
+    now = datetime.datetime.now(datetime.timezone.utc)
+    due = []
+    for ev in events:
+        key = f"xending:{ev.get('id')}"
+        if not ev.get("start") or not ev.get("end") or key in posts: continue
+        start, end = _dt(ev["start"]), _dt(ev["end"])
+        left = (end - now).total_seconds() / 3600
+        if not (X_ENDING_LATE_H <= left <= ENDING_SOON_HOURS): continue
+        if (end - start).total_seconds() / 3600 < X_ENDING_MIN_EVENT_H: continue
+        meta = [by_img[b["img"]] for b in ev.get("badges", []) if b.get("img") in by_img]
+        if meta: due.append((end, ev, meta, left))
+    for end, ev, meta, left in sorted(due, key=lambda x: x[0])[:max_per_run]:
+        text = ending_post_text(ev, meta, left)
+        first = meta[0]
+        if DRY_RUN:
+            print("DRY_RUN last-chance post:\n" + text); continue
+        tweet_id = None
+        try:
+            import tweepy
+            kw = dict(consumer_key=os.environ["X_API_KEY"], consumer_secret=os.environ["X_API_SECRET"],
+                      access_token=os.environ["X_ACCESS_TOKEN"], access_token_secret=os.environ["X_ACCESS_SECRET"])
+            media_ids = None
+            try:
+                pngs = [requests.get(m["url"], timeout=30).content for m in meta[:5]]
+                if len(meta) > 5: pngs += [b""] * (len(meta) - 5)
+                card = make_card(pngs, live_title(meta), header="LAST CHANCE ON TWITCH",
+                                 header_sub="Ends " + end.strftime("%b %-d, %H:%M UTC"), accent=(245, 158, 11))
+                api = tweepy.API(tweepy.OAuth1UserHandler(*kw.values()))
+                media_ids = [api.media_upload(filename=f"{first['img']}-ending.png", file=io.BytesIO(card)).media_id]
+            except Exception as e:
+                print("last chance: image failed, posting text only ->", e)
+            resp = tweepy.Client(**kw).create_tweet(text=text, media_ids=media_ids)
+            tweet_id = (resp.data or {}).get("id")
+            print(f"last chance: posted for {ev['name']} -> {tweet_id}")
+        except Exception as e:
+            print(f"last chance: X post failed for {ev['name']} ->", e)
+        posts = load_json(POSTS_DB, {})             # remembered even when X failed, so it's never posted twice
+        posts[f"xending:{ev['id']}"] = {"tweet": str(tweet_id) if tweet_id else "", "title": first["title"], "set": first["set"],
+                                        "posted": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
+                                        "replied": False if tweet_id else "no tweet",
+                                        "reply": "Objective, channels and the exact end time: {url}"}
+        json.dump(posts, open(POSTS_DB, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        status("last_chance", f"{ev['name']} ends {ev['end']} -> tweet {tweet_id}")
+
 # ---------- main ----------
 # badges.json rows: [title, img, added, free, users, set_id, description]
 def main():
@@ -1034,6 +1106,9 @@ def main():
 
     try: announce_ending(load_events(), live)
     except Exception as e: print("ending soon: skipped ->", e)
+
+    try: announce_last_chance_x(load_events(), live)
+    except Exception as e: print("last chance: skipped ->", e)
 
     try:
         from discord_events import sync_discord_events

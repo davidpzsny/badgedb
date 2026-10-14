@@ -108,7 +108,8 @@ const CONFIG = {
     discord: "https://discord.gg/QkuRDXcZH5",
     reddit:  "",
   },
-  pushApi: "https://api.badgedatabase.com",   // "Remind me" push server (push-server/ on the VM). "" = no Remind me buttons.
+  pushApi: "https://api.badgedatabase.com",
+  goatcounter: "badgedatabase",   // visitor statistics at https://badgedatabase.goatcounter.com (no cookies). "" = off.   // "Remind me" push server (push-server/ on the VM). "" = no Remind me buttons.
   discordDown: true,     // true = notice "Discord is temporarily unavailable" + Discord links paused. Set to false when it works again.
   clientId: "",
   repo: "davidpzsny/badgedb",        // used by the #admin page to save events.json
@@ -227,8 +228,23 @@ function route(){
   $$('.nav a, .bnav a').forEach(a => a.classList.toggle('on', a.dataset.route === h || (h === 'badge' && a.closest('.bnav') && a.dataset.route === 'global')));
   if(p !== routedPath) closeDrawer();          // a new page closes the drawer; data arriving later (live.json, …) re-renders without closing it
   routedPath = p;
+  countView();
 }
 let routedPath = null;
+/* ---------- visitor statistics: GoatCounter (EU-hosted, no cookies, nothing stored in the browser, no IP addresses kept).
+   One count per page; in-site navigation counts too. Off on localhost, in automated browsers and on /admin/. */
+var gcLast = "", gcFirst = true;
+function countView(){
+  const code = CONFIG.goatcounter, p = location.pathname;
+  if(!code || !/^https?:$/.test(location.protocol) || /^(localhost|127\.|\[::1\])/.test(location.hostname) || navigator.webdriver) return;
+  if(p === gcLast || /^\/admin\//.test(p)) return;
+  gcLast = p;
+  const q = {p, t: document.title, s: [screen.width, screen.height, window.devicePixelRatio || 1].join(","), rnd: Math.random().toString(36).slice(2)};
+  if(gcFirst){ q.r = document.referrer || ""; if(location.search) q.q = location.search; }   // where the visit came from: first page only
+  gcFirst = false;
+  const url = `https://${code}.goatcounter.com/count?` + new URLSearchParams(q);
+  try{ if(!(navigator.sendBeacon && navigator.sendBeacon(url))) new Image().src = url; }catch(e){}
+}
 window.addEventListener('popstate', route);
 // in-site links: no full page reload
 document.addEventListener('click', e => {

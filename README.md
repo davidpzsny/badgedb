@@ -68,6 +68,9 @@ Static site on GitHub Pages + a bot in GitHub Actions that runs **every 15 minut
    (more than 5: the first 4 and a "+N" tile) and the text lists each badge with its own objective.
    If an event starts within 12 minutes the bot waits and posts right on time; it never posts an event more than
    90 minutes late, never twice, and never for events without dates (switch off with variable `X_LIVE_POSTS = 0`).
+   **"Last chance" posts**: when a dated event that ran at least 2 days has less than 24 hours left, the bot posts
+   "⏳ Last chance on Twitch: …" with an amber image (objective, end time in UTC), then replies with the link.
+   At most 2 per run, never with less than 3 hours left, never twice (switch off with variable `X_ENDING_POSTS = 0`).
 5. **Global emotes**: tracked from the official API (first-seen and removed dates).
 6. **Popularity**: tries PotatBotat once a day. potat.app blocks requests from GitHub's servers, so for now
    it is updated by hand (see below).
@@ -210,6 +213,12 @@ OBS → Sources → + → Browser, URL above, Width `1920`, Height `1080`. It is
 - **After every change** set `OVERLAY_V` in `index.html` and `v` in `version.json` to the same new value. The overlay checks
   `version.json` every 30 seconds and reloads itself, so the stream PC needs no action (about 1 to 2 minutes after the commit).
 
+### Visitor statistics (GoatCounter)
+Dashboard: **[badgedatabase.goatcounter.com](https://badgedatabase.goatcounter.com)** (pages, where visitors come from,
+countries, browsers, screen sizes). No cookies, nothing stored in the browser, no IP addresses kept; described in the
+Privacy Policy. Every page counts once, in-site navigation too; `/admin/`, localhost and automated browsers are not counted.
+The site code is `CONFIG.goatcounter` in `assets/app.js` (`""` switches counting off).
+
 ### Other
 - Extra channels for channel badges: add them to `channels.txt`.
 - X post text / image: `bot/check_badges.py` → `post_to_x()` / `make_card()`.
@@ -228,7 +237,7 @@ OBS → Sources → + → Browser, URL above, Width `1920`, Height `1080`. It is
 | `DISCORD_WEBHOOK` | optional: post new badges to a Discord channel |
 
 **Variables** (*Variables* tab): `SITE_URL` = `https://badgedatabase.com` · optional `X_LINK_REPLY` = `0`
-(no link replies) · optional `X_LIVE_POSTS` = `0` (no "Now available" posts) · optional `DRY_RUN` = `1` (test without posting).
+(no link replies) · optional `X_LIVE_POSTS` = `0` (no "Now available" posts) · optional `X_ENDING_POSTS` = `0` (no "Last chance" posts) · optional `DRY_RUN` = `1` (test without posting).
 
 **Admin token** (stored only in your browser): github.com/settings/personal-access-tokens → fine-grained →
 *Only select repositories* → `badgedb` → *Repository permissions → Contents: Read and write*.
