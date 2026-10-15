@@ -231,15 +231,36 @@ function route(){
   countView(); homeStreamSync();
 }
 let routedPath = null;
-/* ---------- the 24/7 stream: starts by itself (muted) on the home page and keeps playing while you browse the site.
+/* ---------- cookie consent: the Twitch player sets Twitch's own cookies, so the 24/7 stream only starts by itself
+   after "Accept" in the cookie banner. The choice is kept in this browser for a year; "Cookie settings" in the footer
+   opens the banner again. Without consent the player loads only when the visitor clicks play. ---------- */
+const CONSENT_KEY = "badgedb_consent", CONSENT_DAYS = 365;
+function consent(){                         // true = accepted, false = declined, null = not asked yet (or over a year ago)
+  try{ const c = JSON.parse(localStorage.getItem(CONSENT_KEY) || "null");
+    if(!c || !c.at || !(Date.now() - Date.parse(c.at) < CONSENT_DAYS * 864e5)) return null;
+    return c.twitch === true; }catch(e){ return null; }
+}
+function setConsent(yes){ try{ localStorage.setItem(CONSENT_KEY, JSON.stringify({ twitch: !!yes, at: new Date().toISOString() })); }catch(e){} }
+function consentBar(show){
+  let b = document.getElementById('cookieBar');
+  if(!show){ if(b) b.remove(); return; }
+  if(b || isFile) return;
+  b = document.createElement('div'); b.id = 'cookieBar'; b.className = 'cookie-bar'; b.setAttribute('role', 'dialog'); b.setAttribute('aria-label', 'Cookie settings');
+  b.innerHTML = `<div class="cb-t"><b>Cookies</b><p>Our 24/7 stream plays in a Twitch player, and Twitch sets its own cookies. Accept to let the stream start by itself, muted, in a small player while you browse. Badge Database itself sets no cookies. <a href="/privacy/#p5">Privacy Policy</a></p></div>
+    <div class="cb-b"><button type="button" class="btn ghost" data-consent="no">Decline</button><button type="button" class="btn" data-consent="yes">Accept</button></div>`;
+  document.body.appendChild(b);
+}
+function consentAsk(){ if(consent() === null && !/^\/admin\//.test(location.pathname)) consentBar(true); }
+
+/* ---------- the 24/7 stream: with cookie consent it starts by itself (muted) and keeps playing while you browse.
    One player that is never reloaded: it sits in the stream card on the home page and becomes a small player in the
    corner on every other page. Not on data-saver connections; closing the small player stops it for this visit. ---------- */
-let hsTimer = 0, hsRO = null;
+let hsTimer = 0, hsRO = null, hsAuto = false;
 const hsFrame = muted => `<iframe src="https://player.twitch.tv/?channel=${CONFIG.channel}&${PARENTS()}&muted=${muted}&autoplay=true" allowfullscreen allow="autoplay; fullscreen" title="twitch.tv/${esc(CONFIG.channel)} 24/7 stream"></iframe>`;
 function homeStreamCover(){
   return `<button class="sc-play" data-playhome style="background-image:url('https://static-cdn.jtvnw.net/previews-ttv/live_user_${esc(CONFIG.channel)}-640x360.jpg')">
     <span class="sc-play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
-    <span class="sc-play-t"><b>Watch the 24/7 stream</b><small>Click to play</small></span></button>`;
+    <span class="sc-play-t"><b>Watch the 24/7 stream</b><small>Click to play · Twitch may set cookies</small></span></button>`;
 }
 function dockOff(v){ try{ if(v === undefined) return sessionStorage.getItem("badgedb_dock_off") === "1";
   if(v) sessionStorage.setItem("badgedb_dock_off", "1"); else sessionStorage.removeItem("badgedb_dock_off"); }catch(e){ return false; } }
@@ -269,11 +290,12 @@ function dockPlace(){                      // over the stream card on the home p
 }
 addEventListener('resize', () => dockPlace());
 function homeStreamSync(){
-  const box = document.getElementById('homeStream'); if(!box || isFile || !box.dataset.done) return;
-  dockPlace();
-  if(pathKey() !== '/' || document.getElementById('hsDock') || hsTimer || dockOff() || (navigator.connection && navigator.connection.saveData)) return;
+  dockPlace(); consentAsk();
+  if(isFile || consent() !== true || document.getElementById('hsDock') || hsTimer || dockOff() || (navigator.connection && navigator.connection.saveData)) return;
   if(document.getElementById('player') && !document.getElementById('player').hidden) return;   // stream & chat panel is open
-  const start = () => { hsTimer = 0; if(pathKey() === '/' && !dockOff()) dockOpen(true); };
+  const box = document.getElementById('homeStream');
+  if(pathKey() === '/' && !(box && box.dataset.done)) return;          // home page: wait for the stream card, the player opens in it
+  const start = () => { hsTimer = 0; if(consent() === true && !dockOff() && !document.getElementById('hsDock')){ hsAuto = true; dockOpen(true); } };
   hsTimer = setTimeout(() => { if(document.readyState === 'complete') start(); else addEventListener('load', start, {once: true}); }, 600);
 }
 /* ---------- visitor statistics: GoatCounter (EU-hosted, no cookies, nothing stored in the browser, no IP addresses kept).
@@ -1317,7 +1339,14 @@ document.addEventListener('click', e => {
   const t=e.target.closest('#bpTheme button'); if(t){ bpTheme=t.dataset.t; route(); e.preventDefault(); return; }
   const sh=e.target.closest('[data-share]'); if(sh){ shareBadge(sh.dataset.share, sh.dataset.shareTitle); return; }
   const icsB = e.target.closest('[data-ics]'); if(icsB){ const ev = EVENTS.find(x => x.id === icsB.dataset.ics); if(ev) downloadIcs(ev); icsB.closest('details')?.removeAttribute('open'); return; }
-  if(e.target.closest('[data-playhome]')){ clearTimeout(hsTimer); hsTimer = 0; dockOff(false); dockClose(); dockOpen(false); return; }
+  if(e.target.closest('[data-playhome]')){ clearTimeout(hsTimer); hsTimer = 0; hsAuto = false; dockOff(false); dockClose(); dockOpen(false); return; }
+  const cs = e.target.closest('[data-consent]');
+  if(cs){ const yes = cs.dataset.consent === 'yes'; setConsent(yes); consentBar(false);
+    if(!yes){ clearTimeout(hsTimer); hsTimer = 0; if(hsAuto) dockClose(); hsAuto = false; return; }      // declined: no automatic player from now on
+    dockOff(false); clearTimeout(hsTimer); hsTimer = 0;                                                // accepted: start right away, muted
+    if(!document.getElementById('hsDock') && !(navigator.connection && navigator.connection.saveData) && $('#player').hidden){ hsAuto = true; dockOpen(true); }
+    return; }
+  if(e.target.closest('[data-cookieset]')){ e.preventDefault(); consentBar(true); return; }
   if(e.target.closest('[data-dockclose]')){ dockOff(true); dockClose(); return; }
   if(e.target.closest('[data-twlogin]')){ twLogin(); return; }
   if(e.target.closest('[data-twlogout]')){ twLogout(); return; }

@@ -1050,3 +1050,18 @@ body.dock-mini .to-top{bottom:calc(72px + 34px + 340px * 9 / 16 + 14px)}
   .hs-dock.mini{right:12px;bottom:calc(76px + env(safe-area-inset-bottom));width:min(240px,62vw)}
   body.dock-mini .to-top{bottom:calc(76px + env(safe-area-inset-bottom) + 34px + min(240px,62vw) * 9 / 16 + 12px)}
 }
+
+/* cookie banner (the Twitch player only starts by itself after Accept) */
+.cookie-bar{position:fixed;z-index:50;left:288px;bottom:74px;width:min(600px,calc(100vw - 312px));display:flex;align-items:center;gap:18px;padding:16px 18px;
+  background:var(--panel);border:1px solid var(--line-2);border-radius:16px;box-shadow:0 24px 50px -16px var(--sh);animation:cbIn .25s ease-out}
+.cookie-bar .cb-t{flex:1;min-width:0}
+.cookie-bar .cb-t b{font-size:15px}
+.cookie-bar p{font-size:13px;line-height:1.5;color:var(--muted);margin-top:4px}
+.cookie-bar p a{color:var(--text);text-decoration:underline;text-underline-offset:2px}
+.cookie-bar .cb-b{display:flex;gap:8px;flex:none}
+.cookie-bar .btn{padding:9px 16px;font-size:13.5px}
+@keyframes cbIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@media (max-width:880px){
+  .cookie-bar{left:12px;right:12px;width:auto;bottom:calc(76px + env(safe-area-inset-bottom));flex-direction:column;align-items:stretch;gap:12px;padding:14px 16px}
+  .cookie-bar .cb-b .btn{flex:1;justify-content:center}}
+@media (prefers-reduced-motion:reduce){.cookie-bar{animation:none}}

@@ -1,6 +1,14 @@
 [
  {
   "date": "2026-10-15",
+  "title": "Cookie banner",
+  "items": [
+   {"type": "new", "text": "Cookie banner: the 24/7 stream only starts by itself, muted in a small player, after you click Accept, because the Twitch player sets Twitch's own cookies. If you decline, it plays only when you click play. Change your choice any time with Cookie settings at the bottom of every page."},
+   {"type": "improved", "text": "Privacy Policy updated for the cookie banner."}
+  ]
+ },
+ {
+  "date": "2026-10-15",
   "title": "Badge event fixes",
   "items": [
    {"type": "fixed", "text": "LoL 2026 World Championship is now three events with the dates from Twitch: Heartsteel Fan (watch 30 minutes in League of Legends, Oct 14, 16:00 to Oct 27, 15:59 UTC) and Worlds 2026 Supporter (sub or gift a Tier 1 sub on one of the 105 eligible channels, Oct 14, 19:00 to Nov 15, 18:59 UTC) are running; the K/DA, Pentakill and True Damage Fan badges come later."},
