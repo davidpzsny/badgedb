@@ -547,8 +547,7 @@ def update_popularity(live):
         if sid: counts[sid] = max(counts.get(sid, 0), int(n))    # multi-version sets: the largest version
     if not counts:
         print(f"popularity: could not match any badge -> first row {str(items[0])[:300]}"); status("popularity", f"no badge matched, first row: {str(items[0])[:300]}"); return
-    sdb = pop.get("sdb") or {}                                  # counts taken from StreamDatabase via /admin/: kept for
-    for sid, n in sdb.items(): counts.setdefault(sid, n)         # badges PotatBotat doesn't count yet
+    sdb = pop.get("sdb") or {}                                  # StreamDatabase counts from /admin/ (stream overlay): kept
     json.dump({"updated": today, "source": "PotatBotat (potat.app)", "counts": dict(sorted(counts.items(), key=lambda kv: -kv[1])),
                **({"sdb": sdb, "sdb_updated": pop.get("sdb_updated")} if sdb else {})},
               open(POP_DB, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))

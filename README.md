@@ -223,6 +223,10 @@ OBS → Sources → + → Browser, URL above, Width `1920`, Height `1080`. It is
 - `HIDE_AVAILABLE_IN` (default `Always On`): in these categories the whole "Available here" part is hidden
   (it also hides itself when there is nothing to show).
 - The left column ("Added in the last 14 days") and the footer counters come from `badges.json` / `events.json` every 5 minutes.
+  USERS there is StreamDatabase's count: `/admin/` → **Overlay user counts** writes `sdb-request.json`, the bot's next run
+  (within 5 minutes) loads StreamDatabase's badge list once and saves the counts in `popularity.json` under `sdb`
+  (`bot/sdb_users.py`; result in `status.json` → `sdb_users`). Badges StreamDatabase has no number for fall back to
+  PotatBotat's count. The site itself keeps using PotatBotat's counts.
   The last good copy is kept in the browser source, so the overlay stays filled if the data can't be loaded.
 - **After every change** set `OVERLAY_V` in `index.html` and `v` in `version.json` to the same new value. The overlay checks
   `version.json` every 30 seconds and reloads itself, so the stream PC needs no action (about 1 to 2 minutes after the commit).

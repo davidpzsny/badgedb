@@ -171,7 +171,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-10-15.1";   // bump together with version.json after every change
+const OVERLAY_V = "2026-10-15.2";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -241,7 +241,9 @@ const EXTRA_AVAILABLE = [
 const HIDE_AVAILABLE_IN = ['Always On'];
 const CHANNEL = 'badge_db';
 
-/* Footer counters: read live from badgedatabase.com every 5 minutes; these are only the fallback. */
+/* Footer counters: read live from badgedatabase.com every 5 minutes; these are only the fallback.
+   USERS in the left column: StreamDatabase's count (updated with "User counts from StreamDatabase" in /admin/),
+   else PotatBotat's from popularity.json. */
 const FALLBACK_COUNTS = { active: 16, upcoming: 6, tba: 19, free: 5 };
 /* ============================================================================== */
 
@@ -277,7 +279,7 @@ async function loadStats(){
   if(pop && pop.counts) cacheSet('pop', pop); else pop = cacheGet('pop');
   if(Array.isArray(evs)) site.events = evs;
   if(Array.isArray(badges)){ site.badgesRaw = badges; site.badges = groupBadges(badges); }
-  if(pop && pop.counts) site.pop = pop.counts;
+  if(pop && pop.counts){ site.pop = pop.counts; site.sdb = pop.sdb || {}; }
   render();
   if(!site.events) setTimeout(loadStats, 30000);                                                   // nothing yet: try again soon
 }
@@ -358,12 +360,12 @@ function siteCounts(now){                     // same rules as the site: badge c
 }
 function siteItems(now){                      // every badge set added in the last 14 days, newest first
   const badges = site.badges; if(!badges) return null;
-  const pop = site.pop || {}, byImg = evByImg(), cutoff = now - 14 * 864e5;
+  const pop = site.pop || {}, sdb = site.sdb || {}, byImg = evByImg(), cutoff = now - 14 * 864e5;
   const list = badges.filter(b => b.added && Date.parse(b.added) >= cutoff).sort((a, b) => b.added.localeCompare(a.added));
   if(!list.length) return null;
   return list.map(b => { const e = b.imgs.map(i => byImg[i]).find(Boolean);
     const cost = e && e.b.cost && e.b.cost !== 'na' ? e.b.cost : b.free ? 'free' : '';
-    const d = new Date(b.added + 'T00:00:00Z'), users = pop[b.set] || b.users || 0;   // 0 = PotatBotat has no count yet
+    const d = new Date(b.added + 'T00:00:00Z'), users = sdb[b.set] || pop[b.set] || b.users || 0;   // StreamDatabase (admin button), else PotatBotat; 0 = N/A
     return { slot: 'auto-' + b.set, added: `${M[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`, users: users ? users.toLocaleString('en-US') : 'N/A', cost, title: b.name, sub: 'Global Badge', img: b.img }; });
 }
 
@@ -513,7 +515,7 @@ async function checkVersion(){
 }
 
 (function fromCache(){ const e = cacheGet('events'), b = cacheGet('badges'), p = cacheGet('pop');
-  if(Array.isArray(e)) site.events = e; if(Array.isArray(b)){ site.badgesRaw = b; site.badges = groupBadges(b); } if(p && p.counts) site.pop = p.counts; })();
+  if(Array.isArray(e)) site.events = e; if(Array.isArray(b)){ site.badgesRaw = b; site.badges = groupBadges(b); } if(p && p.counts){ site.pop = p.counts; site.sdb = p.sdb || {}; } })();
 render();
 setInterval(render, 1000);
 loadStats(); setInterval(loadStats, 300000);

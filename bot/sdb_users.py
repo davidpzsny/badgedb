@@ -3,7 +3,8 @@
 Runs only when it was asked for with the "User counts from StreamDatabase" button in /admin/ (the button writes
 sdb-request.json; this runs when that request is newer than the last one handled). One page load per button press:
 StreamDatabase's global badge list (newest first) shows "Users" for every badge. The counts go into popularity.json
-(the site and the overlay read them from there); the result is reported in status.json under "sdb_users".
+under "sdb" (only the stream overlay uses them; the site keeps PotatBotat's counts, which are counted differently and
+are much higher); the result is reported in status.json under "sdb_users".
 """
 import datetime, html as htmlmod, json, os, re
 import requests
@@ -100,10 +101,10 @@ def run():
     how = "list"
     if not any(found.get(s) is not None for s in targets):
         found, how = parse_json(page), "json"
-    # what the page looked like, so the parser can be fixed if StreamDatabase changes its layout
+    # nothing recognised: keep what the page looked like, so the parser can be fixed if StreamDatabase changes its layout
     first = next((m for m in LINK_RE.finditer(page)), None)
     keys = sorted(set(re.findall(r'"(user_?count|userCount|usersCount|users_count|holders)"', page.replace('\\"', '"'))))
-    out["sdb_users_debug"] = {"at": _now(), "msg": json.dumps({
+    if not found: out["sdb_users_debug"] = {"at": _now(), "msg": json.dumps({
         "bytes": len(page), "links": len(LINK_RE.findall(page)), "users_labels": len(USERS_RE.findall(_text(page))), "json_keys": keys,
         "parsed": how, "sample": dict(list(found.items())[:8]),
         "html_near_first_badge": page[max(0, first.start() - 1200): first.start() + 1800] if first else page[:2500]}, ensure_ascii=False)}
@@ -111,8 +112,7 @@ def run():
     missing = [targets[s] for s in targets if s not in found]
     if counts:
         pop = _load(POP_DB, {})
-        pop.setdefault("counts", {}).update(counts)
-        pop["sdb"] = {**(pop.get("sdb") or {}), **counts}            # kept when the daily PotatBotat update replaces counts
+        pop["sdb"] = {**(pop.get("sdb") or {}), **counts}            # kept when the daily PotatBotat update rewrites the file
         pop["sdb_updated"] = _now()
         json.dump(pop, open(POP_DB, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     na = [targets[s] for s in targets if s in found and found[s] is None]

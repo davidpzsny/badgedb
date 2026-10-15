@@ -1441,15 +1441,39 @@ function admShowPopPaste(){
 }
 async function admStorePopularity(c){
   try{
-    let sha; try{ sha = (await gh("contents/popularity.json?ref=main")).sha; }catch(_){}
+    let sha, keep = {};
+    try{ const f = await gh("contents/popularity.json?ref=main", {cache:"no-store"}); sha = f.sha;
+      const old = JSON.parse(b64decode(f.content)); if(old.sdb) keep = {sdb: old.sdb, sdb_updated: old.sdb_updated}; }catch(_){}   // keep the overlay's StreamDatabase counts
     const body = {message:"Update badge popularity via admin", branch:"main",
-      content: b64encode(JSON.stringify({updated:c.updated, source:c.source, counts:c.counts})), ...(sha?{sha}:{})};
+      content: b64encode(JSON.stringify({updated:c.updated, source:c.source, counts:c.counts, ...keep})), ...(sha?{sha}:{})};
     await gh("contents/popularity.json", {method:"PUT", body:JSON.stringify(body)});
     POP = c; applyPopularity(); renderPopularity(); renderGlobal();
     try{ localStorage.setItem(POP_CACHE, JSON.stringify({...c, t: Date.now()})); }catch(_){}
     $('#admPopBox')?.remove();
     admSetStatus(`Saved popularity for ${Object.keys(c.counts).length} badges — the site updates in a few minutes`,"ok");
   }catch(e){ admSetStatus("Could not save popularity: "+e.message,"err"); }
+}
+/* "Overlay user counts": asks the bot (sdb-request.json) to load StreamDatabase's badge list once and save the user
+   counts of the badges added in the last 14 days for the stream overlay, then waits for the bot's answer. */
+async function admSdbUsers(){
+  const at = new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
+  admSetStatus("Asking the bot to read the user counts from StreamDatabase…");
+  try{
+    let sha; try{ sha = (await gh("contents/sdb-request.json?ref=main", {cache:"no-store"})).sha; }catch(_){}
+    await gh("contents/sdb-request.json", {method:"PUT", body:JSON.stringify({message:"Overlay user counts from StreamDatabase via admin", branch:"main",
+      content:b64encode(JSON.stringify({at}) + "\n"), ...(sha?{sha}:{})})});
+  }catch(e){ admSetStatus("Could not send the request: " + e.message, "err"); return; }
+  try{ await gh("actions/workflows/badges.yml/dispatches", {method:"POST", body:JSON.stringify({ref:"main"})}); }catch(_){}   // needs Actions access; otherwise the bot's next run (within 5 min) picks it up
+  admSetStatus("Requested. The bot reads StreamDatabase within about 5 minutes, waiting for the result…");
+  const t0 = Date.now();
+  const poll = async () => {
+    try{ const st = JSON.parse(b64decode((await gh("contents/status.json?ref=main", {cache:"no-store"})).content)).sdb_users;
+      if(st && st.req === at){ const bad = /crash|could not|HTTP \d/i.test(st.msg);
+        admSetStatus(bad ? "StreamDatabase: " + st.msg : `Done: ${st.msg}. The stream overlay shows them within 5 minutes.`, bad ? "err" : "ok"); return; } }catch(_){}
+    if(Date.now() - t0 < 15 * 60000) setTimeout(poll, 20000);
+    else admSetStatus("No answer from the bot yet. Look again later under Actions, Check Twitch badges.", "err");
+  };
+  setTimeout(poll, 20000);
 }
 function admNeeds(ev){ if(isStale(ev)) return false; return !ev.start || ev.badges.some(b=>b.cost==="na" || is_ph(b.how)) || !ev.category || ev.category==="Unknown"; }
 const is_ph = h => { h=(h||"").trim().toLowerCase(); return !h || h==="objective not announced yet." || h==="objective not confirmed yet." || h.startsWith("watch in the category (exact time"); };
@@ -1472,7 +1496,7 @@ function renderAdmin(){
     return;
   }
   top.innerHTML = `<span class="adm-status" id="admStatus">${esc(ADM.status)}</span>
-    <button class="btn ghost" id="admReload">Reload</button><button class="btn ghost" id="admNew">+ New event</button><button class="btn ghost" id="admPop" title="Fetch badge user counts from potat.app in this browser and save them to the site">Update popularity</button><button class="btn" id="admSave">Save changes</button>
+    <button class="btn ghost" id="admReload">Reload</button><button class="btn ghost" id="admNew">+ New event</button><button class="btn ghost" id="admPop" title="Fetch badge user counts from potat.app in this browser and save them to the site">Update popularity</button><button class="btn ghost" id="admSdb" title="Read the user counts of the badges added in the last 14 days from StreamDatabase, for the stream overlay">Overlay user counts</button><button class="btn" id="admSave">Save changes</button>
     <button class="btn ghost" id="admLogout" title="Forget token on this device">Sign out</button>`;
   if(!ADM.events.length){ body.innerHTML = `<div class="empty">Loading events…</div>`; return; }
   const list = ADM.events.map((ev,i)=>({ev,i})).filter(({ev})=> ADM.filter==="all" ? true : ADM.filter==="needs" ? admNeeds(ev) : ["live","soon"].includes(status(ev)));
@@ -1542,6 +1566,7 @@ document.addEventListener('click', e=>{
   if(e.target.id==='admReload'){ if(!ADM.dirty || confirm("Discard unsaved changes?")) admLoad(); return; }
   if(e.target.id==='admSave'){ admSave(); return; }
   if(e.target.id==='admPop'){ admSavePopularity(); return; }
+  if(e.target.id==='admSdb'){ admSdbUsers(); return; }
   if(e.target.id==='admPopClose'){ $('#admPopBox')?.remove(); return; }
   if(e.target.id==='admPopSave'){
     const raw = $('#admPopText').value, a = raw.search(/[\[{]/), z = Math.max(raw.lastIndexOf('}'), raw.lastIndexOf(']'));
