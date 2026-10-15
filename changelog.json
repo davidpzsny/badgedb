@@ -1,6 +1,13 @@
 [
  {
   "date": "2026-10-15",
+  "title": "Badge event updates",
+  "items": [
+   {"type": "fixed", "text": "D&D Dungeon Masters (d20): only counts on twitch.tv/dnd, now listed as its own event with that channel. Ampersand still counts on any channel in the category."}
+  ]
+ },
+ {
+  "date": "2026-10-15",
   "title": "Cookie banner",
   "items": [
    {"type": "new", "text": "Cookie banner: the 24/7 stream only starts by itself, muted in a small player, after you click Accept, because the Twitch player sets Twitch's own cookies. If you decline, it plays only when you click play. Change your choice any time with Cookie settings at the bottom of every page."},

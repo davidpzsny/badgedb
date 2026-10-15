@@ -651,8 +651,8 @@
   "dates_src": "manual"
  },
  {
-  "id": "dnd-dungeon-masters",
-  "name": "D&D: World of Warcraft (Dungeon Masters)",
+  "id": "dnd-dungeon-masters-d20",
+  "name": "D&D: World of Warcraft (d20)",
   "category": "Dungeons & Dragons",
   "start": "2026-09-24T01:15:00Z",
   "end": "2026-10-21T06:58:00Z",
@@ -664,7 +664,20 @@
     "cost": "free",
     "desc": "This badge was earned by watching Dungeon Masters on Twitch.",
     "how_src": "manual"
-   },
+   }
+  ],
+  "channels": [
+   "dnd"
+  ],
+  "name_src": "manual"
+ },
+ {
+  "id": "dnd-dungeon-masters",
+  "name": "D&D: World of Warcraft (Dungeon Masters)",
+  "category": "Dungeons & Dragons",
+  "start": "2026-09-24T01:15:00Z",
+  "end": "2026-10-21T06:58:00Z",
+  "badges": [
    {
     "name": "Ampersand",
     "img": "b17f6b68-4a2d-4d2a-9967-aa8ff26012a0",
@@ -672,7 +685,8 @@
     "cost": "paid",
     "desc": "This badge was earned by subscribing to a streamer in the Dungeons & Dragons category."
    }
-  ]
+  ],
+  "name_src": "manual"
  },
  {
   "id": "atlus-2026",
