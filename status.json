@@ -1,18 +1,18 @@
 {
  "popularity_http": {
-  "at": "2026-10-15T04:00:09+00:00",
-  "msg": "HTTP 403, 4829 bytes, starts with: <!DOCTYPE html>\n<!--[if lt IE 7]> <html class=\"no-js ie6 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 7]>    <html class=\"no-js ie7 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 8]>    <html class=\"no-js ie8 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if gt IE 8]><!--> <html class=\"no-js\" lang=\"en-US\"> <!"
+  "at": "2026-10-15T04:00:55+00:00",
+  "msg": "HTTP 403, 4831 bytes, starts with: <!DOCTYPE html>\n<!--[if lt IE 7]> <html class=\"no-js ie6 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 7]>    <html class=\"no-js ie7 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 8]>    <html class=\"no-js ie8 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if gt IE 8]><!--> <html class=\"no-js\" lang=\"en-US\"> <!"
  },
  "popularity": {
-  "at": "2026-10-15T04:00:09+00:00",
+  "at": "2026-10-15T04:00:55+00:00",
   "msg": "request failed: Expecting value: line 1 column 1 (char 0)"
  },
  "emotes": {
-  "at": "2026-10-15T04:00:13+00:00",
+  "at": "2026-10-15T04:00:59+00:00",
   "msg": "303 live, 0 new, 0 removed"
  },
  "top_categories": {
-  "at": "2026-10-15T04:00:12+00:00",
+  "at": "2026-10-15T04:00:58+00:00",
   "msg": "150 categories, #1 Just Chatting"
  },
  "drop_campaigns": {
@@ -24,11 +24,11 @@
   "msg": "Castlevania: Belmont's Curse at 2026-10-15T04:00:00Z -> tweet 2110581453365096698"
  },
  "discord_events": {
-  "at": "2026-10-15T04:00:09+00:00",
-  "msg": "0 created, 1 started, 0 updated, 0 closed"
+  "at": "2026-10-15T04:00:55+00:00",
+  "msg": "0 created, 0 started, 0 updated, 0 closed"
  },
  "live_channels": {
-  "at": "2026-10-15T04:00:13+00:00",
+  "at": "2026-10-15T04:00:59+00:00",
   "msg": "10 running events, 81 live streams, badge_db live"
  }
 }
