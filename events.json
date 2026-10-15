@@ -3,8 +3,8 @@
   "id": "streamer-awards-2026-vote",
   "name": "The Streamer Awards 2026",
   "category": "Unknown",
-  "start": "",
-  "end": "",
+  "start": "2026-10-16T17:00:00Z",
+  "end": "2026-10-17T04:59:00Z",
   "badges": [
    {
     "name": "Streamer Awards 2026 Vote",
@@ -18,7 +18,8 @@
   "name_src": "manual",
   "channels": [
    "QTCinderella"
-  ]
+  ],
+  "dates_src": "manual"
  },
  {
   "id": "enshrouded",
