@@ -687,6 +687,10 @@ def update_live_channels(token, events, per_event=8):
             if chans:                                            # the event names its channels: show the live ones
                 for i in range(0, len(chans), 100):
                     streams += helix_get(token, "streams", [("user_login", c) for c in chans[i:i + 100]] + [("first", "100")])
+                cat = (ev.get("category") or "").strip()            # ...and only while they stream the event's category
+                if cat and not any(w in cat.lower() for w in GENERIC_CATEGORY) and "," not in cat:
+                    gid = game_id(cat)
+                    if gid: streams = [s for s in streams if s.get("game_id") == gid]
             else:
                 cat = (ev.get("category") or "").strip()
                 if not cat or any(w in cat.lower() for w in GENERIC_CATEGORY) or "," in cat: continue
@@ -697,7 +701,7 @@ def update_live_channels(token, events, per_event=8):
             print("live channels: lookup failed for", ev.get("id"), "->", e); continue
         streams = sorted(streams, key=lambda x: -x.get("viewer_count", 0))
         rows = [row(s) for s in streams if s.get("user_login", "").lower() != OUR_CHANNEL][:per_event]
-        if ours and ((gid and ours.get("game_id") == gid) or OUR_CHANNEL in chans):
+        if ours and ((OUR_CHANNEL in chans and (not gid or ours.get("game_id") == gid)) if chans else (gid and ours.get("game_id") == gid)):
             rows.insert(0, dict(row(ours), ours=True))
         out[ev["id"]] = {"category": ev.get("category", ""), "game_id": gid, "streams": rows}
 

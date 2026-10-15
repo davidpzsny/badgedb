@@ -194,14 +194,14 @@ def channels_html(ev, cat):
     ch = ev_channels(ev)
     drops = (f'https://www.twitch.tv/directory/category/{e(re.sub(r"[^a-z0-9]+", "-", cat.lower()).strip("-"))}?filter=drops' if real_cat(cat) else "")
     if ch:
-        chips = "".join(f'<a class="chan" href="https://twitch.tv/{e(c)}" target="_blank" rel="noopener">{e(c)}</a>' for c in ch[:100])
-        if len(ch) > 100: chips += f'<span class="chan more">+{len(ch) - 100} more</span>'
+        chips = "".join(f'<a class="chan" href="https://twitch.tv/{e(c)}" target="_blank" rel="noopener">{e(c)}</a>' for c in ch[:150])
+        if len(ch) > 150: chips += f'<span class="chan more">+{len(ch) - 150} more</span>'
         note = ""
         if ev.get("channels_partial"):
             note = f'<div class="chan-note">{e(ev.get("channels_note") or "These are some of the participating channels.")}' + \
                    (f' <a href="{drops}" target="_blank" rel="noopener">See every live participating channel on Twitch ↗</a>' if drops else "") + "</div>"
         return f'<div class="chans">{chips}</div>{note}'
-    return f'Any channel in the category with Drops enabled — <a href="{drops}" target="_blank" rel="noopener">see live channels ↗</a>' if drops else "Any"
+    return f'Any channel in the category with Drops enabled. <a href="{drops}" target="_blank" rel="noopener">See live channels ↗</a>' if drops else "Any"
 
 def tile(img, alt=""):
     return f'<span class="tile"><img src="{CDN.format(img)}" alt="{e(alt)}" loading="lazy"></span>' if img else '<span class="tile"><span class="ph">?</span></span>'

@@ -1103,12 +1103,12 @@ function channelsHtml(ev, cat){
   const ch = evChannels(ev), hasCat = cat && !/any|unknown|twitch/i.test(cat);
   const drops = hasCat ? `${catUrl(cat)}?filter=drops` : "";
   if(ch.length){
-    const chips = ch.slice(0, 100).map(c => `<a class="chan" href="https://twitch.tv/${esc(c)}" target="_blank" rel="noopener">${esc(c)}</a>`).join("")
-                + (ch.length > 100 ? `<span class="chan more">+${ch.length - 100} more</span>` : "");
+    const chips = ch.slice(0, 150).map(c => `<a class="chan" href="https://twitch.tv/${esc(c)}" target="_blank" rel="noopener">${esc(c)}</a>`).join("")
+                + (ch.length > 150 ? `<span class="chan more">+${ch.length - 150} more</span>` : "");
     const note = ev.channels_partial ? `<div class="chan-note">${esc(ev.channels_note || "These are some of the participating channels.")}${drops ? ` <a href="${drops}" target="_blank" rel="noopener">See every live participating channel on Twitch ↗</a>` : ""}</div>` : "";
     return `<div class="chans">${chips}</div>${note}`;
   }
-  return hasCat ? `Any channel in the category with Drops enabled — <a href="${drops}" target="_blank" rel="noopener">see live channels ↗</a>` : "Any";
+  return hasCat ? `Any channel in the category with Drops enabled. <a href="${drops}" target="_blank" rel="noopener">See live channels ↗</a>` : "Any";
 }
 const catUrl = c => `https://www.twitch.tv/directory/category/${encodeURIComponent(c.toLowerCase().replace(/[:'’]/g,'').replace(/\s+/g,'-'))}`;
 /* ---------- "Watch now": live streams for a running event (live.json, written by the bot every 15 min) ---------- */

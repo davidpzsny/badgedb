@@ -7,7 +7,8 @@
    {"type": "fixed", "text": "Enshrouded (Flameborn Sigil): watch 15 minutes, Oct 15, 08:00 to Oct 29, 22:58 UTC."},
    {"type": "fixed", "text": "Pokémon Night Out 2026 and the First Partners evolutions: objectives added (sub, gift or watch 20 minutes a day for 3 days; evolutions need the previous badge)."},
    {"type": "fixed", "text": "The Streamer Awards 2026 vote badge: watch the show on twitch.tv/qtcinderella and vote."},
-   {"type": "fixed", "text": "Badges that can be earned in any category no longer link to a Twitch category page that doesn't exist."}
+   {"type": "fixed", "text": "Badges that can be earned in any category no longer link to a Twitch category page that doesn't exist."},
+   {"type": "fixed", "text": "Worlds 2026 Supporter only counts on 105 eligible channels: the badge page lists all of them, and Watch now shows only those channels while they stream League of Legends."}
   ]
  },
  {
