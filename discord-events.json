@@ -78,5 +78,9 @@
  "ffxiv-quest-complete-chat": {
   "id": "1560281457597882480",
   "sig": "[{\"description\": \"\\u2022 Quest Complete Chat: Watch the Fan Fest on /finalfantasyxiv for 60 minutes.\\n\\nDetails and all dates: https://badgedatabase.com/badges/final-fantasy-xiv-fan-festival-2026-jp---quest-complete-chat/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/final-fantasy-xiv-fan-festival-2026-jp---quest-complete-chat/\"}, \"name\": \"Final Fantasy XIV Fan Festival 2026 JP (Quest Complete Chat)\", \"scheduled_end_time\": \"2026-11-01T23:59:00Z\"}, \"2026-10-30T00:00:00Z\"]"
+ },
+ "streamer-awards-2026-vote": {
+  "id": "1560382606670037072",
+  "sig": "[{\"description\": \"\\u2022 Streamer Awards 2026 Vote: Watch The Streamer Awards on twitch.tv/qtcinderella and vote.\\n\\nDetails and all dates: https://badgedatabase.com/badges/streamer-awards-2026-vote/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/streamer-awards-2026-vote/\"}, \"name\": \"The Streamer Awards 2026\", \"scheduled_end_time\": \"2026-10-17T04:59:00Z\"}, \"2026-10-16T17:00:00Z\"]"
  }
 }
