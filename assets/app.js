@@ -454,7 +454,8 @@ function calRange(st){
   const d=new Date(); d.setHours(0,0,0,0);
   d.setDate(d.getDate() - ((d.getDay()+6)%7));               // Monday of the current week
   d.setDate(d.getDate() + (st.span===7 ? st.offset*7 : st.offset*28 - 7));
-  const a0=d.getTime(); return [a0, a0 + st.span*DAY];
+  const a0=d.getTime(), end=new Date(d); end.setDate(end.getDate() + st.span);   // calendar days, so a clock change (DST) doesn't shift them
+  return [a0, end.getTime()];
 }
 function calRows(a0,a1){
   const out=[];
@@ -480,16 +481,20 @@ function leftText(r){
   if(r.st==="live") return fmtD(r.e-now)+" left";
   return "ended";
 }
+// width of a text in the site's bold font, for placing labels next to short calendar bars
+const textW = (() => { let c; return (t, px) => { if(!c){ c = document.createElement('canvas').getContext('2d'); }
+  c.font = `700 ${px}px ${getComputedStyle(document.body).fontFamily}`; return c.measureText(String(t)).width; }; })();
 function renderCalendar(id){
   const el=document.getElementById(id); if(!el) return; const st=CAL[id];
   const [a0,a1]=calRange(st), n=st.span, now=Date.now(), rows=calRows(a0,a1).filter(r => r.st!=='ended');
   const compact = window.matchMedia('(max-width:640px)').matches;
   const cols = compact && n===28 ? 4 : n;                           // phones: 4 week columns instead of 28 day columns
-  const days=Array.from({length:cols},(_,i)=>{ const step = cols===n ? DAY : 7*DAY, d=new Date(a0+i*step);
+  const days=Array.from({length:cols},(_,i)=>{ const step = cols===n ? DAY : 7*DAY, d=new Date(a0); d.setDate(d.getDate() + i * (cols===n ? 1 : 7));
     const t = cols===n ? d.toDateString()===new Date().toDateString() : (now>=d.getTime() && now<d.getTime()+step);
     if(compact) return `<div class="cal-day ${t?'today':''} ${cols===n&&[0,6].includes(d.getDay())?'wk':''}">${cols===n?d.toLocaleDateString(undefined,{weekday:'narrow'}):'Week of'}<b>${cols===n?d.getDate():d.toLocaleDateString(undefined,{month:'short',day:'numeric'})}</b></div>`;
     return `<div class="cal-day ${t?'today':''} ${[0,6].includes(d.getDay())?'wk':''}">${d.toLocaleDateString(undefined,{weekday:'short'})}<b>${d.toLocaleDateString(undefined,{month:'short',day:'numeric'})}</b></div>`; }).join('');
   const shown = st.limit && !st.all ? rows.slice(0, st.limit) : rows;
+  const W = Math.max(el.clientWidth || 1000, n===28 ? 1400 : 760);   // width of the day grid in px (for labels next to short bars)
   const bars=shown.map((r,k)=>{
     const s=Math.max(r.s,a0), e=Math.min(r.e,a1);
     const left=(s-a0)/(a1-a0)*100, width=Math.max((e-s)/(a1-a0)*100, 1.2), w=Math.min(width,100-left);
@@ -500,10 +505,15 @@ function renderCalendar(id){
     const inLabel = w < (n===7 ? 30 : 12) ? `<span class="nm">${esc(nm)}</span>` : label;
     const bar = `<button class="cal-bar ${r.b.cost||'na'} ${r.st==='soon'?'soon':''} ${r.st==='ended'?'ended':''} ${r.s<a0?'cut-l':''} ${r.e>a1?'cut-r':''}"
       style="left:${left}%;width:${narrow?`max(${w}%,34px)`:w+'%'}" data-k="${k}" ${set?`data-set="${esc(set)}"`:`data-ev="${esc(r.ev.id)}"`}>${icon}${narrow?'':inLabel}</button>`;
-    // short bars: put the name next to the bar instead of inside it (or before it, near the right edge)
-    const out = !narrow ? '' : (left + w > 70
-      ? `<span class="cal-out" style="right:calc(${100-left}% + 4px);flex-direction:row-reverse;padding:0 8px 0 0">${label}</span>`
-      : `<span class="cal-out" style="left:calc(${left}% + max(${w}%, 34px) + 4px)">${label}</span>`);
+    // short bars: the name (with the countdown under it) goes next to the bar, on the right when it fits there,
+    // otherwise on the left, ending at the bar; on a background of its own, so grid lines don't run through the text
+    let out = '';
+    if(narrow){
+      const lft = leftText(r), need = Math.max(textW(nm, 12.5), textW(lft, 10.5)) + 16, barPx = Math.max(w / 100 * W, 34);
+      const roomR = W * (1 - left / 100) - barPx - 8, roomL = W * left / 100 - 8;
+      const right = need <= roomR || roomR >= 110 || roomR >= roomL;          // right side (a long name is shortened with …) unless there is no room
+      out = `<span class="cal-out ${right ? '' : 'l'}" style="${right ? `left:calc(${left}% + max(${w}%, 34px) + 6px)` : `right:calc(${100-left}% + 6px)`};max-width:${Math.max(Math.floor(right ? roomR : roomL), 60)}px" ${set?`data-set="${esc(set)}"`:`data-ev="${esc(r.ev.id)}"`}><span class="nm">${esc(nm)}</span><span class="lft">${lft}</span></span>`;
+    }
     const pctL=(s-a0)/(a1-a0)*100, pctW=Math.max((e-s)/(a1-a0)*100,1.5), urgent=r.st==="live" && r.e-now<48*36e5;
     const nowTick = now>=a0 && now<a1 ? `<span class="nowt" style="left:${(now-a0)/(a1-a0)*100}%"></span>` : '';
     const mrow = `<button class="cal-m ${r.b.cost||'na'} ${r.st==='soon'?'soon':''} ${r.st==='ended'?'ended':''}" data-k="${k}" ${set?`data-set="${esc(set)}"`:`data-ev="${esc(r.ev.id)}"`}>
@@ -534,7 +544,7 @@ document.addEventListener('click', e=>{
   const nv=e.target.closest('[data-calnav] button'); if(nv){ const id=nv.parentElement.dataset.calnav, d=+nv.dataset.d; CAL[id].offset = d===0?0:CAL[id].offset+d; renderCalendar(id); return; }
   const ca=e.target.closest('[data-calall]'); if(ca){ const id=ca.dataset.calall; CAL[id].all=!CAL[id].all; renderCalendar(id); return; }
   const vw=e.target.closest('[data-calview] button'); if(vw){ const id=vw.parentElement.dataset.calview; CAL[id].span=+vw.dataset.span; CAL[id].offset=0; renderCalendar(id); return; }
-  const cb=e.target.closest('.cal-bar[data-set], .cal-m[data-set]'); if(cb){ hideTip(); navigate('/badges/'+encodeURIComponent(cb.dataset.set)+'/'); }
+  const cb=e.target.closest('.cal-bar[data-set], .cal-m[data-set], .cal-out[data-set]'); if(cb){ hideTip(); navigate('/badges/'+encodeURIComponent(cb.dataset.set)+'/'); }
 });
 const calTip = document.createElement('div'); calTip.id='calTip'; document.body.appendChild(calTip);
 function hideTip(){ calTip.classList.remove('show'); }

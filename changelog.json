@@ -1,6 +1,14 @@
 [
  {
   "date": "2026-10-15",
+  "title": "Calendar fixes",
+  "items": [
+   {"type": "fixed", "text": "Calendar: short badge events (a few hours long) show their name and countdown neatly next to the bar, on the right side when there is room, without lines running through the text. The label is clickable too."},
+   {"type": "fixed", "text": "Calendar: day headers no longer repeat a date around the clock change (Oct 25)."}
+  ]
+ },
+ {
+  "date": "2026-10-15",
   "title": "Badge event updates",
   "items": [
    {"type": "fixed", "text": "D&D Dungeon Masters (d20): only counts on twitch.tv/dnd, now listed as its own event with that channel. Ampersand still counts on any channel in the category."},

@@ -272,8 +272,12 @@
   .cal-day.wk{background:rgba(var(--ink),.012)}
   .cal-body{position:relative;padding:8px 0 10px;background-image:linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:calc(100% / var(--n)) 100%;min-height:120px}
   .cal-row{position:relative;height:38px}
-  .cal-out{position:absolute;top:4px;height:30px;display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;white-space:nowrap;color:var(--text);padding-left:8px;pointer-events:none}
-  .cal-out .lft{font-size:11px;color:var(--muted);font-weight:700}
+  .cal-out{position:absolute;top:4px;height:30px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:1px;padding:0 7px;border-radius:7px;
+    background:var(--panel);font-size:12.5px;font-weight:700;line-height:1.15;white-space:nowrap;color:var(--text);z-index:4;cursor:pointer}
+  .cal-out.l{align-items:flex-end;text-align:right}
+  .cal-out .nm{max-width:100%;overflow:hidden;text-overflow:ellipsis}
+  .cal-out .lft{font-size:10.5px;color:var(--muted);font-weight:700;font-variant-numeric:tabular-nums}
+  .cal-out:hover .nm{text-decoration:underline;text-underline-offset:2px}
   .cal-bar .ph{width:26px;height:26px;flex:none;border-radius:6px;background:rgba(0,0,0,.25);display:grid;place-items:center;font-size:9px;color:var(--muted)}
   .cal-more{display:flex;justify-content:center;padding:4px 0 12px}
   .cal-bar{position:absolute;top:4px;height:30px;border-radius:10px;display:flex;align-items:center;gap:8px;padding:0 10px 0 4px;font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;color:var(--text);border:1px solid transparent;transition:filter .15s;text-align:left}
