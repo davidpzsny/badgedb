@@ -219,5 +219,13 @@
   "set": "streamer-awards-2026-vote",
   "posted": "2026-10-14T20:55:26+00:00",
   "replied": true
+ },
+ "live:castlevania-belmont-s-curse": {
+  "tweet": "2110581453365096698",
+  "title": "Castlevania Belmont's Curse",
+  "set": "castlevania-belmonts-curse",
+  "posted": "2026-10-15T04:00:06+00:00",
+  "replied": true,
+  "reply": "Objective, channels and exact dates: {url}"
  }
 }
