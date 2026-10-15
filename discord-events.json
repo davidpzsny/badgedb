@@ -45,7 +45,7 @@
  },
  "ffxiv": {
   "id": "1559111256407937084",
-  "sig": "[{\"description\": \"\\u2022 Alpha Chat: Watch any creator in the FFXIV category for 60 minutes during Fan Fest.\\n\\u2022 Quest Complete Chat: Watch the Fan Fest on /finalfantasyxiv for 60 minutes.\\n\\nDetails and all dates: https://badgedatabase.com/badges/final-fantasy-xiv-fan-festival-2026-jp---alpha-chat/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/final-fantasy-xiv-fan-festival-2026-jp---alpha-chat/\"}, \"name\": \"Final Fantasy XIV Fan Festival 2026 JP\", \"scheduled_end_time\": \"2026-11-01T23:59:00Z\"}, \"2026-10-30T00:00:00Z\"]"
+  "sig": "[{\"description\": \"\\u2022 Alpha Chat: Watch any creator in the FFXIV category for 60 minutes during Fan Fest.\\n\\nDetails and all dates: https://badgedatabase.com/badges/final-fantasy-xiv-fan-festival-2026-jp---alpha-chat/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/final-fantasy-xiv-fan-festival-2026-jp---alpha-chat/\"}, \"name\": \"Final Fantasy XIV Fan Festival 2026 JP (Alpha Chat)\", \"scheduled_end_time\": \"2026-11-01T23:59:00Z\"}, \"2026-10-30T00:00:00Z\"]"
  },
  "elden-q3": {
   "id": "1559111258173874239",
@@ -74,5 +74,9 @@
  "dnd-dungeon-masters-d20": {
   "id": "1560200799651500084",
   "sig": "[{\"description\": \"\\u2022 d20: Watch twitch.tv/dnd for 30 minutes.\\n\\nDetails and all dates: https://badgedatabase.com/badges/d20/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/d20/\"}, \"name\": \"D&D: World of Warcraft (d20)\", \"scheduled_end_time\": \"2026-10-21T06:58:00Z\"}, \"2026-09-24T01:15:00Z\"]"
+ },
+ "ffxiv-quest-complete-chat": {
+  "id": "1560281457597882480",
+  "sig": "[{\"description\": \"\\u2022 Quest Complete Chat: Watch the Fan Fest on /finalfantasyxiv for 60 minutes.\\n\\nDetails and all dates: https://badgedatabase.com/badges/final-fantasy-xiv-fan-festival-2026-jp---quest-complete-chat/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/final-fantasy-xiv-fan-festival-2026-jp---quest-complete-chat/\"}, \"name\": \"Final Fantasy XIV Fan Festival 2026 JP (Quest Complete Chat)\", \"scheduled_end_time\": \"2026-11-01T23:59:00Z\"}, \"2026-10-30T00:00:00Z\"]"
  }
 }
