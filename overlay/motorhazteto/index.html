@@ -171,7 +171,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-10-14.6";   // bump together with version.json after every change
+const OVERLAY_V = "2026-10-15.1";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -313,7 +313,8 @@ function eventDesc(ev){
     return cap(orJoin(kinds.map(k => `${k} (${andJoin(names.filter((n, i) => sh[i].text === k))})`))) + ` in ${cat}.`;
   }
   const groups = new Map();                    // otherwise "Badge: objective." (badges with the same objective together)
-  hows.forEach((h, i) => { const t = tba(h) ? 'Objective to be announced' : h.replace(/\s+in the category(?=\.?$)/i, inCat);
+  hows.forEach((h, i) => { let t = tba(h) ? 'Objective to be announced' : h.replace(/\s+in the category(?=\.?$)/i, inCat);
+    if(names.length > 1) t = t.replace(/^unlock [^,]+, then /i, 'Unlock the previous badge, then ');      // evolution chains read as one line
     if(!groups.has(t)) groups.set(t, []); groups.get(t).push(names[i]); });
   const end = t => /[.!?)]$/.test(t) ? t : t + '.';
   if(groups.size === 1 && names.length === 1) return end([...groups.keys()][0]);
@@ -400,6 +401,7 @@ const OTHER_CHANNEL = /twitch\.tv\/|(^|\s)\/[a-z0-9_]{3,}/i, OUR_CHANNEL_RE = ne
 function badgeAction(b){
   const how = String(b.how || '');
   if(OTHER_CHANNEL.test(how) && !OUR_CHANNEL_RE.test(how)) return null;      // must be earned on another channel
+  if(/\b(eligible|participating) [^.]*channels?\b/i.test(how)) return null;   // only on a list of channels (badge_db is not one)
   if(b.cost === 'paid') return /ticket/i.test(how) ? null : { text: 'Sub or Gift', color: '#c4a1ff' };
   const m = how.match(/watch[^0-9]*(\d+)\s*(minutes?|mins?|hours?|h)\b/i);
   if(m) return { text: 'Watch ' + m[1] + (/^h/i.test(m[2]) ? (m[1] === '1' ? ' hour' : ' hours') : ' min'), color: '#4ade80' };

@@ -1,5 +1,16 @@
 [
  {
+  "date": "2026-10-15",
+  "title": "Badge event fixes",
+  "items": [
+   {"type": "fixed", "text": "LoL 2026 World Championship is now three events with the dates from Twitch: Heartsteel Fan (watch 30 minutes in League of Legends, Oct 14, 16:00 to Oct 27, 15:59 UTC) and Worlds 2026 Supporter (sub or gift a Tier 1 sub on one of the 105 eligible channels, Oct 14, 19:00 to Nov 15, 18:59 UTC) are running; the K/DA, Pentakill and True Damage Fan badges come later."},
+   {"type": "fixed", "text": "Enshrouded (Flameborn Sigil): watch 15 minutes, Oct 15, 08:00 to Oct 29, 22:58 UTC."},
+   {"type": "fixed", "text": "Pokémon Night Out 2026 and the First Partners evolutions: objectives added (sub, gift or watch 20 minutes a day for 3 days; evolutions need the previous badge)."},
+   {"type": "fixed", "text": "The Streamer Awards 2026 vote badge: watch the show on twitch.tv/qtcinderella and vote."},
+   {"type": "fixed", "text": "Badges that can be earned in any category no longer link to a Twitch category page that doesn't exist."}
+  ]
+ },
+ {
   "date": "2026-10-14",
   "title": "Emote dates",
   "items": [

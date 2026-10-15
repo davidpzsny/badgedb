@@ -176,6 +176,7 @@ REWARD_QUERY = """query BadgeDBRewardCampaigns {
 def fetch_reward_campaigns():
     if not GQL_OAUTH:
         print("twitch campaigns: skipped — add the TWITCH_GQL_OAUTH secret (a Twitch login token) to enable automatic dates")
+        status("reward_campaigns", "skipped: no TWITCH_GQL_OAUTH secret")
         return []
     headers = {"Client-Id": GQL_CLIENT_ID, "Authorization": f"OAuth {GQL_OAUTH}", "Content-Type": "text/plain;charset=UTF-8",
                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128 Safari/537.36"}
@@ -194,14 +195,18 @@ def fetch_reward_campaigns():
                 print(f"twitch campaigns: {len(camps)} found via {body['operationName']}")
                 for c in camps[:40]:
                     print(f"   - {c.get('name')} | {c.get('startsAt')} -> {c.get('endsAt')} | rewards: {[x.get('name') for x in c.get('rewards') or []]}")
+                status("reward_campaigns", f"ok via {body['operationName']}: {len(camps)} campaigns: " +
+                       "; ".join(f"{c.get('name')} ({(c.get('startsAt') or '')[:16]} -> {(c.get('endsAt') or '')[:16]})" for c in camps[:12])[:900])
                 return camps
             err = str((j or {}).get('errors') or j)
             print(f"twitch campaigns: {body['operationName']} gave no data -> {err[:300]}")
             if "unauthenticated" in err.lower() or "401" in err:
                 print("twitch campaigns: the TWITCH_GQL_OAUTH token was rejected — it may have expired (log out = token invalid). Copy a fresh auth-token.")
+                status("reward_campaigns", "TWITCH_GQL_OAUTH token rejected (expired?): " + err[:200])
                 return []
         except Exception as e:
             print(f"twitch campaigns: {body['operationName']} failed -> {e}")
+    status("reward_campaigns", "no data from Twitch (see the run log)")
     return []
 
 DROPS_QUERY = """query BadgeDBDropCampaigns {

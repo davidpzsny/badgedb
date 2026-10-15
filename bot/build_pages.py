@@ -187,9 +187,12 @@ def ev_channels(ev):
         if c and c not in out: out.append(c)
     return out
 
+GENERIC_CAT = re.compile(r"\b(any|unknown|various|multiple|eligible)\b|twitchcon", re.I)   # not a real Twitch category: no link
+def real_cat(cat): return bool(cat) and not GENERIC_CAT.search(cat)
+
 def channels_html(ev, cat):
     ch = ev_channels(ev)
-    drops = (f'https://www.twitch.tv/directory/category/{e(re.sub(r"[^a-z0-9]+", "-", cat.lower()).strip("-"))}?filter=drops' if cat else "")
+    drops = (f'https://www.twitch.tv/directory/category/{e(re.sub(r"[^a-z0-9]+", "-", cat.lower()).strip("-"))}?filter=drops' if real_cat(cat) else "")
     if ch:
         chips = "".join(f'<a class="chan" href="https://twitch.tv/{e(c)}" target="_blank" rel="noopener">{e(c)}</a>' for c in ch[:100])
         if len(ch) > 100: chips += f'<span class="chan more">+{len(ch) - 100} more</span>'
@@ -237,7 +240,7 @@ def badge_page(s, ev, evb, related, now, stale=False):
     if s["added"]: details.append(("Added", day(s["added"])))
     if s["users"]: details.append(("Users", f'{s["users"]:,}'))
     details.append(("Cost", {"free": "Free", "paid": "Paid (subscription / gift sub)"}.get(cost, "—")))
-    cat_link = f'<a href="https://www.twitch.tv/directory/category/{e(re.sub(r"[^a-z0-9]+", "-", cat.lower()).strip("-"))}?filter=drops" target="_blank" rel="noopener">{e(cat)}</a>' if cat else "—"
+    cat_link = f'<a href="https://www.twitch.tv/directory/category/{e(re.sub(r"[^a-z0-9]+", "-", cat.lower()).strip("-"))}?filter=drops" target="_blank" rel="noopener">{e(cat)}</a>' if real_cat(cat) else (e(cat) or "—")
     eventish = bool(info.get("objective") or info.get("category"))
     avail = [("Status", ("Ended (dates were never announced)" if stale else {"live": "Active", "soon": "Upcoming", "ended": "Ended", "tba": "Date not announced"}[st]) if ev
                         else ("Ended — exact dates weren't recorded" if eventish else "Not a timed event")),

@@ -1,7 +1,7 @@
 [
  {
   "id": "streamer-awards-2026-vote",
-  "name": "Streamer Awards 2026 Vote",
+  "name": "The Streamer Awards 2026",
   "category": "Unknown",
   "start": "",
   "end": "",
@@ -9,27 +9,35 @@
    {
     "name": "Streamer Awards 2026 Vote",
     "img": "941f3939-ae1c-4b47-a5fd-9adc53d3a4f4",
-    "how": "Watch a stream.",
+    "how": "Watch The Streamer Awards on twitch.tv/qtcinderella and vote.",
     "cost": "free",
-    "desc": "This badge was earned by watching and voting on the 2026 Streamer Awards!"
+    "desc": "This badge was earned by watching and voting on the 2026 Streamer Awards!",
+    "how_src": "manual"
    }
+  ],
+  "name_src": "manual",
+  "channels": [
+   "QTCinderella"
   ]
  },
  {
   "id": "enshrouded",
-  "name": "Enshrouded",
+  "name": "Enshrouded 1.0 launch",
   "category": "Enshrouded",
-  "start": "",
-  "end": "",
+  "start": "2026-10-15T08:00:00Z",
+  "end": "2026-10-29T22:58:00Z",
   "badges": [
    {
     "name": "Flameborn Sigil",
     "img": "66ccfcbb-8b82-4746-8b61-2c38f69731c7",
-    "how": "Watch a stream in the category.",
+    "how": "Watch 15 minutes in the category.",
     "cost": "free",
-    "desc": "This badge was earned by watching a streamer in the Enshrouded category during the v1.0 game launch"
+    "desc": "This badge was earned by watching a streamer in the Enshrouded category during the v1.0 game launch",
+    "how_src": "manual"
    }
-  ]
+  ],
+  "dates_src": "manual",
+  "name_src": "manual"
  },
  {
   "id": "castlevania-belmont-s-curse",
@@ -52,25 +60,48 @@
   "id": "lol-worlds-2026",
   "name": "LoL 2026 World Championship",
   "category": "League of Legends",
-  "start": "",
-  "end": "",
+  "start": "2026-10-14T19:00:00Z",
+  "end": "2026-11-15T18:59:00Z",
   "badges": [
    {
     "name": "Worlds 2026 Supporter",
     "img": "031a4882-d8e6-4dd6-97d8-40620f59d288",
-    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub on one of the 105 eligible League of Legends channels.",
     "cost": "paid",
     "desc": "This Chat Badge was earned by supporting the 2026 League of Legends World Championship!",
     "how_src": "manual"
-   },
+   }
+  ],
+  "name_src": "manual",
+  "dates_src": "manual",
+  "note": "Only counts on the 105 eligible League of Legends channels."
+ },
+ {
+  "id": "lol-worlds-2026-heartsteel",
+  "name": "Worlds 2026: Heartsteel Fan",
+  "category": "League of Legends",
+  "start": "2026-10-14T16:00:00Z",
+  "end": "2026-10-27T15:59:00Z",
+  "badges": [
    {
     "name": "Heartsteel Fan",
     "img": "e97f6718-9d36-4b35-8a6f-a36545ab81ff",
-    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid",
+    "how": "Watch 30 minutes in the category.",
+    "cost": "free",
     "desc": "This Chat Badge was earned by supporting the 2026 League of Legends World Championship!",
     "how_src": "manual"
-   },
+   }
+  ],
+  "dates_src": "manual",
+  "name_src": "manual"
+ },
+ {
+  "id": "lol-worlds-2026-fans",
+  "name": "Worlds 2026: K/DA, Pentakill and True Damage Fan",
+  "category": "League of Legends",
+  "start": "",
+  "end": "",
+  "badges": [
    {
     "name": "K/DA Fan",
     "img": "cf6ff3ab-9153-483b-bdac-f07577e6e202",
@@ -166,30 +197,31 @@
  {
   "id": "gastly",
   "name": "Pokémon Night Out 2026",
-  "category": "Pokémon",
+  "category": "Any",
   "start": "",
   "end": "",
   "badges": [
    {
     "name": "Gastly",
     "img": "602335f3-4d73-40f9-b8e2-5c5e25f32d62",
-    "how": "Objective not announced yet.",
-    "cost": "na",
-    "desc": "This badge was earned during Pokémon Night Out 2026."
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub, or watch 20 minutes a day for 3 days.",
+    "cost": "free",
+    "desc": "This badge was earned during Pokémon Night Out 2026.",
+    "how_src": "manual"
    },
    {
     "name": "Haunter",
     "img": "ddfbf317-aa77-482e-a99d-eb975deb2fe7",
-    "how": "Evolves from the Night Out 2026 Gastly badge.",
-    "cost": "na",
+    "how": "Unlock Gastly, then watch 20 minutes a day for 3 days.",
+    "cost": "free",
     "desc": "This badge was earned by evolving the Night Out 2026 Gastly badge.",
     "how_src": "manual"
    },
    {
     "name": "Gengar",
     "img": "f68e567f-67cf-4d4a-8c3e-a0dcee42f095",
-    "how": "Evolves from the Night Out 2026 Gastly badge.",
-    "cost": "na",
+    "how": "Unlock Haunter, then watch 20 minutes a day for 3 days.",
+    "cost": "free",
     "desc": "This badge was earned by evolving the Night Out 2026 Haunter badge.",
     "how_src": "manual"
    }
@@ -993,15 +1025,15 @@
  },
  {
   "id": "pokemon-evo",
-  "name": "Pokémon First Partners — evolutions",
-  "category": "Pokémon",
+  "name": "Pokémon First Partners evolutions",
+  "category": "Any",
   "start": "",
   "end": "",
   "badges": [
    {
     "name": "Ivysaur",
     "img": "6de326e8-643f-4043-beb6-3ad135385708",
-    "how": "Evolves from your First Partners starter badge (unlocked before Nov 1).",
+    "how": "Evolves from Bulbasaur. Details not announced yet.",
     "cost": "na",
     "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign.",
     "how_src": "manual"
@@ -1009,54 +1041,55 @@
    {
     "name": "Venusaur",
     "img": "ad14f7e4-1ca6-476b-acaf-250da22388ec",
-    "how": "Evolves from your First Partners starter badge (unlocked before Nov 1).",
-    "cost": "na",
+    "how": "Unlock Ivysaur, then watch 20 minutes a day for 3 days.",
+    "cost": "free",
     "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign.",
     "how_src": "manual"
    },
    {
     "name": "Charmeleon",
     "img": "d9698627-aff7-434c-8002-1351b2c59984",
-    "how": "Evolves from your First Partners starter badge (unlocked before Nov 1).",
-    "cost": "na",
+    "how": "Unlock Charmander, then watch 20 minutes a day for 3 days.",
+    "cost": "free",
     "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign.",
     "how_src": "manual"
    },
    {
     "name": "Charizard",
     "img": "ac097350-add0-44c4-b405-e70aa746389b",
-    "how": "Evolves from your First Partners starter badge (unlocked before Nov 1).",
-    "cost": "na",
+    "how": "Unlock Charmeleon, then watch 20 minutes a day for 3 days.",
+    "cost": "free",
     "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign.",
     "how_src": "manual"
    },
    {
     "name": "Wartortle",
     "img": "15a0db5d-bef1-49bb-8594-e3925e1ec248",
-    "how": "Evolves from your First Partners starter badge (unlocked before Nov 1).",
-    "cost": "na",
+    "how": "Unlock Squirtle, then watch 20 minutes a day for 3 days.",
+    "cost": "free",
     "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign.",
     "how_src": "manual"
    },
    {
     "name": "Blastoise",
     "img": "2b975e12-fd49-4e54-85c4-6cc042453dbb",
-    "how": "Evolves from your First Partners starter badge (unlocked before Nov 1).",
-    "cost": "na",
+    "how": "Unlock Wartortle, then watch 20 minutes a day for 3 days.",
+    "cost": "free",
     "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign.",
     "how_src": "manual"
    },
    {
     "name": "Pikachu",
     "img": "b9dd6905-474f-45d1-a4ff-8ba138208afc",
-    "how": "Evolves from the Pichu badge (Pichu had to be unlocked before Oct 1).",
-    "cost": "na",
+    "how": "Unlock Pichu, then watch 20 minutes a day for 3 days.",
+    "cost": "free",
     "desc": "This badge was earned by evolving a badge from the Pokémon First Partners Collection campaign.",
     "how_src": "manual"
    }
   ],
   "name_src": "manual",
-  "about": "Evolutions of the Pokémon First Partners Collection badges. Pichu evolves if it was unlocked before October 1; Bulbasaur, Charmander and Squirtle if unlocked before November 1. Twitch hasn't announced when evolving opens."
+  "about": "Evolutions of the Pokémon First Partners Collection badges. Pichu evolves if it was unlocked before October 1; Bulbasaur, Charmander and Squirtle if unlocked before November 1. Twitch hasn't announced when evolving opens.",
+  "note": "The starter badge (Bulbasaur, Charmander, Squirtle) must be unlocked before Nov 1, Pichu before Oct 1, or its evolutions can't be unlocked."
  },
  {
   "id": "wasteland",
