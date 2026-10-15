@@ -547,7 +547,10 @@ def update_popularity(live):
         if sid: counts[sid] = max(counts.get(sid, 0), int(n))    # multi-version sets: the largest version
     if not counts:
         print(f"popularity: could not match any badge -> first row {str(items[0])[:300]}"); status("popularity", f"no badge matched, first row: {str(items[0])[:300]}"); return
-    json.dump({"updated": today, "source": "PotatBotat (potat.app)", "counts": dict(sorted(counts.items(), key=lambda kv: -kv[1]))},
+    sdb = pop.get("sdb") or {}                                  # counts taken from StreamDatabase via /admin/: kept for
+    for sid, n in sdb.items(): counts.setdefault(sid, n)         # badges PotatBotat doesn't count yet
+    json.dump({"updated": today, "source": "PotatBotat (potat.app)", "counts": dict(sorted(counts.items(), key=lambda kv: -kv[1])),
+               **({"sdb": sdb, "sdb_updated": pop.get("sdb_updated")} if sdb else {})},
               open(POP_DB, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     top = max(counts, key=counts.get)
     print(f"popularity: {len(counts)} badge sets updated (top: {top} {counts[top]:,})")
@@ -1142,6 +1145,14 @@ def main():
         except Exception as e: print("global emotes: skipped ->", e)
         try: crawl_channel_badges(tok)
         except Exception as e: print("channel crawl failed:", e)
+
+    try:                                    # user counts from StreamDatabase, only when asked for in /admin/
+        import sdb_users
+        STATUS.update(sdb_users.run())
+    except Exception as e:
+        print("sdb users: skipped ->", e)
+        STATUS["sdb_users"] = {"at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
+                               "req": load_json(os.path.join(ROOT, "sdb-request.json"), {}).get("at"), "msg": f"crashed: {e!r}"[:600]}
 
     write_status()
 
