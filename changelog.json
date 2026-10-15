@@ -3,7 +3,8 @@
   "date": "2026-10-15",
   "title": "Badge event updates",
   "items": [
-   {"type": "fixed", "text": "D&D Dungeon Masters (d20): only counts on twitch.tv/dnd, now listed as its own event with that channel. Ampersand still counts on any channel in the category."}
+   {"type": "fixed", "text": "D&D Dungeon Masters (d20): only counts on twitch.tv/dnd, now listed as its own event with that channel. Ampersand still counts on any channel in the category."},
+   {"type": "fixed", "text": "FFXIV Fan Festival 2026 JP (Quest Complete Chat): only counts on twitch.tv/finalfantasyxiv, now listed as its own event with that channel. Alpha Chat still counts on any channel in the category."}
   ]
  },
  {

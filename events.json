@@ -1078,7 +1078,7 @@
  },
  {
   "id": "ffxiv",
-  "name": "Final Fantasy XIV Fan Festival 2026 JP",
+  "name": "Final Fantasy XIV Fan Festival 2026 JP (Alpha Chat)",
   "category": "Final Fantasy XIV",
   "start": "2026-10-30T00:00:00Z",
   "end": "2026-11-01T23:59:00Z",
@@ -1089,7 +1089,17 @@
     "how": "Watch any creator in the FFXIV category for 60 minutes during Fan Fest.",
     "cost": "free",
     "desc": "This badge was earned by watching a creator in the Final Fantasy 14 category for 60 minutes during the Fan Fest 2026 - JP"
-   },
+   }
+  ],
+  "name_src": "manual"
+ },
+ {
+  "id": "ffxiv-quest-complete-chat",
+  "name": "Final Fantasy XIV Fan Festival 2026 JP (Quest Complete Chat)",
+  "category": "Final Fantasy XIV",
+  "start": "2026-10-30T00:00:00Z",
+  "end": "2026-11-01T23:59:00Z",
+  "badges": [
    {
     "name": "Quest Complete Chat",
     "img": "e7d696ad-4479-4e44-bceb-5643f80bef38",
@@ -1097,6 +1107,10 @@
     "cost": "free",
     "desc": "This badge was earned by watching the Fan Fest 2026 for 60 minutes on /finalfantasyxiv"
    }
+  ],
+  "name_src": "manual",
+  "channels": [
+   "finalfantasyxiv"
   ]
  },
  {
