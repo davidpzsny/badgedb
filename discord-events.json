@@ -85,6 +85,10 @@
  },
  "gastly": {
   "id": "1560699105381064957",
-  "sig": "[{\"description\": \"\\u2022 Gastly: Subscribe (Tier 1) or gift a Tier 1 sub, or watch 20 minutes a day for 3 days.\\n\\u2022 Haunter: Unlock Gastly, then watch 20 minutes a day for 3 days.\\n\\u2022 Gengar: Unlock Haunter, then watch 20 minutes a day for 3 days.\\n\\nDetails and all dates: https://badgedatabase.com/badges/gastly/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/gastly/\"}, \"name\": \"Pok\\u00e9mon Night Out 2026\", \"scheduled_end_time\": \"2027-01-30T22:59:59Z\"}, \"2026-10-16T17:00:00Z\"]"
+  "sig": "[{\"description\": \"\\u2022 Gastly: Subscribe (Tier 1) or gift a Tier 1 sub, or watch 20 minutes a day for 3 days.\\n\\u2022 Haunter: Unlock Gastly, then watch 20 minutes a day for 3 days.\\n\\u2022 Gengar: Unlock Haunter, then watch 20 minutes a day for 3 days.\\n\\nDetails and all dates: https://badgedatabase.com/badges/gastly/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/gastly/\"}, \"name\": \"Pok\\u00e9mon Night Out 2026\", \"scheduled_end_time\": \"2027-01-30T22:59:00Z\"}, \"2026-10-16T17:00:00Z\"]"
+ },
+ "pokemon-evo": {
+  "id": "1560707536586285186",
+  "sig": "[{\"description\": \"\\u2022 Ivysaur: Evolves from Bulbasaur. Details not announced yet.\\n\\u2022 Venusaur: Unlock Ivysaur, then watch 20 minutes a day for 3 days.\\n\\u2022 Charmeleon: Unlock Charmander, then watch 20 minutes a day for 3 days.\\n\\u2022 Charizard: Unlock Charmeleon, then watch 20 minutes a day for 3 days.\\n\\u2022 Wartortle: Unlock Squirtle, then watch 20 minutes a day for 3 days.\\n\\u2022 Blastoise: Unlock Wartortle, then watch 20 minutes a day for 3 days.\\n\\u2022 Pikachu: Unlock Pichu, then watch 20 minutes a day for 3 days.\\n\\nDetails and all dates: https://badgedatabase.com/badges/ivysaur/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/ivysaur/\"}, \"name\": \"Pok\\u00e9mon First Partners evolutions\", \"scheduled_end_time\": \"2027-01-30T22:59:00Z\"}, \"2026-10-16T17:00:00Z\"]"
  }
 }
