@@ -1,5 +1,35 @@
 [
  {
+  "id": "cyberpunk-2077",
+  "name": "Cyberpunk 2077",
+  "category": "Cyberpunk 2077",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Edgerunners D",
+    "img": "99095484-4036-40e6-a1f6-c451e93abdeb",
+    "how": "Watch a stream in the category.",
+    "cost": "free",
+    "desc": "This badge was earned by watching a streamer in the Cyberpunk 2077 category during the Cyberpunk: Edgerunners 2: Twitch Co-Streaming"
+   },
+   {
+    "name": "Edgerunners Talia",
+    "img": "37886d76-944e-46ed-81ee-348d43a17922",
+    "how": "Watch a stream in the category.",
+    "cost": "free",
+    "desc": "This badge was earned by watching a streamer in the Cyberpunk 2077 category during the Cyberpunk: Edgerunners 2: Twitch Co-Streaming"
+   },
+   {
+    "name": "Edgerunners Weak",
+    "img": "053062de-0527-4263-a595-740dc0ec2674",
+    "how": "Watch a stream in the category.",
+    "cost": "free",
+    "desc": "This badge was earned by watching a streamer in the Cyberpunk 2077 category during the Cyberpunk: Edgerunners 2: Twitch Co-Streaming"
+   }
+  ]
+ },
+ {
   "id": "believeinrichmond",
   "name": "BelieveInRichmond",
   "category": "Unknown",

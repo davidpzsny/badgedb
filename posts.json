@@ -256,5 +256,26 @@
   "set": "streamer-awards-2026-vote",
   "replied": "discord only",
   "posted": "2026-10-16T05:00:47+00:00"
+ },
+ "edgerunners-d": {
+  "tweet": "2111110145342402653",
+  "title": "Edgerunners D",
+  "set": "edgerunners-d",
+  "posted": "2026-10-16T15:00:56+00:00",
+  "replied": false
+ },
+ "edgerunners-talia": {
+  "tweet": "2111110153697476645",
+  "title": "Edgerunners Talia",
+  "set": "edgerunners-talia",
+  "posted": "2026-10-16T15:00:58+00:00",
+  "replied": false
+ },
+ "edgerunners-weak": {
+  "tweet": "2111110158692807009",
+  "title": "Edgerunners Weak",
+  "set": "edgerunners-weak",
+  "posted": "2026-10-16T15:00:59+00:00",
+  "replied": false
  }
 }
