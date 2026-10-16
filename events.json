@@ -368,8 +368,8 @@
   "id": "gastly",
   "name": "Pokémon Night Out 2026",
   "category": "Any",
-  "start": "",
-  "end": "",
+  "start": "2026-10-16T17:00:00Z",
+  "end": "2027-01-30T22:59:59Z",
   "badges": [
    {
     "name": "Gastly",
@@ -396,7 +396,10 @@
     "how_src": "manual"
    }
   ],
-  "name_src": "manual"
+  "name_src": "manual",
+  "dates_src": "twitch",
+  "twitch_campaign": "3e7f0c98-893c-47a7-9044-1c61173b8f94",
+  "about": "pokemon test\nend 1/30"
  },
  {
   "id": "vaultbreakers",

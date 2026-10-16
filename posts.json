@@ -285,5 +285,13 @@
   "posted": "2026-10-16T17:00:07+00:00",
   "replied": true,
   "reply": "Objective, channels and exact dates: {url}"
+ },
+ "live:gastly": {
+  "tweet": "2111140365273031001",
+  "title": "Gastly",
+  "set": "gastly",
+  "posted": "2026-10-16T17:01:01+00:00",
+  "replied": true,
+  "reply": "Objective, channels and exact dates: {url}"
  }
 }

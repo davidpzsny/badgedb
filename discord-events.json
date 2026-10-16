@@ -82,5 +82,9 @@
  "streamer-awards-2026-vote": {
   "id": "1560382606670037072",
   "sig": "[{\"description\": \"\\u2022 Streamer Awards 2026 Vote: Watch The Streamer Awards on twitch.tv/qtcinderella and vote.\\n\\nDetails and all dates: https://badgedatabase.com/badges/streamer-awards-2026-vote/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/streamer-awards-2026-vote/\"}, \"name\": \"The Streamer Awards 2026\", \"scheduled_end_time\": \"2026-10-17T04:59:00Z\"}, \"2026-10-16T17:00:00Z\"]"
+ },
+ "gastly": {
+  "id": "1560699105381064957",
+  "sig": "[{\"description\": \"\\u2022 Gastly: Subscribe (Tier 1) or gift a Tier 1 sub, or watch 20 minutes a day for 3 days.\\n\\u2022 Haunter: Unlock Gastly, then watch 20 minutes a day for 3 days.\\n\\u2022 Gengar: Unlock Haunter, then watch 20 minutes a day for 3 days.\\n\\nDetails and all dates: https://badgedatabase.com/badges/gastly/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/gastly/\"}, \"name\": \"Pok\\u00e9mon Night Out 2026\", \"scheduled_end_time\": \"2027-01-30T22:59:59Z\"}, \"2026-10-16T17:00:00Z\"]"
  }
 }
