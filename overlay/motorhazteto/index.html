@@ -47,12 +47,17 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 .brand .name{font-weight:800;font-size:46px;letter-spacing:-1px;line-height:1;display:flex}
 .brand .twitch{width:42px;height:42px;display:block;flex:none}
 .avail{display:flex;align-items:center;justify-content:flex-end;gap:18px;min-width:0}
-.avail .head{text-align:right;line-height:1;flex:0 1 auto;min-width:0;max-width:300px}
+.avail .head{text-align:right;line-height:1;flex:none;max-width:300px}
 .avail .k{font-weight:700;font-size:15px;letter-spacing:2.5px;text-transform:uppercase;color:#7d7d86}
 .avail .t{font-weight:800;font-size:24px;letter-spacing:.5px;text-transform:uppercase;color:#efeff1;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .avail .sep{width:1px;height:46px;background:#26262b;flex:none}
 .avail .list{display:flex;align-items:center;gap:10px;min-width:0;overflow:hidden}
-.chip{display:flex;align-items:center;gap:11px;padding:7px 14px 7px 7px;background:#121214;border:1px solid #232328;border-radius:12px}
+.chip{display:flex;align-items:center;gap:11px;padding:7px 14px 7px 7px;background:#121214;border:1px solid #232328;border-radius:12px;flex:none}
+/* more chips than fit: they take turns, one at a time */
+.avail .list.rot .chip{display:none}
+.avail .list.rot{justify-content:flex-end}
+.avail .list.rot .chip.on{display:flex;animation:chipIn .45s ease-out}
+@keyframes chipIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .chip .imgs{display:flex;align-items:center;gap:4px}
 .chip .imgs img{width:44px;height:44px;border-radius:9px}
 .chip .l{font-weight:700;font-size:17px;color:#efeff1;white-space:nowrap}
@@ -171,7 +176,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-10-15.2";   // bump together with version.json after every change
+const OVERLAY_V = "2026-10-16.1";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -239,6 +244,9 @@ const EXTRA_AVAILABLE = [
 /* Stream categories where the whole "Available here" part of the header is hidden.
    The overlay checks badge_db's current category every minute. */
 const HIDE_AVAILABLE_IN = ['Always On'];
+/* Stream categories where the running badges that can be earned in ANY category (e.g. Pokémon Night Out) are shown
+   in the header as well. Only badges you can earn right now; not those that need a special channel. */
+const ANY_CATEGORY_BADGES_IN = ['Just Chatting'];
 const CHANNEL = 'badge_db';
 
 /* Footer counters: read live from badgedatabase.com every 5 minutes; these are only the fallback.
@@ -402,6 +410,8 @@ function inStreamCategory(ev){
 const OTHER_CHANNEL = /twitch\.tv\/|(^|\s)\/[a-z0-9_]{3,}/i, OUR_CHANNEL_RE = new RegExp('(twitch\\.tv)?/' + CHANNEL + '\\b', 'i');
 function badgeAction(b){
   const how = String(b.how || '');
+  const daily = how.match(/watch[^0-9]*(\d+)\s*(?:minutes?|mins?)\s*a day for (\d+) days/i);
+  if(daily) return { text: `Watch ${daily[1]} min × ${daily[2]} days`, color: '#4ade80' };
   if(OTHER_CHANNEL.test(how) && !OUR_CHANNEL_RE.test(how)) return null;      // must be earned on another channel
   if(/\b(eligible|participating) [^.]*channels?\b/i.test(how)) return null;   // only on a list of channels (badge_db is not one)
   if(b.cost === 'paid') return /ticket/i.test(how) ? null : { text: 'Sub or Gift', color: '#c4a1ff' };
@@ -410,22 +420,29 @@ function badgeAction(b){
   if(b.cost === 'free' || /watch/i.test(how)) return { text: 'Watch', color: '#4ade80' };
   return { text: 'Objective TBA', color: '#9a9aa3' };
 }
+// badges of any category: category "Any" (not "Any · channel: …") and no channel list without badge_db
+function anyCategory(ev){
+  const cat = String(ev.category || '').trim(), chans = (ev.channels || []).map(c => String(c).trim().toLowerCase()).filter(Boolean);
+  return /^any\b/i.test(cat) && !/channel/i.test(cat) && !(chans.length && !chans.includes(CHANNEL));
+}
 function autoAvailable(now){
   if(!streamCat || !site.events) return [];
-  const chips = [];
+  const chips = [], withAny = ANY_CATEGORY_BADGES_IN.some(c => normCat(c) === normCat(streamCat));
   site.events.forEach(ev => {
     if(!ev.start || !ev.end) return;
-    const start = Date.parse(ev.start), end = Date.parse(ev.end);
-    if(!(now < end) || !inStreamCategory(ev)) return;
+    const start = Date.parse(ev.start), end = Date.parse(ev.end), any = withAny && anyCategory(ev);
+    if(!(now < end) || !(any || inStreamCategory(ev))) return;
+    if(any && now < start) return;                     // any-category badges: only once they can be earned
     const groups = new Map();                  // badges of one event with the same objective share a chip (e.g. 5 LoL badges)
     (ev.badges || []).forEach(b => {
       const act = badgeAction(b); if(!act) return;
+      if(any && act.text === 'Objective TBA') return;          // not earnable yet
       const key = now < start ? 'soon' : act.text;
       if(!groups.has(key)) groups.set(key, { act, badges: [] });
       groups.get(key).badges.push(b);
     });
     groups.forEach(({act, badges}) => {
-      const label = badges.length === 1 ? badges[0].name : ev.name, imgs = badges.slice(0, 5).map(b => b.img);
+      const label = badges.length === 1 ? badges[0].name : (EVENT_TITLES[ev.id] || ev.name), imgs = badges.slice(0, any ? 3 : 5).map(b => b.img);
       chips.push(now < start ? { imgs, label, cdTo: start, soon: true } : { imgs, label, action: act.text, actionColor: act.color });
     });
   });
@@ -435,7 +452,7 @@ function autoAvailable(now){
 /* ---------- rendering: lists are rebuilt only when their content changes (so the scrolling never jumps);
    clock and countdowns are updated in place every second ---------- */
 const lastSig = {};
-function setList(id, html){ if(lastSig[id] !== html){ lastSig[id] = html; $(id).innerHTML = html; } }
+function setList(id, html){ if(lastSig[id] !== html){ lastSig[id] = html; $(id).innerHTML = html; return true; } return false; }
 const img = (u, cls) => u ? `<img class="slot${cls ? ' ' + cls : ''}" src="${esc(badgeUrl(u))}" alt="">` : '';
 
 function eventView(e, now){
@@ -491,10 +508,11 @@ function render(){
       return soon ? { ...a, cdTo: evStart(a.ev), soon: true } : { ...a, actionColor: /watch/i.test(a.action) ? '#4ade80' : '#c4a1ff' }; });
   const auto = hideAll ? [] : autoAvailable(now), avail = hideAll ? [] : auto.concat(extra);
   document.querySelector('.avail').style.visibility = avail.length ? '' : 'hidden';   // nothing to show: no label, no line
-  setList('available', avail.map(a => {
+  const chipsChanged = setList('available', avail.map(a => {
     const action = a.soon ? `<div class="a bc" style="color:#f5b83d" data-to="${a.cdTo}" data-prefix="STARTS IN"></div>`
                           : `<div class="a bc" style="color:${a.actionColor}">${esc(a.action)}</div>`;
     return `<div class="chip"><div class="imgs">${a.imgs.map(u => img(u)).join('')}</div><div style="line-height:1;min-width:0"><div class="l b">${esc(a.label)}</div>${action}</div></div>`; }).join(''));
+  if(chipsChanged) fitChips();
   $('availHead').textContent = avail.length && avail.every(a => a.soon) ? 'Coming Here' : 'Available Here';
   $('availTitle').textContent = auto.length ? streamCat : [...new Set(extra.map(a => a.game).filter(Boolean))].join(' · ');
 
@@ -503,6 +521,22 @@ function render(){
 
   document.querySelectorAll('[data-to]').forEach(el => { el.textContent = countdown(+el.dataset.to - now, el.dataset.prefix); });
 }
+
+/* header chips: when they don't all fit next to each other, show them one at a time, switching every 6 seconds */
+let chipIdx = 0;
+function fitChips(){
+  const list = $('available'); list.classList.remove('rot'); list.style.width = ''; chipIdx = 0;
+  if(list.children.length > 1 && list.scrollWidth > list.clientWidth + 2){
+    const widest = Math.max(...[...list.children].map(c => c.offsetWidth));      // same width for every turn, so nothing jumps
+    list.classList.add('rot'); list.children[0].classList.add('on'); list.style.width = widest + 'px';
+  }
+}
+setInterval(() => {
+  const list = $('available'); if(!list.classList.contains('rot') || !list.children.length) return;
+  list.children[chipIdx % list.children.length].classList.remove('on');
+  chipIdx = (chipIdx + 1) % list.children.length; list.children[chipIdx].classList.add('on');
+}, 6000);
+addEventListener('resize', () => { if($('available').children.length) fitChips(); });
 
 /* ---------- reload by itself when a new version is uploaded (version.json) ---------- */
 async function checkVersion(){

@@ -222,6 +222,9 @@ OBS → Sources → + → Browser, URL above, Width `1920`, Height `1080`. It is
   `our_game_id`, `upcoming` (event → game id, next 14 days) and `game_names` (id → Twitch's own name) into `live.json`.
 - `HIDE_AVAILABLE_IN` (default `Always On`): in these categories the whole "Available here" part is hidden
   (it also hides itself when there is nothing to show).
+- `ANY_CATEGORY_BADGES_IN` (default `Just Chatting`): in these categories the header also shows the running badges
+  that can be earned in any category (events with category `Any`, e.g. Pokémon Night Out), only once they can be earned.
+  When the chips don't fit next to each other, they take turns, one every 6 seconds.
 - The left column ("Added in the last 14 days") and the footer counters come from `badges.json` / `events.json` every 5 minutes.
   USERS there is StreamDatabase's count: `/admin/` → **Overlay user counts** writes `sdb-request.json`, the bot's next run
   (within 5 minutes) loads StreamDatabase's badge list once and saves the counts in `popularity.json` under `sdb`
