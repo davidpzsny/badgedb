@@ -32,55 +32,54 @@
  {
   "id": "believeinrichmond",
   "name": "BelieveInRichmond",
-  "category": "Unknown",
+  "category": "Any",
   "start": "",
   "end": "",
   "badges": [
    {
     "name": "BelieveInRichmond",
     "img": "07374c1e-6858-443f-8f57-cfbbe38364ca",
-    "how": "Objective not announced yet.",
-    "cost": "na",
-    "desc": "Subbed to a streamer and got 1 month of Apple TV!"
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub on any channel.",
+    "cost": "paid",
+    "desc": "Subbed to a streamer and got 1 month of Apple TV!",
+    "how_src": "manual"
    }
   ]
  },
  {
   "id": "beagoldfish",
   "name": "BeAGoldfish",
-  "category": "Unknown",
+  "category": "Any",
   "start": "",
   "end": "",
   "badges": [
    {
     "name": "BeAGoldfish",
     "img": "fa5a8b25-f4e4-443b-98c6-623c65a89296",
-    "how": "Objective not announced yet.",
-    "cost": "na",
-    "desc": "Subbed to a streamer and got 1 month of Apple TV!"
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub on any channel.",
+    "cost": "paid",
+    "desc": "Subbed to a streamer and got 1 month of Apple TV!",
+    "how_src": "manual"
    }
   ]
  },
  {
   "id": "streamer-awards-2026-vote",
   "name": "The Streamer Awards 2026",
-  "category": "Unknown",
+  "category": "The Streamer Awards",
   "start": "2026-10-16T17:00:00Z",
   "end": "2026-10-17T04:59:00Z",
   "badges": [
    {
     "name": "Streamer Awards 2026 Vote",
     "img": "941f3939-ae1c-4b47-a5fd-9adc53d3a4f4",
-    "how": "Watch The Streamer Awards on twitch.tv/qtcinderella and vote.",
+    "how": "Watch 20 minutes in the category.",
     "cost": "free",
     "desc": "This badge was earned by watching and voting on the 2026 Streamer Awards!",
     "how_src": "manual"
    }
   ],
   "name_src": "manual",
-  "channels": [
-   "QTCinderella"
-  ],
   "dates_src": "manual"
  },
  {

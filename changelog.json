@@ -1,5 +1,13 @@
 [
  {
+  "date": "2026-10-16",
+  "title": "Badge event updates",
+  "items": [
+   {"type": "fixed", "text": "Streamer Awards 2026 Vote: watch 20 minutes in The Streamer Awards category on any channel, Oct 16, 17:00 to Oct 17, 04:59 UTC."},
+   {"type": "fixed", "text": "BeAGoldfish and BelieveInRichmond (Apple TV): subscribe (Tier 1) or gift a Tier 1 sub on any channel."}
+  ]
+ },
+ {
   "date": "2026-10-15",
   "title": "Calendar fixes",
   "items": [
