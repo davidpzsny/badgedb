@@ -16,7 +16,11 @@ jobs:
   check:
     runs-on: ubuntu-24.04
     steps:
+      # ref: main = the newest commit when the run starts. Without it a run that waited in the queue would work on the
+      # commit from when it was triggered, miss what the previous run saved (e.g. posts.json) and post to X again.
       - uses: actions/checkout@v5
+        with:
+          ref: main
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -63,7 +67,9 @@ jobs:
           if git diff --cached --quiet; then echo "Nothing changed."; exit 0; fi
           git commit -q -m "Update badges $(date -u +%F)"
           for i in 1 2 3; do
-            if ! git pull -q --rebase; then
+            # -X ours: where someone else changed the same lines meanwhile (e.g. events.json from /admin/), their version
+            # wins; everything else this run saved (posts.json above all) is kept, so nothing is posted twice
+            if ! git pull -q --rebase -X ours; then
               git rebase --abort
               echo "::warning::Files were uploaded while the bot was running - this run's save is skipped, the next run (15 min) redoes it."
               exit 0
