@@ -368,7 +368,7 @@
   "name": "Pokémon Night Out 2026",
   "category": "Any",
   "start": "2026-10-16T17:00:00Z",
-  "end": "2027-01-30T22:59:59Z",
+  "end": "2027-01-30T22:59:00Z",
   "badges": [
    {
     "name": "Gastly",
@@ -396,7 +396,7 @@
    }
   ],
   "name_src": "manual",
-  "dates_src": "twitch",
+  "dates_src": "manual",
   "twitch_campaign": "3e7f0c98-893c-47a7-9044-1c61173b8f94",
   "about": "pokemon test\nend 1/30"
  },
@@ -1227,8 +1227,8 @@
   "id": "pokemon-evo",
   "name": "Pokémon First Partners evolutions",
   "category": "Any",
-  "start": "",
-  "end": "",
+  "start": "2026-10-16T17:00:00Z",
+  "end": "2027-01-30T22:59:00Z",
   "badges": [
    {
     "name": "Ivysaur",
@@ -1289,7 +1289,8 @@
   ],
   "name_src": "manual",
   "about": "Evolutions of the Pokémon First Partners Collection badges. Pichu evolves if it was unlocked before October 1; Bulbasaur, Charmander and Squirtle if unlocked before November 1. Twitch hasn't announced when evolving opens.",
-  "note": "The starter badge (Bulbasaur, Charmander, Squirtle) must be unlocked before Nov 1, Pichu before Oct 1, or its evolutions can't be unlocked."
+  "note": "The starter badge (Bulbasaur, Charmander, Squirtle) must be unlocked before Nov 1, Pichu before Oct 1, or its evolutions can't be unlocked.",
+  "dates_src": "manual"
  },
  {
   "id": "wasteland",
