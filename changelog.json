@@ -1,5 +1,12 @@
 [
  {
+  "date": "2026-10-17",
+  "title": "Badge event updates",
+  "items": [
+   {"type": "fixed", "text": "Ivysaur (Pokémon First Partners): unlock Bulbasaur, then watch 20 minutes a day for 3 days."}
+  ]
+ },
+ {
   "date": "2026-10-16",
   "title": "Badge event updates",
   "items": [
