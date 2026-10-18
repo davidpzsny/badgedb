@@ -301,5 +301,20 @@
   "posted": "2026-10-16T17:34:31+00:00",
   "replied": true,
   "reply": "Objective, channels and exact dates: {url}"
+ },
+ "ending:dayz": {
+  "tweet": "",
+  "title": "DayZ Yellow King",
+  "set": "dayz-yellow-king",
+  "replied": "discord only",
+  "posted": "2026-10-18T09:00:49+00:00"
+ },
+ "xending:dayz": {
+  "tweet": "2111744304263639061",
+  "title": "DayZ Yellow King",
+  "set": "dayz-yellow-king",
+  "posted": "2026-10-18T09:00:51+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
