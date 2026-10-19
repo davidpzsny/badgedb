@@ -53,11 +53,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 .avail .sep{width:1px;height:46px;background:#26262b;flex:none}
 .avail .list{display:flex;align-items:center;gap:10px;min-width:0;overflow:hidden}
 .chip{display:flex;align-items:center;gap:11px;padding:7px 14px 7px 7px;background:#121214;border:1px solid #232328;border-radius:12px;flex:none}
-/* more chips than fit: first fewer badge images and shorter names (c1, c2), and only then they take turns */
-.chip .ls{display:none}
-.avail .list.c1 .chip .lf,.avail .list.c2 .chip .lf{display:none}
-.avail .list.c1 .chip .ls,.avail .list.c2 .chip .ls{display:inline}
-.avail .list.c1 .chip .imgs img:nth-child(n+3),.avail .list.c2 .chip .imgs img:nth-child(n+2){display:none}
+/* more chips than fit: they take turns, one at a time */
 .avail .list.rot .chip{display:none}
 .avail .list.rot{justify-content:flex-end}
 .avail .list.rot .chip.on{display:flex;animation:chipIn .45s ease-out}
@@ -180,7 +176,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-10-19.1";   // bump together with version.json after every change
+const OVERLAY_V = "2026-10-19.2";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -251,8 +247,6 @@ const HIDE_AVAILABLE_IN = ['Always On'];
 /* Stream categories where the running badges that can be earned in ANY category (e.g. Pokémon Night Out) are shown
    in the header as well. Only badges you can earn right now; not those that need a special channel. */
 const ANY_CATEGORY_BADGES_IN = ['Just Chatting'];
-/* Shorter chip names, used when the header chips don't fit next to each other (by event id on the site). */
-const SHORT_TITLES = { 'gastly': 'Pokémon Night Out', 'pokemon-evo': 'Pokémon Evolutions', 'lol-worlds-2026-fans': 'Worlds Fan Badges' };
 const CHANNEL = 'badge_db';
 
 /* Footer counters: read live from badgedatabase.com every 5 minutes; these are only the fallback.
@@ -458,8 +452,7 @@ function autoAvailable(now){
     }
     groups.forEach(({act, badges}) => {
       const label = badges.length === 1 ? badges[0].name : (EVENT_TITLES[ev.id] || ev.name), imgs = badges.slice(0, any ? 3 : 5).map(b => b.img);
-      const short = badges.length === 1 ? label : (SHORT_TITLES[ev.id] || label);
-      chips.push(now < start ? { imgs, label, short, cdTo: start, soon: true } : { imgs, label, short, action: act.text, actionColor: act.color });
+      chips.push(now < start ? { imgs, label, cdTo: start, soon: true } : { imgs, label, action: act.text, actionColor: act.color });
     });
   });
   return chips;
@@ -527,8 +520,7 @@ function render(){
   const chipsChanged = setList('available', avail.map(a => {
     const action = a.soon ? `<div class="a bc" style="color:#f5b83d" data-to="${a.cdTo}" data-prefix="STARTS IN"></div>`
                           : `<div class="a bc" style="color:${a.actionColor}">${esc(a.action)}</div>`;
-    const name = a.short && a.short !== a.label ? `<span class="lf">${esc(a.label)}</span><span class="ls">${esc(a.short)}</span>` : esc(a.label);
-    return `<div class="chip"><div class="imgs">${a.imgs.map(u => img(u)).join('')}</div><div style="line-height:1;min-width:0"><div class="l b">${name}</div>${action}</div></div>`; }).join(''));
+    return `<div class="chip"><div class="imgs">${a.imgs.map(u => img(u)).join('')}</div><div style="line-height:1;min-width:0"><div class="l b">${esc(a.label)}</div>${action}</div></div>`; }).join(''));
   if(chipsChanged) fitChips();
   $('availHead').textContent = avail.length && avail.every(a => a.soon) ? 'Coming Here' : 'Available Here';
   $('availTitle').textContent = auto.length ? streamCat : [...new Set(extra.map(a => a.game).filter(Boolean))].join(' · ');
@@ -539,17 +531,11 @@ function render(){
   document.querySelectorAll('[data-to]').forEach(el => { el.textContent = countdown(+el.dataset.to - now, el.dataset.prefix); });
 }
 
-/* header chips: when they don't all fit next to each other, first show at most 2, then 1 badge image per chip with
-   shorter names; if that is still too wide, show them one at a time, switching every 6 seconds */
+/* header chips: when they don't all fit next to each other, show them one at a time, switching every 6 seconds */
 let chipIdx = 0;
 function fitChips(){
-  const list = $('available'); list.classList.remove('rot', 'c1', 'c2'); list.style.width = ''; chipIdx = 0;
-  const over = () => list.scrollWidth > list.clientWidth + 2;
-  if(list.children.length < 2 || !over()) return;
-  list.classList.add('c1'); if(!over()) return;
-  list.classList.replace('c1', 'c2'); if(!over()) return;
-  list.classList.remove('c2');
-  {
+  const list = $('available'); list.classList.remove('rot'); list.style.width = ''; chipIdx = 0;
+  if(list.children.length > 1 && list.scrollWidth > list.clientWidth + 2){
     const widest = Math.max(...[...list.children].map(c => c.offsetWidth));      // same width for every turn, so nothing jumps
     list.classList.add('rot'); list.children[0].classList.add('on'); list.style.width = widest + 'px';
   }
