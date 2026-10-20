@@ -375,5 +375,20 @@
   "set": "the-mox",
   "posted": "2026-10-20T21:45:30+00:00",
   "replied": true
+ },
+ "ending:rematch-blue-lock": {
+  "tweet": "",
+  "title": "Rematch Blue Lock",
+  "set": "rematch-blue-lock",
+  "replied": "discord only",
+  "posted": "2026-10-20T23:00:51+00:00"
+ },
+ "xending:rematch-blue-lock": {
+  "tweet": "2112680479954739317",
+  "title": "Rematch Blue Lock",
+  "set": "rematch-blue-lock",
+  "posted": "2026-10-20T23:00:52+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
