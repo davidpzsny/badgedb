@@ -41,11 +41,10 @@
  },
  {
   "id": "gray-zone-warfare-gold",
-  "name": "Gray Zone Warfare Gold",
+  "name": "Gray Zone Warfare",
   "category": "Gray Zone Warfare",
-  "start": "2026-10-22T16:00:00Z",
-  "end": "2026-11-06T12:59:00Z",
-  "dates_src": "manual",
+  "start": "",
+  "end": "",
   "name_src": "manual",
   "badges": [
    {
@@ -56,7 +55,7 @@
     "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Gray Zone Warfare category"
    }
   ],
-  "note": "Announced for selected streamers in the Gray Zone Warfare category."
+  "note": "Dates not announced yet."
  },
  {
   "id": "beagoldfish",
@@ -343,8 +342,8 @@
   "id": "witchspire",
   "name": "Witchspire",
   "category": "Witchspire",
-  "start": "2026-10-21T00:00:00Z",
-  "end": "2026-10-31T23:59:00Z",
+  "start": "2026-10-21T16:00:00Z",
+  "end": "2026-10-31T07:59:00Z",
   "badges": [
    {
     "name": "Gold Stamp",
@@ -368,9 +367,7 @@
     "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Witchspire category"
    }
   ],
-  "dates_src": "manual",
-  "time_tba": true,
-  "note": "Exact start and end times not announced yet, only the days."
+  "dates_src": "manual"
  },
  {
   "id": "sonic-racing-crossworlds",
@@ -449,7 +446,7 @@
    "Pokémon Trading Card Game Pocket",
    "Pokémon Trading Card Game Live"
   ],
-  "note": "Counts in 20 categories: Just Chatting, DJs, Art, Special Events, Sports, Music, Talk Shows & Podcasts, Animals, Aquariums, and Zoos, Co-working & Studying, Makers & Crafting and 10 Pokémon game categories."
+  "note": "Counts in 20 categories: Just Chatting, DJs, Art, Special Events, Sports, Music, Talk Shows & Podcasts, Animals, Aquariums, and Zoos, Co-working & Studying, Makers & Crafting and 10 Pokémon game categories. Get Gastly's Night Out Ball (sub, gift sub or 20 minutes watched) before Oct 24, 23:59 UTC."
  },
  {
   "id": "vaultbreakers",
@@ -1347,7 +1344,7 @@
   ],
   "name_src": "manual",
   "about": "Evolutions of the Pokémon First Partners Collection badges. Pichu evolves if it was unlocked before October 1; Bulbasaur, Charmander and Squirtle if unlocked before November 1. Twitch hasn't announced when evolving opens.",
-  "note": "Counts in 20 categories: Just Chatting, DJs, Art, Special Events, Sports, Music, Talk Shows & Podcasts, Animals, Aquariums, and Zoos, Co-working & Studying, Makers & Crafting and 10 Pokémon game categories.",
+  "note": "Counts in 20 categories: Just Chatting, DJs, Art, Special Events, Sports, Music, Talk Shows & Podcasts, Animals, Aquariums, and Zoos, Co-working & Studying, Makers & Crafting and 10 Pokémon game categories. The starter (Bulbasaur, Charmander, Squirtle) must be unlocked by Nov 1, Pichu had to be unlocked before Oct 1; Great Balls can still be progressed until Nov 1.",
   "dates_src": "manual",
   "categories": [
    "Just Chatting",
