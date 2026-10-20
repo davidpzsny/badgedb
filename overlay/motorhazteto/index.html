@@ -176,7 +176,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-10-19.2";   // bump together with version.json after every change
+const OVERLAY_V = "2026-10-20.1";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -244,8 +244,9 @@ const EXTRA_AVAILABLE = [
 /* Stream categories where the whole "Available here" part of the header is hidden.
    The overlay checks badge_db's current category every minute. */
 const HIDE_AVAILABLE_IN = ['Always On'];
-/* Stream categories where the running badges that can be earned in ANY category (e.g. Pokémon Night Out) are shown
-   in the header as well. Only badges you can earn right now; not those that need a special channel. */
+/* Stream categories where the running badges that can be earned in ANY category are shown in the header as well.
+   Events that list their eligible categories on the site (e.g. Pokémon Night Out: Just Chatting, Art, Pokémon GO, ...)
+   show up by themselves in those categories. Only badges you can earn right now; not those that need another channel. */
 const ANY_CATEGORY_BADGES_IN = ['Just Chatting'];
 const CHANNEL = 'badge_db';
 
@@ -425,12 +426,15 @@ function anyCategory(ev){
   const cat = String(ev.category || '').trim(), chans = (ev.channels || []).map(c => String(c).trim().toLowerCase()).filter(Boolean);
   return /^any\b/i.test(cat) && !/channel/i.test(cat) && !(chans.length && !chans.includes(CHANNEL));
 }
+// events that list their eligible categories (e.g. Pokémon Night Out: Just Chatting, Art, Pokémon GO, ...)
+const inCategoryList = ev => Array.isArray(ev.categories) && !!streamCat && ev.categories.some(c => normCat(c) === normCat(streamCat))
+  && !((ev.channels || []).length && !(ev.channels || []).map(c => String(c).trim().toLowerCase()).includes(CHANNEL));
 function autoAvailable(now){
   if(!streamCat || !site.events) return [];
   const chips = [], withAny = ANY_CATEGORY_BADGES_IN.some(c => normCat(c) === normCat(streamCat));
   site.events.forEach(ev => {
     if(!ev.start || !ev.end) return;
-    const start = Date.parse(ev.start), end = Date.parse(ev.end), any = withAny && anyCategory(ev);
+    const start = Date.parse(ev.start), end = Date.parse(ev.end), any = (withAny && anyCategory(ev)) || inCategoryList(ev);
     if(!(now < end) || !(any || inStreamCategory(ev))) return;
     if(any && now < start) return;                     // any-category badges: only once they can be earned
     const groups = new Map();                  // badges of one event with the same objective share a chip (e.g. 5 LoL badges)

@@ -1,5 +1,17 @@
 [
  {
+  "date": "2026-10-20",
+  "title": "Badge event updates",
+  "items": [
+   {"type": "fixed", "text": "Cyberpunk: Edgerunners 2 (Edgerunners D, Talia and Weak): watch 15 minutes on twitch.tv/cdprojektred or twitch.tv/cdprojektredjapan, Oct 19, 22:01 to Oct 20, 22:00 UTC. Re-airings on Oct 20 at 10:00 and 19:00 UTC."},
+   {"type": "fixed", "text": "Witchspire (Witch Hat, Gold Stamp, Witchspire Logo): Oct 21 to Oct 31 (exact times not announced yet)."},
+   {"type": "fixed", "text": "New upcoming event: Gray Zone Warfare Gold, Oct 22, 16:00 to Nov 6, 12:59 UTC, for subscribing to selected streamers. The badge appears on the site as soon as Twitch publishes it."},
+   {"type": "fixed", "text": "Pokémon Night Out 2026 and the First Partners evolutions count in 20 categories (Just Chatting, Art, Music, the Pokémon games and more), not in every category."},
+   {"type": "fixed", "text": "BeAGoldfish and BelieveInRichmond are now one event: Apple TV (subscribers get 1 month of Apple TV), dates not announced yet."},
+   {"type": "fixed", "text": "Final Fantasy XIV Fan Festival: Twitch's category name FINAL FANTASY XIV ONLINE, so the category link works."}
+  ]
+ },
+ {
   "date": "2026-10-19",
   "title": "Badge event updates",
   "items": [

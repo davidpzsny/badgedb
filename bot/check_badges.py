@@ -591,6 +591,7 @@ def announce_live(events, live):
     due = []
     for ev in events:
         if not ev.get("start") or not ev.get("end") or f"live:{ev['id']}" in posts: continue
+        if ev.get("time_tba"): continue                          # only the days are known: the start time is a guess
         start, end = _dt(ev["start"]), _dt(ev["end"])
         if end <= now: continue
         mins = (start - now).total_seconds() / 60
@@ -948,7 +949,7 @@ def announce_ending(events, live):
     changed = False
     for ev in events:
         key = f"ending:{ev.get('id')}"
-        if not ev.get("end") or key in posts: continue
+        if not ev.get("end") or key in posts or ev.get("time_tba"): continue
         left = (_dt(ev["end"]) - now).total_seconds() / 3600
         if not (0 < left <= ENDING_SOON_HOURS): continue
         meta = [by_img[b["img"]] for b in ev.get("badges", []) if b.get("img") in by_img]
@@ -1001,7 +1002,7 @@ def announce_last_chance_x(events, live, max_per_run=2):
     due = []
     for ev in events:
         key = f"xending:{ev.get('id')}"
-        if not ev.get("start") or not ev.get("end") or key in posts: continue
+        if not ev.get("start") or not ev.get("end") or key in posts or ev.get("time_tba"): continue
         start, end = _dt(ev["start"]), _dt(ev["end"])
         left = (end - now).total_seconds() / 3600
         if not (X_ENDING_LATE_H <= left <= ENDING_SOON_HOURS): continue

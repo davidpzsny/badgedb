@@ -1,54 +1,65 @@
 [
  {
   "id": "cyberpunk-2077",
-  "name": "Cyberpunk 2077",
+  "name": "Cyberpunk: Edgerunners 2",
   "category": "Cyberpunk 2077",
-  "start": "",
-  "end": "",
+  "start": "2026-10-19T22:01:00Z",
+  "end": "2026-10-20T22:00:00Z",
   "badges": [
    {
     "name": "Edgerunners D",
     "img": "99095484-4036-40e6-a1f6-c451e93abdeb",
-    "how": "Watch a stream in the category.",
+    "how": "Watch 15 minutes on twitch.tv/cdprojektred or twitch.tv/cdprojektredjapan.",
     "cost": "free",
-    "desc": "This badge was earned by watching a streamer in the Cyberpunk 2077 category during the Cyberpunk: Edgerunners 2: Twitch Co-Streaming"
+    "desc": "This badge was earned by watching a streamer in the Cyberpunk 2077 category during the Cyberpunk: Edgerunners 2: Twitch Co-Streaming",
+    "how_src": "manual"
    },
    {
     "name": "Edgerunners Talia",
     "img": "37886d76-944e-46ed-81ee-348d43a17922",
-    "how": "Watch a stream in the category.",
+    "how": "Watch 15 minutes on twitch.tv/cdprojektred or twitch.tv/cdprojektredjapan.",
     "cost": "free",
-    "desc": "This badge was earned by watching a streamer in the Cyberpunk 2077 category during the Cyberpunk: Edgerunners 2: Twitch Co-Streaming"
+    "desc": "This badge was earned by watching a streamer in the Cyberpunk 2077 category during the Cyberpunk: Edgerunners 2: Twitch Co-Streaming",
+    "how_src": "manual"
    },
    {
     "name": "Edgerunners Weak",
     "img": "053062de-0527-4263-a595-740dc0ec2674",
-    "how": "Watch a stream in the category.",
+    "how": "Watch 15 minutes on twitch.tv/cdprojektred or twitch.tv/cdprojektredjapan.",
     "cost": "free",
-    "desc": "This badge was earned by watching a streamer in the Cyberpunk 2077 category during the Cyberpunk: Edgerunners 2: Twitch Co-Streaming"
+    "desc": "This badge was earned by watching a streamer in the Cyberpunk 2077 category during the Cyberpunk: Edgerunners 2: Twitch Co-Streaming",
+    "how_src": "manual"
    }
-  ]
+  ],
+  "name_src": "manual",
+  "dates_src": "manual",
+  "channels": [
+   "cdprojektred",
+   "cdprojektredjapan"
+  ],
+  "note": "Only on the CD PROJEKT RED channels. They stream it again on Oct 20 at 10:00 and 19:00 UTC."
  },
  {
-  "id": "believeinrichmond",
-  "name": "BelieveInRichmond",
-  "category": "Any",
-  "start": "",
-  "end": "",
+  "id": "gray-zone-warfare-gold",
+  "name": "Gray Zone Warfare Gold",
+  "category": "Gray Zone Warfare",
+  "start": "2026-10-22T16:00:00Z",
+  "end": "2026-11-06T12:59:00Z",
+  "dates_src": "manual",
+  "name_src": "manual",
   "badges": [
    {
-    "name": "BelieveInRichmond",
-    "img": "07374c1e-6858-443f-8f57-cfbbe38364ca",
-    "how": "Subscribe (Tier 1) or gift a Tier 1 sub on any channel.",
+    "name": "Gray Zone Warfare Gold",
+    "img": "",
+    "how": "Subscribe to one of the selected streamers (details not announced yet).",
     "cost": "paid",
-    "desc": "Subbed to a streamer and got 1 month of Apple TV!",
     "how_src": "manual"
    }
   ]
  },
  {
   "id": "beagoldfish",
-  "name": "BeAGoldfish",
+  "name": "Apple TV",
   "category": "Any",
   "start": "",
   "end": "",
@@ -60,8 +71,18 @@
     "cost": "paid",
     "desc": "Subbed to a streamer and got 1 month of Apple TV!",
     "how_src": "manual"
+   },
+   {
+    "name": "BelieveInRichmond",
+    "img": "07374c1e-6858-443f-8f57-cfbbe38364ca",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub on any channel.",
+    "cost": "paid",
+    "desc": "Subbed to a streamer and got 1 month of Apple TV!",
+    "how_src": "manual"
    }
-  ]
+  ],
+  "name_src": "manual",
+  "note": "Subscribers get 1 month of Apple TV. Dates not announced yet."
  },
  {
   "id": "streamer-awards-2026-vote",
@@ -318,8 +339,8 @@
   "id": "witchspire",
   "name": "Witchspire",
   "category": "Witchspire",
-  "start": "",
-  "end": "",
+  "start": "2026-10-21T00:00:00Z",
+  "end": "2026-10-31T23:59:00Z",
   "badges": [
    {
     "name": "Gold Stamp",
@@ -342,7 +363,10 @@
     "cost": "paid",
     "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Witchspire category"
    }
-  ]
+  ],
+  "dates_src": "manual",
+  "time_tba": true,
+  "note": "Exact start and end times not announced yet, only the days."
  },
  {
   "id": "sonic-racing-crossworlds",
@@ -366,7 +390,7 @@
  {
   "id": "gastly",
   "name": "Pokémon Night Out 2026",
-  "category": "Any",
+  "category": "20 eligible categories",
   "start": "2026-10-16T17:00:00Z",
   "end": "2027-01-30T22:59:00Z",
   "badges": [
@@ -398,7 +422,30 @@
   "name_src": "manual",
   "dates_src": "manual",
   "twitch_campaign": "3e7f0c98-893c-47a7-9044-1c61173b8f94",
-  "about": "Summary: Disclaimer: Pokémon Night Out Themed Poke Balls must be opened within 30 days of the campaign ending. Pokémon First Partners Campaign and Night Out Campaign evolutions must be completed by January 30, 2027.\n\nParticipating categories include: Pokémon FireRed/LeafGreen, Pokémon Pokopia, Pokémon UNITE, Pokémon Champions, Pokémon GO, Pokémon Legends: Z-A, Pokémon Scarlet/Violet, Pokémon Trading Card Game, Pokémon Trading Card Game Pocket, Pokémon Trading Card Game Live, Pokémon: Diamond/Pearl, Just Chatting, DJs, Art, Special Events, Sports, Music, Talk Shows & Podcasts, Animals/Aquariums/Zoos, Co-working & Studying, Makers & Crafting"
+  "about": "Summary: Disclaimer: Pokémon Night Out Themed Poke Balls must be opened within 30 days of the campaign ending. Pokémon First Partners Campaign and Night Out Campaign evolutions must be completed by January 30, 2027.\n\nParticipating categories include: Pokémon FireRed/LeafGreen, Pokémon Pokopia, Pokémon UNITE, Pokémon Champions, Pokémon GO, Pokémon Legends: Z-A, Pokémon Scarlet/Violet, Pokémon Trading Card Game, Pokémon Trading Card Game Pocket, Pokémon Trading Card Game Live, Pokémon: Diamond/Pearl, Just Chatting, DJs, Art, Special Events, Sports, Music, Talk Shows & Podcasts, Animals/Aquariums/Zoos, Co-working & Studying, Makers & Crafting",
+  "categories": [
+   "Just Chatting",
+   "DJs",
+   "Art",
+   "Special Events",
+   "Sports",
+   "Music",
+   "Talk Shows & Podcasts",
+   "Animals, Aquariums, and Zoos",
+   "Co-working & Studying",
+   "Makers & Crafting",
+   "Pokémon FireRed/LeafGreen",
+   "Pokémon Pokopia",
+   "Pokémon UNITE",
+   "Pokémon Champions",
+   "Pokémon GO",
+   "Pokémon Legends: Z-A",
+   "Pokémon Scarlet/Violet",
+   "Pokémon Trading Card Game",
+   "Pokémon Trading Card Game Pocket",
+   "Pokémon Trading Card Game Live"
+  ],
+  "note": "Counts in 20 categories: Just Chatting, DJs, Art, Special Events, Sports, Music, Talk Shows & Podcasts, Animals, Aquariums, and Zoos, Co-working & Studying, Makers & Crafting and 10 Pokémon game categories."
  },
  {
   "id": "vaultbreakers",
@@ -505,7 +552,7 @@
  },
  {
   "id": "yellow-party-hat",
-  "name": "RuneFest 2026 — official livestream",
+  "name": "RuneFest 2026: official livestream",
   "category": "Old School RuneScape",
   "start": "2026-10-03T13:00:00Z",
   "end": "2026-10-04T22:59:00Z",
@@ -531,7 +578,7 @@
  },
  {
   "id": "runescape-shrimp",
-  "name": "RuneFest 2026 — co-streams",
+  "name": "RuneFest 2026: co-streams",
   "category": "Old School RuneScape",
   "start": "2026-10-03T13:00:00Z",
   "end": "2026-10-04T22:59:00Z",
@@ -813,7 +860,7 @@
   "category": "Minecraft",
   "start": "2026-09-17T18:00:00Z",
   "end": "2026-09-22T06:58:00Z",
-  "note": "Short window — only on Minecraft streams that have the reward enabled. Receiving a gifted sub or using Prime does not count.",
+  "note": "Short window, only on Minecraft streams that have the reward enabled. Receiving a gifted sub or using Prime does not count.",
   "badges": [
    {
     "name": "Blue Creeper Boss",
@@ -1021,7 +1068,7 @@
   "category": "20 eligible Pokémon categories",
   "start": "2026-08-24T17:00:00Z",
   "end": "2026-10-01T07:00:00Z",
-  "note": "Unlock the starters before Oct 1 — otherwise you can't get their evolution badges later.",
+  "note": "Unlock the starters before Oct 1, otherwise you can't get their evolution badges later.",
   "badges": [
    {
     "name": "Pichu",
@@ -1144,7 +1191,7 @@
  {
   "id": "ffxiv",
   "name": "Final Fantasy XIV Fan Festival 2026 JP (Alpha Chat)",
-  "category": "Final Fantasy XIV",
+  "category": "FINAL FANTASY XIV ONLINE",
   "start": "2026-10-30T00:00:00Z",
   "end": "2026-11-01T23:59:00Z",
   "badges": [
@@ -1156,12 +1203,13 @@
     "desc": "This badge was earned by watching a creator in the Final Fantasy 14 category for 60 minutes during the Fan Fest 2026 - JP"
    }
   ],
-  "name_src": "manual"
+  "name_src": "manual",
+  "time_tba": true
  },
  {
   "id": "ffxiv-quest-complete-chat",
   "name": "Final Fantasy XIV Fan Festival 2026 JP (Quest Complete Chat)",
-  "category": "Final Fantasy XIV",
+  "category": "FINAL FANTASY XIV ONLINE",
   "start": "2026-10-30T00:00:00Z",
   "end": "2026-11-01T23:59:00Z",
   "badges": [
@@ -1176,7 +1224,8 @@
   "name_src": "manual",
   "channels": [
    "finalfantasyxiv"
-  ]
+  ],
+  "time_tba": true
  },
  {
   "id": "elden-q3",
@@ -1218,7 +1267,7 @@
    {
     "name": "TwitchCon Berlin badges",
     "img": "",
-    "how": "TwitchCon always ships its own badges — expected again this year.",
+    "how": "TwitchCon always ships its own badges, expected again this year.",
     "cost": "na"
    }
   ]
@@ -1226,7 +1275,7 @@
  {
   "id": "pokemon-evo",
   "name": "Pokémon First Partners evolutions",
-  "category": "Any",
+  "category": "20 eligible categories",
   "start": "2026-10-16T17:00:00Z",
   "end": "2027-01-30T22:59:00Z",
   "badges": [
@@ -1289,8 +1338,30 @@
   ],
   "name_src": "manual",
   "about": "Evolutions of the Pokémon First Partners Collection badges. Pichu evolves if it was unlocked before October 1; Bulbasaur, Charmander and Squirtle if unlocked before November 1. Twitch hasn't announced when evolving opens.",
-  "note": "The starter badge (Bulbasaur, Charmander, Squirtle) must be unlocked before Nov 1, Pichu before Oct 1, or its evolutions can't be unlocked.",
-  "dates_src": "manual"
+  "note": "Counts in 20 categories: Just Chatting, DJs, Art, Special Events, Sports, Music, Talk Shows & Podcasts, Animals, Aquariums, and Zoos, Co-working & Studying, Makers & Crafting and 10 Pokémon game categories.",
+  "dates_src": "manual",
+  "categories": [
+   "Just Chatting",
+   "DJs",
+   "Art",
+   "Special Events",
+   "Sports",
+   "Music",
+   "Talk Shows & Podcasts",
+   "Animals, Aquariums, and Zoos",
+   "Co-working & Studying",
+   "Makers & Crafting",
+   "Pokémon FireRed/LeafGreen",
+   "Pokémon Pokopia",
+   "Pokémon UNITE",
+   "Pokémon Champions",
+   "Pokémon GO",
+   "Pokémon Legends: Z-A",
+   "Pokémon Scarlet/Violet",
+   "Pokémon Trading Card Game",
+   "Pokémon Trading Card Game Pocket",
+   "Pokémon Trading Card Game Live"
+  ]
  },
  {
   "id": "wasteland",
