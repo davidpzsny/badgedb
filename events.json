@@ -61,8 +61,8 @@
   "id": "beagoldfish",
   "name": "Apple TV",
   "category": "Any",
-  "start": "",
-  "end": "",
+  "start": "2026-10-20T19:00:00Z",
+  "end": "2026-11-03T19:59:59Z",
   "badges": [
    {
     "name": "BeAGoldfish",
@@ -82,7 +82,10 @@
    }
   ],
   "name_src": "manual",
-  "note": "Subscribers get 1 month of Apple TV. Dates not announced yet."
+  "note": "Subscribers get 1 month of Apple TV. Dates not announced yet.",
+  "dates_src": "twitch",
+  "twitch_campaign": "b5557155-92cd-49d4-afce-5661565b8898",
+  "about": "Get two exclusive Ted Lasso Chat Badges with the purchase of a new sub or gift sub. Terms apply."
  },
  {
   "id": "streamer-awards-2026-vote",

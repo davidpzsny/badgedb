@@ -360,5 +360,13 @@
   "set": "gray-zone-warfare-gold",
   "posted": "2026-10-20T15:35:24+00:00",
   "replied": true
+ },
+ "live:beagoldfish": {
+  "tweet": "2112620085512921281",
+  "title": "BeAGoldfish",
+  "set": "beagoldfish",
+  "posted": "2026-10-20T19:00:54+00:00",
+  "replied": true,
+  "reply": "Objective, channels and exact dates: {url}"
  }
 }
