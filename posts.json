@@ -316,5 +316,35 @@
   "posted": "2026-10-18T09:00:51+00:00",
   "replied": true,
   "reply": "Objective, channels and the exact end time: {url}"
+ },
+ "ending:dnd-dungeon-masters-d20": {
+  "tweet": "",
+  "title": "d20",
+  "set": "d20",
+  "replied": "discord only",
+  "posted": "2026-10-20T07:00:46+00:00"
+ },
+ "ending:dnd-dungeon-masters": {
+  "tweet": "",
+  "title": "Ampersand",
+  "set": "ampersand",
+  "replied": "discord only",
+  "posted": "2026-10-20T07:00:46+00:00"
+ },
+ "xending:dnd-dungeon-masters-d20": {
+  "tweet": "2112438869689860320",
+  "title": "d20",
+  "set": "d20",
+  "posted": "2026-10-20T07:00:48+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
+ },
+ "xending:dnd-dungeon-masters": {
+  "tweet": "2112438873158504836",
+  "title": "Ampersand",
+  "set": "ampersand",
+  "posted": "2026-10-20T07:00:49+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
