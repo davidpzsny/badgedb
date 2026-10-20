@@ -140,8 +140,9 @@ const tile = b => `<span class="tile">${b.img ? `<img src="${esc(b.img)}" alt="$
 const fmt = iso => iso ? new Date(/^\d{4}-\d\d-\d\d$/.test(iso) ? iso + "T12:00:00Z" : iso).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}) : "";   // plain dates stay on their day in every time zone
 const fmtFull = iso => iso ? new Date(iso).toLocaleString(undefined,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : "Not announced";
 const fmtUtc = (iso, withDay) => new Date(iso).toLocaleString(undefined, {...(withDay ? {month:'short', day:'numeric'} : {}), hour:'2-digit', minute:'2-digit', hourCycle:'h23', timeZone:'UTC'}) + " UTC";
-function fmtWhen(iso){                  // local time + the same moment in UTC (as Twitch and StreamDatabase write it): "Oct 15, 06:00 (04:00 UTC)"
+function fmtWhen(iso, tba){             // local time + the same moment in UTC (as Twitch and StreamDatabase write it): "Oct 15, 06:00 (04:00 UTC)"
   const d = new Date(iso || ""); if(!iso || isNaN(d)) return fmtFull(iso);
+  if(tba) return `${d.toLocaleDateString(undefined, {month:'short', day:'numeric', timeZone:'UTC'})} <span class="utc">(time not announced)</span>`;   // only the day is known
   if(d.getTimezoneOffset() === 0) return fmtUtc(iso, true);
   const sameDay = d.getUTCDate() === d.getDate() && d.getUTCMonth() === d.getMonth();
   return `${fmtFull(iso)} <span class="utc">(${fmtUtc(iso, !sameDay)})</span>`;
@@ -1166,7 +1167,7 @@ function openEvent(id){
   const ev=allEvents().find(e=>e.id===id); if(!ev) return; const st=status(ev);
   const cd = st==="live"?`<div class="cd" data-cd="${ev.end}">${countdown(ev.end)}<small>until it ends</small></div>`:st==="soon"?`<div class="cd" data-cd="${ev.start}">${countdown(ev.start)}<small>until it starts</small></div>`:"";
   open(`<div class="hero-img">${ev.badges.map(b=>tile({...b,img:cdn(b.img)})).join('')}</div><h3>${esc(ev.name)}</h3><div class="sub">${esc(ev.category)}</div>${cd}
-    <dl class="kv"><dt>Status</dt><dd>${{live:"Active now",soon:"Upcoming",ended:"Ended",tba:"Date not announced"}[st]}</dd><dt>Starts</dt><dd>${fmtWhen(ev.start)}</dd><dt>Ends</dt><dd>${fmtWhen(ev.end)}</dd></dl>
+    <dl class="kv"><dt>Status</dt><dd>${{live:"Active now",soon:"Upcoming",ended:"Ended",tba:"Date not announced"}[st]}</dd><dt>Starts</dt><dd>${fmtWhen(ev.start, ev.time_tba)}</dd><dt>Ends</dt><dd>${fmtWhen(ev.end, ev.time_tba)}</dd></dl>
     ${ev.note?`<p class="hint">${esc(ev.note)}</p>`:''}
     <div class="badgelist">${ev.badges.map(b=>`<div>${tile({...b,img:cdn(b.img)})}<span><b>${esc(b.name)}</b><span>${esc(b.how)}</span></span><span class="pill ${b.cost}" style="margin-left:auto;flex:none">${{free:"Free",paid:"Paid",na:"TBA"}[b.cost]}</span></div>`).join('')}</div>
     ${watchNowHtml(ev)}
@@ -1178,7 +1179,7 @@ function openBadge(set,type){
   const how = b.how || (ev ? ev.b.how : "") || "No public description for this badge.";
   open(`<div class="hero-img">${tile(b)}</div><h3>${esc(b.name)}</h3><div class="sub">${type==='global'?'Twitch global badge':'Channel badge'}${(type==='global'?isFree(b):b.free)?' · <span class="pill free">Free</span>':''}${st==="live"?' · <span class="pill live">Active now</span>':st==="soon"?' · <span class="pill soon">Upcoming</span>':''}</div>
     ${ev&&st==="live"?`<div class="cd" data-cd="${ev.ev.end}">${countdown(ev.ev.end)}<small>until it ends</small></div>`:''}
-    <dl class="kv"><dt>How to get it</dt><dd>${esc(how)}</dd>${ev?`<dt>Event</dt><dd>${esc(ev.ev.name)}<br><span style="color:var(--muted)">${fmtWhen(ev.ev.start)} – ${fmtWhen(ev.ev.end)}</span></dd>`:''}${b.added?`<dt>Added</dt><dd>${fmt(b.added)}</dd>`:''}${b.users?`<dt>Users</dt><dd>${num(b.users)}</dd>`:''}<dt>Versions</dt><dd>${b.versions.length}</dd>${type==='global'?`<dt>Set ID</dt><dd><code>${esc(b.set)}</code></dd>`:''}</dl>
+    <dl class="kv"><dt>How to get it</dt><dd>${esc(how)}</dd>${ev?`<dt>Event</dt><dd>${esc(ev.ev.name)}<br><span style="color:var(--muted)">${fmtWhen(ev.ev.start, ev.ev.time_tba)} – ${fmtWhen(ev.ev.end, ev.ev.time_tba)}</span></dd>`:''}${b.added?`<dt>Added</dt><dd>${fmt(b.added)}</dd>`:''}${b.users?`<dt>Users</dt><dd>${num(b.users)}</dd>`:''}<dt>Versions</dt><dd>${b.versions.length}</dd>${type==='global'?`<dt>Set ID</dt><dd><code>${esc(b.set)}</code></dd>`:''}</dl>
     ${b.versions.length>1?`<div class="versions">${b.versions.map(v=>`<span class="v">${tile({name:v.title||v.id,img:v.img})}<span>${esc(v.title&&v.title!==b.name?v.title.replace(b.name,'').trim()||v.id:v.id)}</span></span>`).join('')}</div>`:''}
     <div class="actions">${ev?`<button class="btn" data-openev="${ev.ev.id}">Open event</button>${calendarMenu(ev.ev)}`:''}<a class="btn ghost" href="${esc(b.img)}" target="_blank" rel="noopener">Open image</a><button class="btn ghost" data-copy="${esc(b.img)}">Copy image URL</button></div>`);
 }
@@ -1334,8 +1335,8 @@ function renderBadgePage(set){
           <dt>Objective</dt><dd>${ev&&ev.b.how&&!/^objective not/i.test(ev.b.how)?esc(ev.b.how):esc(info.objective||"—")}</dd>
           <dt>Category</dt><dd>${cat && !/any|unknown|twitch/i.test(cat)?`<a href="${catUrl(cat)}?filter=drops" target="_blank" rel="noopener">${esc(cat)}</a>`:esc(cat||"—")}</dd>
           <dt>Channels</dt><dd>${ev?channelsHtml(ev.ev, cat):"Any"}</dd>
-          <dt>Started</dt><dd>${ev&&ev.ev.start?fmtWhen(ev.ev.start):(info.objective||info.category)&&!ev?"Not recorded":"—"}</dd>
-          <dt>Ends</dt><dd>${ev&&ev.ev.end?fmtWhen(ev.ev.end):(info.objective||info.category)&&!ev?"Not recorded":"—"}</dd>
+          <dt>Started</dt><dd>${ev&&ev.ev.start?fmtWhen(ev.ev.start, ev.ev.time_tba):(info.objective||info.category)&&!ev?"Not recorded":"—"}</dd>
+          <dt>Ends</dt><dd>${ev&&ev.ev.end?fmtWhen(ev.ev.end, ev.ev.time_tba):(info.objective||info.category)&&!ev?"Not recorded":"—"}</dd>
         </dl>
         ${ev?`<div class="actions" style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-ev="${ev.ev.id}">Open event</button>${calendarMenu(ev.ev)}</div>`:''}
       </div>

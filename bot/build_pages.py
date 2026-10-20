@@ -39,6 +39,9 @@ def utc(iso):
     if not iso: return ""
     return datetime.datetime.fromisoformat(iso.replace("Z", "+00:00")).strftime("%b %-d, %Y, %H:%M UTC")
 
+def ev_time(ev, key):                       # "Oct 21, 2026, 16:00 UTC", or only the day when the time isn't announced yet
+    return f'{day(ev[key])} (time not announced)' if ev.get("time_tba") else utc(ev[key])
+
 def day(iso):
     if not iso: return ""
     return datetime.date.fromisoformat(iso[:10]).strftime("%b %-d, %Y")
@@ -246,8 +249,8 @@ def badge_page(s, ev, evb, related, now, stale=False):
                         else ("Ended — exact dates weren't recorded" if eventish else "Not a timed event")),
              ("Objective", e(how) if how else "—"), ("Category", cat_link),
              ("Channels", channels_html(ev, cat) if ev else "Any"),
-             ("Started", utc(ev["start"]) if ev and ev.get("start") else ("Not recorded" if not ev and eventish else "—")),
-             ("Ends", utc(ev["end"]) if ev and ev.get("end") else ("Not recorded" if not ev and eventish else "—"))]
+             ("Started", ev_time(ev, "start") if ev and ev.get("start") else ("Not recorded" if not ev and eventish else "—")),
+             ("Ends", ev_time(ev, "end") if ev and ev.get("end") else ("Not recorded" if not ev and eventish else "—"))]
     dl = lambda rows: '<dl class="kv2">' + "".join(f"<dt>{k}</dt><dd>{v}</dd>" for k, v in rows) + "</dl>"
     context = (ev or {}).get("about") or (ev or {}).get("note") or (
         f'This badge was added to promote {ev["name"]}{" in the " + cat + " category" if cat else ""} on Twitch.' if ev else "No additional context yet. Follow twitch.tv/badge_db for updates.")

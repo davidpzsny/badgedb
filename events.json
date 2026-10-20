@@ -55,7 +55,8 @@
     "cost": "paid",
     "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Gray Zone Warfare category"
    }
-  ]
+  ],
+  "note": "Announced for selected streamers in the Gray Zone Warfare category."
  },
  {
   "id": "beagoldfish",
@@ -82,7 +83,7 @@
    }
   ],
   "name_src": "manual",
-  "note": "Subscribers get 1 month of Apple TV. Dates not announced yet.",
+  "note": "Subscribers also get 1 month of Apple TV (terms apply).",
   "dates_src": "twitch",
   "twitch_campaign": "b5557155-92cd-49d4-afce-5661565b8898",
   "about": "Get two exclusive Ted Lasso Chat Badges with the purchase of a new sub or gift sub. Terms apply."
@@ -522,7 +523,7 @@
  {
   "id": "witcher-3",
   "name": "Witcher 3",
-  "category": "Witcher 3",
+  "category": "The Witcher 3: Wild Hunt",
   "start": "2026-09-29T10:00:00Z",
   "end": "2026-10-27T09:59:00Z",
   "badges": [
@@ -539,7 +540,7 @@
  {
   "id": "ace-combat-8-nugget",
   "name": "ACE COMBAT 8 Nugget",
-  "category": "ACE COMBAT 8",
+  "category": "ACE COMBAT 8: WINGS OF THEVE",
   "start": "2026-09-28T22:00:00Z",
   "end": "2026-10-26T06:59:00Z",
   "badges": [
@@ -551,7 +552,12 @@
     "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the ACE COMBAT 8 category during the game's launch!"
    }
   ],
-  "dates_src": "twitch"
+  "dates_src": "twitch",
+  "categories": [
+   "ACE COMBAT 8: WINGS OF THEVE",
+   "Ace Combat Zero: The Belkan War"
+  ],
+  "note": "Also counts in Ace Combat Zero: The Belkan War."
  },
  {
   "id": "yellow-party-hat",
