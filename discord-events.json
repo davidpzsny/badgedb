@@ -82,5 +82,17 @@
  "pokemon-evo": {
   "id": "1560707536586285186",
   "sig": "[{\"description\": \"\\u2022 Ivysaur: Unlock Bulbasaur, then watch 20 minutes a day for 3 days.\\n\\u2022 Venusaur: Unlock Ivysaur, then watch 20 minutes a day for 3 days.\\n\\u2022 Charmeleon: Unlock Charmander, then watch 20 minutes a day for 3 days.\\n\\u2022 Charizard: Unlock Charmeleon, then watch 20 minutes a day for 3 days.\\n\\u2022 Wartortle: Unlock Squirtle, then watch 20 minutes a day for 3 days.\\n\\u2022 Blastoise: Unlock Wartortle, then watch 20 minutes a day for 3 days.\\n\\u2022 Pikachu: Unlock Pichu, then watch 20 minutes a day for 3 days.\\n\\nDetails and all dates: https://badgedatabase.com/badges/ivysaur/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/ivysaur/\"}, \"name\": \"Pok\\u00e9mon First Partners evolutions\", \"scheduled_end_time\": \"2027-01-30T22:59:00Z\"}, \"2026-10-16T17:00:00Z\"]"
+ },
+ "cyberpunk-2077": {
+  "id": "1562000573455405086",
+  "sig": "[{\"description\": \"\\u2022 Edgerunners D: Watch 15 minutes on twitch.tv/cdprojektred or twitch.tv/cdprojektredjapan.\\n\\u2022 Edgerunners Talia: Watch 15 minutes on twitch.tv/cdprojektred or twitch.tv/cdprojektredjapan.\\n\\u2022 Edgerunners Weak: Watch 15 minutes on twitch.tv/cdprojektred or twitch.tv/cdprojektredjapan.\\n\\nDetails and all dates: https://badgedatabase.com/badges/edgerunners-d/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/edgerunners-d/\"}, \"name\": \"Cyberpunk: Edgerunners 2\", \"scheduled_end_time\": \"2026-10-20T22:00:00Z\"}, \"2026-10-19T22:01:00Z\"]"
+ },
+ "gray-zone-warfare-gold": {
+  "id": "1562000575153971221",
+  "sig": "[{\"description\": \"\\u2022 Gray Zone Warfare Gold: Subscribe to one of the selected streamers (details not announced yet).\\n\\nDetails and all dates: https://badgedatabase.com/timeline/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/timeline/\"}, \"name\": \"Gray Zone Warfare Gold\", \"scheduled_end_time\": \"2026-11-06T12:59:00Z\"}, \"2026-10-22T16:00:00Z\"]"
+ },
+ "witchspire": {
+  "id": "1562000577414692956",
+  "sig": "[{\"description\": \"\\u2022 Gold Stamp: Watch 240 minutes in the category.\\n\\u2022 Witchspire Logo: Watch 60 minutes in the category.\\n\\u2022 Witch Hat: Subscribe (Tier 1) or gift a Tier 1 sub in the category.\\n\\nDetails and all dates: https://badgedatabase.com/badges/gold-stamp/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/gold-stamp/\"}, \"name\": \"Witchspire\", \"scheduled_end_time\": \"2026-10-31T23:59:00Z\"}, \"2026-10-21T00:00:00Z\"]"
  }
 }
