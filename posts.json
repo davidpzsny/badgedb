@@ -390,5 +390,13 @@
   "posted": "2026-10-20T23:00:52+00:00",
   "replied": true,
   "reply": "Objective, channels and the exact end time: {url}"
+ },
+ "live:witchspire": {
+  "tweet": "2112936975615348942",
+  "title": "Gold Stamp",
+  "set": "gold-stamp",
+  "posted": "2026-10-21T16:00:06+00:00",
+  "replied": true,
+  "reply": "Objective, channels and exact dates: {url}"
  }
 }
