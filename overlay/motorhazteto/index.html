@@ -176,7 +176,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-10-20.2";   // bump together with version.json after every change
+const OVERLAY_V = "2026-10-21.1";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -242,7 +242,7 @@ const EXTRA_AVAILABLE = [
 ];
 
 /* Stream categories where the whole "Available here" part of the header is hidden.
-   The overlay checks badge_db's current category every minute. */
+   The overlay checks badge_db's current category every 30 seconds. */
 const HIDE_AVAILABLE_IN = ['Always On'];
 /* Stream categories where the running badges that can be earned in ANY category are shown in the header as well.
    Events that list their eligible categories on the site (e.g. Pokémon Night Out: Just Chatting, Art, Pokémon GO, ...)
@@ -418,7 +418,8 @@ function badgeAction(b){
   if(/\b(eligible|participating) [^.]*channels?\b/i.test(how)) return null;   // only on a list of channels (badge_db is not one)
   if(b.cost === 'paid') return /ticket/i.test(how) ? null : { text: 'Sub or Gift', color: '#c4a1ff' };
   const m = how.match(/watch[^0-9]*(\d+)\s*(minutes?|mins?|hours?|h)\b/i);
-  if(m) return { text: 'Watch ' + m[1] + (/^h/i.test(m[2]) ? (m[1] === '1' ? ' hour' : ' hours') : ' min'), color: '#4ade80' };
+  if(m){ const n = +m[1], hrs = /^h/i.test(m[2]) ? n : n >= 60 && n % 60 === 0 ? n / 60 : 0;    // 240 minutes reads "Watch 4 hours"
+    return { text: hrs ? `Watch ${hrs} ${hrs === 1 ? 'hour' : 'hours'}` : `Watch ${n} min`, color: '#4ade80' }; }
   if(b.cost === 'free' || /watch/i.test(how)) return { text: 'Watch', color: '#4ade80' };
   return { text: 'Objective TBA', color: '#9a9aa3' };
 }
@@ -569,7 +570,7 @@ async function checkVersion(){
 render();
 setInterval(render, 1000);
 loadStats(); setInterval(loadStats, 300000);
-loadCategory(); setInterval(loadCategory, 60000);
+loadCategory(); setInterval(loadCategory, 30000);   // the header follows a category change within about half a minute
 setInterval(checkVersion, 30000); setTimeout(checkVersion, 5000);
 </script>
 </body>

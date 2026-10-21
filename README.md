@@ -215,7 +215,7 @@ OBS → Sources → + → Browser, URL above, Width `1920`, Height `1080`. It is
   In `overlay/motorhazteto/index.html`: `EVENT_TITLES` / `EVENT_DESC` (own title or description by event id),
   `EXTRA_EVENTS` (events not on the site yet, UTC times from streamdatabase.com/events, `start: null` = TBA),
   `EXTRA_AVAILABLE` (header chips added by hand), `ITEMS` (left column fallback).
-- **Header "Available here" is automatic:** every minute the overlay reads badge_db's current Twitch category (decapi.me,
+- **Header "Available here" is automatic:** every 30 seconds the overlay reads badge_db's current Twitch category (decapi.me,
   backup: the bot's `live.json`) and shows the badges of running events in that category from `events.json`
   ("Watch 60 min" / "Sub or Gift"; upcoming ones: "Coming here" + countdown). Badges that need another channel
   (e.g. "watch twitch.tv/dnd") or a ticket are left out. Matching uses Twitch category ids: the bot writes
