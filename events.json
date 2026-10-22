@@ -1,5 +1,31 @@
 [
  {
+  "id": "qsmp-2-season-2",
+  "name": "QSMP 2 Season 2",
+  "category": "QSMP",
+  "start": "2026-10-21T13:00:00Z",
+  "end": "2026-11-18T12:59:00Z",
+  "dates_src": "manual",
+  "name_src": "manual",
+  "channels": [
+   "QSMP",
+   "Quackity",
+   "QuackityToo"
+  ],
+  "note": "Only on twitch.tv/qsmp, twitch.tv/quackity and twitch.tv/quackitytoo. The QSMP2 badge from the March 2026 launch is back for Season 2.",
+  "about": "Quackity's QSMP 2 is back for Season 2, and so is its badge.",
+  "badges": [
+   {
+    "name": "QSMP2",
+    "img": "2fa68fb9-fcdd-4795-bfab-f408e10efaef",
+    "how": "Watch 1 hour on twitch.tv/qsmp, twitch.tv/quackity or twitch.tv/quackitytoo (QSMP category).",
+    "cost": "free",
+    "desc": "This badge was earned for watching QSMP during the initial 2026 launch!",
+    "how_src": "manual"
+   }
+  ]
+ },
+ {
   "id": "cyberpunk-2077-the-mox",
   "name": "Cyberpunk 2077: The Mox",
   "category": "Cyberpunk 2077",
