@@ -127,9 +127,12 @@ def sync_events(desc_by_img, new_sets, title_to_img=None):
     ids = {e["id"] for e in events}
     now = datetime.datetime.now(datetime.timezone.utc).isoformat()
     def open_event_for(cat):
+        # only an event without dates yet (e.g. created a moment ago for another badge of the same campaign): an event
+        # with dates or a channel list is a campaign of its own, so a new badge in that category gets a new event
         for e in events:
             if (e.get("category") or "").lower() != cat.lower(): continue
             if e.get("end") and e["end"] < now: continue          # already over
+            if e.get("start") or e.get("channels"): continue
             return e
         return None
     added = 0

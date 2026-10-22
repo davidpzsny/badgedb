@@ -1,5 +1,13 @@
 [
  {
+  "date": "2026-10-22",
+  "title": "Badge event updates",
+  "items": [
+   {"type": "fixed", "text": "Cyberpunk 2077: The Mox is its own event: sub or gift a Tier 1 sub in Cyberpunk 2077, Oct 22, 10:00 to Nov 19, 09:59 UTC (for the 2.5 update). It was wrongly listed under the Edgerunners 2 event before."},
+   {"type": "fixed", "text": "New badges of a game are no longer added to an event of the same game that already has its own dates or channel list."}
+  ]
+ },
+ {
   "date": "2026-10-20",
   "title": "Badge event updates",
   "items": [

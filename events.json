@@ -1,5 +1,25 @@
 [
  {
+  "id": "cyberpunk-2077-the-mox",
+  "name": "Cyberpunk 2077: The Mox",
+  "category": "Cyberpunk 2077",
+  "start": "2026-10-22T10:00:00Z",
+  "end": "2026-11-19T09:59:00Z",
+  "dates_src": "manual",
+  "name_src": "manual",
+  "badges": [
+   {
+    "name": "The Mox",
+    "img": "1b9b6fbf-9100-4b2c-9bdf-8be0f1456ff9",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Cyberpunk 2077 category",
+    "how_src": "manual"
+   }
+  ],
+  "about": "Celebrating Cyberpunk 2077's 2.5 update."
+ },
+ {
   "id": "cyberpunk-2077",
   "name": "Cyberpunk: Edgerunners 2",
   "category": "Cyberpunk 2077",
@@ -29,13 +49,6 @@
     "cost": "free",
     "desc": "This badge was earned by watching a streamer in the Cyberpunk 2077 category during the Cyberpunk: Edgerunners 2: Twitch Co-Streaming",
     "how_src": "manual"
-   },
-   {
-    "name": "The Mox",
-    "img": "1b9b6fbf-9100-4b2c-9bdf-8be0f1456ff9",
-    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid",
-    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Cyberpunk 2077 category"
    }
   ],
   "name_src": "manual",
