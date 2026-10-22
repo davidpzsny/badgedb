@@ -73,7 +73,7 @@
  },
  "gray-zone-warfare-gold": {
   "id": "1562000575153971221",
-  "sig": "[{\"description\": \"\\u2022 Gray Zone Warfare (Gold): Subscribe (Tier 1) or gift a Tier 1 sub in the category.\\n\\nDetails and all dates: https://badgedatabase.com/badges/gray-zone-warfare-gold/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/gray-zone-warfare-gold/\"}, \"name\": \"Gray Zone Warfare Gold\", \"scheduled_end_time\": \"2026-11-06T12:59:00Z\"}, \"2026-10-22T16:00:00Z\"]"
+  "sig": "[{\"description\": \"\\u2022 Gray Zone Warfare (Gold): Subscribe (Tier 1) or gift a Tier 1 sub on one of the 38 participating Gray Zone Warfare channels.\\n\\nDetails and all dates: https://badgedatabase.com/badges/gray-zone-warfare-gold/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/gray-zone-warfare-gold/\"}, \"name\": \"Gray Zone Warfare\", \"scheduled_end_time\": \"2026-11-06T12:58:00Z\"}, \"2026-10-22T16:00:00Z\"]"
  },
  "witchspire": {
   "id": "1562000577414692956",
@@ -90,5 +90,9 @@
  "qsmp-2-season-2": {
   "id": "1562693543808475216",
   "sig": "[{\"description\": \"\\u2022 QSMP2: Watch 1 hour on twitch.tv/qsmp, twitch.tv/quackity or twitch.tv/quackitytoo (QSMP category).\\n\\nDetails and all dates: https://badgedatabase.com/badges/qsmp2/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/qsmp2/\"}, \"name\": \"QSMP 2 Season 2\", \"scheduled_end_time\": \"2026-11-18T12:59:00Z\"}, \"2026-10-21T13:00:00Z\"]"
+ },
+ "call-of-duty-modern-warfare-4": {
+  "id": "1562931062055632926",
+  "sig": "[{\"description\": \"\\u2022 Modern Warfare 4: Subscribe (Tier 1) or gift a Tier 1 sub in the category.\\n\\nDetails and all dates: https://badgedatabase.com/badges/modern-warfare-4/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/modern-warfare-4/\"}, \"name\": \"Call of Duty: Modern Warfare 4\", \"scheduled_end_time\": \"2026-11-13T17:59:00Z\"}, \"2026-10-23T17:00:00Z\"]"
  }
 }
