@@ -89,19 +89,62 @@
   "id": "gray-zone-warfare-gold",
   "name": "Gray Zone Warfare",
   "category": "Gray Zone Warfare",
-  "start": "",
-  "end": "",
+  "start": "2026-10-22T16:00:00Z",
+  "end": "2026-11-06T12:58:00Z",
   "name_src": "manual",
   "badges": [
    {
     "name": "Gray Zone Warfare (Gold)",
     "img": "29bd60c0-72a3-4151-8bb8-73153add8f85",
-    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub on one of the 38 participating Gray Zone Warfare channels.",
     "cost": "paid",
-    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Gray Zone Warfare category"
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Gray Zone Warfare category",
+    "how_src": "manual"
    }
   ],
-  "note": "Dates not announced yet."
+  "note": "Only on the 38 participating Gray Zone Warfare channels.",
+  "dates_src": "manual",
+  "channels": [
+   "2TwistedTV",
+   "actionjaxon",
+   "Bigfry",
+   "Crash8",
+   "DamnitBennett",
+   "OperatorDrewski",
+   "iiizwerg",
+   "jenntacles",
+   "KapitanRutain",
+   "Klean",
+   "Triple_G",
+   "CyborgAngel",
+   "TheJan11",
+   "Xyko_tv",
+   "Sixquatre",
+   "Onepeg",
+   "SgtPrepperTV",
+   "Kotton",
+   "Alpacasnackpack",
+   "bearki",
+   "thesaintglizzy",
+   "JesseKazam",
+   "Credard",
+   "TyyPlays",
+   "stankRat",
+   "HiTower_",
+   "JarH3ad_TV",
+   "ArcadeBulls",
+   "RikOnAir",
+   "Conducteir77",
+   "typecheck",
+   "Kouinia",
+   "Altair",
+   "Xos93",
+   "Xnapycz",
+   "WillerZ",
+   "SOA_SnakeEyes",
+   "AirwingMarine"
+  ],
+  "about": "For Gray Zone Warfare's 0.5 update."
  },
  {
   "id": "beagoldfish",
@@ -370,19 +413,23 @@
  },
  {
   "id": "call-of-duty-modern-warfare-4",
-  "name": "Call of Duty Modern Warfare 4",
-  "category": "Call of Duty Modern Warfare 4",
-  "start": "",
-  "end": "",
+  "name": "Call of Duty: Modern Warfare 4",
+  "category": "Call of Duty: Modern Warfare 4",
+  "start": "2026-10-23T17:00:00Z",
+  "end": "2026-11-13T17:59:00Z",
   "badges": [
    {
     "name": "Modern Warfare 4",
     "img": "41505da3-121e-4d81-985f-95185a79186c",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
     "cost": "paid",
-    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Call of Duty Modern Warfare 4 category during the launch."
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Call of Duty Modern Warfare 4 category during the launch.",
+    "how_src": "manual"
    }
-  ]
+  ],
+  "name_src": "manual",
+  "dates_src": "manual",
+  "about": "For the launch of Call of Duty: Modern Warfare 4."
  },
  {
   "id": "witchspire",

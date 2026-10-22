@@ -3,6 +3,8 @@
   "date": "2026-10-22",
   "title": "Badge event updates",
   "items": [
+   {"type": "fixed", "text": "Gray Zone Warfare (Gold) started: sub or gift a Tier 1 sub on one of the 38 participating Gray Zone Warfare channels, Oct 22, 16:00 to Nov 6, 12:58 UTC. The badge page lists every channel."},
+   {"type": "fixed", "text": "Call of Duty: Modern Warfare 4: sub or gift a Tier 1 sub in the category, Oct 23, 17:00 to Nov 13, 17:59 UTC."},
    {"type": "fixed", "text": "QSMP 2 Season 2: the QSMP2 badge is back. Watch 1 hour on twitch.tv/qsmp, twitch.tv/quackity or twitch.tv/quackitytoo, Oct 21, 13:00 to Nov 18, 12:59 UTC."},
    {"type": "fixed", "text": "Cyberpunk 2077: The Mox is its own event: sub or gift a Tier 1 sub in Cyberpunk 2077, Oct 22, 10:00 to Nov 19, 09:59 UTC (for the 2.5 update). It was wrongly listed under the Edgerunners 2 event before."},
    {"type": "fixed", "text": "New badges of a game are no longer added to an event of the same game that already has its own dates or channel list."}
