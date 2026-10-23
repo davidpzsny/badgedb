@@ -406,5 +406,13 @@
   "posted": "2026-10-22T10:00:06+00:00",
   "replied": true,
   "reply": "Objective, channels and exact dates: {url}"
+ },
+ "live:call-of-duty-modern-warfare-4": {
+  "tweet": "2113676851319103891",
+  "title": "Modern Warfare 4",
+  "set": "modern-warfare-4",
+  "posted": "2026-10-23T17:00:06+00:00",
+  "replied": true,
+  "reply": "Objective, channels and exact dates: {url}"
  }
 }
