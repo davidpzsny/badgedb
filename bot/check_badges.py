@@ -560,7 +560,9 @@ def update_popularity(live):
 
 # ---------- "Now available" posts when a badge event starts ----------
 X_LIVE_POSTS = (os.environ.get("X_LIVE_POSTS") or "1").strip().lower() not in ("0", "false", "no", "off")
-LIVE_WAIT_MIN = 12          # if an event starts within this many minutes, wait for it and post on time
+LIVE_WAIT_MIN = 2           # if an event starts within this many minutes, wait for it and post on time. Kept short: the
+                            # bot runs every 5 minutes, and a long wait would hold back everything else (e.g. live.json,
+                            # which the stream overlay uses to follow badge_db's category)
 LIVE_LATE_MIN = 90          # never announce an event that started longer ago than this
 def _dt(t): return datetime.datetime.fromisoformat(t.replace("Z", "+00:00"))
 

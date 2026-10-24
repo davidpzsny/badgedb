@@ -176,7 +176,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-10-21.1";   // bump together with version.json after every change
+const OVERLAY_V = "2026-10-24.1";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -381,14 +381,31 @@ function siteItems(now){                      // every badge set added in the la
 
 /* ---------- current stream category: DecAPI (about a minute fresh), else the site bot's live.json (15 min) ---------- */
 let streamCat = null, live = null;            // streamCat null = unknown: only the EXTRA_AVAILABLE chips show
+/* 1) Twitch itself (the category set in the stream manager, the moment it changes, with its id),
+   2) DecAPI, 3) the bot's live.json (every 5 minutes) */
+let gqlFails = 0, streamCatId = null;
+async function gqlCategory(){
+  if(gqlFails >= 3) return null;                     // not reachable from here: stop asking
+  try{
+    const r = await fetch('https://gql.twitch.tv/gql', { method: 'POST', cache: 'no-store',
+      headers: { 'Client-Id': 'kimne78kx3ncx6brgo4mv6wki5h1ko', 'Content-Type': 'text/plain;charset=UTF-8' },
+      body: JSON.stringify({ query: `query { user(login: "${CHANNEL}") { broadcastSettings { game { id name displayName } } } }` }) });
+    if(!r.ok) throw new Error(r.status);
+    const g = (((await r.json()).data || {}).user || {}).broadcastSettings;
+    gqlFails = 0;
+    return g && g.game ? { id: String(g.game.id), name: g.game.name || g.game.displayName } : { id: null, name: '' };
+  }catch(e){ gqlFails++; return null; }
+}
 async function loadCategory(){
-  const [dec, j] = await Promise.all([
+  const [gq, dec, j] = await Promise.all([
+    gqlCategory(),
     fetch('https://decapi.me/twitch/game/' + CHANNEL + '?t=' + Date.now(), {cache: 'no-store'}).then(r => r.ok ? r.text() : '').catch(() => ''),
     getJson('live.json')]);
   if(j && typeof j === 'object') live = j;
   const t = String(dec || '').trim();
-  if(t && t.length < 80 && !/not found|error|invalid|rate limit|<html/i.test(t)) streamCat = t;
-  else if(live && live.our_live && live.our_game) streamCat = live.our_game;
+  if(gq && gq.name){ streamCat = gq.name; streamCatId = gq.id; }
+  else if(t && t.length < 80 && !/not found|error|invalid|rate limit|<html/i.test(t)){ streamCat = t; streamCatId = null; }
+  else if(live && live.our_live && live.our_game){ streamCat = live.our_game; streamCatId = live.our_game_id || null; }
   render();
 }
 
@@ -403,6 +420,7 @@ function inStreamCategory(ev){
   if(chans.length && !chans.includes(CHANNEL)) return false;              // only on certain channels, not ours
   const gid = live && ((live.events && live.events[ev.id] && live.events[ev.id].game_id) || (live.upcoming && live.upcoming[ev.id]));
   if(gid){
+    if(streamCatId) return gid === streamCatId;                          // Twitch's own category id: exact
     const name = live.game_names && live.game_names[gid];
     if(name) return normCat(name) === normCat(streamCat);
     if(live.our_game_id && normCat(live.our_game) === normCat(streamCat)) return gid === live.our_game_id;

@@ -379,37 +379,66 @@
  },
  {
   "id": "lol-worlds-2026-fans",
-  "name": "Worlds 2026: K/DA, Pentakill and True Damage Fan",
+  "name": "Worlds 2026: True Damage Fan",
   "category": "League of Legends",
-  "start": "",
-  "end": "",
+  "start": "2026-10-28T00:00:00Z",
+  "end": "2026-11-06T23:59:00Z",
   "badges": [
-   {
-    "name": "K/DA Fan",
-    "img": "cf6ff3ab-9153-483b-bdac-f07577e6e202",
-    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid",
-    "desc": "This Chat Badge was earned by supporting the 2026 League of Legends World Championship!",
-    "how_src": "manual"
-   },
-   {
-    "name": "Pentakill Fan",
-    "img": "721fe947-d819-4b13-9b7a-92debcd9393b",
-    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid",
-    "desc": "This Chat Badge was earned by supporting the 2026 League of Legends World Championship!",
-    "how_src": "manual"
-   },
    {
     "name": "True Damage Fan",
     "img": "06c27674-9c56-479d-8acf-a3dfd5680425",
-    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid",
+    "how": "Watch League of Legends streams (exact watch time not announced yet).",
+    "cost": "free",
     "desc": "This Chat Badge was earned by supporting the 2026 League of Legends World Championship!",
     "how_src": "manual"
    }
   ],
-  "name_src": "manual"
+  "name_src": "manual",
+  "dates_src": "manual",
+  "time_tba": true,
+  "note": "Exact times not announced yet, only the days."
+ },
+ {
+  "id": "lol-worlds-2026-pentakill",
+  "name": "Worlds 2026: Pentakill Fan",
+  "category": "League of Legends",
+  "start": "2026-11-07T00:00:00Z",
+  "end": "2026-11-11T23:59:00Z",
+  "dates_src": "manual",
+  "name_src": "manual",
+  "time_tba": true,
+  "note": "Exact times not announced yet, only the days.",
+  "badges": [
+   {
+    "name": "Pentakill Fan",
+    "img": "721fe947-d819-4b13-9b7a-92debcd9393b",
+    "how": "Watch League of Legends streams (exact watch time not announced yet).",
+    "cost": "free",
+    "desc": "This Chat Badge was earned by supporting the 2026 League of Legends World Championship!",
+    "how_src": "manual"
+   }
+  ]
+ },
+ {
+  "id": "lol-worlds-2026-kda",
+  "name": "Worlds 2026: K/DA Fan",
+  "category": "League of Legends",
+  "start": "2026-11-13T00:00:00Z",
+  "end": "2026-11-14T23:59:00Z",
+  "dates_src": "manual",
+  "name_src": "manual",
+  "time_tba": true,
+  "note": "Exact times not announced yet, only the days.",
+  "badges": [
+   {
+    "name": "K/DA Fan",
+    "img": "cf6ff3ab-9153-483b-bdac-f07577e6e202",
+    "how": "Watch League of Legends streams (exact watch time not announced yet).",
+    "cost": "free",
+    "desc": "This Chat Badge was earned by supporting the 2026 League of Legends World Championship!",
+    "how_src": "manual"
+   }
+  ]
  },
  {
   "id": "call-of-duty-modern-warfare-4",
