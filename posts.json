@@ -414,5 +414,20 @@
   "posted": "2026-10-23T17:00:06+00:00",
   "replied": true,
   "reply": "Objective, channels and exact dates: {url}"
+ },
+ "ending:ace-combat-8-nugget": {
+  "tweet": "",
+  "title": "ACE COMBAT 8 Nugget",
+  "set": "ace-combat-8-nugget",
+  "replied": "discord only",
+  "posted": "2026-10-25T07:00:51+00:00"
+ },
+ "xending:ace-combat-8-nugget": {
+  "tweet": "2114250830282957043",
+  "title": "ACE COMBAT 8 Nugget",
+  "set": "ace-combat-8-nugget",
+  "posted": "2026-10-25T07:00:53+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
