@@ -370,6 +370,7 @@ CH_STATE = os.path.join(ROOT, "channels-state.json")
 CH_LIST = os.path.join(ROOT, "channels.txt")
 CH_PER_RUN = 120            # channels checked per run
 CH_RECHECK_HOURS = 24
+CH_SKIP = {"streamdatabase"}      # channels never listed on the site (their rows are dropped on the next run)
 
 def helix_get(token, path, params=None):
     r = requests.get("https://api.twitch.tv/helix/" + path, params=params or {}, timeout=30,
@@ -386,8 +387,8 @@ def load_json(path, default):
     except Exception: return default
 
 def crawl_channel_badges(token):
-    db = load_json(CH_DB, [])                 # rows: [title, img, first_seen, channel_login, channel_display, set_id, type]
-    state = load_json(CH_STATE, {})           # login -> {"id":..., "checked": iso}
+    db = [r for r in load_json(CH_DB, []) if len(r) < 4 or r[3] not in CH_SKIP]   # rows: [title, img, first_seen, channel_login, channel_display, set_id, type]
+    state = {k: v for k, v in load_json(CH_STATE, {}).items() if k not in CH_SKIP}   # login -> {"id":..., "checked": iso}
     known = {r[1] for r in db}
     now = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None); now_iso = now.isoformat(timespec="seconds")
 
@@ -401,6 +402,7 @@ def crawl_channel_badges(token):
         for st in helix_get(token, "streams", {"first": 100}):
             wanted[st["user_login"].lower()] = (st["user_id"], st["user_name"])
     except Exception as e: print("streams lookup failed:", e)
+    for l in CH_SKIP: wanted.pop(l, None)
 
     # resolve ids for manual names
     need_ids = [l for l, v in wanted.items() if v is None and not state.get(l, {}).get("id")]
@@ -550,7 +552,7 @@ def update_popularity(live):
         if sid: counts[sid] = max(counts.get(sid, 0), int(n))    # multi-version sets: the largest version
     if not counts:
         print(f"popularity: could not match any badge -> first row {str(items[0])[:300]}"); status("popularity", f"no badge matched, first row: {str(items[0])[:300]}"); return
-    sdb = pop.get("sdb") or {}                                  # StreamDatabase counts from /admin/ (stream overlay): kept
+    sdb = pop.get("sdb") or {}                                  # overlay user counts from /admin/ (stream overlay): kept
     json.dump({"updated": today, "source": "PotatBotat (potat.app)", "counts": dict(sorted(counts.items(), key=lambda kv: -kv[1])),
                **({"sdb": sdb, "sdb_updated": pop.get("sdb_updated")} if sdb else {})},
               open(POP_DB, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
@@ -1151,7 +1153,7 @@ def main():
         try: crawl_channel_badges(tok)
         except Exception as e: print("channel crawl failed:", e)
 
-    try:                                    # user counts from StreamDatabase, only when asked for in /admin/
+    try:                                    # overlay user counts, only when asked for in /admin/
         import sdb_users
         STATUS.update(sdb_users.run())
     except Exception as e:

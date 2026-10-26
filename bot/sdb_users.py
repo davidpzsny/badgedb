@@ -1,8 +1,8 @@
-"""User counts from StreamDatabase for the newest badges (the stream overlay's "Added in the last 14 days" column).
+"""User counts from an external badge list for the newest badges (the stream overlay's "Added in the last 14 days" column).
 
-Runs only when it was asked for with the "User counts from StreamDatabase" button in /admin/ (the button writes
+Runs only when it was asked for with the "Overlay user counts" button in /admin/ (the button writes
 sdb-request.json; this runs when that request is newer than the last one handled). One page load per button press:
-StreamDatabase's global badge list (newest first) shows "Users" for every badge. The counts go into popularity.json
+The global badge list at LIST_URL (newest first) shows "Users" for every badge. The counts go into popularity.json
 under "sdb" (only the stream overlay uses them; the site keeps PotatBotat's counts, which are counted differently and
 are much higher); the result is reported in status.json under "sdb_users".
 """
@@ -93,15 +93,15 @@ def run():
         resp = requests.get(LIST_URL, headers=HEADERS, timeout=40)
         page = resp.text
     except Exception as e:
-        out["sdb_users"]["msg"] = f"StreamDatabase could not be loaded: {e}"[:600]; return out
+        out["sdb_users"]["msg"] = f"The badge list could not be loaded: {e}"[:600]; return out
     if resp.status_code != 200:
-        out["sdb_users"]["msg"] = f"StreamDatabase answered HTTP {resp.status_code} ({len(page)} bytes): {_text(page)[:300]}"[:600]
+        out["sdb_users"]["msg"] = f"The badge list answered HTTP {resp.status_code} ({len(page)} bytes): {_text(page)[:300]}"[:600]
         return out
     found = parse_list(page)
     how = "list"
     if not any(found.get(s) is not None for s in targets):
         found, how = parse_json(page), "json"
-    # nothing recognised: keep what the page looked like, so the parser can be fixed if StreamDatabase changes its layout
+    # nothing recognised: keep what the page looked like, so the parser can be fixed if the page changes its layout
     first = next((m for m in LINK_RE.finditer(page)), None)
     keys = sorted(set(re.findall(r'"(user_?count|userCount|usersCount|users_count|holders)"', page.replace('\\"', '"'))))
     if not found: out["sdb_users_debug"] = {"at": _now(), "msg": json.dumps({
@@ -117,8 +117,8 @@ def run():
         json.dump(pop, open(POP_DB, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     na = [targets[s] for s in targets if s in found and found[s] is None]
     out["sdb_users"]["msg"] = (f"{len(counts)} of {len(targets)} badges from the last {DAYS} days updated"
-                               + (f"; N/A on StreamDatabase: {', '.join(na)}" if na else "")
-                               + (f"; not in StreamDatabase's list: {', '.join(missing)}" if missing else ""))[:600]
+                               + (f"; no number yet: {', '.join(na)}" if na else "")
+                               + (f"; not in the list: {', '.join(missing)}" if missing else ""))[:600]
     print("sdb users:", out["sdb_users"]["msg"])
     return out
 

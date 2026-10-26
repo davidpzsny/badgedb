@@ -176,7 +176,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-10-26.1";   // bump together with version.json after every change
+const OVERLAY_V = "2026-10-26.2";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -252,7 +252,7 @@ const ANY_CATEGORY_BADGES_IN = ['Just Chatting'];
 const CHANNEL = 'badge_db';
 
 /* Footer counters: read live from badgedatabase.com every 5 minutes; these are only the fallback.
-   USERS in the left column: StreamDatabase's count (updated with "User counts from StreamDatabase" in /admin/),
+   USERS in the left column: the count saved with "Overlay user counts" in /admin/,
    else PotatBotat's from popularity.json. */
 const FALLBACK_COUNTS = { active: 16, upcoming: 6, tba: 19, free: 5 };
 /* ============================================================================== */
@@ -376,7 +376,7 @@ function siteItems(now){                      // every badge set added in the la
   if(!list.length) return null;
   return list.map(b => { const e = b.imgs.map(i => byImg[i]).find(Boolean);
     const cost = e && e.b.cost && e.b.cost !== 'na' ? e.b.cost : b.free ? 'free' : '';
-    const d = new Date(b.added + 'T00:00:00Z'), users = sdb[b.set] || pop[b.set] || b.users || 0;   // StreamDatabase (admin button), else PotatBotat; 0 = N/A
+    const d = new Date(b.added + 'T00:00:00Z'), users = sdb[b.set] || pop[b.set] || b.users || 0;   // admin button counts, else PotatBotat; 0 = N/A
     return { slot: 'auto-' + b.set, added: `${M[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`, users: users ? users.toLocaleString('en-US') : 'N/A', cost, title: b.name, sub: 'Global Badge', img: b.img }; });
 }
 

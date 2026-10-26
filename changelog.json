@@ -1,6 +1,13 @@
 [
  {
   "date": "2026-10-26",
+  "title": "Text updates",
+  "items": [
+   {"type": "improved", "text": "Sources section and FAQ: reworded the data source lines."}
+  ]
+ },
+ {
+  "date": "2026-10-26",
   "title": "Badge event updates",
   "items": [
    {"type": "new", "text": "Hunt: Showdown 1896: two new badges are coming with Twitch Frightfest (expected from Oct 26; the end and the objectives are not announced yet)."},

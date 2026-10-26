@@ -92,7 +92,7 @@ Rules the site applies by itself:
   the timeline headings always show the same numbers.
 - Anything set by hand in `/admin/` is never overwritten by the bot.
 - Times are shown in the visitor's local time; badge pages and event details add the UTC time in brackets
-  ("Oct 15, 06:00 (04:00 UTC)"), so they can be compared with Twitch and StreamDatabase directly.
+  ("Oct 15, 06:00 (04:00 UTC)"), so they can be compared with Twitch directly.
 - **Speed:** `channel-badges.json` (about 440 KB) is loaded only on the Channel Badges pages and when quick search opens;
   the menu count comes from the build. Data files are fetched with `no-cache`, so returning visitors get a quick
   "not modified" answer instead of downloading them again.
@@ -151,7 +151,7 @@ site.webmanifest, og-image.png, CNAME
 ## Everyday use
 
 ### A badge has no dates
-Take the exact times from **[streamdatabase.com/events](https://www.streamdatabase.com/events)** (shown in UTC there).
+Take the exact times (UTC) from the official announcement or the events tracker.
 Open **[badgedatabase.com/admin/](https://badgedatabase.com/admin/)** → **Needs info** → open the event →
 set **Starts / Ends** (your local time: Hungary is UTC+2 in summer time, UTC+1 in winter), objective, Free / Sub, optional **Channels** (comma separated;
 tick "only part of the participating channels" if the list is incomplete) → **Save changes**.
@@ -213,7 +213,7 @@ OBS → Sources → + → Browser, URL above, Width `1920`, Height `1080`. It is
   ended events and date-TBA events older than 21 days drop out), with badge images, UTC times and a description written
   from the badges' objectives. A new badge on the site shows up on the stream within about 5 minutes.
   In `overlay/motorhazteto/index.html`: `EVENT_TITLES` / `EVENT_DESC` (own title or description by event id),
-  `EXTRA_EVENTS` (events not on the site yet, UTC times from streamdatabase.com/events, `start: null` = TBA),
+  `EXTRA_EVENTS` (events not on the site yet, UTC times, `start: null` = TBA),
   `EXTRA_AVAILABLE` (header chips added by hand), `ITEMS` (left column fallback).
 - **Header "Available here" is automatic:** every 30 seconds the overlay reads badge_db's current Twitch category (decapi.me,
   backup: the bot's `live.json`) and shows the badges of running events in that category from `events.json`
@@ -226,9 +226,9 @@ OBS → Sources → + → Browser, URL above, Width `1920`, Height `1080`. It is
   that can be earned in any category (events with category `Any`, e.g. Pokémon Night Out), only once they can be earned.
   When the chips don't fit next to each other, they take turns, one every 6 seconds.
 - The left column ("Added in the last 14 days") and the footer counters come from `badges.json` / `events.json` every 5 minutes.
-  USERS there is StreamDatabase's count: `/admin/` → **Overlay user counts** writes `sdb-request.json`, the bot's next run
-  (within 5 minutes) loads StreamDatabase's badge list once and saves the counts in `popularity.json` under `sdb`
-  (`bot/sdb_users.py`; result in `status.json` → `sdb_users`). Badges StreamDatabase has no number for fall back to
+  USERS there is the external badge list's count: `/admin/` → **Overlay user counts** writes `sdb-request.json`, the bot's next run
+  (within 5 minutes) loads that badge list once and saves the counts in `popularity.json` under `sdb`
+  (`bot/sdb_users.py`; result in `status.json` → `sdb_users`). Badges without a number there fall back to
   PotatBotat's count. The site itself keeps using PotatBotat's counts.
   The last good copy is kept in the browser source, so the overlay stays filled if the data can't be loaded.
 - **After every change** set `OVERLAY_V` in `index.html` and `v` in `version.json` to the same new value. The overlay checks

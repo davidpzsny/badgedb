@@ -140,7 +140,7 @@ const tile = b => `<span class="tile">${b.img ? `<img src="${esc(b.img)}" alt="$
 const fmt = iso => iso ? new Date(/^\d{4}-\d\d-\d\d$/.test(iso) ? iso + "T12:00:00Z" : iso).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}) : "";   // plain dates stay on their day in every time zone
 const fmtFull = iso => iso ? new Date(iso).toLocaleString(undefined,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : "Not announced";
 const fmtUtc = (iso, withDay) => new Date(iso).toLocaleString(undefined, {...(withDay ? {month:'short', day:'numeric'} : {}), hour:'2-digit', minute:'2-digit', hourCycle:'h23', timeZone:'UTC'}) + " UTC";
-function fmtWhen(iso, tba){             // local time + the same moment in UTC (as Twitch and StreamDatabase write it): "Oct 15, 06:00 (04:00 UTC)"
+function fmtWhen(iso, tba){             // local time + the same moment in UTC (as Twitch writes it): "Oct 15, 06:00 (04:00 UTC)"
   const d = new Date(iso || ""); if(!iso || isNaN(d)) return fmtFull(iso);
   if(tba) return `${d.toLocaleDateString(undefined, {month:'short', day:'numeric', timeZone:'UTC'})} <span class="utc">(time not announced)</span>`;   // only the day is known
   if(d.getTimezoneOffset() === 0) return fmtUtc(iso, true);
@@ -1010,7 +1010,7 @@ function renderEmotes(){
   if(eFilter === "year") list = list.filter(e => (e[2] || "").startsWith(yr));
   if(eFilter === "6m") list = list.filter(e => (e[2] || "") >= halfYear);
   if(eQuery) list = list.filter(e => e[1].toLowerCase().includes(eQuery));
-  // Twitch doesn't publish emote dates. Emotes added since Feb 2025 have their date (StreamDatabase's history until our
+  // Twitch doesn't publish emote dates. Emotes added since Feb 2025 have their date (a community tracker's history until our
   // own tracking started, then the bot's first-seen date); older ones keep Twitch's own list order, which is chronological
   // (emotes.json stores it oldest → newest) and show "Before Feb 2025".
   const pos = e => EMOTES.indexOf(e);
@@ -1454,7 +1454,7 @@ async function admStorePopularity(c){
   try{
     let sha, keep = {};
     try{ const f = await gh("contents/popularity.json?ref=main", {cache:"no-store"}); sha = f.sha;
-      const old = JSON.parse(b64decode(f.content)); if(old.sdb) keep = {sdb: old.sdb, sdb_updated: old.sdb_updated}; }catch(_){}   // keep the overlay's StreamDatabase counts
+      const old = JSON.parse(b64decode(f.content)); if(old.sdb) keep = {sdb: old.sdb, sdb_updated: old.sdb_updated}; }catch(_){}   // keep the overlay's user counts
     const body = {message:"Update badge popularity via admin", branch:"main",
       content: b64encode(JSON.stringify({updated:c.updated, source:c.source, counts:c.counts, ...keep})), ...(sha?{sha}:{})};
     await gh("contents/popularity.json", {method:"PUT", body:JSON.stringify(body)});
@@ -1464,23 +1464,23 @@ async function admStorePopularity(c){
     admSetStatus(`Saved popularity for ${Object.keys(c.counts).length} badges — the site updates in a few minutes`,"ok");
   }catch(e){ admSetStatus("Could not save popularity: "+e.message,"err"); }
 }
-/* "Overlay user counts": asks the bot (sdb-request.json) to load StreamDatabase's badge list once and save the user
+/* "Overlay user counts": asks the bot (sdb-request.json) to load the badge list once and save the user
    counts of the badges added in the last 14 days for the stream overlay, then waits for the bot's answer. */
 async function admSdbUsers(){
   const at = new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
-  admSetStatus("Asking the bot to read the user counts from StreamDatabase…");
+  admSetStatus("Asking the bot to read the overlay user counts…");
   try{
     let sha; try{ sha = (await gh("contents/sdb-request.json?ref=main", {cache:"no-store"})).sha; }catch(_){}
-    await gh("contents/sdb-request.json", {method:"PUT", body:JSON.stringify({message:"Overlay user counts from StreamDatabase via admin", branch:"main",
+    await gh("contents/sdb-request.json", {method:"PUT", body:JSON.stringify({message:"Overlay user counts via admin", branch:"main",
       content:b64encode(JSON.stringify({at}) + "\n"), ...(sha?{sha}:{})})});
   }catch(e){ admSetStatus("Could not send the request: " + e.message, "err"); return; }
   try{ await gh("actions/workflows/badges.yml/dispatches", {method:"POST", body:JSON.stringify({ref:"main"})}); }catch(_){}   // needs Actions access; otherwise the bot's next run (within 5 min) picks it up
-  admSetStatus("Requested. The bot reads StreamDatabase within about 5 minutes, waiting for the result…");
+  admSetStatus("Requested. The bot reads the user counts within about 5 minutes, waiting for the result…");
   const t0 = Date.now();
   const poll = async () => {
     try{ const st = JSON.parse(b64decode((await gh("contents/status.json?ref=main", {cache:"no-store"})).content)).sdb_users;
       if(st && st.req === at){ const bad = /crash|could not|HTTP \d/i.test(st.msg);
-        admSetStatus(bad ? "StreamDatabase: " + st.msg : `Done: ${st.msg}. The stream overlay shows them within 5 minutes.`, bad ? "err" : "ok"); return; } }catch(_){}
+        admSetStatus(bad ? "User counts: " + st.msg : `Done: ${st.msg}. The stream overlay shows them within 5 minutes.`, bad ? "err" : "ok"); return; } }catch(_){}
     if(Date.now() - t0 < 15 * 60000) setTimeout(poll, 20000);
     else admSetStatus("No answer from the bot yet. Look again later under Actions, Check Twitch badges.", "err");
   };
@@ -1507,7 +1507,7 @@ function renderAdmin(){
     return;
   }
   top.innerHTML = `<span class="adm-status" id="admStatus">${esc(ADM.status)}</span>
-    <button class="btn ghost" id="admReload">Reload</button><button class="btn ghost" id="admNew">+ New event</button><button class="btn ghost" id="admPop" title="Fetch badge user counts from potat.app in this browser and save them to the site">Update popularity</button><button class="btn ghost" id="admSdb" title="Read the user counts of the badges added in the last 14 days from StreamDatabase, for the stream overlay">Overlay user counts</button><button class="btn" id="admSave">Save changes</button>
+    <button class="btn ghost" id="admReload">Reload</button><button class="btn ghost" id="admNew">+ New event</button><button class="btn ghost" id="admPop" title="Fetch badge user counts from potat.app in this browser and save them to the site">Update popularity</button><button class="btn ghost" id="admSdb" title="Read the user counts of the badges added in the last 14 days, for the stream overlay">Overlay user counts</button><button class="btn" id="admSave">Save changes</button>
     <button class="btn ghost" id="admLogout" title="Forget token on this device">Sign out</button>`;
   if(!ADM.events.length){ body.innerHTML = `<div class="empty">Loading events…</div>`; return; }
   const list = ADM.events.map((ev,i)=>({ev,i})).filter(({ev})=> ADM.filter==="all" ? true : ADM.filter==="needs" ? admNeeds(ev) : ["live","soon"].includes(status(ev)));
