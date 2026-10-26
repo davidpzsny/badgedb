@@ -1,5 +1,23 @@
 [
  {
+  "id": "hunt-showdown-1896",
+  "name": "Hunt: Showdown 1896",
+  "category": "Hunt: Showdown 1896",
+  "start": "",
+  "end": "",
+  "name_src": "manual",
+  "note": "StreamDatabase lists Oct 26 as the start; the end date and the badges are not announced yet.",
+  "badges": [
+   {
+    "name": "Hunt: Showdown 1896 badges",
+    "img": "",
+    "how": "Details not announced yet.",
+    "cost": "na",
+    "desc": "Two new badges will be part of Twitch Frightfest."
+   }
+  ]
+ },
+ {
   "id": "qsmp-2-season-2",
   "name": "QSMP 2 Season 2",
   "category": "QSMP",
@@ -520,7 +538,7 @@
    {
     "name": "Gastly",
     "img": "602335f3-4d73-40f9-b8e2-5c5e25f32d62",
-    "how": "Subscribe (Tier 1), gift a Tier 1 sub or watch 20 minutes by Oct 24, 23:59 UTC, then watch 20 minutes a day for 2 days by Nov 23, 22:59 UTC.",
+    "how": "Earn the Night Out Ball (subscribe Tier 1 or gift a Tier 1 sub until Oct 25, or watch 20 minutes until Oct 24, 23:59 UTC), then watch 20 minutes a day for 2 days by Nov 23, 22:59 UTC to open it.",
     "cost": "free",
     "desc": "This badge was earned during Pokémon Night Out 2026.",
     "how_src": "manual"
@@ -568,7 +586,7 @@
    "Pokémon Trading Card Game Pocket",
    "Pokémon Trading Card Game Live"
   ],
-  "note": "Counts in 20 categories: Just Chatting, DJs, Art, Special Events, Sports, Music, Talk Shows & Podcasts, Animals, Aquariums, and Zoos, Co-working & Studying, Makers & Crafting and 10 Pokémon game categories. Get Gastly's Night Out Ball (sub, gift sub or 20 minutes watched) before Oct 24, 23:59 UTC."
+  "note": "Counts in 20 categories: Just Chatting, DJs, Art, Special Events, Sports, Music, Talk Shows & Podcasts, Animals, Aquariums, and Zoos, Co-working & Studying, Makers & Crafting and 10 Pokémon game categories. The Night Out Ball can no longer be earned (watching ended Oct 24, buying Oct 25), but a ball already earned can still be opened until Nov 23, 22:59 UTC to get Gastly. Haunter and Gengar can be evolved until Jan 30, 2027."
  },
  {
   "id": "vaultbreakers",
@@ -1465,8 +1483,8 @@
    }
   ],
   "name_src": "manual",
-  "about": "Evolutions of the Pokémon First Partners Collection badges. Pichu evolves if it was unlocked before October 1; Bulbasaur, Charmander and Squirtle if unlocked before November 1. Twitch hasn't announced when evolving opens.",
-  "note": "Counts in 20 categories: Just Chatting, DJs, Art, Special Events, Sports, Music, Talk Shows & Podcasts, Animals, Aquariums, and Zoos, Co-working & Studying, Makers & Crafting and 10 Pokémon game categories. The starter (Bulbasaur, Charmander, Squirtle) must be unlocked by Nov 1, Pichu had to be unlocked before Oct 1; Great Balls can still be progressed until Nov 1.",
+  "about": "Evolutions of the Pokémon First Partners Collection badges, open since Oct 16. Pichu evolves if it was unlocked before October 1; Bulbasaur, Charmander and Squirtle if unlocked by November 1.",
+  "note": "Counts in 20 categories: Just Chatting, DJs, Art, Special Events, Sports, Music, Talk Shows & Podcasts, Animals, Aquariums, and Zoos, Co-working & Studying, Makers & Crafting and 10 Pokémon game categories. The starter (Bulbasaur, Charmander, Squirtle) must be unlocked by Nov 1, Pichu had to be unlocked before Oct 1; Great Balls can no longer be bought but can still be unlocked until Nov 1.",
   "dates_src": "manual",
   "categories": [
    "Just Chatting",
