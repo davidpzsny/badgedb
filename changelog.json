@@ -3,7 +3,7 @@
   "date": "2026-10-26",
   "title": "Badge event updates",
   "items": [
-   {"type": "new", "text": "Hunt: Showdown 1896: two new badges are coming with Twitch Frightfest (StreamDatabase lists Oct 26 as the start; the end and the objectives are not announced yet)."},
+   {"type": "new", "text": "Hunt: Showdown 1896: two new badges are coming with Twitch Frightfest (expected from Oct 26; the end and the objectives are not announced yet)."},
    {"type": "fixed", "text": "Pokémon Night Out (Gastly): the Night Out Ball can no longer be earned (watching ended Oct 24, buying Oct 25), but a ball already earned can still be opened until Nov 23, 22:59 UTC. Haunter and Gengar can be evolved until Jan 30, 2027."},
    {"type": "fixed", "text": "Pokémon First Partners evolutions: evolving has been open since Oct 16; Bulbasaur, Charmander and Squirtle must be unlocked by Nov 1 (Great Balls can no longer be bought)."}
   ]
@@ -31,7 +31,7 @@
   "title": "Badge event updates",
   "items": [
    {"type": "fixed", "text": "Witchspire (Witch Hat, Gold Stamp, Witchspire Logo): exact times announced, Oct 21, 16:00 to Oct 31, 07:59 UTC."},
-   {"type": "fixed", "text": "Gray Zone Warfare (Gold): dates not announced yet (StreamDatabase no longer lists Oct 22 to Nov 6)."},
+   {"type": "fixed", "text": "Gray Zone Warfare (Gold): dates not announced yet (the earlier Oct 22 to Nov 6 dates were withdrawn)."},
    {"type": "fixed", "text": "Pokémon Night Out 2026: get Gastly's Night Out Ball before Oct 24, 23:59 UTC. Evolutions: the starter badge must be unlocked by Nov 1 (Pichu before Oct 1)."},
    {"type": "fixed", "text": "Apple TV (BeAGoldfish, BelieveInRichmond) started: Oct 20, 19:00 to Nov 3, 19:59 UTC. Sub or gift a Tier 1 sub on any channel; subscribers also get 1 month of Apple TV."},
    {"type": "fixed", "text": "Gray Zone Warfare (Gold) is out on Twitch: sub or gift a Tier 1 sub in Gray Zone Warfare, Oct 22, 16:00 to Nov 6, 12:59 UTC."},
