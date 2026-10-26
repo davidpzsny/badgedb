@@ -429,5 +429,20 @@
   "posted": "2026-10-25T07:00:53+00:00",
   "replied": true,
   "reply": "Objective, channels and the exact end time: {url}"
+ },
+ "ending:witcher-3": {
+  "tweet": "",
+  "title": "Wolf Medallion",
+  "set": "wolf-medallion",
+  "replied": "discord only",
+  "posted": "2026-10-26T10:00:52+00:00"
+ },
+ "xending:witcher-3": {
+  "tweet": "2114658519706124777",
+  "title": "Wolf Medallion",
+  "set": "wolf-medallion",
+  "posted": "2026-10-26T10:00:54+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
