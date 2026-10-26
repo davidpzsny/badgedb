@@ -444,5 +444,19 @@
   "posted": "2026-10-26T10:00:54+00:00",
   "replied": true,
   "reply": "Objective, channels and the exact end time: {url}"
+ },
+ "hunt-red": {
+  "tweet": "2114735137510273043",
+  "title": "Hunt Red",
+  "set": "hunt-red",
+  "posted": "2026-10-26T15:05:21+00:00",
+  "replied": false
+ },
+ "hunt-white": {
+  "tweet": "2114735142753214960",
+  "title": "Hunt White",
+  "set": "hunt-white",
+  "posted": "2026-10-26T15:05:22+00:00",
+  "replied": false
  }
 }
