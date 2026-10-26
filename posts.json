@@ -458,5 +458,13 @@
   "set": "hunt-white",
   "posted": "2026-10-26T15:05:22+00:00",
   "replied": true
+ },
+ "live:hunt-showdown-1896": {
+  "tweet": "2114741867531399261",
+  "title": "Hunt Red",
+  "set": "hunt-red",
+  "posted": "2026-10-26T15:32:06+00:00",
+  "replied": true,
+  "reply": "Objective, channels and exact dates: {url}"
  }
 }
