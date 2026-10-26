@@ -3,31 +3,27 @@
   "id": "hunt-showdown-1896",
   "name": "Hunt: Showdown 1896",
   "category": "Hunt: Showdown 1896",
-  "start": "",
-  "end": "",
+  "start": "2026-10-26T15:00:00Z",
+  "end": "2026-11-09T15:00:00Z",
+  "dates_src": "manual",
   "name_src": "manual",
-  "note": "Expected from Oct 26; the end date and the badges are not announced yet.",
+  "about": "Hunt: Showdown 1896's Twitch Drops for Stream-o-Ween. Subscribing also unlocks in-game rewards.",
   "badges": [
-   {
-    "name": "Hunt: Showdown 1896 badges",
-    "img": "",
-    "how": "Details not announced yet.",
-    "cost": "na",
-    "desc": "Two new badges will be part of Twitch Frightfest."
-   },
    {
     "name": "Hunt Red",
     "img": "3433db97-62af-4475-a76d-2cc97f3af012",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
     "cost": "paid",
-    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Hunt: Showdown 1896 category"
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Hunt: Showdown 1896 category",
+    "how_src": "manual"
    },
    {
     "name": "Hunt White",
     "img": "20dd1791-9c66-44a8-b077-fa97d0c8b88b",
-    "how": "Watch a stream in the category.",
+    "how": "Watch 1 hour in the category.",
     "cost": "free",
-    "desc": "This badge was earned by watching a streamer in the Hunt: Showdown 1896 category"
+    "desc": "This badge was earned by watching a streamer in the Hunt: Showdown 1896 category",
+    "how_src": "manual"
    }
   ]
  },

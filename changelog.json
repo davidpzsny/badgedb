@@ -10,7 +10,7 @@
   "date": "2026-10-26",
   "title": "Badge event updates",
   "items": [
-   {"type": "new", "text": "Hunt: Showdown 1896: two new badges are coming with Twitch Frightfest (expected from Oct 26; the end and the objectives are not announced yet)."},
+   {"type": "new", "text": "Hunt: Showdown 1896: Hunt White (watch 1 hour in the category) and Hunt Red (subscribe or gift a Tier 1 sub in the category), Oct 26, 15:00 to Nov 9, 15:00 UTC."},
    {"type": "fixed", "text": "Pokémon Night Out (Gastly): the Night Out Ball can no longer be earned (watching ended Oct 24, buying Oct 25), but a ball already earned can still be opened until Nov 23, 22:59 UTC. Haunter and Gengar can be evolved until Jan 30, 2027."},
    {"type": "fixed", "text": "Pokémon First Partners evolutions: evolving has been open since Oct 16; Bulbasaur, Charmander and Squirtle must be unlocked by Nov 1 (Great Balls can no longer be bought)."}
   ]
