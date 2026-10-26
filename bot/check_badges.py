@@ -370,7 +370,7 @@ CH_STATE = os.path.join(ROOT, "channels-state.json")
 CH_LIST = os.path.join(ROOT, "channels.txt")
 CH_PER_RUN = 120            # channels checked per run
 CH_RECHECK_HOURS = 24
-CH_SKIP = {"streamdatabase"}      # channels never listed on the site (their rows are dropped on the next run)
+CH_SKIP = {"streamdatabase"}      # channels never shown on the site: channel badges, live channels, top streams
 
 def helix_get(token, path, params=None):
     r = requests.get("https://api.twitch.tv/helix/" + path, params=params or {}, timeout=30,
@@ -710,7 +710,7 @@ def update_live_channels(token, events, per_event=8):
         except Exception as e:
             print("live channels: lookup failed for", ev.get("id"), "->", e); continue
         streams = sorted(streams, key=lambda x: -x.get("viewer_count", 0))
-        rows = [row(s) for s in streams if s.get("user_login", "").lower() != OUR_CHANNEL][:per_event]
+        rows = [row(s) for s in streams if s.get("user_login", "").lower() not in CH_SKIP | {OUR_CHANNEL}][:per_event]
         if ours and ((OUR_CHANNEL in chans and (not gid or ours.get("game_id") == gid)) if chans else (gid and ours.get("game_id") == gid)):
             rows.insert(0, dict(row(ours), ours=True))
         out[ev["id"]] = {"category": ev.get("category", ""), "game_id": gid, "streams": rows}
@@ -768,8 +768,9 @@ def update_top_categories(token, n=150):
             print("top categories: streams lookup failed for", g.get("name"), "->", e); live = []
         row = {"id": g["id"], "name": g.get("name", ""), "box": g.get("box_art_url", ""),
                "viewers": sum(x.get("viewer_count", 0) for x in live), "streams": len(live)}
-        if live:
-            t = max(live, key=lambda x: x.get("viewer_count", 0))
+        shown = [x for x in live if x.get("user_login", "").lower() not in CH_SKIP]
+        if shown:
+            t = max(shown, key=lambda x: x.get("viewer_count", 0))
             row["top"] = {"login": t.get("user_login", ""), "name": t.get("user_name", ""), "viewers": t.get("viewer_count", 0)}
         return row
 
