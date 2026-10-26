@@ -466,5 +466,20 @@
   "posted": "2026-10-26T15:32:06+00:00",
   "replied": true,
   "reply": "Objective, channels and exact dates: {url}"
+ },
+ "ending:lol-worlds-2026-heartsteel": {
+  "tweet": "",
+  "title": "Heartsteel Fan",
+  "set": "heartsteel-fan",
+  "replied": "discord only",
+  "posted": "2026-10-26T16:00:51+00:00"
+ },
+ "xending:lol-worlds-2026-heartsteel": {
+  "tweet": "2114749109366038659",
+  "title": "Heartsteel Fan",
+  "set": "heartsteel-fan",
+  "posted": "2026-10-26T16:00:52+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
