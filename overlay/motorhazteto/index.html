@@ -176,7 +176,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-10-26.3";   // bump together with version.json after every change
+const OVERLAY_V = "2026-10-27.1";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -233,7 +233,8 @@ const EXTRA_EVENTS = [
 ];
 
 /* Top bar "Available here": filled AUTOMATICALLY with the badges you can earn in badge_db's current Twitch
-   category (running events from badgedatabase.com; upcoming ones in that category show "STARTS IN ..."). Badges
+   category (running events from badgedatabase.com; upcoming ones in that category show "STARTS IN ..." from 24 hours
+   before their start, only when the start time is announced, not just the day). Badges
    that need a specific channel (e.g. "watch twitch.tv/dnd") are left out.
    EXTRA_AVAILABLE: chips added by hand on top of that (ev = event id on the site, or a slot from EXTRA_EVENTS; shown
    while that event is ACTIVE; showSoon: true = also while UPCOMING; hideWhen = event id that hides it). */
@@ -449,6 +450,7 @@ function anyCategory(ev){
 // events that list their eligible categories (e.g. Pokémon Night Out: Just Chatting, Art, Pokémon GO, ...)
 const inCategoryList = ev => Array.isArray(ev.categories) && !!streamCat && ev.categories.some(c => normCat(c) === normCat(streamCat))
   && !((ev.channels || []).length && !(ev.channels || []).map(c => String(c).trim().toLowerCase()).includes(CHANNEL));
+const SOON_MS = 24 * 3600e3;                 // upcoming badges get a "STARTS IN" chip from this long before their start
 function autoAvailable(now){
   if(!streamCat || !site.events) return [];
   const chips = [], withAny = ANY_CATEGORY_BADGES_IN.some(c => normCat(c) === normCat(streamCat));
@@ -457,6 +459,7 @@ function autoAvailable(now){
     const start = Date.parse(ev.start), end = Date.parse(ev.end), any = (withAny && anyCategory(ev)) || inCategoryList(ev);
     if(!(now < end) || !(any || inStreamCategory(ev))) return;
     if(any && now < start) return;                     // any-category badges: only once they can be earned
+    if(now < start && (ev.time_tba || start - now > SOON_MS)) return;   // later ones (e.g. LoL fan badges days away) stay out of the header
     const groups = new Map();                  // badges of one event with the same objective share a chip (e.g. 5 LoL badges)
     (ev.badges || []).forEach(b => {
       const act = badgeAction(b); if(!act) return;

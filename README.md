@@ -217,7 +217,7 @@ OBS → Sources → + → Browser, URL above, Width `1920`, Height `1080`. It is
   `EXTRA_AVAILABLE` (header chips added by hand), `ITEMS` (left column fallback).
 - **Header "Available here" is automatic:** every 30 seconds the overlay reads badge_db's current Twitch category (decapi.me,
   backup: the bot's `live.json`) and shows the badges of running events in that category from `events.json`
-  ("Watch 60 min" / "Sub or Gift"; upcoming ones: "Coming here" + countdown). Badges that need another channel
+  ("Watch 60 min" / "Sub or Gift"; upcoming ones: countdown, only from 24 hours before an announced start time). Badges that need another channel
   (e.g. "watch twitch.tv/dnd") or a ticket are left out. Matching uses Twitch category ids: the bot writes
   `our_game_id`, `upcoming` (event → game id, next 14 days) and `game_names` (id → Twitch's own name) into `live.json`.
 - `HIDE_AVAILABLE_IN` (default `Always On`): in these categories the whole "Available here" part is hidden
