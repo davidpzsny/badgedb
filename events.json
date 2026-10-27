@@ -3,8 +3,8 @@
   "id": "hunt-showdown-1896",
   "name": "Hunt: Showdown 1896",
   "category": "Hunt: Showdown 1896",
-  "start": "2026-10-26T15:00:00Z",
-  "end": "2026-11-09T15:00:00Z",
+  "start": "2026-10-26T14:54:00Z",
+  "end": "2026-11-09T13:59:00Z",
   "dates_src": "manual",
   "name_src": "manual",
   "about": "Hunt: Showdown 1896's Twitch Drops for Stream-o-Ween. Subscribing also unlocks in-game rewards.",
@@ -409,22 +409,20 @@
   "id": "lol-worlds-2026-fans",
   "name": "Worlds 2026: True Damage Fan",
   "category": "League of Legends",
-  "start": "2026-10-28T00:00:00Z",
-  "end": "2026-11-06T23:59:00Z",
+  "start": "2026-10-27T16:00:00Z",
+  "end": "2026-11-07T15:59:00Z",
   "badges": [
    {
     "name": "True Damage Fan",
     "img": "06c27674-9c56-479d-8acf-a3dfd5680425",
-    "how": "Watch League of Legends streams (exact watch time not announced yet).",
+    "how": "Watch 30 minutes in the category.",
     "cost": "free",
     "desc": "This Chat Badge was earned by supporting the 2026 League of Legends World Championship!",
     "how_src": "manual"
    }
   ],
   "name_src": "manual",
-  "dates_src": "manual",
-  "time_tba": true,
-  "note": "Exact times not announced yet, only the days."
+  "dates_src": "manual"
  },
  {
   "id": "lol-worlds-2026-pentakill",

@@ -1,5 +1,13 @@
 [
  {
+  "date": "2026-10-27",
+  "title": "Badge event updates",
+  "items": [
+   {"type": "fixed", "text": "Worlds 2026: True Damage Fan: watch 30 minutes in League of Legends, Oct 27, 16:00 to Nov 7, 15:59 UTC."},
+   {"type": "fixed", "text": "Hunt: Showdown 1896 (Hunt Red, Hunt White): Oct 26, 14:54 to Nov 9, 13:59 UTC."}
+  ]
+ },
+ {
   "date": "2026-10-26",
   "title": "Text updates",
   "items": [
