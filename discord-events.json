@@ -93,7 +93,7 @@
  },
  "lol-worlds-2026-fans": {
   "id": "1563498751610458152",
-  "sig": "[{\"description\": \"\\u2022 True Damage Fan: Watch League of Legends streams (exact watch time not announced yet).\\n\\nDetails and all dates: https://badgedatabase.com/badges/true-damage-fan/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/true-damage-fan/\"}, \"name\": \"Worlds 2026: True Damage Fan\", \"scheduled_end_time\": \"2026-11-06T23:59:00Z\"}, \"2026-10-28T00:00:00Z\"]"
+  "sig": "[{\"description\": \"\\u2022 True Damage Fan: Watch 30 minutes in the category.\\n\\nDetails and all dates: https://badgedatabase.com/badges/true-damage-fan/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/true-damage-fan/\"}, \"name\": \"Worlds 2026: True Damage Fan\", \"scheduled_end_time\": \"2026-11-07T15:59:00Z\"}, \"2026-10-27T16:00:00Z\"]"
  },
  "lol-worlds-2026-pentakill": {
   "id": "1563498753984561302",
@@ -105,6 +105,6 @@
  },
  "hunt-showdown-1896": {
   "id": "1564300611116073123",
-  "sig": "[{\"description\": \"\\u2022 Hunt Red: Subscribe (Tier 1) or gift a Tier 1 sub in the category.\\n\\u2022 Hunt White: Watch 15 minutes in the category.\\n\\nDetails and all dates: https://badgedatabase.com/badges/hunt-red/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/hunt-red/\"}, \"name\": \"Hunt: Showdown 1896\", \"scheduled_end_time\": \"2026-11-09T15:00:00Z\"}, \"2026-10-26T15:00:00Z\"]"
+  "sig": "[{\"description\": \"\\u2022 Hunt Red: Subscribe (Tier 1) or gift a Tier 1 sub in the category.\\n\\u2022 Hunt White: Watch 15 minutes in the category.\\n\\nDetails and all dates: https://badgedatabase.com/badges/hunt-red/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/hunt-red/\"}, \"name\": \"Hunt: Showdown 1896\", \"scheduled_end_time\": \"2026-11-09T13:59:00Z\"}, \"2026-10-26T14:54:00Z\"]"
  }
 }
