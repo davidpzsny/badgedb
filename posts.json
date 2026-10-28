@@ -526,5 +526,20 @@
   "posted": "2026-10-28T07:00:54+00:00",
   "replied": true,
   "reply": "Objective, channels and the exact end time: {url}"
+ },
+ "ending:alien-isolation": {
+  "tweet": "",
+  "title": "SEEGSON Synthetics",
+  "set": "seegson-synthetics",
+  "replied": "discord only",
+  "posted": "2026-10-28T09:00:55+00:00"
+ },
+ "xending:alien-isolation": {
+  "tweet": "2115368208417145283",
+  "title": "SEEGSON Synthetics",
+  "set": "seegson-synthetics",
+  "posted": "2026-10-28T09:00:57+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
