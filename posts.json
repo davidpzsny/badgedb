@@ -496,5 +496,35 @@
   "set": "dbd-halloween-2026",
   "posted": "2026-10-27T19:01:35+00:00",
   "replied": true
+ },
+ "ending:ultramarine": {
+  "tweet": "",
+  "title": "Ultramarine",
+  "set": "ultramarine",
+  "replied": "discord only",
+  "posted": "2026-10-28T07:00:51+00:00"
+ },
+ "ending:elden-q2": {
+  "tweet": "",
+  "title": "Bloody Finger ELDEN RING",
+  "set": "bloody-finger-elden-ring",
+  "replied": "discord only",
+  "posted": "2026-10-28T07:00:51+00:00"
+ },
+ "xending:ultramarine": {
+  "tweet": "2115337993871319386",
+  "title": "Ultramarine",
+  "set": "ultramarine",
+  "posted": "2026-10-28T07:00:53+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
+ },
+ "xending:elden-q2": {
+  "tweet": "2115337997428167040",
+  "title": "Bloody Finger ELDEN RING",
+  "set": "bloody-finger-elden-ring",
+  "posted": "2026-10-28T07:00:54+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
