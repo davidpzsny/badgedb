@@ -541,5 +541,26 @@
   "posted": "2026-10-28T09:00:57+00:00",
   "replied": true,
   "reply": "Objective, channels and the exact end time: {url}"
+ },
+ "ending:enshrouded": {
+  "tweet": "",
+  "title": "Flameborn Sigil",
+  "set": "flameborn-sigil",
+  "replied": "discord only",
+  "posted": "2026-10-28T22:58:59+00:00"
+ },
+ "xending:enshrouded": {
+  "tweet": "2115579115327689032",
+  "title": "Flameborn Sigil",
+  "set": "flameborn-sigil",
+  "sets": [
+   "flameborn-sigil"
+  ],
+  "titles": [
+   "Flameborn Sigil"
+  ],
+  "posted": "2026-10-28T22:59:01+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
