@@ -636,13 +636,14 @@ def announce_live(events, live):
             print(f"now-available: X post failed for {ev['name']} ->", e)
         try:
             discord_send("live", {"title": f"🟢 Now available: {' & '.join(m['title'] for m in meta[:3])}",
-                "description": text.split("\n\n", 1)[-1].replace("#Twitch #TwitchBadges", "").strip(),
+                "description": text.split("\n\n", 1)[-1].replace("#Twitch #TwitchBadges", "").strip() + discord_links(meta),
                 "url": f"{site_url()}/badges/{first['set']}/", "thumbnail": {"url": first["url"]}, "color": 0x34D399})
         except Exception as e:
             print("now-available: Discord post failed ->", e)
         # remember it (also when X failed, so it's never posted twice); the link reply follows like for new badges
         posts = load_json(POSTS_DB, {})
         posts[f"live:{ev['id']}"] = {"tweet": str(tweet_id) if tweet_id else "", "title": first["title"], "set": first["set"],
+                                     **badge_list(meta),
                                      "posted": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
                                      "replied": False if tweet_id else "no tweet",
                                      "reply": "Objective, channels and exact dates: {url}"}
@@ -878,6 +879,40 @@ def remember_post(badge, tweet_id, key=None):
                            "posted": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"), "replied": False}
     json.dump(posts, open(POSTS_DB, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
+def badge_list(meta):
+    """Every badge of a post (an event can have several): the link reply then links each badge page."""
+    seen, sets, titles = set(), [], []
+    for m in meta:
+        if m.get("set") and m["set"] not in seen:
+            seen.add(m["set"]); sets.append(m["set"]); titles.append(m.get("title") or m["set"])
+    return {"sets": sets, "titles": titles}
+
+X_URL_LEN = 23                                     # X counts every link as 23 characters
+def _xlen(text):                                   # X's weighted length: links 23, most symbols and emoji (e.g. "•") 2
+    light = lambda c: ord(c) <= 4351 or 8192 <= ord(c) <= 8205 or 8208 <= ord(c) <= 8223 or 8242 <= ord(c) <= 8247
+    return sum(1 if light(c) else 2 for c in re.sub(r"https?://\S+", "x" * X_URL_LEN, text))
+
+def link_reply_text(v, site):
+    """(text, urls) of the link reply. One badge: the template with its link. Several: one line per badge
+    ("• Hunt Red: link"), as many as fit in a post, the rest as "+ N more" with the timeline link."""
+    sets = v.get("sets") or [v["set"]]
+    titles = v.get("titles") or []
+    urls = [f"{site}/badges/{s}/" for s in sets]
+    tmpl = v.get("reply") or f"How to get {v['title']} and when it's available: {{url}}"
+    if len(urls) == 1:
+        return tmpl.replace("{url}", urls[0]), urls
+    head = tmpl.replace("{url}", "").rstrip().rstrip(":") + ":"
+    lines = [f"• {titles[i] if i < len(titles) else s}: {u}" for i, (s, u) in enumerate(zip(sets, urls))]
+    for n in range(len(lines), 0, -1):
+        more = [f"+ {len(lines) - n} more: {site}/timeline/"] if n < len(lines) else []
+        text = "\n".join([head] + lines[:n] + more)
+        if _xlen(text) <= 280: return text, urls[:n]
+    return tmpl.replace("{url}", urls[0]), urls[:1]
+
+def _online(url):
+    try: return requests.get(url, timeout=20).status_code == 200
+    except Exception: return False
+
 def reply_with_links(max_per_run=3):
     """Next runs after a post: as soon as /badges/<set>/ is online, reply to the post with that link."""
     if not X_LINK_REPLY or DRY_RUN: return
@@ -894,16 +929,12 @@ def reply_with_links(max_per_run=3):
         if done >= max_per_run: break
         if (now - datetime.datetime.fromisoformat(v["posted"])).total_seconds() > 3 * 86400:
             v["replied"] = "skipped (too old)"; continue
-        url = f"{site}/badges/{v.get('set') or set_id}/"
+        text, urls = link_reply_text({**v, "set": v.get("set") or set_id}, site)
+        waiting = [u for u in urls if not _online(u)]
+        if waiting:
+            print(f"x link reply: {', '.join(waiting)} not online yet, will retry"); continue
         try:
-            live = requests.get(url, timeout=20).status_code == 200
-        except Exception:
-            live = False
-        if not live:
-            print(f"x link reply: {url} not online yet, will retry"); continue
-        try:
-            text = v.get("reply") or f"How to get {v['title']} and when it's available: {url}"
-            client.create_tweet(text=text.replace("{url}", url), in_reply_to_tweet_id=v["tweet"])
+            client.create_tweet(text=text, in_reply_to_tweet_id=v["tweet"])
             v["replied"] = True; done += 1
             print(f"x link reply: posted for {set_id}")
         except Exception as e:
@@ -940,6 +971,11 @@ def discord_send(kind, embed):
     print(f"posted to Discord ({kind}): {embed.get('title')}")
     return True
 
+def discord_links(meta):
+    """One link per badge of an event, for Discord embeds (only the first badge is the embed's own link)."""
+    if len(meta) < 2: return ""
+    return "\n\n" + "\n".join(f"[{m['title']}]({site_url()}/badges/{m['set']}/)" for m in meta[:10])
+
 def post_to_discord(badge):
     discord_send("badge", {
         "title": f"New Twitch global badge: {badge['title']}",
@@ -966,7 +1002,7 @@ def announce_ending(events, live):
         try:
             sent = discord_send("ending", {
                 "title": f"⏳ Ending soon: {live_title(meta)}",
-                "description": f"Ends <t:{end_ts}:R> (<t:{end_ts}:f>)\n{site_url()}/badges/{meta[0]['set']}/",
+                "description": f"Ends <t:{end_ts}:R> (<t:{end_ts}:f>)" + (discord_links(meta) if len(meta) > 1 else f"\n{site_url()}/badges/{meta[0]['set']}/"),
                 "url": f"{site_url()}/badges/{meta[0]['set']}/",
                 "thumbnail": {"url": meta[0]["url"]}, "color": 0xF59E0B})
         except Exception as e:
@@ -1044,6 +1080,7 @@ def announce_last_chance_x(events, live, max_per_run=2):
             print(f"last chance: X post failed for {ev['name']} ->", e)
         posts = load_json(POSTS_DB, {})             # remembered even when X failed, so it's never posted twice
         posts[f"xending:{ev['id']}"] = {"tweet": str(tweet_id) if tweet_id else "", "title": first["title"], "set": first["set"],
+                                        **badge_list(meta),
                                         "posted": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
                                         "replied": False if tweet_id else "no tweet",
                                         "reply": "Objective, channels and the exact end time: {url}"}
