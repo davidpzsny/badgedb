@@ -11,17 +11,9 @@
   "id": "1559104827705790545",
   "sig": "[{\"description\": \"\\u2022 SEEGSON Synthetics: Watch 30 minutes in the category.\\n\\u2022 Sevastopol Station: Subscribe (Tier 1) or gift a Tier 1 sub in the category.\\n\\nDetails and all dates: https://badgedatabase.com/badges/seegson-synthetics/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/seegson-synthetics/\"}, \"name\": \"Alien: Isolation\", \"scheduled_end_time\": \"2026-10-29T08:58:00Z\"}, \"2026-10-01T09:00:00Z\"]"
  },
- "ultramarine": {
-  "id": "1559104843040165898",
-  "sig": "[{\"description\": \"\\u2022 Ultramarine: Subscribe (Tier 1) or gift a Tier 1 sub in the category.\\n\\nDetails and all dates: https://badgedatabase.com/badges/ultramarine/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/ultramarine/\"}, \"name\": \"Space Marine II 2nd Anniversary\", \"scheduled_end_time\": \"2026-10-29T06:59:00Z\"}, \"2026-10-01T08:00:00Z\"]"
- },
  "twitchcon-sd": {
   "id": "1559104849637810196",
   "sig": "[{\"description\": \"\\u2022 BeachBall: Buy a 1-day TwitchCon ticket.\\n\\u2022 Taco: Buy a 3-day TwitchCon ticket.\\n\\nDetails and all dates: https://badgedatabase.com/badges/twitchcon-2026---san-diego---beachball/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/twitchcon-2026---san-diego---beachball/\"}, \"name\": \"TwitchCon 2026 San Diego\", \"scheduled_end_time\": \"2026-11-15T23:59:00Z\"}, \"2026-07-22T17:00:00Z\"]"
- },
- "elden-q2": {
-  "id": "1559104877412622547",
-  "sig": "[{\"description\": \"\\u2022 Bloody Finger ELDEN RING: Subscribe (Tier 1) or gift a Tier 1 sub in the category.\\n\\nDetails and all dates: https://badgedatabase.com/badges/bloody-finger-elden-ring/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/bloody-finger-elden-ring/\"}, \"name\": \"Questline 2: Path of the Cardinal Sin\", \"scheduled_end_time\": \"2026-10-29T06:59:00Z\"}, \"2026-10-01T07:00:00Z\"]"
  },
  "ffxiv": {
   "id": "1559111256407937084",
