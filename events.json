@@ -1,5 +1,21 @@
 [
  {
+  "id": "elden-ring",
+  "name": "ELDEN RING",
+  "category": "ELDEN RING",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Warrior Jar Alexander",
+    "img": "a080167b-6264-404b-b9b1-e5a68348299f",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the ELDEN RING category."
+   }
+  ]
+ },
+ {
   "id": "dbd-halloween-2026",
   "name": "Dead by Daylight",
   "category": "Dead by Daylight",
@@ -1412,7 +1428,7 @@
   "badges": [
    {
     "name": "Warrior Jar Alexander",
-    "img": "",
+    "img": "a080167b-6264-404b-b9b1-e5a68348299f",
     "how": "Details not announced yet.",
     "cost": "na"
    }
