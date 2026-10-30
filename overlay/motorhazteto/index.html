@@ -30,7 +30,7 @@
 
 html,body{margin:0;padding:0;background:#000;overflow:hidden}
 *{box-sizing:border-box}
-@keyframes scrollY{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+@keyframes scrollY{from{transform:translateY(0)}to{transform:translateY(var(--to,-50%))}}
 .b{font-family:'Barlow',sans-serif} .bc{font-family:'Barlow Condensed',sans-serif} .bsc{font-family:'Barlow Semi Condensed',sans-serif}
 .slot{display:block;flex:none;object-fit:contain}
 
@@ -142,13 +142,13 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
   <div class="body">
     <div class="colL">
       <div class="h bc">Added in the last 14 days</div>
-      <div class="win"><div class="roll" id="items" style="animation:scrollY 130s linear infinite"></div></div>
+      <div class="win"><div class="roll" id="items"></div></div>
     </div>
     <div class="colR">
       <div class="h bc">Events</div>
       <div class="evcols">
-        <div class="win"><div class="roll" id="eventsA" style="animation:scrollY 84s linear infinite"></div></div>
-        <div class="win"><div class="roll" id="eventsB" style="animation:scrollY 84s linear infinite;animation-delay:-42s"></div></div>
+        <div class="win"><div class="roll" id="eventsA"></div></div>
+        <div class="win"><div class="roll" id="eventsB"></div></div>
       </div>
     </div>
   </div>
@@ -176,7 +176,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-10-27.1";   // bump together with version.json after every change
+const OVERLAY_V = "2026-10-30.1";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -489,6 +489,36 @@ function autoAvailable(now){
    clock and countdowns are updated in place every second ---------- */
 const lastSig = {};
 function setList(id, html){ if(lastSig[id] !== html){ lastSig[id] = html; $(id).innerHTML = html; return true; } return false; }
+/* scrolling columns: every column moves at the same speed; a list that fits in its column stands still (no doubles).
+   When the content changes (a new badge, user counts, an event starting) the list keeps its place instead of jumping. */
+const ROLL_PX_PER_S = 30;
+const ROLL_START = { eventsB: 0.5 };                 // the second events column starts half a turn ahead
+const roll = {};                                     // id -> { html, h }
+function rollOffset(id, el){                         // how far (px) the column has scrolled within one copy
+  try{ const a = el.getAnimations()[0], p = a && a.effect.getComputedTiming().progress;
+       if(typeof p === 'number' && roll[id] && roll[id].h) return p * roll[id].h; }catch(e){}
+  return null;
+}
+function setRoll(id, html, force){
+  const el = $(id), old = roll[id];
+  if(!force && old && old.html === html){            // same cards: only measure again if their size changed (fonts, images)
+    const full = el.scrollHeight;
+    if(old.h ? full === old.h * old.n : full <= el.parentElement.clientHeight) return;
+  }
+  const off = rollOffset(id, el);
+  el.style.animation = 'none'; el.innerHTML = html;
+  const h = el.scrollHeight, win = el.parentElement.clientHeight;
+  roll[id] = { html, h: 0, n: 1 };
+  if(!h || h <= win) return;                         // everything fits: stand still
+  const n = Math.ceil(win / h) + 1;
+  el.innerHTML = html.repeat(n);                     // enough copies to fill the column all the way round
+  roll[id].h = h; roll[id].n = n;
+  const dur = h / ROLL_PX_PER_S, p = off !== null ? (off % h) / h : (ROLL_START[id] || 0);
+  el.style.setProperty('--to', -h + 'px');
+  void el.offsetWidth;                               // restart the animation from the kept position
+  el.style.animation = `scrollY ${dur.toFixed(2)}s linear ${(-p * dur).toFixed(2)}s infinite`;
+}
+function refreshRolls(){ Object.keys(roll).forEach(id => setRoll(id, roll[id].html, true)); }   // re-measure (fonts, size)
 const img = (u, cls) => u ? `<img class="slot${cls ? ' ' + cls : ''}" src="${esc(badgeUrl(u))}" alt="">` : '';
 
 function eventView(e, now){
@@ -530,12 +560,11 @@ function render(){
   const views = evList.map(e => eventView(e, now)), bySlot = {};
   views.forEach(v => { bySlot[v.e.slot] = v; });
   const visible = views.filter(v => v.status !== 'ENDED'), half = Math.ceil(visible.length / 2);
-  const loop = arr => arr.concat(arr);                  // doubled list = seamless scroll loop
-  setList('eventsA', loop(visible.slice(0, half)).map(eventCard).join(''));
-  setList('eventsB', loop(visible.slice(half)).map(eventCard).join(''));
+  setRoll('eventsA', visible.slice(0, half).map(eventCard).join(''));
+  setRoll('eventsB', visible.slice(half).map(eventCard).join(''));
 
   const items = siteItems(now) || ITEMS;
-  setList('items', loop(items).map(it => itemCard(it, now)).join(''));
+  setRoll('items', items.map(it => itemCard(it, now)).join(''));
 
   const isActive = k => !!(bySlot[k] && bySlot[k].status === 'ACTIVE'), isSoon = k => !!(bySlot[k] && bySlot[k].status === 'UPCOMING');
   const evStart = k => { const e = evList.find(x => x.slot === k); return e && e.start ? Date.parse(e.start) : null; };
@@ -556,7 +585,8 @@ function render(){
   const sc = siteCounts(now) || FALLBACK_COUNTS;
   $('cActive').textContent = sc.active; $('cUpcoming').textContent = sc.upcoming; $('cTba').textContent = sc.tba; $('cFree').textContent = sc.free;
 
-  document.querySelectorAll('[data-to]').forEach(el => { el.textContent = countdown(+el.dataset.to - now, el.dataset.prefix); });
+  document.querySelectorAll('[data-to]').forEach(el => {          // only touch the ones that changed (less repainting)
+    const t = countdown(+el.dataset.to - now, el.dataset.prefix); if(el.textContent !== t) el.textContent = t; });
 }
 
 /* header chips: when they don't all fit next to each other, show them one at a time, switching every 6 seconds */
@@ -573,8 +603,8 @@ setInterval(() => {
   list.children[chipIdx % list.children.length].classList.remove('on');
   chipIdx = (chipIdx + 1) % list.children.length; list.children[chipIdx].classList.add('on');
 }, 6000);
-addEventListener('resize', () => { if($('available').children.length) fitChips(); });
-if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if($('available').children.length) fitChips(); });   // names are measured in the final font
+addEventListener('resize', () => { if($('available').children.length) fitChips(); refreshRolls(); });
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if($('available').children.length) fitChips(); refreshRolls(); });   // measured in the final font
 
 /* ---------- reload by itself when a new version is uploaded (version.json) ---------- */
 async function checkVersion(){
