@@ -587,5 +587,33 @@
   "posted": "2026-10-30T08:00:50+00:00",
   "replied": true,
   "reply": "Objective, channels and the exact end time: {url}"
+ },
+ "live:ffxiv": {
+  "tweet": "2116183563464823092",
+  "title": "Final Fantasy XIV Fan Festival 2026 JP - Alpha Chat",
+  "set": "final-fantasy-xiv-fan-festival-2026-jp---alpha-chat",
+  "sets": [
+   "final-fantasy-xiv-fan-festival-2026-jp---alpha-chat"
+  ],
+  "titles": [
+   "Final Fantasy XIV Fan Festival 2026 JP - Alpha Chat"
+  ],
+  "posted": "2026-10-30T15:00:54+00:00",
+  "replied": true,
+  "reply": "Objective, channels and exact dates: {url}"
+ },
+ "live:ffxiv-quest-complete-chat": {
+  "tweet": "2116183616979902711",
+  "title": "Final Fantasy XIV Fan Festival 2026 JP - Quest Complete Chat",
+  "set": "final-fantasy-xiv-fan-festival-2026-jp---quest-complete-chat",
+  "sets": [
+   "final-fantasy-xiv-fan-festival-2026-jp---quest-complete-chat"
+  ],
+  "titles": [
+   "Final Fantasy XIV Fan Festival 2026 JP - Quest Complete Chat"
+  ],
+  "posted": "2026-10-30T15:01:06+00:00",
+  "replied": true,
+  "reply": "Objective, channels and exact dates: {url}"
  }
 }
