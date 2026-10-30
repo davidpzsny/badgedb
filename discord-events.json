@@ -17,7 +17,7 @@
  },
  "elden-q3": {
   "id": "1559111258173874239",
-  "sig": "[{\"description\": \"\\u2022 Warrior Jar Alexander: Details not announced yet.\\n\\nDetails and all dates: https://badgedatabase.com/badges/warrior-jar-alexander/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/warrior-jar-alexander/\"}, \"name\": \"Questline 3: Path of the Elden Lord\", \"scheduled_end_time\": \"2026-11-28T23:59:00Z\"}, \"2026-11-02T00:00:00Z\"]"
+  "sig": "[{\"description\": \"\\u2022 Warrior Jar Alexander: Subscribe (Tier 1) or gift a Tier 1 sub in the category.\\n\\nDetails and all dates: https://badgedatabase.com/badges/warrior-jar-alexander/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/warrior-jar-alexander/\"}, \"name\": \"Questline 3: Path of the Elden Lord\", \"scheduled_end_time\": \"2026-11-28T23:59:00Z\"}, \"2026-11-02T00:00:00Z\"]"
  },
  "elden-q4": {
   "id": "1559111259771764798",
@@ -85,6 +85,6 @@
  },
  "dbd-halloween-2026": {
   "id": "1565754579549683815",
-  "sig": "[{\"description\": \"\\u2022 DbD Halloween 2026: Subscribe (Tier 1) or gift a Tier 1 sub in the category.\\n\\nDetails and all dates: https://badgedatabase.com/badges/dbd-halloween-2026/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/dbd-halloween-2026/\"}, \"name\": \"Dead by Daylight\", \"scheduled_end_time\": \"2026-11-09T07:58:00Z\"}, \"2026-10-31T07:00:00Z\"]"
+  "sig": "[{\"description\": \"\\u2022 DbD Halloween 2026: Subscribe (Tier 1) or gift a Tier 1 sub in the category.\\n\\nDetails and all dates: https://badgedatabase.com/badges/dbd-halloween-2026/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/dbd-halloween-2026/\"}, \"name\": \"Dead by Daylight\", \"scheduled_end_time\": \"2026-11-09T07:58:00Z\"}, \"2026-10-30T21:00:00Z\"]"
  }
 }
