@@ -1,25 +1,9 @@
 [
  {
-  "id": "elden-ring",
-  "name": "ELDEN RING",
-  "category": "ELDEN RING",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "Warrior Jar Alexander",
-    "img": "a080167b-6264-404b-b9b1-e5a68348299f",
-    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid",
-    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the ELDEN RING category."
-   }
-  ]
- },
- {
   "id": "dbd-halloween-2026",
   "name": "Dead by Daylight",
   "category": "Dead by Daylight",
-  "start": "2026-10-31T07:00:00Z",
+  "start": "2026-10-30T21:00:00Z",
   "end": "2026-11-09T07:58:00Z",
   "dates_src": "manual",
   "name_src": "manual",
@@ -1429,11 +1413,14 @@
    {
     "name": "Warrior Jar Alexander",
     "img": "a080167b-6264-404b-b9b1-e5a68348299f",
-    "how": "Details not announced yet.",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
     "cost": "paid",
-    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the ELDEN RING category."
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the ELDEN RING category.",
+    "how_src": "manual"
    }
-  ]
+  ],
+  "time_tba": true,
+  "dates_src": "manual"
  },
  {
   "id": "elden-q4",
@@ -1448,7 +1435,9 @@
     "how": "Details not announced yet.",
     "cost": "na"
    }
-  ]
+  ],
+  "time_tba": true,
+  "dates_src": "manual"
  },
  {
   "id": "twitchcon-berlin",
@@ -1463,7 +1452,9 @@
     "how": "TwitchCon always ships its own badges, expected again this year.",
     "cost": "na"
    }
-  ]
+  ],
+  "time_tba": true,
+  "dates_src": "manual"
  },
  {
   "id": "pokemon-evo",

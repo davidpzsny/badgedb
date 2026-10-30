@@ -3,6 +3,9 @@
   "date": "2026-10-30",
   "title": "Badge event updates",
   "items": [
+   {"type": "fixed", "text": "Dead by Daylight (DbD Halloween 2026) started earlier: Oct 30, 21:00 UTC (until Nov 9, 07:58 UTC)."},
+   {"type": "fixed", "text": "Questline 3: Path of the Elden Lord (Warrior Jar Alexander): subscribe or gift a Tier 1 sub in the ELDEN RING category, Nov 2 to Nov 28 (times not announced yet). A duplicate ELDEN RING event was removed."},
+   {"type": "fixed", "text": "Elden Ring Questline 4 and TwitchCon 2027 Berlin: only the days are announced, times are now marked as not announced."},
    {"type": "fixed", "text": "Dead by Daylight (DbD Halloween 2026): subscribe or gift a Tier 1 sub in the Dead by Daylight category, Oct 31, 07:00 to Nov 9, 07:58 UTC."}
   ]
  },

@@ -46,7 +46,7 @@ def twitch_global_badges():
     return out
 
 # ---------- events.json: timeline entries, kept in sync with Twitch's own badge descriptions ----------
-PLACEHOLDER_HOW = {"", "objective not announced yet.", "objective not confirmed yet."}
+PLACEHOLDER_HOW = {"", "objective not announced yet.", "objective not confirmed yet.", "details not announced yet."}
 def is_placeholder_how(h):
     h = (h or "").strip().lower()
     return h in PLACEHOLDER_HOW or h.startswith("watch in the category (exact time") or h.startswith("this badge was")
@@ -135,10 +135,25 @@ def sync_events(desc_by_img, new_sets, title_to_img=None):
             if e.get("start") or e.get("channels"): continue
             return e
         return None
+    def placeholder_for(title):
+        # a badge entered by hand before Twitch published it (no image yet, same name) in an event that isn't over
+        n = _norm(title)
+        for e in events:
+            if e.get("end") and e["end"] < now: continue
+            for pb in e.get("badges", []):
+                if not pb.get("img") and _norm(pb.get("name")) == n: return pb
+        return None
     added = 0
     for b in new_sets:
         if b["img"] in known_imgs: continue
         info = parse_desc(b.get("desc"))
+        pb = placeholder_for(b["title"])
+        if pb:                                   # fill the hand-made entry instead of creating a second event
+            pb["img"] = b["img"]
+            if b.get("desc"): pb["desc"] = b["desc"]
+            if info.get("how") and is_placeholder_how(pb.get("how")): pb["how"] = info["how"]
+            if info.get("cost") and pb.get("cost") in (None, "", "na"): pb["cost"] = info["cost"]
+            known_imgs.add(b["img"]); added += 1; continue
         badge = {"name": b["title"], "img": b["img"], "how": info.get("how") or "Objective not announced yet.",
                  "cost": info.get("cost") or "na"}
         if b.get("desc"): badge["desc"] = b["desc"]
