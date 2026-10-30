@@ -622,5 +622,28 @@
   "set": "warrior-jar-alexander",
   "posted": "2026-10-30T17:00:50+00:00",
   "replied": true
+ },
+ "ending:dragon-s-dogma-ii": {
+  "tweet": "",
+  "title": "TheDragonsDogma",
+  "set": "thedragonsdogma",
+  "replied": "discord only",
+  "posted": "2026-10-30T22:59:20+00:00"
+ },
+ "xending:dragon-s-dogma-ii": {
+  "tweet": "2116303979391103182",
+  "title": "TheDragonsDogma",
+  "set": "thedragonsdogma",
+  "sets": [
+   "thedragonsdogma",
+   "frekifriend"
+  ],
+  "titles": [
+   "TheDragonsDogma",
+   "FrekiFriend"
+  ],
+  "posted": "2026-10-30T22:59:22+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
