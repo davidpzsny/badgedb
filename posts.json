@@ -562,5 +562,30 @@
   "posted": "2026-10-28T22:59:01+00:00",
   "replied": true,
   "reply": "Objective, channels and the exact end time: {url}"
+ },
+ "ending:witchspire": {
+  "tweet": "",
+  "title": "Gold Stamp",
+  "set": "gold-stamp",
+  "replied": "discord only",
+  "posted": "2026-10-30T08:00:48+00:00"
+ },
+ "xending:witchspire": {
+  "tweet": "2116077855662555260",
+  "title": "Gold Stamp",
+  "set": "gold-stamp",
+  "sets": [
+   "gold-stamp",
+   "witchspire-logo",
+   "witch-hat"
+  ],
+  "titles": [
+   "Gold Stamp",
+   "Witchspire Logo",
+   "Witch Hat"
+  ],
+  "posted": "2026-10-30T08:00:50+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
