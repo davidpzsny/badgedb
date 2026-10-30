@@ -82,5 +82,9 @@
  "hunt-showdown-1896": {
   "id": "1564300611116073123",
   "sig": "[{\"description\": \"\\u2022 Hunt Red: Subscribe (Tier 1) or gift a Tier 1 sub in the category.\\n\\u2022 Hunt White: Watch 15 minutes in the category.\\n\\nDetails and all dates: https://badgedatabase.com/badges/hunt-red/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/hunt-red/\"}, \"name\": \"Hunt: Showdown 1896\", \"scheduled_end_time\": \"2026-11-09T13:59:00Z\"}, \"2026-10-26T14:54:00Z\"]"
+ },
+ "dbd-halloween-2026": {
+  "id": "1565754579549683815",
+  "sig": "[{\"description\": \"\\u2022 DbD Halloween 2026: Subscribe (Tier 1) or gift a Tier 1 sub in the category.\\n\\nDetails and all dates: https://badgedatabase.com/badges/dbd-halloween-2026/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/dbd-halloween-2026/\"}, \"name\": \"Dead by Daylight\", \"scheduled_end_time\": \"2026-11-09T07:58:00Z\"}, \"2026-10-31T07:00:00Z\"]"
  }
 }
