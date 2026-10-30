@@ -176,7 +176,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-10-30.1";   // bump together with version.json after every change
+const OVERLAY_V = "2026-10-30.2";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -219,7 +219,7 @@ const ITEMS = [
    EVENT_TITLES / EVENT_DESC: your own title or description for an event (by its id on the site, e.g. 'dayz').
    EXTRA_EVENTS: events that are not on the site yet. */
 const EVENT_TITLES = {
-  'twitchcon-sd': 'TwitchCon 2026 San Diego', 'elden-q2': 'Elden Ring · Path of the Cardinal Sin', 'ffxiv': 'FFXIV Fan Festival 2026 JP',
+  'twitchcon-sd': 'TwitchCon 2026 San Diego', 'elden-q2': 'Elden Ring · Path of the Cardinal Sin', 'ffxiv': 'FFXIV Fan Festival 2026 JP', 'ffxiv-quest-complete-chat': 'FFXIV Fan Festival 2026 JP · Quest Complete Chat',
   'dragon-s-dogma-ii': "Dragon's Dogma 2", 'gastly': 'Pokémon Night Out 2026', 'vaultbreakers': 'Vaultbreakers', 'dayz': 'DayZ · Badlands',
   'call-of-duty-modern-warfare-4': 'Call of Duty: Modern Warfare 4', 'witchspire': 'Witchspire · Haunted Magick', 'pokemon-evo': 'Pokémon Evolution Badges',
   'ultramarine': 'Warhammer 40,000: Space Marine II', 'rematch-blue-lock': 'Rematch', 'dnd-dungeon-masters': 'Dungeons & Dragons: Dungeon Masters',
@@ -489,9 +489,11 @@ function autoAvailable(now){
    clock and countdowns are updated in place every second ---------- */
 const lastSig = {};
 function setList(id, html){ if(lastSig[id] !== html){ lastSig[id] = html; $(id).innerHTML = html; return true; } return false; }
-/* scrolling columns: every column moves at the same speed; a list that fits in its column stands still (no doubles).
-   When the content changes (a new badge, user counts, an event starting) the list keeps its place instead of jumping. */
-const ROLL_PX_PER_S = 30;
+/* scrolling columns: a steady speed in pixels per second, whatever the length of the list. The events columns stand
+   still when everything fits; "Added in the last 14 days" always moves, slower. When the content changes (a new badge,
+   user counts, an event starting) a list keeps its place instead of jumping. */
+const ROLL_SPEED = { items: 18, eventsA: 30, eventsB: 30 };
+const ROLL_ALWAYS = { items: true };               // keeps moving even when the whole list fits in the column
 const ROLL_START = { eventsB: 0.5 };                 // the second events column starts half a turn ahead
 const roll = {};                                     // id -> { html, h }
 function rollOffset(id, el){                         // how far (px) the column has scrolled within one copy
@@ -503,17 +505,17 @@ function setRoll(id, html, force){
   const el = $(id), old = roll[id];
   if(!force && old && old.html === html){            // same cards: only measure again if their size changed (fonts, images)
     const full = el.scrollHeight;
-    if(old.h ? full === old.h * old.n : full <= el.parentElement.clientHeight) return;
+    if(old.h ? full === old.h * old.n : (full <= el.parentElement.clientHeight && !ROLL_ALWAYS[id]) || !full) return;
   }
   const off = rollOffset(id, el);
   el.style.animation = 'none'; el.innerHTML = html;
   const h = el.scrollHeight, win = el.parentElement.clientHeight;
   roll[id] = { html, h: 0, n: 1 };
-  if(!h || h <= win) return;                         // everything fits: stand still
+  if(!h || (h <= win && !ROLL_ALWAYS[id])) return;   // everything fits: stand still
   const n = Math.ceil(win / h) + 1;
   el.innerHTML = html.repeat(n);                     // enough copies to fill the column all the way round
   roll[id].h = h; roll[id].n = n;
-  const dur = h / ROLL_PX_PER_S, p = off !== null ? (off % h) / h : (ROLL_START[id] || 0);
+  const dur = h / (ROLL_SPEED[id] || 30), p = off !== null ? (off % h) / h : (ROLL_START[id] || 0);
   el.style.setProperty('--to', -h + 'px');
   void el.offsetWidth;                               // restart the animation from the kept position
   el.style.animation = `scrollY ${dur.toFixed(2)}s linear ${(-p * dur).toFixed(2)}s infinite`;

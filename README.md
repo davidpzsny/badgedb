@@ -226,8 +226,9 @@ OBS → Sources → + → Browser, URL above, Width `1920`, Height `1080`. It is
   that can be earned in any category (events with category `Any`, e.g. Pokémon Night Out), only once they can be earned.
   When the chips don't fit next to each other, they take turns, one every 6 seconds.
 - The left column ("Added in the last 14 days") and the footer counters come from `badges.json` / `events.json` every 5 minutes.
-  Every column scrolls at the same speed (`ROLL_PX_PER_S`, 30 pixels a second); a list that fits in its column stands
-  still, and new data (a new badge, user counts, an event starting) never makes a column jump back.
+  The columns scroll at a steady speed (`ROLL_SPEED`: events 30, "Added in the last 14 days" 18 pixels a second). An
+  events column that fits stands still; the left column always moves. New data (a new badge, user counts, an event
+  starting) never makes a column jump back.
   USERS there is the external badge list's count: `/admin/` → **Overlay user counts** writes `sdb-request.json`, the bot's next run
   (within 5 minutes) loads that badge list once and saves the counts in `popularity.json` under `sdb`
   (`bot/sdb_users.py`; result in `status.json` → `sdb_users`). Badges without a number there fall back to
