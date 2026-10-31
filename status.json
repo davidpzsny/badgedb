@@ -1,19 +1,19 @@
 {
  "popularity_http": {
-  "at": "2026-10-31T12:35:22+00:00",
+  "at": "2026-10-31T12:40:28+00:00",
   "msg": "HTTP 403, 5368 bytes, starts with: <!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\"><meta name=\"robots\" content=\"noindex,nofollow\"><meta name=\"viewport\" content=\"width=device-width,initial-scal"
  },
  "popularity": {
-  "at": "2026-10-31T12:35:22+00:00",
+  "at": "2026-10-31T12:40:28+00:00",
   "msg": "request failed: Expecting value: line 1 column 1 (char 0)"
  },
  "emotes": {
-  "at": "2026-10-31T12:35:28+00:00",
+  "at": "2026-10-31T12:40:33+00:00",
   "msg": "307 live, 0 new, 0 removed"
  },
  "top_categories": {
-  "at": "2026-10-31T12:35:26+00:00",
-  "msg": "150 categories, #1 Counter-Strike"
+  "at": "2026-10-31T12:40:31+00:00",
+  "msg": "150 categories, #1 Just Chatting"
  },
  "drop_campaigns": {
   "at": "2026-10-31T00:00:48+00:00",
@@ -24,15 +24,15 @@
   "msg": "Final Fantasy XIV Fan Festival 2026 JP (Quest Complete Chat) at 2026-10-30T15:01:00Z -> tweet 2116183616979902711"
  },
  "discord_events": {
-  "at": "2026-10-31T12:35:22+00:00",
+  "at": "2026-10-31T12:40:28+00:00",
   "msg": "0 created, 0 started, 0 updated, 0 closed"
  },
  "live_channels": {
-  "at": "2026-10-31T12:35:28+00:00",
+  "at": "2026-10-31T12:40:33+00:00",
   "msg": "13 running events, 82 live streams, badge_db live"
  },
  "reward_campaigns": {
-  "at": "2026-10-31T12:35:21+00:00",
+  "at": "2026-10-31T12:40:27+00:00",
   "msg": "ok via BadgeDBRewardCampaigns: 5 campaigns: First Partners Collection (2026-08-24T17:00 -> 2026-11-01T07:00); 1 Month of Apple TV (2026-10-20T19:00 -> 2026-11-03T19:59); Ted Lasso Badges (2026-10-20T19:00 -> 2026-11-03T19:59); Pokémon Night Out Campaign (2026-10-16T17:00 -> 2026-11-23T22:59); Pokemon Evolutions (2026-10-16T17:00 -> 2027-01-30T22:59)"
  },
  "sdb_users": {
