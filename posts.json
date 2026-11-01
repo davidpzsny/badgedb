@@ -659,5 +659,26 @@
   "set": "final-fantasy-xiv-fan-festival-2026-jp---quest-complete-chat",
   "replied": "discord only",
   "posted": "2026-10-31T15:00:48+00:00"
+ },
+ "ending:castlevania-belmont-s-curse": {
+  "tweet": "",
+  "title": "Castlevania Belmont's Curse",
+  "set": "castlevania-belmonts-curse",
+  "replied": "discord only",
+  "posted": "2026-11-01T04:00:47+00:00"
+ },
+ "xending:castlevania-belmont-s-curse": {
+  "tweet": "2116742228961870221",
+  "title": "Castlevania Belmont's Curse",
+  "set": "castlevania-belmonts-curse",
+  "sets": [
+   "castlevania-belmonts-curse"
+  ],
+  "titles": [
+   "Castlevania Belmont's Curse"
+  ],
+  "posted": "2026-11-01T04:00:49+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
