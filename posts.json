@@ -680,5 +680,19 @@
   "posted": "2026-11-01T04:00:49+00:00",
   "replied": true,
   "reply": "Objective, channels and the exact end time: {url}"
+ },
+ "live:elden-q3": {
+  "tweet": "2117171345872277866",
+  "title": "Warrior Jar Alexander",
+  "set": "warrior-jar-alexander",
+  "sets": [
+   "warrior-jar-alexander"
+  ],
+  "titles": [
+   "Warrior Jar Alexander"
+  ],
+  "posted": "2026-11-02T08:25:59+00:00",
+  "replied": true,
+  "reply": "Objective, channels and exact dates: {url}"
  }
 }
