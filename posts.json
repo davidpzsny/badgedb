@@ -708,5 +708,28 @@
   "set": "horde",
   "posted": "2026-11-02T18:25:26+00:00",
   "replied": true
+ },
+ "ending:beagoldfish": {
+  "tweet": "",
+  "title": "BeAGoldfish",
+  "set": "beagoldfish",
+  "replied": "discord only",
+  "posted": "2026-11-02T20:00:51+00:00"
+ },
+ "xending:beagoldfish": {
+  "tweet": "2117346224227447001",
+  "title": "BeAGoldfish",
+  "set": "beagoldfish",
+  "sets": [
+   "beagoldfish",
+   "believeinrichmond"
+  ],
+  "titles": [
+   "BeAGoldfish",
+   "BelieveInRichmond"
+  ],
+  "posted": "2026-11-02T20:00:53+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
