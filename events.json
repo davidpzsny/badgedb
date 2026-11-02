@@ -1407,8 +1407,8 @@
   "id": "elden-q3",
   "name": "Questline 3: Path of the Elden Lord",
   "category": "ELDEN RING",
-  "start": "2026-11-02T00:00:00Z",
-  "end": "2026-11-28T23:59:00Z",
+  "start": "2026-11-02T07:00:00Z",
+  "end": "2026-11-30T06:59:00Z",
   "badges": [
    {
     "name": "Warrior Jar Alexander",
@@ -1419,7 +1419,6 @@
     "how_src": "manual"
    }
   ],
-  "time_tba": true,
   "dates_src": "manual"
  },
  {
