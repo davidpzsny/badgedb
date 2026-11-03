@@ -1,33 +1,29 @@
 [
  {
-  "id": "horde",
-  "name": "Horde",
-  "category": "Unknown",
+  "id": "wow-forever",
+  "name": "World of Warcraft: WoW Forever launch",
+  "category": "World of Warcraft",
   "start": "",
   "end": "",
+  "name_src": "manual",
+  "note": "Dates not announced yet.",
+  "about": "Celebrating the launch of WoW: Forever. Pick a side: Horde or Alliance.",
   "badges": [
    {
     "name": "Horde",
     "img": "8dfb6f30-1ec1-497a-91e4-028a704b4f57",
-    "how": "Subscribe (Tier 1) or gift a Tier 1 sub.",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
     "cost": "paid",
-    "desc": "FOR THE HORDE! This badge was unlocked by subscribing or gifting a sub to a streamer during the launch of WoW: Forever."
-   }
-  ]
- },
- {
-  "id": "alliance",
-  "name": "Alliance",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
+    "desc": "FOR THE HORDE! This badge was unlocked by subscribing or gifting a sub to a streamer during the launch of WoW: Forever.",
+    "how_src": "manual"
+   },
    {
     "name": "Alliance",
     "img": "59d5bb2e-0d62-4116-a6bc-79cd5afe9246",
-    "how": "Subscribe (Tier 1) or gift a Tier 1 sub.",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
     "cost": "paid",
-    "desc": "FOR THE ALLIANCE! This badge was unlocked by subscribing or gifting a sub to a streamer during the launch of WoW: Forever."
+    "desc": "FOR THE ALLIANCE! This badge was unlocked by subscribing or gifting a sub to a streamer during the launch of WoW: Forever.",
+    "how_src": "manual"
    }
   ]
  },
