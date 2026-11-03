@@ -261,7 +261,15 @@ The site code is `CONFIG.goatcounter` in `assets/app.js` (`""` switches counting
 | `DISCORD_WEBHOOK` | optional: post new badges to a Discord channel |
 
 **Variables** (*Variables* tab): `SITE_URL` = `https://badgedatabase.com` · optional `X_LINK_REPLY` = `0`
-(no link replies) · optional `X_LIVE_POSTS` = `0` (no "Now available" posts) · optional `X_ENDING_POSTS` = `0` (no "Last chance" posts) · optional `DRY_RUN` = `1` (test without posting).
+(no link replies) · optional `X_LIVE_POSTS` = `0` (no "Now available" posts) · optional `X_ENDING_POSTS` = `0` (no "Last chance" posts) · optional `TWITCH_CHAT_POSTS` = `0` (no Twitch chat messages) · optional `DRY_RUN` = `1` (test without posting).
+
+**Twitch chat messages**: for every new global badge the bot writes "Twitch global badge added: <name> <badge page link>"
+in badge_db's chat, as badge_db. One-time setup: log in to twitch.tv as **badge_db**, open
+`https://id.twitch.tv/oauth2/authorize?client_id=nqfd84n7ko17trxgtfepmsw5ys3375&redirect_uri=https%3A%2F%2Fbadgedatabase.com%2F&response_type=token&scope=user%3Abot+channel%3Abot&force_verify=true`
+and click **Authorize** (the app may then send chat messages as badge_db; the bot uses its own app token, nothing to
+store or renew). To test it: put `{"at": "<any new text, e.g. the date>"}` into `twitch-chat-test.json`; the next run
+sends one test message and writes the result to `status.json` → `twitch_chat_test` (every message: `twitch_chat`).
+To undo: twitch.tv → Settings → Connections → the app → Disconnect.
 
 **Admin token** (stored only in your browser): github.com/settings/personal-access-tokens → fine-grained →
 *Only select repositories* → `badgedb` → *Repository permissions → Contents: Read and write*.

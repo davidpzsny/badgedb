@@ -1000,6 +1000,44 @@ def post_to_discord(badge):
         "footer": {"text": "badgedatabase.com"},
         "color": 0x8B5CF6})
 
+# ---------- Twitch chat: badge_db says it in its own chat ("Twitch global badge added: ...") ----------
+# One-time setup: the badge_db account authorizes the bot's Twitch app with the scopes user:bot and channel:bot
+# (README, "Twitch chat messages"). The bot then sends with its own app token: nothing to refresh, nothing stored.
+TWITCH_CHAT_POSTS = (os.environ.get("TWITCH_CHAT_POSTS") or "1").strip().lower() not in ("0", "false", "no", "off")
+_chat = {}
+def post_to_twitch_chat(badge=None, text=None):
+    """Send one chat message as badge_db in badge_db's chat. Returns True when Twitch says it was sent."""
+    if not TWITCH_CHAT_POSTS: return False
+    text = text or f"Twitch global badge added: {badge['title']} {site_url()}/badges/{badge['set']}/"
+    if DRY_RUN:
+        print("DRY_RUN Twitch chat:", text); return True
+    try:
+        if not _chat.get("tok"): _chat["tok"] = app_token()
+        if not _chat.get("id"): _chat["id"] = helix_get(_chat["tok"], "users", {"login": OUR_CHANNEL})[0]["id"]
+        r = requests.post("https://api.twitch.tv/helix/chat/messages", timeout=30,
+                          headers={"Client-Id": os.environ["TWITCH_CLIENT_ID"], "Authorization": f"Bearer {_chat['tok']}"},
+                          json={"broadcaster_id": _chat["id"], "sender_id": _chat["id"], "message": text[:500]})
+        try: body = r.json()
+        except Exception: body = {}
+        d = (body.get("data") or [{}])[0]
+        if r.status_code == 200 and d.get("is_sent"):
+            print("posted to Twitch chat:", text[:80]); status("twitch_chat", f"sent: {text[:120]}"); return True
+        why = (d.get("drop_reason") or {}).get("message") or body.get("message") or r.text[:200]
+        print(f"Twitch chat: not sent (HTTP {r.status_code}): {why}")
+        status("twitch_chat", f"not sent (HTTP {r.status_code}): {why}")
+    except Exception as e:
+        print("Twitch chat failed:", e); status("twitch_chat", f"failed: {e!r}")
+    return False
+
+def twitch_chat_selftest():
+    """twitch-chat-test.json {"at": ...} newer than the last one handled: send one test message (checks the setup)."""
+    req = load_json(os.path.join(ROOT, "twitch-chat-test.json"), {})
+    done = load_json(os.path.join(ROOT, "status.json"), {}).get("twitch_chat_test", {})
+    if not req.get("at") or done.get("req") == req["at"]: return
+    ok = post_to_twitch_chat(text="BadgeDB bot is connected: new Twitch global badges will be posted here.")
+    STATUS["twitch_chat_test"] = {"at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
+                                  "req": req["at"], "msg": "sent" if ok else STATUS.get("twitch_chat", {}).get("msg", "not sent")}
+
 ENDING_SOON_HOURS = 24      # remind once when an event has less than this many hours left
 def announce_ending(events, live):
     by_img = {b["img"]: b for b in live}
@@ -1157,6 +1195,7 @@ def main():
                 remember_post(b, post_to_x(b, img)); post_to_discord(b)
             except Exception as e:
                 print("posting failed:", e)
+            post_to_twitch_chat(b)                # on its own: an X or Discord failure doesn't stop it
         posted += 1
 
     # 2) save every new version: extra versions of a known set inherit that set's date (not announced),
@@ -1205,6 +1244,9 @@ def main():
         except Exception as e: print("global emotes: skipped ->", e)
         try: crawl_channel_badges(tok)
         except Exception as e: print("channel crawl failed:", e)
+
+    try: twitch_chat_selftest()             # only when twitch-chat-test.json asks for it
+    except Exception as e: print("twitch chat test: skipped ->", e)
 
     try:                                    # overlay user counts, only when asked for in /admin/
         import sdb_users

@@ -48,6 +48,7 @@ jobs:
           X_LINK_REPLY: ${{ vars.X_LINK_REPLY }}
           X_LIVE_POSTS: ${{ vars.X_LIVE_POSTS }}
           X_ENDING_POSTS: ${{ vars.X_ENDING_POSTS }}
+          TWITCH_CHAT_POSTS: ${{ vars.TWITCH_CHAT_POSTS }}
           SITE_URL: ${{ vars.SITE_URL }}
           DRY_RUN: ${{ vars.DRY_RUN }}
         run: python bot/check_badges.py
