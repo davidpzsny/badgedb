@@ -44,12 +44,12 @@
  },
  {
   "id": "wow-forever",
-  "name": "World of Warcraft: WoW Forever launch",
+  "name": "World of Warcraft: Forever",
   "category": "World of Warcraft",
-  "start": "",
-  "end": "",
+  "start": "2026-11-04T16:00:00Z",
+  "end": "2026-12-01T07:58:00Z",
+  "dates_src": "manual",
   "name_src": "manual",
-  "note": "Dates not announced yet.",
   "about": "Celebrating the launch of WoW: Forever.",
   "badges": [
    {
