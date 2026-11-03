@@ -1,38 +1,44 @@
 [
  {
   "id": "payday-3",
-  "name": "Payday 3",
-  "category": "Payday 3",
+  "name": "PAYDAY 3",
+  "category": "PAYDAY 3",
   "start": "",
   "end": "",
+  "name_src": "manual",
+  "note": "Dates not announced yet.",
   "badges": [
+   {
+    "name": "Joy",
+    "img": "e8ff781d-a445-4ed3-9790-9514a2eb45f0",
+    "how": "Watch 90 minutes in the category.",
+    "cost": "free",
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Payday 3 category for 90 minutes",
+    "how_src": "manual"
+   },
    {
     "name": "Clover",
     "img": "1495822f-a2a6-46f7-8e0b-48db278621d9",
     "how": "Watch 30 minutes in the category.",
     "cost": "free",
-    "desc": "This badge was earned by watching a streamer in the Payday 3 category for 30 minutes"
-   },
-   {
-    "name": "Joy",
-    "img": "e8ff781d-a445-4ed3-9790-9514a2eb45f0",
-    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
-    "cost": "paid",
-    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Payday 3 category for 90 minutes"
+    "desc": "This badge was earned by watching a streamer in the Payday 3 category for 30 minutes",
+    "how_src": "manual"
    },
    {
     "name": "KawaiiDozer",
     "img": "a1bf84a7-cebc-496b-acf2-411938b18d9f",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
     "cost": "paid",
-    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Payday 3 category"
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Payday 3 category",
+    "how_src": "manual"
    },
    {
     "name": "Pearl",
     "img": "8346da26-6494-4edb-945d-63a50a6e416b",
     "how": "Watch 60 minutes in the category.",
     "cost": "free",
-    "desc": "This badge was earned by watching a streamer in the Payday 3 category for 60 minutes"
+    "desc": "This badge was earned by watching a streamer in the Payday 3 category for 60 minutes",
+    "how_src": "manual"
    }
   ]
  },
