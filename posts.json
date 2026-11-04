@@ -775,5 +775,28 @@
   "posted": "2026-11-04T16:00:56+00:00",
   "replied": true,
   "reply": "Objective, channels and exact dates: {url}"
+ },
+ "ending:vaultbreakers": {
+  "tweet": "",
+  "title": "Vaultbreakers",
+  "set": "vaultbreakers",
+  "replied": "discord only",
+  "posted": "2026-11-04T17:00:58+00:00"
+ },
+ "xending:vaultbreakers": {
+  "tweet": "2118025730529304635",
+  "title": "Vaultbreakers",
+  "set": "vaultbreakers",
+  "sets": [
+   "vaultbreakers",
+   "vaultbreakers-golden"
+  ],
+  "titles": [
+   "Vaultbreakers",
+   "Vaultbreakers Golden"
+  ],
+  "posted": "2026-11-04T17:01:00+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
