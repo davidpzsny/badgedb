@@ -759,5 +759,21 @@
   "set": "pearl",
   "posted": "2026-11-03T14:25:25+00:00",
   "replied": true
+ },
+ "live:wow-forever": {
+  "tweet": "2118010611380457696",
+  "title": "Horde",
+  "set": "horde",
+  "sets": [
+   "horde",
+   "alliance"
+  ],
+  "titles": [
+   "Horde",
+   "Alliance"
+  ],
+  "posted": "2026-11-04T16:00:56+00:00",
+  "replied": true,
+  "reply": "Objective, channels and exact dates: {url}"
  }
 }
