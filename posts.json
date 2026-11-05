@@ -798,5 +798,26 @@
   "posted": "2026-11-04T17:01:00+00:00",
   "replied": true,
   "reply": "Objective, channels and the exact end time: {url}"
+ },
+ "ending:gray-zone-warfare-gold": {
+  "tweet": "",
+  "title": "Gray Zone Warfare (Gold)",
+  "set": "gray-zone-warfare-gold",
+  "replied": "discord only",
+  "posted": "2026-11-05T13:00:56+00:00"
+ },
+ "xending:gray-zone-warfare-gold": {
+  "tweet": "2118327714935386393",
+  "title": "Gray Zone Warfare (Gold)",
+  "set": "gray-zone-warfare-gold",
+  "sets": [
+   "gray-zone-warfare-gold"
+  ],
+  "titles": [
+   "Gray Zone Warfare (Gold)"
+  ],
+  "posted": "2026-11-05T13:00:58+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
