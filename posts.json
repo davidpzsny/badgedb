@@ -819,5 +819,25 @@
   "posted": "2026-11-05T13:00:58+00:00",
   "replied": true,
   "reply": "Objective, channels and the exact end time: {url}"
+ },
+ "live:payday-3": {
+  "tweet": "2118674974491771269",
+  "title": "Joy",
+  "set": "joy",
+  "sets": [
+   "joy",
+   "clover",
+   "kawaiidozer",
+   "pearl"
+  ],
+  "titles": [
+   "Joy",
+   "Clover",
+   "KawaiiDozer",
+   "Pearl"
+  ],
+  "posted": "2026-11-06T12:00:52+00:00",
+  "replied": true,
+  "reply": "Objective, channels and exact dates: {url}"
  }
 }
