@@ -519,17 +519,15 @@
   "id": "lol-worlds-2026-pentakill",
   "name": "Worlds 2026: Pentakill Fan",
   "category": "League of Legends",
-  "start": "2026-11-07T00:00:00Z",
-  "end": "2026-11-11T23:59:00Z",
+  "start": "2026-11-07T16:00:00Z",
+  "end": "2026-11-13T15:59:00Z",
   "dates_src": "manual",
   "name_src": "manual",
-  "time_tba": true,
-  "note": "Exact times not announced yet, only the days.",
   "badges": [
    {
     "name": "Pentakill Fan",
     "img": "721fe947-d819-4b13-9b7a-92debcd9393b",
-    "how": "Watch League of Legends streams (exact watch time not announced yet).",
+    "how": "Watch 30 minutes in the category.",
     "cost": "free",
     "desc": "This Chat Badge was earned by supporting the 2026 League of Legends World Championship!",
     "how_src": "manual"
