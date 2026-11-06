@@ -1,5 +1,37 @@
 [
  {
+  "id": "metaphor-refantazio",
+  "name": "Metaphor: ReFantazio",
+  "category": "Metaphor: ReFantazio",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Gallica",
+    "img": "d2adf631-2045-4246-9c34-201487e809ae",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Metaphor: ReFantazio category during the Switch 2 launch!"
+   }
+  ]
+ },
+ {
+  "id": "doom-the-dark-ages",
+  "name": "DOOM: The Dark Ages",
+  "category": "DOOM: The Dark Ages",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "DOOM: The Dark Ages",
+    "img": "80e404b7-673b-4ca8-ab69-1779f9685eec",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid",
+    "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the DOOM: The Dark Ages category during the launch of Slaughter Mode!"
+   }
+  ]
+ },
+ {
   "id": "payday-3",
   "name": "PAYDAY 3",
   "category": "PAYDAY 3",
