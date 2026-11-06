@@ -839,5 +839,26 @@
   "posted": "2026-11-06T12:00:52+00:00",
   "replied": true,
   "reply": "Objective, channels and exact dates: {url}"
+ },
+ "ending:lol-worlds-2026-fans": {
+  "tweet": "",
+  "title": "True Damage Fan",
+  "set": "true-damage-fan",
+  "replied": "discord only",
+  "posted": "2026-11-06T16:00:54+00:00"
+ },
+ "xending:lol-worlds-2026-fans": {
+  "tweet": "2118735392220631338",
+  "title": "True Damage Fan",
+  "set": "true-damage-fan",
+  "sets": [
+   "true-damage-fan"
+  ],
+  "titles": [
+   "True Damage Fan"
+  ],
+  "posted": "2026-11-06T16:00:56+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
