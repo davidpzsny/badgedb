@@ -1001,7 +1001,7 @@ def post_to_discord(badge):
         "color": 0x8B5CF6})
 
 # ---------- Twitch chat: badge_db says it in its own chat ("Twitch global badge added: ...") ----------
-# One-time setup: the badge_db account authorizes the bot's Twitch app with the scopes user:bot and channel:bot
+# One-time setup: the badge_db account authorizes the bot's Twitch app with the scopes user:write:chat, user:bot and channel:bot
 # (README, "Twitch chat messages"). The bot then sends with its own app token: nothing to refresh, nothing stored.
 TWITCH_CHAT_POSTS = (os.environ.get("TWITCH_CHAT_POSTS") or "1").strip().lower() not in ("0", "false", "no", "off")
 _chat = {}
@@ -1030,11 +1030,18 @@ def post_to_twitch_chat(badge=None, text=None):
     return False
 
 def twitch_chat_selftest():
-    """twitch-chat-test.json {"at": ...} newer than the last one handled: send one test message (checks the setup)."""
+    """twitch-chat-test.json {"at": ...} newer than the last one handled: send one test message (checks the setup).
+    With "sets": [set ids] it sends the usual "Twitch global badge added" message for those badges instead
+    (e.g. badges that came while the chat messages weren't set up yet)."""
     req = load_json(os.path.join(ROOT, "twitch-chat-test.json"), {})
     done = load_json(os.path.join(ROOT, "status.json"), {}).get("twitch_chat_test", {})
     if not req.get("at") or done.get("req") == req["at"]: return
-    ok = post_to_twitch_chat(text="BadgeDB bot is connected: new Twitch global badges will be posted here.")
+    if req.get("sets"):
+        rows = {r[5]: r for r in load_json(os.path.join(ROOT, "badges.json"), []) if len(r) > 5}
+        sent = [post_to_twitch_chat({"title": rows[s][0], "set": s}) for s in req["sets"] if s in rows]
+        ok = bool(sent) and all(sent)
+    else:
+        ok = post_to_twitch_chat(text="BadgeDB bot is connected: new Twitch global badges will be posted here.")
     STATUS["twitch_chat_test"] = {"at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
                                   "req": req["at"], "msg": "sent" if ok else STATUS.get("twitch_chat", {}).get("msg", "not sent")}
 
