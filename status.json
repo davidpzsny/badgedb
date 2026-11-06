@@ -1,18 +1,18 @@
 {
  "popularity_http": {
-  "at": "2026-11-06T02:45:31+00:00",
-  "msg": "HTTP 403, 5389 bytes, starts with: <!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\"><meta name=\"robots\" content=\"noindex,nofollow\"><meta name=\"viewport\" content=\"width=device-width,initial-scal"
+  "at": "2026-11-06T02:50:24+00:00",
+  "msg": "HTTP 403, 5368 bytes, starts with: <!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\"><meta name=\"robots\" content=\"noindex,nofollow\"><meta name=\"viewport\" content=\"width=device-width,initial-scal"
  },
  "popularity": {
-  "at": "2026-11-06T02:45:31+00:00",
+  "at": "2026-11-06T02:50:24+00:00",
   "msg": "request failed: Expecting value: line 1 column 1 (char 0)"
  },
  "emotes": {
-  "at": "2026-11-06T02:45:35+00:00",
+  "at": "2026-11-06T02:50:30+00:00",
   "msg": "309 live, 0 new, 0 removed"
  },
  "top_categories": {
-  "at": "2026-11-06T02:45:34+00:00",
+  "at": "2026-11-06T02:50:28+00:00",
   "msg": "150 categories, #1 World of Warcraft"
  },
  "drop_campaigns": {
@@ -24,15 +24,15 @@
   "msg": "World of Warcraft: Forever at 2026-11-04T16:00:00Z -> tweet 2118010611380457696"
  },
  "discord_events": {
-  "at": "2026-11-06T02:45:31+00:00",
+  "at": "2026-11-06T02:50:24+00:00",
   "msg": "0 created, 0 started, 0 updated, 0 closed"
  },
  "live_channels": {
-  "at": "2026-11-06T02:45:35+00:00",
-  "msg": "10 running events, 67 live streams, badge_db live"
+  "at": "2026-11-06T02:50:30+00:00",
+  "msg": "10 running events, 68 live streams, badge_db live"
  },
  "reward_campaigns": {
-  "at": "2026-11-06T02:45:31+00:00",
+  "at": "2026-11-06T02:50:23+00:00",
   "msg": "ok via BadgeDBRewardCampaigns: 2 campaigns: Pokémon Night Out Campaign (2026-10-16T17:00 -> 2026-11-23T22:59); Pokemon Evolutions (2026-10-16T17:00 -> 2027-01-30T22:59)"
  },
  "sdb_users": {
