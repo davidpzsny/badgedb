@@ -183,7 +183,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-11-03.6";   // bump together with version.json after every change
+const OVERLAY_V = "2026-11-06.1";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -471,7 +471,9 @@ function autoAvailable(now){
     (ev.badges || []).forEach(b => {
       const act = badgeAction(b); if(!act) return;
       if(any && act.text === 'Objective TBA') return;          // not earnable yet
-      const key = now < start ? 'soon' : any ? 'all' : act.text;   // any-category events (Pokémon Night Out): one chip for the event
+      // any-category events (Pokémon Night Out): one chip for the event; otherwise the free (watch) badges of an event
+      // share one chip and the sub badges another (e.g. PAYDAY 3: Joy, Clover and Pearl together, KawaiiDozer on its own)
+      const key = now < start ? 'soon' : any ? 'all' : /^watch/i.test(act.text) ? 'watch' : act.text;
       if(!groups.has(key)) groups.set(key, { act, badges: [] });
       groups.get(key).badges.push(b);
     });
@@ -482,6 +484,13 @@ function autoAvailable(now){
         const daily = g.badges.some(b => /a day for \d+ days/i.test(b.how || ''));
         g.act = acts.every(t => /^watch/i.test(t)) && mins.length === 1 ? { text: `Watch ${mins[0]} min${daily ? ' a day' : ''}`, color: '#4ade80' }
               : acts.every(t => /^watch/i.test(t)) ? { text: 'Watch', color: '#4ade80' } : { text: 'Sub, gift or watch', color: '#4ade80' };
+      }
+    }
+    if(groups.has('watch')){                   // different watch times in one chip: "Watch 30 to 90 min"
+      const g = groups.get('watch'), acts = [...new Set(g.badges.map(b => badgeAction(b).text))];
+      if(acts.length > 1){
+        const mins = g.badges.map(b => +((String(b.how).match(/watch[^0-9]*(\d+)\s*min/i) || [])[1] || 0)).filter(Boolean).sort((a, b) => a - b);
+        g.act = { ...g.act, text: mins.length === g.badges.length ? `Watch ${mins[0]} to ${mins[mins.length - 1]} min` : 'Watch' };
       }
     }
     groups.forEach(({act, badges}) => {
