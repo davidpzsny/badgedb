@@ -874,5 +874,19 @@
   "set": "gallica",
   "posted": "2026-11-06T19:20:27+00:00",
   "replied": true
+ },
+ "live:lol-worlds-2026-pentakill": {
+  "tweet": "2119097760980914473",
+  "title": "Pentakill Fan",
+  "set": "pentakill-fan",
+  "sets": [
+   "pentakill-fan"
+  ],
+  "titles": [
+   "Pentakill Fan"
+  ],
+  "posted": "2026-11-07T16:00:52+00:00",
+  "replied": true,
+  "reply": "Objective, channels and exact dates: {url}"
  }
 }
