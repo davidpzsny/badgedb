@@ -888,5 +888,26 @@
   "posted": "2026-11-07T16:00:52+00:00",
   "replied": true,
   "reply": "Objective, channels and exact dates: {url}"
+ },
+ "ending:dbd-halloween-2026": {
+  "tweet": "",
+  "title": "DbD Halloween 2026",
+  "set": "dbd-halloween-2026",
+  "replied": "discord only",
+  "posted": "2026-11-08T08:00:49+00:00"
+ },
+ "xending:dbd-halloween-2026": {
+  "tweet": "2119339351653896302",
+  "title": "DbD Halloween 2026",
+  "set": "dbd-halloween-2026",
+  "sets": [
+   "dbd-halloween-2026"
+  ],
+  "titles": [
+   "DbD Halloween 2026"
+  ],
+  "posted": "2026-11-08T08:00:51+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
