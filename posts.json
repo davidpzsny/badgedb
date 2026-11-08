@@ -909,5 +909,28 @@
   "posted": "2026-11-08T08:00:51+00:00",
   "replied": true,
   "reply": "Objective, channels and the exact end time: {url}"
+ },
+ "ending:hunt-showdown-1896": {
+  "tweet": "",
+  "title": "Hunt Red",
+  "set": "hunt-red",
+  "replied": "discord only",
+  "posted": "2026-11-08T14:00:48+00:00"
+ },
+ "xending:hunt-showdown-1896": {
+  "tweet": "2119429943582962167",
+  "title": "Hunt Red",
+  "set": "hunt-red",
+  "sets": [
+   "hunt-red",
+   "hunt-white"
+  ],
+  "titles": [
+   "Hunt Red",
+   "Hunt White"
+  ],
+  "posted": "2026-11-08T14:00:50+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
