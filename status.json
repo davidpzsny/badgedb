@@ -1,18 +1,18 @@
 {
  "popularity_http": {
-  "at": "2026-11-08T07:20:24+00:00",
+  "at": "2026-11-08T07:25:18+00:00",
   "msg": "HTTP 403, 5389 bytes, starts with: <!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\"><meta name=\"robots\" content=\"noindex,nofollow\"><meta name=\"viewport\" content=\"width=device-width,initial-scal"
  },
  "popularity": {
-  "at": "2026-11-08T07:20:24+00:00",
+  "at": "2026-11-08T07:25:18+00:00",
   "msg": "request failed: Expecting value: line 1 column 1 (char 0)"
  },
  "emotes": {
-  "at": "2026-11-08T07:20:31+00:00",
+  "at": "2026-11-08T07:25:22+00:00",
   "msg": "309 live, 0 new, 0 removed"
  },
  "top_categories": {
-  "at": "2026-11-08T07:20:30+00:00",
+  "at": "2026-11-08T07:25:21+00:00",
   "msg": "150 categories, #1 Just Chatting"
  },
  "drop_campaigns": {
@@ -24,15 +24,15 @@
   "msg": "Worlds 2026: Pentakill Fan at 2026-11-07T16:00:00Z -> tweet 2119097760980914473"
  },
  "discord_events": {
-  "at": "2026-11-08T07:20:24+00:00",
+  "at": "2026-11-08T07:25:18+00:00",
   "msg": "0 created, 0 started, 0 updated, 0 closed"
  },
  "live_channels": {
-  "at": "2026-11-08T07:20:31+00:00",
+  "at": "2026-11-08T07:25:22+00:00",
   "msg": "10 running events, 67 live streams, badge_db live"
  },
  "reward_campaigns": {
-  "at": "2026-11-08T07:20:23+00:00",
+  "at": "2026-11-08T07:25:17+00:00",
   "msg": "ok via BadgeDBRewardCampaigns: 2 campaigns: Pokémon Night Out Campaign (2026-10-16T17:00 -> 2026-11-23T22:59); Pokemon Evolutions (2026-10-16T17:00 -> 2027-01-30T22:59)"
  },
  "sdb_users": {
