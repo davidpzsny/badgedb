@@ -462,10 +462,12 @@ function calRows(a0,a1){
   const out=[];
   EVENTS.forEach(ev=>{ if(!ev.start||!ev.end) return; const s=Date.parse(ev.start), e=Date.parse(ev.end);
     if(!(s<a1 && e>a0)) return;
-    ev.badges.forEach((b,i)=>out.push({ev,b,s,e,i,a:badgeAddedMs(b, s<=Date.now() ? s : 0),st:status(ev)})); });
-  // newest badges on top (like BadgeBase): by the day Twitch added the badge — upcoming ones included —
-  // then the later start first; badges of one event stay together in their own order
-  return out.sort((x,y)=> (y.a-x.a) || (y.s-x.s) || (x.ev===y.ev ? x.i-y.i : x.ev.id.localeCompare(y.ev.id)));
+    ev.badges.forEach((b,i)=>out.push({ev,b,s,e,i,st:status(ev)})); });
+  // schedule order: running events first, the one that ends soonest on top; then upcoming ones by their start.
+  // Badges of one event stay together in their own order.
+  const rank = r => r.st==="live" ? 0 : r.st==="soon" ? 1 : 2;
+  return out.sort((x,y)=> (rank(x)-rank(y)) || (rank(x)===0 ? x.e-y.e : x.s-y.s) || (x.s-y.s) ||
+                          (x.ev===y.ev ? x.i-y.i : x.ev.id.localeCompare(y.ev.id)));
 }
 // when Twitch added a badge (ms); placeholders without a Twitch record use the fallback
 // (the event start once it has started, otherwise the bottom of the list)

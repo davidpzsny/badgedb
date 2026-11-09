@@ -1,5 +1,12 @@
 [
  {
+  "date": "2026-11-09",
+  "title": "Timeline order",
+  "items": [
+   {"type": "improved", "text": "Timeline schedule: running events are listed by when they end (soonest first), then upcoming events by when they start. Badges of one event stay together."}
+  ]
+ },
+ {
   "date": "2026-11-06",
   "title": "Badge event updates",
   "items": [
