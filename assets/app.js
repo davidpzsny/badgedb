@@ -505,7 +505,8 @@ function renderCalendar(id){
     const narrow = w < (n===7 ? 16 : 7), minPx = 34 + (Math.min(r.bs.length, 4) - 1) * 21;   // a short bar still fits every icon
     const one = r.bs.length===1, g = one ? (globalBadges.find(x=>x.imgId===r.b.img)||{}) : {}, set=g.set||"",
           nm = one ? (g.name||r.b.name) : r.ev.name;                  // one badge: its name (and page); several: the event
-    const icon = r.bs.slice(0, 4).map(b => b.img ? `<img src="${esc(cdn(b.img))}" alt="" loading="lazy">` : `<span class="ph">?</span>`).join('')
+    const icon = r.bs.slice(0, 4).map((b, i) => { const bset = (globalBadges.find(x=>x.imgId===b.img)||{}).set || "";   // each icon: its own badge page
+                 return `<span class="cal-ico${bset ? ' go' : ''}" data-bi="${i}"${bset ? ` data-bset="${esc(bset)}"` : ''}>${b.img ? `<img src="${esc(cdn(b.img))}" alt="${esc(b.name)}" loading="lazy">` : `<span class="ph">?</span>`}</span>`; }).join('')
                + (r.bs.length > 4 ? `<span class="more">+${r.bs.length - 4}</span>` : '');
     const label = `<span class="nm">${esc(nm)}</span><span class="lft">${leftText(r)}</span>`;
     const inLabel = w < (n===7 ? 30 : 12) ? `<span class="nm">${esc(nm)}</span>` : label;
@@ -550,6 +551,7 @@ document.addEventListener('click', e=>{
   const nv=e.target.closest('[data-calnav] button'); if(nv){ const id=nv.parentElement.dataset.calnav, d=+nv.dataset.d; CAL[id].offset = d===0?0:CAL[id].offset+d; renderCalendar(id); return; }
   const ca=e.target.closest('[data-calall]'); if(ca){ const id=ca.dataset.calall; CAL[id].all=!CAL[id].all; renderCalendar(id); return; }
   const vw=e.target.closest('[data-calview] button'); if(vw){ const id=vw.parentElement.dataset.calview; CAL[id].span=+vw.dataset.span; CAL[id].offset=0; renderCalendar(id); return; }
+  const ic=e.target.closest('.cal-ico[data-bset]'); if(ic){ e.stopImmediatePropagation(); hideTip(); navigate('/badges/'+encodeURIComponent(ic.dataset.bset)+'/'); return; }
   const cb=e.target.closest('.cal-bar[data-set], .cal-m[data-set], .cal-out[data-set]'); if(cb){ hideTip(); navigate('/badges/'+encodeURIComponent(cb.dataset.set)+'/'); }
 });
 const calTip = document.createElement('div'); calTip.id='calTip'; document.body.appendChild(calTip);
@@ -557,13 +559,15 @@ function hideTip(){ calTip.classList.remove('show'); }
 document.addEventListener('mouseover', e=>{
   const b=e.target.closest('.cal-bar'); if(!b || window.matchMedia('(hover:none)').matches){ hideTip(); return; }
   const cal=b.closest('.cal'), r=cal && cal._rows && cal._rows[+b.dataset.k]; if(!r) return;
-  const bn = b => (globalBadges.find(x=>x.imgId===b.img)||{}).name||b.name, one = r.bs.length===1;
-  calTip.innerHTML = `<b>${esc(one ? bn(r.b) : r.ev.name)}</b><div style="color:var(--muted)">${esc(one ? r.ev.name : r.bs.map(bn).join(', '))}${r.ev.category&&r.ev.category!=="Unknown"?` · ${esc(r.ev.category)}`:''}</div>
+  const bn = b => (globalBadges.find(x=>x.imgId===b.img)||{}).name||b.name, ic = e.target.closest('.cal-ico');
+  const one = !!ic || r.bs.length===1, bb = ic ? (r.bs[+ic.dataset.bi] || r.b) : r.b;
+  calTip.innerHTML = `<b>${esc(one ? bn(bb) : r.ev.name)}</b><div style="color:var(--muted)">${esc(one ? r.ev.name : r.bs.map(bn).join(', '))}${r.ev.category&&r.ev.category!=="Unknown"?` · ${esc(r.ev.category)}`:''}</div>
     <div class="r"><span>Starts</span><span>${fmtShort(r.s)}</span></div><div class="r"><span>Ends</span><span>${fmtShort(r.e)}</span></div>
-    ${one?`<div class="r"><span>Cost</span><span>${{free:'Free',paid:'Sub / paid',na:'Unknown'}[r.b.cost||'na']}</span></div>`:''}
+    ${one?`<div class="r"><span>Cost</span><span>${{free:'Free',paid:'Sub / paid',na:'Unknown'}[bb.cost||'na']}</span></div>`:''}
     <div class="r"><span>Status</span><span>${leftText(r)}</span></div>
-    ${one ? (r.b.how?`<div style="margin-top:6px;color:var(--text)">${esc(r.b.how)}</div>`:'')
-          : r.bs.slice(0, 8).map(b => `<div style="margin-top:6px;color:var(--text)"><b>${esc(bn(b))}:</b> ${esc(b.how||'')}</div>`).join('')}`;
+    ${one ? (bb.how?`<div style="margin-top:6px;color:var(--text)">${esc(bb.how)}</div>`:'')
+          : r.bs.slice(0, 8).map(b => `<div style="margin-top:6px;color:var(--text)"><b>${esc(bn(b))}:</b> ${esc(b.how||'')}</div>`).join('')}
+    ${r.bs.length>1 ? `<div style="margin-top:7px;color:var(--muted);font-size:11px">${ic ? 'Click to open this badge' : 'Click a badge icon to open that badge, or the bar for the event'}</div>` : ''}`;
   calTip.classList.add('show');
 });
 document.addEventListener('mousemove', e=>{ if(!calTip.classList.contains('show')) return;
@@ -1172,10 +1176,11 @@ function watchNowHtml(ev){
 function openEvent(id){
   const ev=allEvents().find(e=>e.id===id); if(!ev) return; const st=status(ev);
   const cd = st==="live"?`<div class="cd" data-cd="${ev.end}">${countdown(ev.end)}<small>until it ends</small></div>`:st==="soon"?`<div class="cd" data-cd="${ev.start}">${countdown(ev.start)}<small>until it starts</small></div>`:"";
-  open(`<div class="hero-img">${ev.badges.map(b=>tile({...b,img:cdn(b.img)})).join('')}</div><h3>${esc(ev.name)}</h3><div class="sub">${esc(ev.category)}</div>${cd}
+  const bset = b => (globalBadges.find(x=>x.imgId===b.img)||{}).set || "", go = b => bset(b) ? ` class="go" data-badge="${esc(bset(b))}" data-type="global" role="link" tabindex="0" title="Open badge"` : '';
+  open(`<div class="hero-img">${ev.badges.map(b=>`<span${go(b)}>${tile({...b,img:cdn(b.img)})}</span>`).join('')}</div><h3>${esc(ev.name)}</h3><div class="sub">${esc(ev.category)}</div>${cd}
     <dl class="kv"><dt>Status</dt><dd>${{live:"Active now",soon:"Upcoming",ended:"Ended",tba:"Date not announced"}[st]}</dd><dt>Starts</dt><dd>${fmtWhen(ev.start, ev.time_tba)}</dd><dt>Ends</dt><dd>${fmtWhen(ev.end, ev.time_tba)}</dd></dl>
     ${ev.note?`<p class="hint">${esc(ev.note)}</p>`:''}
-    <div class="badgelist">${ev.badges.map(b=>`<div>${tile({...b,img:cdn(b.img)})}<span><b>${esc(b.name)}</b><span>${esc(b.how)}</span></span><span class="pill ${b.cost}" style="margin-left:auto;flex:none">${{free:"Free",paid:"Paid",na:"TBA"}[b.cost]}</span></div>`).join('')}</div>
+    <div class="badgelist">${ev.badges.map(b=>`<div${go(b)}>${tile({...b,img:cdn(b.img)})}<span><b>${esc(b.name)}</b><span>${esc(b.how)}</span></span><span class="pill ${b.cost}" style="margin-left:auto;flex:none">${{free:"Free",paid:"Paid",na:"TBA"}[b.cost]}</span>${bset(b)?'<span class="chev" aria-hidden="true">›</span>':''}</div>`).join('')}</div>
     ${watchNowHtml(ev)}
     <div class="actions">${remindHtml(ev)}${!/any|unknown|twitch|eligible/i.test(ev.category)?`<a class="btn" target="_blank" rel="noopener" href="${catUrl(ev.category)}">Open category on Twitch</a>`:''}<button class="btn ghost" data-copy="${esc(ev.name)} — ${esc(ev.badges.map(b=>b.name+': '+b.how).join(' | '))} (${fmt(ev.start)} – ${fmt(ev.end)})">Copy summary</button>${calendarMenu(ev)}</div>`);
 }
@@ -1640,6 +1645,7 @@ $('#qT').addEventListener('input',e=>{tQuery=qsNorm(e.target.value.trim());tShow
 $('#scrim').addEventListener('click',closeDrawer); $('#closeDrawer').addEventListener('click',closeDrawer);
 $('#btnPlayer').addEventListener('click',togglePlayer); document.addEventListener('click', e => { if(e.target.closest('[data-bnplay]')) togglePlayer(); }); $('#btnPlayerX').addEventListener('click',togglePlayer);
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDrawer(); });
+document.addEventListener('keydown',e=>{ const g=e.target.closest && e.target.closest('.drawer .go[data-badge]'); if(g && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); g.click(); } });
 
 // Pages built by the bot arrive pre-filled (data-ssr): keep that content until live data is loaded.
 if(!document.body.dataset.ssr) renderAll();

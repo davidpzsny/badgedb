@@ -290,7 +290,9 @@
   .cal-bar.cut-l{border-top-left-radius:0;border-bottom-left-radius:0;border-left-width:0}
   .cal-bar.cut-r{border-top-right-radius:0;border-bottom-right-radius:0;border-right-width:0}
   .cal-bar img{width:26px;height:26px;object-fit:contain;flex:none;border-radius:6px;background:rgba(0,0,0,.25);padding:1px}
-  .cal-bar img + img{margin-left:-5px}                       /* several badges of one event: icons side by side */
+  .cal-ico{display:flex;flex:none;border-radius:7px;transition:transform .12s, box-shadow .12s}
+  .cal-ico + .cal-ico{margin-left:-5px}                      /* several badges of one event: icons side by side */
+  .cal-ico.go:hover{transform:scale(1.14);box-shadow:0 0 0 2px var(--text);position:relative;z-index:1}
   .cal-bar .more,.cal-mtop .more{flex:none;font-size:10.5px;font-weight:800;color:var(--muted)}
   .cal-bar .nm{overflow:hidden;text-overflow:ellipsis}
   .cal-bar .lft{margin-left:auto;font-size:11px;font-weight:700;color:var(--muted);padding-left:8px;font-variant-numeric:tabular-nums}
@@ -421,7 +423,12 @@
   .drawer .badgelist{display:flex;flex-direction:column;gap:8px;margin-top:20px}
   .drawer .badgelist>div{display:flex;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:13px}
   .drawer .badgelist .tile{width:40px;height:40px;border-radius:10px}.drawer .badgelist .tile img{width:28px;height:28px}
-  .drawer .badgelist b{display:block;font-size:13.5px}.drawer .badgelist span span{color:var(--muted)}
+  .drawer .badgelist b{display:block;font-size:13.5px}
+  .drawer .badgelist>.go{cursor:pointer;transition:border-color .15s, background .15s}
+  .drawer .badgelist>.go:hover,.drawer .badgelist>.go:focus-visible{border-color:var(--purple);background:var(--panel-2);outline:none}
+  .drawer .badgelist .chev{flex:none;color:var(--muted);font-size:20px;line-height:1;margin-left:2px}
+  .drawer .hero-img>.go{cursor:pointer;border-radius:22px;transition:transform .15s}
+  .drawer .hero-img>.go:hover{transform:translateY(-2px)}.drawer .badgelist span span{color:var(--muted)}
   .drawer .actions{display:flex;gap:8px;margin-top:22px;flex-wrap:wrap}
   .drawer .hint{font-size:13px;color:var(--amber);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:10px;padding:10px 12px;margin-top:18px}
   .versions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
@@ -540,7 +547,7 @@
     .cal-m:last-of-type{border-bottom:0}
     .cal-mtop{display:flex;align-items:center;gap:9px;padding:0 12px}
     .cal-mtop img,.cal-mtop .ph{width:28px;height:28px;border-radius:7px;flex:none;object-fit:contain;background:rgba(var(--ink),.05)}
-    .cal-mtop img + img{margin-left:-6px}
+    .cal-mtop .cal-ico + .cal-ico{margin-left:-6px}
     .cal-mtop .nm{font-weight:700;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
     .cal-mtop .lft{font-size:11.5px;font-weight:700;color:var(--muted);white-space:nowrap}
     .cal-mtop .lft.urgent{color:var(--amber)}
