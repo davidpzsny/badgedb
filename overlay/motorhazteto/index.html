@@ -88,6 +88,15 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 .item .users{font-weight:600;font-size:14px;letter-spacing:.8px;color:#6b6b73;white-space:nowrap}
 .item .main{display:flex;align-items:center;gap:14px;padding:12px 14px}
 .item .main img{width:42px;height:42px;border-radius:8px}
+/* state dot on the badge image: can it be earned right now? (green now, amber not yet, red over); legend under the column */
+.item .pic{position:relative;flex:none;width:42px;height:42px}
+.item .pic .dot{position:absolute;right:-6px;bottom:-6px;width:17px;height:17px;box-sizing:border-box;border-radius:50%;border:3px solid #121214}
+.dot.now{background:#22c55e;box-shadow:0 0 9px rgba(34,197,94,.75)}
+.dot.soon{background:#f5b83d}
+.dot.ended{background:#ef4444}
+.legend{display:flex;justify-content:center;gap:18px;margin-top:10px;font-weight:700;font-size:13px;letter-spacing:1.2px;text-transform:uppercase;color:#8b8b93;white-space:nowrap;flex:none}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%}
 .item .title{font-weight:700;font-size:20px;letter-spacing:.3px}
 .item .title .nw{white-space:nowrap}                 /* the last word and NEW never get separated */
 .item .title .pill{display:inline-block;margin-left:8px;vertical-align:3px}
@@ -150,6 +159,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
     <div class="colL">
       <div class="h bc">Added in the last 14 days</div>
       <div class="win"><div class="roll" id="items"></div></div>
+      <div class="legend bc"><span><i class="dot now"></i>Available now</span><span><i class="dot soon"></i>Not yet</span><span><i class="dot ended"></i>Ended</span></div>
     </div>
     <div class="colR">
       <div class="h bc">Events</div>
@@ -183,7 +193,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-11-09.2";   // bump together with version.json after every change
+const OVERLAY_V = "2026-11-09.3";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -388,10 +398,11 @@ function siteItems(now){                      // every badge set added in the la
   const pop = site.pop || {}, sdb = site.sdb || {}, byImg = evByImg(), cutoff = now - 14 * 864e5;
   const list = badges.filter(b => b.added && Date.parse(b.added) >= cutoff).sort((a, b) => b.added.localeCompare(a.added));
   if(!list.length) return null;
+  const state = ev => !ev ? '' : !ev.start || now < Date.parse(ev.start) ? 'soon' : ev.end && now > Date.parse(ev.end) ? 'ended' : 'now';
   return list.map(b => { const e = b.imgs.map(i => byImg[i]).find(Boolean);
     const cost = e && e.b.cost && e.b.cost !== 'na' ? e.b.cost : b.free ? 'free' : '';
     const d = new Date(b.added + 'T00:00:00Z'), users = sdb[b.set] || pop[b.set] || b.users || 0;   // admin button counts, else PotatBotat; 0 = N/A
-    return { slot: 'auto-' + b.set, day: b.added, added: `${M[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`, users: users ? users.toLocaleString('en-US') : 'N/A', cost, title: b.name, sub: 'Global Badge', img: b.img }; });
+    return { slot: 'auto-' + b.set, state: state(e && e.ev), day: b.added, added: `${M[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`, users: users ? users.toLocaleString('en-US') : 'N/A', cost, title: b.name, sub: 'Global Badge', img: b.img }; });
 }
 
 /* ---------- current stream category: DecAPI (about a minute fresh), else the site bot's live.json (15 min) ---------- */
@@ -572,7 +583,7 @@ function itemCard(it, now){
   const isNew = Date.parse(it.day || it.added) >= now - NEW_DAYS * 864e5;   // NEW tag only for the last 7 days
   const cost = it.cost ? `<span class="pill" style="color:${it.cost === 'free' ? '#4ade80' : '#c4a1ff'};background:${it.cost === 'free' ? '#123920' : '#2d1a4d'}">${esc(it.cost.toUpperCase())}</span>` : '';
   return `<div class="item"><div class="bar"><span class="added bsc">ADDED: ${esc(it.added)}</span><span class="right">${cost}<span class="users bsc">USERS: ${esc(it.users)}</span></span></div>
-    <div class="main">${img(it.img)}<div style="line-height:1.1;min-width:0"><div class="title b">${titleNew(it.title, isNew)}</div>
+    <div class="main"><span class="pic">${img(it.img)}${it.state ? `<i class="dot ${it.state}"></i>` : ''}</span><div style="line-height:1.1;min-width:0"><div class="title b">${titleNew(it.title, isNew)}</div>
       <div class="sub bc">${esc(it.sub)}</div></div></div></div>`;
 }
 
