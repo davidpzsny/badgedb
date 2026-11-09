@@ -183,7 +183,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-11-09.1";   // bump together with version.json after every change
+const OVERLAY_V = "2026-11-09.2";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -382,6 +382,7 @@ function siteCounts(now){                     // same rules as the site: badge c
   return { active: n(live), upcoming: n(evs.filter(e => st(e) === 'soon')), tba: n(evs.filter(e => st(e) === 'tba' && !stale(e))) + orphans.length,
            free: live.reduce((s, e) => s + (e.badges || []).filter(b => b.cost === 'free').length, 0) };
 }
+const NEW_DAYS = 7;                            // badges younger than this get the NEW tag in the left column
 function siteItems(now){                      // every badge set added in the last 14 days, newest first
   const badges = site.badges; if(!badges) return null;
   const pop = site.pop || {}, sdb = site.sdb || {}, byImg = evByImg(), cutoff = now - 14 * 864e5;
@@ -390,7 +391,7 @@ function siteItems(now){                      // every badge set added in the la
   return list.map(b => { const e = b.imgs.map(i => byImg[i]).find(Boolean);
     const cost = e && e.b.cost && e.b.cost !== 'na' ? e.b.cost : b.free ? 'free' : '';
     const d = new Date(b.added + 'T00:00:00Z'), users = sdb[b.set] || pop[b.set] || b.users || 0;   // admin button counts, else PotatBotat; 0 = N/A
-    return { slot: 'auto-' + b.set, added: `${M[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`, users: users ? users.toLocaleString('en-US') : 'N/A', cost, title: b.name, sub: 'Global Badge', img: b.img }; });
+    return { slot: 'auto-' + b.set, day: b.added, added: `${M[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`, users: users ? users.toLocaleString('en-US') : 'N/A', cost, title: b.name, sub: 'Global Badge', img: b.img }; });
 }
 
 /* ---------- current stream category: DecAPI (about a minute fresh), else the site bot's live.json (15 min) ---------- */
@@ -568,7 +569,7 @@ function titleNew(title, isNew){
   return `${i > 0 ? esc(t.slice(0, i + 1)) : ''}<span class="nw">${esc(t.slice(i + 1))}${pill}</span>`;
 }
 function itemCard(it, now){
-  const isNew = Date.parse(it.added) >= now - 14 * 864e5;
+  const isNew = Date.parse(it.day || it.added) >= now - NEW_DAYS * 864e5;   // NEW tag only for the last 7 days
   const cost = it.cost ? `<span class="pill" style="color:${it.cost === 'free' ? '#4ade80' : '#c4a1ff'};background:${it.cost === 'free' ? '#123920' : '#2d1a4d'}">${esc(it.cost.toUpperCase())}</span>` : '';
   return `<div class="item"><div class="bar"><span class="added bsc">ADDED: ${esc(it.added)}</span><span class="right">${cost}<span class="users bsc">USERS: ${esc(it.users)}</span></span></div>
     <div class="main">${img(it.img)}<div style="line-height:1.1;min-width:0"><div class="title b">${titleNew(it.title, isNew)}</div>
