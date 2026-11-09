@@ -3,7 +3,8 @@
   "date": "2026-11-09",
   "title": "Timeline order",
   "items": [
-   {"type": "improved", "text": "Timeline schedule: running events are listed by when they end (soonest first), then upcoming events by when they start. Badges of one event stay together."}
+   {"type": "improved", "text": "Timeline schedule: running events are listed by when they end (soonest first), then upcoming events by when they start. Badges of one event stay together."},
+   {"type": "improved", "text": "Timeline schedule: the badges of one event now share one row with all their icons (hover for each objective, click to open the event)."}
   ]
  },
  {

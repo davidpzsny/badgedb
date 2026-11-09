@@ -462,12 +462,13 @@ function calRows(a0,a1){
   const out=[];
   EVENTS.forEach(ev=>{ if(!ev.start||!ev.end) return; const s=Date.parse(ev.start), e=Date.parse(ev.end);
     if(!(s<a1 && e>a0)) return;
-    ev.badges.forEach((b,i)=>out.push({ev,b,s,e,i,st:status(ev)})); });
-  // schedule order: running events first, the one that ends soonest on top; then upcoming ones by their start.
-  // Badges of one event stay together in their own order.
+    if(!ev.badges.length) return;
+    // one row per event (its badges together, like a schedule); free when any of its badges can be earned for free
+    const cost = ev.badges.some(b => b.cost==="free") ? "free" : ev.badges.some(b => b.cost==="paid") ? "paid" : "na";
+    out.push({ev, b:ev.badges[0], bs:ev.badges, cost, s, e, st:status(ev)}); });
+  // schedule order: running events first, the one that ends soonest on top; then upcoming ones by their start
   const rank = r => r.st==="live" ? 0 : r.st==="soon" ? 1 : 2;
-  return out.sort((x,y)=> (rank(x)-rank(y)) || (rank(x)===0 ? x.e-y.e : x.s-y.s) || (x.s-y.s) ||
-                          (x.ev===y.ev ? x.i-y.i : x.ev.id.localeCompare(y.ev.id)));
+  return out.sort((x,y)=> (rank(x)-rank(y)) || (rank(x)===0 ? x.e-y.e : x.s-y.s) || (x.s-y.s) || x.ev.id.localeCompare(y.ev.id));
 }
 // when Twitch added a badge (ms); placeholders without a Twitch record use the fallback
 // (the event start once it has started, otherwise the bottom of the list)
@@ -501,29 +502,31 @@ function renderCalendar(id){
   const bars=shown.map((r,k)=>{
     const s=Math.max(r.s,a0), e=Math.min(r.e,a1);
     const left=(s-a0)/(a1-a0)*100, width=Math.max((e-s)/(a1-a0)*100, 1.2), w=Math.min(width,100-left);
-    const narrow = w < (n===7 ? 16 : 7);
-    const g=globalBadges.find(x=>x.imgId===r.b.img)||{}, set=g.set||"", nm=g.name||r.b.name;
-    const icon = r.b.img ? `<img src="${esc(cdn(r.b.img))}" alt="" loading="lazy">` : `<span class="ph">?</span>`;
+    const narrow = w < (n===7 ? 16 : 7), minPx = 34 + (Math.min(r.bs.length, 4) - 1) * 21;   // a short bar still fits every icon
+    const one = r.bs.length===1, g = one ? (globalBadges.find(x=>x.imgId===r.b.img)||{}) : {}, set=g.set||"",
+          nm = one ? (g.name||r.b.name) : r.ev.name;                  // one badge: its name (and page); several: the event
+    const icon = r.bs.slice(0, 4).map(b => b.img ? `<img src="${esc(cdn(b.img))}" alt="" loading="lazy">` : `<span class="ph">?</span>`).join('')
+               + (r.bs.length > 4 ? `<span class="more">+${r.bs.length - 4}</span>` : '');
     const label = `<span class="nm">${esc(nm)}</span><span class="lft">${leftText(r)}</span>`;
     const inLabel = w < (n===7 ? 30 : 12) ? `<span class="nm">${esc(nm)}</span>` : label;
-    const bar = `<button class="cal-bar ${r.b.cost||'na'} ${r.st==='soon'?'soon':''} ${r.st==='ended'?'ended':''} ${r.s<a0?'cut-l':''} ${r.e>a1?'cut-r':''}"
-      style="left:${left}%;width:${narrow?`max(${w}%,34px)`:w+'%'}" data-k="${k}" ${set?`data-set="${esc(set)}"`:`data-ev="${esc(r.ev.id)}"`}>${icon}${narrow?'':inLabel}</button>`;
+    const bar = `<button class="cal-bar ${r.cost} ${r.st==='soon'?'soon':''} ${r.st==='ended'?'ended':''} ${r.s<a0?'cut-l':''} ${r.e>a1?'cut-r':''}"
+      style="left:${left}%;width:${narrow?`max(${w}%,${minPx}px)`:w+'%'}" data-k="${k}" ${set?`data-set="${esc(set)}"`:`data-ev="${esc(r.ev.id)}"`}>${icon}${narrow?'':inLabel}</button>`;
     // short bars: the name (with the countdown under it) goes next to the bar, on the right when it fits there,
     // otherwise on the left, ending at the bar; on a background of its own, so grid lines don't run through the text
     let out = '';
     if(narrow){
-      const lft = leftText(r), need = Math.max(textW(nm, 12.5), textW(lft, 10.5)) + 16, barPx = Math.max(w / 100 * W, 34);
+      const lft = leftText(r), need = Math.max(textW(nm, 12.5), textW(lft, 10.5)) + 16, barPx = Math.max(w / 100 * W, minPx);
       const roomR = W * (1 - left / 100) - barPx - 8, roomL = W * left / 100 - 8;
       const right = need <= roomR || roomR >= 110 || roomR >= roomL;          // right side (a long name is shortened with …) unless there is no room
-      out = `<span class="cal-out ${right ? '' : 'l'}" style="${right ? `left:calc(${left}% + max(${w}%, 34px) + 6px)` : `right:calc(${100-left}% + 6px)`};max-width:${Math.max(Math.floor(right ? roomR : roomL), 60)}px" ${set?`data-set="${esc(set)}"`:`data-ev="${esc(r.ev.id)}"`}><span class="nm">${esc(nm)}</span><span class="lft">${lft}</span></span>`;
+      out = `<span class="cal-out ${right ? '' : 'l'}" style="${right ? `left:calc(${left}% + max(${w}%, ${minPx}px) + 6px)` : `right:calc(${100-left}% + 6px)`};max-width:${Math.max(Math.floor(right ? roomR : roomL), 60)}px" ${set?`data-set="${esc(set)}"`:`data-ev="${esc(r.ev.id)}"`}><span class="nm">${esc(nm)}</span><span class="lft">${lft}</span></span>`;
     }
     const pctL=(s-a0)/(a1-a0)*100, pctW=Math.max((e-s)/(a1-a0)*100,1.5), urgent=r.st==="live" && r.e-now<48*36e5;
     const nowTick = now>=a0 && now<a1 ? `<span class="nowt" style="left:${(now-a0)/(a1-a0)*100}%"></span>` : '';
-    const mrow = `<button class="cal-m ${r.b.cost||'na'} ${r.st==='soon'?'soon':''} ${r.st==='ended'?'ended':''}" data-k="${k}" ${set?`data-set="${esc(set)}"`:`data-ev="${esc(r.ev.id)}"`}>
+    const mrow = `<button class="cal-m ${r.cost} ${r.st==='soon'?'soon':''} ${r.st==='ended'?'ended':''}" data-k="${k}" ${set?`data-set="${esc(set)}"`:`data-ev="${esc(r.ev.id)}"`}>
       <span class="cal-mtop">${icon}<span class="nm">${esc(nm)}</span><span class="lft ${urgent?'urgent':''}">${leftText(r)}</span></span>
       <span class="cal-mtrack"><i style="left:${pctL}%;width:${Math.min(pctW,100-pctL)}%"></i>${nowTick}</span></button>`;
     return compact ? mrow : `<div class="cal-row">${bar}${out}</div>`;
-  }).join('') + (st.limit && rows.length > st.limit ? `<div class="cal-more"><button class="btn ghost" data-calall="${id}">${st.all?'Show less':`Show all ${rows.length} badges`}</button></div>` : '');
+  }).join('') + (st.limit && rows.length > st.limit ? `<div class="cal-more"><button class="btn ghost" data-calall="${id}">${st.all?'Show less':`Show all ${rows.length} events`}</button></div>` : '');
   const nowX = now>=a0 && now<a1 ? `<div class="cal-now" style="left:${(now-a0)/(a1-a0)*100}%"></div>` : '';
   const label = `${new Date(a0).toLocaleDateString(undefined,{month:'short',day:'numeric'})} – ${new Date(a1-1).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'})}`;
   const liveCount = rows.filter(r=>r.st==="live").length;
@@ -538,7 +541,7 @@ function renderCalendar(id){
       <div class="cal-body">${rows.length?bars:`<div class="cal-empty">${READY?'No badges with known dates in this range.':'Loading…'}</div>`}${nowX}</div>
     </div></div>
     <div class="cal-foot"><span><i style="background:rgba(52,211,153,.5)"></i>Free</span><span><i style="background:rgba(139,92,246,.6)"></i>Sub / paid</span><span><i style="border:1px dashed var(--line-2)"></i>Starts later</span>
-      <span class="sp">* Newest badges first. Shown in your local time (${esc(Intl.DateTimeFormat().resolvedOptions().timeZone||'')}). Hover a badge for details, click to open it.</span></div>`;
+      <span class="sp">* Ending soonest first; badges of one event share a row. Shown in your local time (${esc(Intl.DateTimeFormat().resolvedOptions().timeZone||'')}). Hover a badge for details, click to open it.</span></div>`;
   el._rows = rows;
   if(n===28 && !compact){ const sc=el.querySelector('.cal-scroll'); if(sc && now>=a0 && now<a1) sc.scrollLeft = Math.max(0,(now-a0)/(a1-a0)*sc.scrollWidth - sc.clientWidth/3); }
 }
@@ -554,12 +557,13 @@ function hideTip(){ calTip.classList.remove('show'); }
 document.addEventListener('mouseover', e=>{
   const b=e.target.closest('.cal-bar'); if(!b || window.matchMedia('(hover:none)').matches){ hideTip(); return; }
   const cal=b.closest('.cal'), r=cal && cal._rows && cal._rows[+b.dataset.k]; if(!r) return;
-  const gt=(globalBadges.find(x=>x.imgId===r.b.img)||{}).name||r.b.name;
-  calTip.innerHTML = `<b>${esc(gt)}</b><div style="color:var(--muted)">${esc(r.ev.name)}${r.ev.category&&r.ev.category!=="Unknown"?` · ${esc(r.ev.category)}`:''}</div>
+  const bn = b => (globalBadges.find(x=>x.imgId===b.img)||{}).name||b.name, one = r.bs.length===1;
+  calTip.innerHTML = `<b>${esc(one ? bn(r.b) : r.ev.name)}</b><div style="color:var(--muted)">${esc(one ? r.ev.name : r.bs.map(bn).join(', '))}${r.ev.category&&r.ev.category!=="Unknown"?` · ${esc(r.ev.category)}`:''}</div>
     <div class="r"><span>Starts</span><span>${fmtShort(r.s)}</span></div><div class="r"><span>Ends</span><span>${fmtShort(r.e)}</span></div>
-    <div class="r"><span>Cost</span><span>${{free:'Free',paid:'Sub / paid',na:'Unknown'}[r.b.cost||'na']}</span></div>
+    ${one?`<div class="r"><span>Cost</span><span>${{free:'Free',paid:'Sub / paid',na:'Unknown'}[r.b.cost||'na']}</span></div>`:''}
     <div class="r"><span>Status</span><span>${leftText(r)}</span></div>
-    ${r.b.how?`<div style="margin-top:6px;color:var(--text)">${esc(r.b.how)}</div>`:''}`;
+    ${one ? (r.b.how?`<div style="margin-top:6px;color:var(--text)">${esc(r.b.how)}</div>`:'')
+          : r.bs.slice(0, 8).map(b => `<div style="margin-top:6px;color:var(--text)"><b>${esc(bn(b))}:</b> ${esc(b.how||'')}</div>`).join('')}`;
   calTip.classList.add('show');
 });
 document.addEventListener('mousemove', e=>{ if(!calTip.classList.contains('show')) return;
