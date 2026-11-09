@@ -229,8 +229,9 @@ OBS → Sources → + → Browser, URL above, Width `1920`, Height `1080`. It is
   The columns scroll at a steady speed (`ROLL_SPEED`: events 30, "Added in the last 14 days" 18 pixels a second). An
   events column that fits stands still; the left column always moves. New data (a new badge, user counts, an event
   starting) never makes a column jump back.
-  USERS there is the external badge list's count: `/admin/` → **Overlay user counts** writes `sdb-request.json`, the bot's next run
-  (within 5 minutes) loads that badge list once and saves the counts in `popularity.json` under `sdb`
+  USERS there is the external badge list's count: the bot loads that badge list on its own every 30 minutes
+  (`AUTO_MIN`), and `/admin/` → **Overlay user counts** (writes `sdb-request.json`) makes the next run (within 5 minutes)
+  do it right away. The counts are saved in `popularity.json` under `sdb`
   (`bot/sdb_users.py`; result in `status.json` → `sdb_users`). Badges without a number there fall back to
   PotatBotat's count. The site itself keeps using PotatBotat's counts.
   The last good copy is kept in the browser source, so the overlay stays filled if the data can't be loaded.

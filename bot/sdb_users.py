@@ -1,7 +1,7 @@
 """User counts from an external badge list for the newest badges (the stream overlay's "Added in the last 14 days" column).
 
-Runs only when it was asked for with the "Overlay user counts" button in /admin/ (the button writes
-sdb-request.json; this runs when that request is newer than the last one handled). One page load per button press:
+Runs on its own every AUTO_MIN minutes, and right away when asked for with the "Overlay user counts" button in /admin/
+(the button writes sdb-request.json; that runs when the request is newer than the last one handled). One page load a time:
 The global badge list at LIST_URL (newest first) shows "Users" for every badge. The counts go into popularity.json
 under "sdb" (only the stream overlay uses them; the site keeps PotatBotat's counts, which are counted differently and
 are much higher); the result is reported in status.json under "sdb_users".
@@ -17,6 +17,7 @@ LIST_URL = "https://www.streamdatabase.com/twitch/global-badges"
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128 Safari/537.36",
            "Accept": "text/html,application/xhtml+xml", "Accept-Language": "en-US,en;q=0.9"}
 DAYS = 14
+AUTO_MIN = 30           # load the list on its own this often, so the overlay's USERS stay current
 
 
 def _load(path, default):
@@ -78,12 +79,15 @@ def parse_json(page):
 
 
 def run():
-    """Returns {status_key: {"at", "msg"}} for status.json; does nothing when no new request is waiting."""
+    """Returns {status_key: {"at", "msg"}} for status.json; does nothing until the next turn is due (or asked for)."""
     req = _load(REQ, {})
     st = _load(os.path.join(ROOT, "status.json"), {}).get("sdb_users", {})
-    if not req.get("at") or st.get("req") == req.get("at"):
+    asked = bool(req.get("at")) and st.get("req") != req.get("at")
+    try: age = (datetime.datetime.now(datetime.timezone.utc) - datetime.datetime.fromisoformat(st["at"])).total_seconds() / 60
+    except Exception: age = 1e9
+    if not asked and age < AUTO_MIN:
         return {}
-    out = {"sdb_users": {"at": _now(), "req": req["at"], "msg": ""}}
+    out = {"sdb_users": {"at": _now(), "req": req.get("at") if asked else st.get("req", ""), "msg": ""}}
     rows = _load(BADGES, [])
     cutoff = (datetime.date.today() - datetime.timedelta(days=DAYS)).isoformat()
     targets = {}
@@ -110,8 +114,8 @@ def run():
         "html_near_first_badge": page[max(0, first.start() - 1200): first.start() + 1800] if first else page[:2500]}, ensure_ascii=False)}
     counts = {s: found[s] for s in targets if found.get(s) is not None}
     missing = [targets[s] for s in targets if s not in found]
-    if counts:
-        pop = _load(POP_DB, {})
+    pop = _load(POP_DB, {})
+    if counts and any((pop.get("sdb") or {}).get(s) != n for s, n in counts.items()):   # only write when a number changed
         pop["sdb"] = {**(pop.get("sdb") or {}), **counts}            # kept when the daily PotatBotat update rewrites the file
         pop["sdb_updated"] = _now()
         json.dump(pop, open(POP_DB, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
