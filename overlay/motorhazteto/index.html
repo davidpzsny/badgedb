@@ -69,7 +69,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 .chip .imgs{display:flex;align-items:center;gap:4px}
 .chip .imgs img{width:44px;height:44px;border-radius:9px}
 .chip .l{font-weight:700;font-size:17px;color:#efeff1;white-space:nowrap}
-.chip .a{font-weight:700;font-size:13px;letter-spacing:1.2px;text-transform:uppercase;white-space:nowrap;margin-top:5px}
+.chip .a{font-weight:700;font-size:13px;letter-spacing:1.2px;text-transform:uppercase;white-space:nowrap;margin-top:5px;font-variant-numeric:tabular-nums}
 
 /* body */
 .body{flex:1;display:flex;gap:24px;padding:24px 30px;min-height:0}
@@ -183,7 +183,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-11-06.1";   // bump together with version.json after every change
+const OVERLAY_V = "2026-11-09.1";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -272,12 +272,18 @@ const pad = n => String(n).padStart(2, '0');
 const badgeUrl = u => !u ? '' : u.startsWith('http') ? u : 'https://static-cdn.jtvnw.net/badges/v1/' + u + '/3';
 const dayStamp = ts => { const d = new Date(ts); return `${MS[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}, TIME TBA`; };
 const stamp = ts => { const d = new Date(ts); return `${MS[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}, ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())} UTC`; };
-function countdown(ms, prefix){
+function countdown(ms, prefix){                 // "ENDS IN 4D 07H 12M 05S": always down to the second
   if(ms <= 0) return 'JUST NOW';
-  const days = Math.floor(ms / 864e5), hrs = Math.floor((ms % 864e5) / 36e5), mins = Math.floor((ms % 36e5) / 6e4);
-  if(days > 0) return `${prefix} ${days}D ${hrs}H`;
-  if(hrs > 0) return `${prefix} ${hrs}H ${mins}M`;
-  return `${prefix} ${mins}M`;
+  const days = Math.floor(ms / 864e5), hrs = Math.floor((ms % 864e5) / 36e5), mins = Math.floor((ms % 36e5) / 6e4),
+        secs = Math.floor((ms % 6e4) / 1e3), p = n => String(n).padStart(2, '0');
+  if(days > 0) return `${prefix} ${days}D ${p(hrs)}H ${p(mins)}M ${p(secs)}S`;
+  if(hrs > 0) return `${prefix} ${hrs}H ${p(mins)}M ${p(secs)}S`;
+  if(mins > 0) return `${prefix} ${mins}M ${p(secs)}S`;
+  return `${prefix} ${secs}S`;
+}
+function fillCountdowns(now, root){              // only touch the ones that changed (less repainting)
+  (root || document).querySelectorAll('[data-to]').forEach(el => {
+    const t = countdown(+el.dataset.to - now, el.dataset.prefix); if(el.textContent !== t) el.textContent = t; });
 }
 
 /* ---------- live data from badgedatabase.com (events, left column, footer counters) ---------- */
@@ -596,15 +602,14 @@ function render(){
     const action = a.soon ? `<div class="a bc" style="color:#f5b83d" data-to="${a.cdTo}" data-prefix="STARTS IN"></div>`
                           : `<div class="a bc" style="color:${a.actionColor}">${esc(a.action)}</div>`;
     return `<div class="chip"><div class="imgs">${a.imgs.map(u => img(u)).join('')}</div><div style="line-height:1;min-width:0"><div class="l b">${esc(a.label)}</div>${action}</div></div>`; }).join(''));
-  if(chipsChanged) fitChips();
+  if(chipsChanged){ fillCountdowns(now, $('available')); fitChips(); }   // measured with the countdown text in
   $('availHead').textContent = avail.length && avail.every(a => a.soon) ? 'Coming Here' : 'Available Here';
   $('availTitle').textContent = auto.length ? streamCat : [...new Set(extra.map(a => a.game).filter(Boolean))].join(' · ');
 
   const sc = siteCounts(now) || FALLBACK_COUNTS;
   $('cActive').textContent = sc.active; $('cUpcoming').textContent = sc.upcoming; $('cTba').textContent = sc.tba; $('cFree').textContent = sc.free;
 
-  document.querySelectorAll('[data-to]').forEach(el => {          // only touch the ones that changed (less repainting)
-    const t = countdown(+el.dataset.to - now, el.dataset.prefix); if(el.textContent !== t) el.textContent = t; });
+  fillCountdowns(now);
 }
 
 /* header chips: when they don't all fit next to each other, show them one at a time, switching every 6 seconds */
