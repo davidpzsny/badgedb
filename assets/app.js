@@ -497,7 +497,8 @@ function renderCalendar(id){
     const t = cols===n ? d.toDateString()===new Date().toDateString() : (now>=d.getTime() && now<d.getTime()+step);
     if(compact) return `<div class="cal-day ${t?'today':''} ${cols===n&&[0,6].includes(d.getDay())?'wk':''}">${cols===n?d.toLocaleDateString(undefined,{weekday:'narrow'}):'Week of'}<b>${cols===n?d.getDate():d.toLocaleDateString(undefined,{month:'short',day:'numeric'})}</b></div>`;
     return `<div class="cal-day ${t?'today':''} ${[0,6].includes(d.getDay())?'wk':''}">${d.toLocaleDateString(undefined,{weekday:'short'})}<b>${d.toLocaleDateString(undefined,{month:'short',day:'numeric'})}</b></div>`; }).join('');
-  const shown = st.limit && !st.all ? rows.slice(0, st.limit) : rows;
+  const cut = st.limit && rows.length > st.limit + 2;          // hiding only one or two rows is not worth a button: show them
+  const shown = cut && !st.all ? rows.slice(0, st.limit) : rows, more = rows.length - (st.limit || 0);
   const W = Math.max(el.clientWidth || 1000, n===28 ? 1400 : 760);   // width of the day grid in px (for labels next to short bars)
   const bars=shown.map((r,k)=>{
     const s=Math.max(r.s,a0), e=Math.min(r.e,a1);
@@ -527,7 +528,7 @@ function renderCalendar(id){
       <span class="cal-mtop">${icon}<span class="nm">${esc(nm)}</span><span class="lft ${urgent?'urgent':''}">${leftText(r)}</span></span>
       <span class="cal-mtrack"><i style="left:${pctL}%;width:${Math.min(pctW,100-pctL)}%"></i>${nowTick}</span></button>`;
     return compact ? mrow : `<div class="cal-row">${bar}${out}</div>`;
-  }).join('') + (st.limit && rows.length > st.limit ? `<div class="cal-more"><button class="btn ghost" data-calall="${id}">${st.all?'Show less':`Show all ${rows.length} events`}</button></div>` : '');
+  }).join('') + (cut ? `<div class="cal-more"><button class="btn ghost" data-calall="${id}">${st.all?'Show less':`Show ${more} more event${more===1?'':'s'}`}</button></div>` : '');
   const nowX = now>=a0 && now<a1 ? `<div class="cal-now" style="left:${(now-a0)/(a1-a0)*100}%"></div>` : '';
   const label = `${new Date(a0).toLocaleDateString(undefined,{month:'short',day:'numeric'})} – ${new Date(a1-1).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'})}`;
   const liveCount = rows.filter(r=>r.st==="live").length;
