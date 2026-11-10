@@ -1,5 +1,21 @@
 [
  {
+  "id": "jordan-x-space-jam",
+  "name": "Jordan x Space Jam",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Jordan x Space Jam",
+    "img": "f7d0e088-2870-4b20-93e8-ab0fedfe50e4",
+    "how": "Watch a stream.",
+    "cost": "free",
+    "desc": "This badge was earned by watching Jordan x Space Jam streams during TwitchCon San Diego 2026!"
+   }
+  ]
+ },
+ {
   "id": "metaphor-refantazio",
   "name": "Metaphor: ReFantazio",
   "category": "Metaphor: ReFantazio",
