@@ -568,14 +568,11 @@
  },
  {
   "id": "lol-worlds-2026-kda",
-  "name": "Worlds 2026: K/DA Fan",
+  "name": "LoL Virtual Groups: K/DA Fan",
   "category": "League of Legends",
-  "start": "2026-11-13T00:00:00Z",
-  "end": "2026-11-14T23:59:00Z",
   "dates_src": "manual",
   "name_src": "manual",
-  "time_tba": true,
-  "note": "Exact times not announced yet, only the days.",
+  "note": "Dates not announced yet.",
   "badges": [
    {
     "name": "K/DA Fan",

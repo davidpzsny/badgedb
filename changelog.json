@@ -1,5 +1,12 @@
 [
  {
+  "date": "2026-11-10",
+  "title": "K/DA Fan",
+  "items": [
+   {"type": "fixed", "text": "K/DA Fan: the dates are not confirmed yet, so the badge now shows as Date not announced instead of Nov 13 to 14."}
+  ]
+ },
+ {
   "date": "2026-11-09",
   "title": "Timeline order",
   "items": [
