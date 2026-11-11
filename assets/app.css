@@ -302,6 +302,15 @@
   .cal-foot{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:10px 16px 12px;border-top:1px solid var(--line);font-size:12px;color:var(--dim)}
   .cal-foot i{display:inline-block;width:12px;height:12px;border-radius:4px;vertical-align:-2px;margin-right:5px}
   .cal-foot .sp{margin-left:auto}
+  /* speculated times: only the days are known (amber tag, hatched bar) */
+  .spec-tag{display:inline-flex;align-items:center;flex:none;font-size:9.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:2px 6px;border-radius:6px;line-height:1.3;
+        color:#fbbf24;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.38);margin-left:6px;vertical-align:1px;white-space:nowrap}
+  .cal-bar.spec::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+        background:repeating-linear-gradient(135deg,rgba(251,191,36,.10) 0 6px,transparent 6px 12px)}
+  .cal-bar .spec-tag{margin-left:0}
+  .cal-m.spec .cal-mtrack i{background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.35) 0 4px,transparent 4px 8px)}
+  .cal-foot i.spec-sw{background:repeating-linear-gradient(135deg,rgba(251,191,36,.7) 0 3px,transparent 3px 6px);border:1px solid rgba(251,191,36,.5)}
+  .cal-out .spec-tag{margin-left:6px;font-size:9px}
   #calTip{position:fixed;z-index:40;pointer-events:none;background:var(--bg-2);border:1px solid var(--line-2);border-radius:12px;padding:10px 12px;font-size:12.5px;box-shadow:0 20px 40px -12px var(--sh);max-width:300px;opacity:0;transition:opacity .12s}
   #calTip.show{opacity:1}
   #calTip b{display:block;font-size:14px;margin-bottom:2px}
@@ -952,6 +961,7 @@ main{grid-column:2;grid-row:2}
   --shadow:0 1px 0 rgba(255,255,255,.7) inset,0 10px 26px -18px rgba(40,30,80,.35);
   --sh:rgba(40,30,80,.22); --tile-a:#FFFFFF; --tile-b:#ECE9F5;
 }
+[data-theme="light"] .spec-tag{color:#a16207;background:rgba(202,138,4,.10);border-color:rgba(202,138,4,.45)}
 [data-theme="light"] main::before{background:radial-gradient(ellipse at center,rgba(139,92,246,.09),transparent 65%)}
 [data-theme="light"] .pill.ending{color:#DC2626} [data-theme="light"] .pill.tba{color:#2563EB}
 [data-theme="light"] .side-social .dc{color:#5865F2}

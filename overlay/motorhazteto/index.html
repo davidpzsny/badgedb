@@ -193,7 +193,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-11-09.4";   // bump together with version.json after every change
+const OVERLAY_V = "2026-11-11.1";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -560,9 +560,9 @@ const img = (u, cls) => u ? `<img class="slot${cls ? ' ' + cls : ''}" src="${esc
 function eventView(e, now){
   const start = e.start ? Date.parse(e.start) : null, end = e.end ? Date.parse(e.end) : null;
   if(start === null) return { e, status: 'UPCOMING', bg: '#d99e1e', fg: '#1a1205', cdTo: null, cdText: 'DATE TBA', startLabel: 'STARTS' };
-  if(now < start && e.tba){ const d = new Date(start); return { e, status: 'UPCOMING', bg: '#d99e1e', fg: '#1a1205', cdTo: null, cdText: `STARTS ${MS[d.getUTCMonth()]} ${d.getUTCDate()}`, startLabel: 'STARTS' }; }   // only the day is known
+  if(now < start && e.tba){ const d = new Date(start); return { e, status: 'UPCOMING', bg: '#d99e1e', fg: '#1a1205', cdText: `SPECULATED · ${MS[d.getUTCMonth()]} ${d.getUTCDate()}`, cdTo: null, startLabel: 'STARTS' }; }   // only the day is known: speculated time
   if(now < start)    return { e, status: 'UPCOMING', bg: '#d99e1e', fg: '#1a1205', cdTo: start, prefix: 'STARTS IN', startLabel: 'STARTS' };
-  if(end === null || now < end) return { e, status: 'ACTIVE', bg: '#3ba55d', fg: '#06160c', cdTo: end, prefix: 'ENDS IN', cdText: end === null ? 'LIVE' : '', startLabel: 'STARTED' };
+  if(end === null || now < end) return { e, status: 'ACTIVE', bg: '#3ba55d', fg: '#06160c', cdTo: end, prefix: e.tba ? 'ENDS IN ~' : 'ENDS IN', cdText: end === null ? 'LIVE' : '', startLabel: 'STARTED' };
   return { e, status: 'ENDED' };
 }
 function eventCard(v){

@@ -4,7 +4,9 @@
   "title": "Space Jam and GTA VI",
   "items": [
    {"type": "new", "text": "Space Jam's 30th Anniversary: the Jordan x Space Jam badge is earned by watching, Nov 13 to 15. Exact times, channels and watch time are not announced yet."},
-   {"type": "new", "text": "Grand Theft Auto VI: upcoming event added. The release is expected to bring at least four badges and some unlockable emotes; dates are not announced yet."}
+   {"type": "new", "text": "Grand Theft Auto VI: upcoming event added. The release is expected to bring at least four badges and some unlockable emotes; dates are not announced yet."},
+   {"type": "improved", "text": "Speculated times: when only the days of an event are known, it is marked Speculated (amber tag, striped bar in the schedule) and its countdowns get a ~ sign."},
+   {"type": "fixed", "text": "Event and badge details: the line under the big countdown (until it starts / ends) no longer disappears after a second."}
   ]
  },
  {
