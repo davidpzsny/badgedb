@@ -939,5 +939,26 @@
   "set": "jordan-x-space-jam",
   "posted": "2026-11-10T19:30:42+00:00",
   "replied": true
+ },
+ "ending:lol-worlds-2026-pentakill": {
+  "tweet": "",
+  "title": "Pentakill Fan",
+  "set": "pentakill-fan",
+  "replied": "discord only",
+  "posted": "2026-11-12T16:00:53+00:00"
+ },
+ "xending:lol-worlds-2026-pentakill": {
+  "tweet": "2120909714443907543",
+  "title": "Pentakill Fan",
+  "set": "pentakill-fan",
+  "sets": [
+   "pentakill-fan"
+  ],
+  "titles": [
+   "Pentakill Fan"
+  ],
+  "posted": "2026-11-12T16:00:55+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
