@@ -1,5 +1,28 @@
 [
  {
+  "id": "streamer-awards-2026-vote-nov",
+  "name": "The Streamer Awards 2026 (November)",
+  "category": "The Streamer Awards",
+  "start": "2026-11-12T17:00:00Z",
+  "end": "2026-11-13T07:59:00Z",
+  "dates_src": "manual",
+  "name_src": "manual",
+  "channels": [
+   "QTCinderella"
+  ],
+  "note": "Only on twitch.tv/qtcinderella. The badge could also be earned in the October window.",
+  "badges": [
+   {
+    "name": "Streamer Awards 2026 Vote",
+    "img": "941f3939-ae1c-4b47-a5fd-9adc53d3a4f4",
+    "how": "Watch 15 minutes on twitch.tv/qtcinderella in The Streamer Awards category.",
+    "cost": "free",
+    "desc": "This badge was earned by watching and voting on the 2026 Streamer Awards!",
+    "how_src": "manual"
+   }
+  ]
+ },
+ {
   "id": "jordan-x-space-jam",
   "name": "Space Jam's 30th Anniversary",
   "category": "Unknown",
