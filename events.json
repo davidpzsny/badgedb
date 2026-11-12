@@ -607,16 +607,17 @@
  },
  {
   "id": "lol-worlds-2026-kda",
-  "name": "LoL Virtual Groups: K/DA Fan",
+  "name": "Worlds 2026: K/DA Fan",
   "category": "League of Legends",
+  "start": "2026-11-13T16:00:00Z",
+  "end": "2026-11-15T15:59:00Z",
   "dates_src": "manual",
   "name_src": "manual",
-  "note": "Dates not announced yet.",
   "badges": [
    {
     "name": "K/DA Fan",
     "img": "cf6ff3ab-9153-483b-bdac-f07577e6e202",
-    "how": "Watch League of Legends streams (exact watch time not announced yet).",
+    "how": "Watch 30 minutes in the category.",
     "cost": "free",
     "desc": "This Chat Badge was earned by supporting the 2026 League of Legends World Championship!",
     "how_src": "manual"
