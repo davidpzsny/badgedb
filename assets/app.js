@@ -159,8 +159,15 @@ const specTag = ev => ev && ev.time_tba ? `<span class="spec-tag" title="${SPEC_
 const cdp = ev => ev && ev.time_tba ? "~" : "";
 
 // event lookup by image id → objective + status for the archive drawer
-let EV_BY_IMG = {};
-function indexEvents(){ EV_BY_IMG = {}; EVENTS.forEach(ev => ev.badges.forEach(b => { if(b.img) EV_BY_IMG[b.img] = {ev, b}; })); }
+let EV_BY_IMG = {}, EVS_BY_IMG = {};
+// A badge can come back in a later event (e.g. a second voting window). EVS_BY_IMG keeps every window; EV_BY_IMG is the main
+// one: the running window first, then the next upcoming one, then the newest.
+function indexEvents(){
+  EV_BY_IMG = {}; EVS_BY_IMG = {};
+  EVENTS.forEach(ev => ev.badges.forEach(b => { if(b.img) (EVS_BY_IMG[b.img] = EVS_BY_IMG[b.img] || []).push({ev, b}); }));
+  const rank = x => ({live:0, soon:1, tba:2})[status(x.ev)] ?? 3, t = x => Date.parse(x.ev.start || x.ev.end || 0) || 0;
+  for(const k in EVS_BY_IMG){ const L = EVS_BY_IMG[k].sort((x, y) => rank(x) - rank(y) || t(y) - t(x)); EV_BY_IMG[k] = L[0]; }
+}
 indexEvents();
 
 // normalized archive rows
@@ -1327,6 +1334,17 @@ function renderBadgePage(set){
   const sp = ev && ev.ev.time_tba ? " (speculated time)" : "", p = ev ? cdp(ev.ev) : "";
   const cd = st==="live" ? `<div class="bp-cd" data-cd="${ev.ev.end}" data-cdp="${p}">${p}${countdown(ev.ev.end)}<small>until it ends${sp}</small></div>` : st==="soon" ? `<div class="bp-cd" data-cd="${ev.ev.start}" data-cdp="${p}">${p}${countdown(ev.ev.start)}<small>until it starts${sp}</small></div>` : "";
   const bg = bpTheme==="dark" ? "#18181b" : "#f7f7f8";
+  const others = ev ? (EVS_BY_IMG[ev.b.img] || []).filter(o => o.ev !== ev.ev) : [];   // the badge's other windows
+  const isNew = others.length && (st === "live" || st === "soon") && others.every(o => status(o.ev) === "ended");
+  const winDay = t => new Date(t).toLocaleDateString(undefined, {month:'short', day:'numeric', year:'numeric'});
+  const winPill = o => { const s = status(o.ev); return s === "ended" ? `<span class="pill ended">Ended ${esc(winDay(o.ev.end))}</span>`
+                         : `<span class="pill ${s === "live" ? "new" : "tba"}">${{live:"Active", soon:"Upcoming", tba:"Date not announced"}[s]}</span>`; };
+  const othersCard = others.length ? `<div class="card2 bp-wins"><h3>${others.every(o => status(o.ev) === "ended") ? "Earlier availability" : "Other availability"}</h3>
+        ${others.map(o => `<div class="bp-win"><div class="bp-win-top">${winPill(o)}<b>${esc(o.ev.name)}</b></div>
+          <dl class="kv2"><dt>Objective</dt><dd>${esc(o.b.how || "—")}</dd><dt>Channels</dt><dd>${channelsHtml(o.ev, (o.ev.category||"").split(" · ")[0])}</dd>
+            <dt>Started</dt><dd>${o.ev.start ? fmtWhen(o.ev.start, o.ev.time_tba) : "—"}</dd><dt>${status(o.ev) === "ended" ? "Ended" : "Ends"}</dt><dd>${o.ev.end ? fmtWhen(o.ev.end, o.ev.time_tba) : "—"}</dd></dl>
+          <button class="btn ghost" data-ev="${esc(o.ev.id)}">Open event</button></div>`).join('')}
+      </div>` : "";
   box.innerHTML = `
     <div class="page-head"><div><h1>${esc(v.title||b.name)}</h1><p class="lead">Everything you need to know about this Twitch global badge.</p></div>
       <div class="bp-side">${ev ? remindHtml(ev.ev, "bp-share") : ""}<button class="btn ghost bp-share" data-share="${esc(location.origin+'/badges/'+encodeURIComponent(b.set)+'/')}" data-share-title="${esc(v.title||b.name)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Share</button>${isFree(b)?'<span class="pill free">Free</span> ':''}${st==="live"?'<span class="pill live">Active</span>':st==="soon"?'<span class="pill soon">Upcoming</span>':st==="ended"?'<span class="pill na">Ended</span>':''}</div></div>
@@ -1350,7 +1368,7 @@ function renderBadgePage(set){
           <dt>Cost</dt><dd>${ev&&ev.b.cost==='paid'?'Paid (subscription / gift sub)':ev&&ev.b.cost==='free'?'Free':b.free||(!ev&&info.cost==='free')?'Free':(!ev&&info.cost==='paid')?'Paid (subscription / gift sub)':'—'}</dd>
         </dl>
       </div>
-      <div class="card2"><h3>Availability</h3>
+      <div class="card2"><h3>Availability${isNew ? ` <span class="pill new" title="This badge is available again in a new event">New</span>` : ""}</h3>
         ${cd}
         <dl class="kv2">
           <dt>Status</dt><dd>${st?(st==="tba"&&isStale(ev.ev)?"Ended (dates were never announced)":{live:"Active",soon:"Upcoming",ended:"Ended",tba:"Date not announced"}[st])
@@ -1363,6 +1381,7 @@ function renderBadgePage(set){
         </dl>
         ${ev?`<div class="actions" style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-ev="${ev.ev.id}">Open event</button>${calendarMenu(ev.ev)}</div>`:''}
       </div>
+      ${othersCard}
       <div class="card2"><h3>Context</h3><p class="ctx">${context?esc(context):"No additional context yet. Follow twitch.tv/badge_db for updates."}</p>
         <h3 style="margin-top:18px">History</h3><dl class="kv2"><dt>Added</dt><dd>${b.added?fmt(b.added):"Before tracking started"}</dd></dl>
         <div class="actions" style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap"><a class="btn ghost" href="${esc(v.img)}" target="_blank" rel="noopener">Open image</a><button class="btn ghost" data-copy="${esc(v.img)}">Copy image URL</button><button class="btn ghost" data-copy="${esc(location.origin+'/badges/'+encodeURIComponent(b.set)+'/')}">Copy page link</button><a class="report-link" href="/contact/?topic=fix&badge=${encodeURIComponent(b.name)}&link=${encodeURIComponent(location.origin+'/badges/'+encodeURIComponent(b.set)+'/')}" style="align-self:center;margin-left:auto">Report a mistake</a></div>

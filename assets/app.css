@@ -234,6 +234,11 @@
   /* ================= badge page ================= */
   .back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-weight:700;font-size:13.5px;margin-top:22px}.back:hover{color:var(--text)}
   .bp-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px}
+  .pill.new{background:rgba(52,211,153,.16);color:var(--mint)}
+  .card2 h3 .pill{vertical-align:2px;margin-left:6px}
+  .bp-win + .bp-win{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}   /* the badge's other event windows */
+  .bp-win-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .bp-win .btn{margin-top:12px}
   .card2{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:20px}
   .card2 h3{font-size:16px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:10px}
   .sizes{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap}
