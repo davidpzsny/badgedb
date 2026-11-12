@@ -960,5 +960,26 @@
   "posted": "2026-11-12T16:00:55+00:00",
   "replied": true,
   "reply": "Objective, channels and the exact end time: {url}"
+ },
+ "live:streamer-awards-2026-vote-nov": {
+  "tweet": "2120931959006253201",
+  "title": "Streamer Awards 2026 Vote",
+  "set": "streamer-awards-2026-vote",
+  "sets": [
+   "streamer-awards-2026-vote"
+  ],
+  "titles": [
+   "Streamer Awards 2026 Vote"
+  ],
+  "posted": "2026-11-12T17:29:19+00:00",
+  "replied": true,
+  "reply": "Objective, channels and exact dates: {url}"
+ },
+ "ending:streamer-awards-2026-vote-nov": {
+  "tweet": "",
+  "title": "Streamer Awards 2026 Vote",
+  "set": "streamer-awards-2026-vote",
+  "replied": "discord only",
+  "posted": "2026-11-12T17:29:19+00:00"
  }
 }
