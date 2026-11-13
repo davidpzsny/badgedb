@@ -1009,5 +1009,19 @@
   "set": "minecraft-golden-frog",
   "posted": "2026-11-13T02:50:28+00:00",
   "replied": true
+ },
+ "live:lol-worlds-2026-kda": {
+  "tweet": "2121272105232683035",
+  "title": "K/DA Fan",
+  "set": "kda-fan",
+  "sets": [
+   "kda-fan"
+  ],
+  "titles": [
+   "K/DA Fan"
+  ],
+  "posted": "2026-11-13T16:00:56+00:00",
+  "replied": true,
+  "reply": "Objective, channels and exact dates: {url}"
  }
 }
