@@ -45,6 +45,10 @@
  },
  "jordan-x-space-jam": {
   "id": "1569955843439329365",
-  "sig": "[{\"description\": \"\\u2022 Jordan x Space Jam: Watch Jordan x Space Jam streams (exact watch time and channels not announced yet).\\n\\nDetails and all dates: https://badgedatabase.com/badges/jordan-x-space-jam/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/jordan-x-space-jam/\"}, \"name\": \"Space Jam's 30th Anniversary\", \"scheduled_end_time\": \"2026-11-15T23:59:00Z\"}, \"2026-11-13T00:00:00Z\"]"
+  "sig": "[{\"description\": \"\\u2022 Jordan x Space Jam: Watch 15 minutes on twitch.tv/samham (IRL category).\\n\\nDetails and all dates: https://badgedatabase.com/badges/jordan-x-space-jam/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/jordan-x-space-jam/\"}, \"name\": \"Space Jam's 30th Anniversary\", \"scheduled_end_time\": \"2026-11-15T23:59:00Z\"}, \"2026-11-13T00:00:00Z\"]"
+ },
+ "metaphor-refantazio": {
+  "id": "1570906863506165868",
+  "sig": "[{\"description\": \"\\u2022 Gallica: Subscribe (Tier 1) or gift a Tier 1 sub in the category.\\n\\nDetails and all dates: https://badgedatabase.com/badges/gallica/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/gallica/\"}, \"name\": \"Metaphor: ReFantazio\", \"scheduled_end_time\": \"2026-12-12T17:59:00Z\"}, \"2026-11-14T18:00:00Z\"]"
  }
 }
