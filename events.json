@@ -54,7 +54,7 @@
   "dates_src": "manual",
   "name_src": "manual",
   "time_tba": true,
-  "note": "Only on twitch.tv/samham. Only the days are known so far, the exact times are not announced yet.",
+  "note": "Confirmed live on twitch.tv/samham on Nov 13, during TwitchCon San Diego 2026. The end time is not announced yet, only the day (Nov 15).",
   "badges": [
    {
     "name": "Jordan x Space Jam",
@@ -67,7 +67,8 @@
   ],
   "channels": [
    "Samham"
-  ]
+  ],
+  "about": "Jordan Brand's Jumpman badge for the 30th anniversary of Space Jam, earned on Samham's channel during TwitchCon San Diego 2026."
  },
  {
   "id": "metaphor-refantazio",
