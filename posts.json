@@ -1029,20 +1029,55 @@
   "title": "Bleed Miami",
   "set": "bleed-miami",
   "posted": "2026-11-13T18:05:21+00:00",
-  "replied": false
+  "replied": true
  },
  "scored-big": {
   "tweet": "2121303423886950422",
   "title": "Scored Big",
   "set": "scored-big",
   "posted": "2026-11-13T18:05:23+00:00",
-  "replied": false
+  "replied": true
  },
  "welcome-2-miami": {
   "tweet": "2121303429155054016",
   "title": "Welcome 2 Miami",
   "set": "welcome-2-miami",
   "posted": "2026-11-13T18:05:24+00:00",
+  "replied": true
+ },
+ "bronze-chain": {
+  "tweet": "2121304706936922555",
+  "title": "Bronze Chain",
+  "set": "bronze-chain",
+  "posted": "2026-11-13T18:10:28+00:00",
+  "replied": false
+ },
+ "diamond-chain": {
+  "tweet": "2121304714230788134",
+  "title": "Diamond Chain",
+  "set": "diamond-chain",
+  "posted": "2026-11-13T18:10:30+00:00",
+  "replied": false
+ },
+ "gold-chain": {
+  "tweet": "2121304720388083723",
+  "title": "Gold Chain",
+  "set": "gold-chain",
+  "posted": "2026-11-13T18:10:32+00:00",
+  "replied": false
+ },
+ "golden-iguana": {
+  "tweet": "2121304726184624138",
+  "title": "Golden Iguana",
+  "set": "golden-iguana",
+  "posted": "2026-11-13T18:10:33+00:00",
+  "replied": false
+ },
+ "miami-chain": {
+  "tweet": "2121304731343544670",
+  "title": "Miami Chain",
+  "set": "miami-chain",
+  "posted": "2026-11-13T18:10:34+00:00",
   "replied": false
  }
 }
