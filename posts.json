@@ -1050,21 +1050,21 @@
   "title": "Bronze Chain",
   "set": "bronze-chain",
   "posted": "2026-11-13T18:10:28+00:00",
-  "replied": false
+  "replied": true
  },
  "diamond-chain": {
   "tweet": "2121304714230788134",
   "title": "Diamond Chain",
   "set": "diamond-chain",
   "posted": "2026-11-13T18:10:30+00:00",
-  "replied": false
+  "replied": true
  },
  "gold-chain": {
   "tweet": "2121304720388083723",
   "title": "Gold Chain",
   "set": "gold-chain",
   "posted": "2026-11-13T18:10:32+00:00",
-  "replied": false
+  "replied": true
  },
  "golden-iguana": {
   "tweet": "2121304726184624138",
