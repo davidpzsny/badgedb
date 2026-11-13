@@ -48,27 +48,27 @@
  {
   "id": "jordan-x-space-jam",
   "name": "Space Jam's 30th Anniversary",
-  "category": "IRL",
+  "category": "Unknown",
   "start": "2026-11-13T00:00:00Z",
   "end": "2026-11-15T23:59:00Z",
   "dates_src": "manual",
   "name_src": "manual",
   "time_tba": true,
-  "note": "Confirmed live on twitch.tv/samham on Nov 13, during TwitchCon San Diego 2026. The end time is not announced yet, only the day (Nov 15).",
+  "note": "The eligible channel changes during the event: it was twitch.tv/samham earlier on Nov 13, now it is twitch.tv/realkatieb. Only the days are known (Nov 13 to 15), the exact times are not announced.",
   "badges": [
    {
     "name": "Jordan x Space Jam",
     "img": "f7d0e088-2870-4b20-93e8-ab0fedfe50e4",
-    "how": "Watch 15 minutes on twitch.tv/samham (IRL category).",
+    "how": "Watch twitch.tv/realkatieb (exact watch time not announced).",
     "cost": "free",
     "desc": "This badge was earned by watching Jordan x Space Jam streams during TwitchCon San Diego 2026!",
     "how_src": "manual"
    }
   ],
   "channels": [
-   "Samham"
+   "RealKatieB"
   ],
-  "about": "Jordan Brand's Jumpman badge for the 30th anniversary of Space Jam, earned on Samham's channel during TwitchCon San Diego 2026."
+  "about": "Jordan Brand's Jumpman badge for the 30th anniversary of Space Jam, given out on changing channels during TwitchCon San Diego 2026."
  },
  {
   "id": "metaphor-refantazio",
