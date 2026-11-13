@@ -1,165 +1,5 @@
 [
  {
-  "id": "silver-chain",
-  "name": "Silver Chain",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "Silver Chain",
-    "img": "b8b5b601-d707-41c9-9fb6-9610280285e6",
-    "how": "Watch a stream.",
-    "cost": "free",
-    "desc": "This badge was earned for watching 3 days of GTAVI during launch week."
-   }
-  ]
- },
- {
-  "id": "purple-chain",
-  "name": "Purple Chain",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "Purple Chain",
-    "img": "07fdf1d1-f160-4415-821e-391a90852db6",
-    "how": "Watch a stream.",
-    "cost": "free",
-    "desc": "This badge was earned for watching 1 day of GTAVI during launch week."
-   }
-  ]
- },
- {
-  "id": "miami-chain",
-  "name": "Miami Chain",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "Miami Chain",
-    "img": "015f3db0-1a3f-4e4a-970d-bea3adb3a331",
-    "how": "Watch a stream.",
-    "cost": "free",
-    "desc": "This badge was earned for watching 6 days of GTAVI during launch week."
-   }
-  ]
- },
- {
-  "id": "golden-iguana",
-  "name": "Golden Iguana",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "Golden Iguana",
-    "img": "62c3816a-87d6-4ca0-bce0-fca6bcfa719f",
-    "how": "Objective not announced yet.",
-    "cost": "na",
-    "desc": "This badge was earned by securing all the Emotes and Badges from the GTAVI launch. "
-   }
-  ]
- },
- {
-  "id": "gold-chain",
-  "name": "Gold Chain",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "Gold Chain",
-    "img": "b7974da7-9af4-4ff6-8029-a9ca95b8b037",
-    "how": "Watch a stream.",
-    "cost": "free",
-    "desc": "This badge was earned for watching 4 days of GTAVI during launch week."
-   }
-  ]
- },
- {
-  "id": "diamond-chain",
-  "name": "Diamond Chain",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "Diamond Chain",
-    "img": "7498db8a-8085-4262-ac9c-b2d13591b75f",
-    "how": "Watch a stream.",
-    "cost": "free",
-    "desc": "This badge was earned for watching 5 days of GTAVI during launch week."
-   }
-  ]
- },
- {
-  "id": "bronze-chain",
-  "name": "Bronze Chain",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "Bronze Chain",
-    "img": "2e7cf17d-12ba-41cd-8f9d-4d96c5f69d45",
-    "how": "Watch a stream.",
-    "cost": "free",
-    "desc": "This badge was earned for watching 2 days of GTAVI during launch week."
-   }
-  ]
- },
- {
-  "id": "welcome-2-miami",
-  "name": "Welcome 2 Miami",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "Welcome 2 Miami",
-    "img": "1c51d343-754e-4fee-a717-ec95cafb5482",
-    "how": "Objective not announced yet.",
-    "cost": "na",
-    "desc": "This badge was earned by subbing to a GTAVI streamer during launch."
-   }
-  ]
- },
- {
-  "id": "scored-big",
-  "name": "Scored Big",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "Scored Big",
-    "img": "2acfc5b8-7907-4b05-9b30-e211a93ffc63",
-    "how": "Objective not announced yet.",
-    "cost": "na",
-    "desc": "This badge was earned by subbing to a GTAVI streamer during launch."
-   }
-  ]
- },
- {
-  "id": "bleed-miami",
-  "name": "Bleed Miami",
-  "category": "Unknown",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "Bleed Miami",
-    "img": "c7b8fc7d-7ebd-46e1-8f57-cc58ce51a9d1",
-    "how": "Objective not announced yet.",
-    "cost": "na",
-    "desc": "This badge was earned by subbing to a GTAVI streamer during launch."
-   }
-  ]
- },
- {
   "id": "minecraft-golden-frog",
   "name": "The Streamer Awards 2026: Minecraft Golden Frog",
   "category": "The Streamer Awards",
@@ -208,30 +48,33 @@
  {
   "id": "jordan-x-space-jam",
   "name": "Space Jam's 30th Anniversary",
-  "category": "Unknown",
+  "category": "IRL",
   "start": "2026-11-13T00:00:00Z",
   "end": "2026-11-15T23:59:00Z",
   "dates_src": "manual",
   "name_src": "manual",
   "time_tba": true,
-  "note": "Only the days are known so far. Exact times, channels and watch time not announced yet.",
+  "note": "Only on twitch.tv/samham. Only the days are known so far, the exact times are not announced yet.",
   "badges": [
    {
     "name": "Jordan x Space Jam",
     "img": "f7d0e088-2870-4b20-93e8-ab0fedfe50e4",
-    "how": "Watch Jordan x Space Jam streams (exact watch time and channels not announced yet).",
+    "how": "Watch 15 minutes on twitch.tv/samham (IRL category).",
     "cost": "free",
     "desc": "This badge was earned by watching Jordan x Space Jam streams during TwitchCon San Diego 2026!",
     "how_src": "manual"
    }
+  ],
+  "channels": [
+   "Samham"
   ]
  },
  {
   "id": "metaphor-refantazio",
   "name": "Metaphor: ReFantazio",
   "category": "Metaphor: ReFantazio",
-  "start": "",
-  "end": "",
+  "start": "2026-11-14T18:00:00Z",
+  "end": "2026-12-12T17:59:00Z",
   "badges": [
    {
     "name": "Gallica",
@@ -240,7 +83,8 @@
     "cost": "paid",
     "desc": "This badge was earned by subscribing or gifting a sub to a streamer in the Metaphor: ReFantazio category during the Switch 2 launch!"
    }
-  ]
+  ],
+  "dates_src": "manual"
  },
  {
   "id": "doom-the-dark-ages",
@@ -266,13 +110,87 @@
   "end": "",
   "dates_src": "manual",
   "name_src": "manual",
-  "note": "Dates not announced yet.",
+  "note": "Dates not announced yet. The badges are tied to the launch week of the game.",
   "badges": [
    {
-    "name": "GTA VI badges",
-    "img": "",
-    "how": "The release is expected to bring at least nine badges and a few unlockable emotes. Details not announced yet.",
-    "cost": "na"
+    "name": "Welcome 2 Miami",
+    "img": "1c51d343-754e-4fee-a717-ec95cafb5482",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid",
+    "desc": "This badge was earned by subbing to a GTAVI streamer during launch.",
+    "how_src": "manual"
+   },
+   {
+    "name": "Scored Big",
+    "img": "2acfc5b8-7907-4b05-9b30-e211a93ffc63",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid",
+    "desc": "This badge was earned by subbing to a GTAVI streamer during launch.",
+    "how_src": "manual"
+   },
+   {
+    "name": "Bleed Miami",
+    "img": "c7b8fc7d-7ebd-46e1-8f57-cc58ce51a9d1",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid",
+    "desc": "This badge was earned by subbing to a GTAVI streamer during launch.",
+    "how_src": "manual"
+   },
+   {
+    "name": "Purple Chain",
+    "img": "07fdf1d1-f160-4415-821e-391a90852db6",
+    "how": "Watch 1 hour a day in the category for 1 day.",
+    "cost": "free",
+    "desc": "This badge was earned for watching 1 day of GTAVI during launch week.",
+    "how_src": "manual"
+   },
+   {
+    "name": "Bronze Chain",
+    "img": "2e7cf17d-12ba-41cd-8f9d-4d96c5f69d45",
+    "how": "Watch 1 hour a day in the category for 2 days.",
+    "cost": "free",
+    "desc": "This badge was earned for watching 2 days of GTAVI during launch week.",
+    "how_src": "manual"
+   },
+   {
+    "name": "Silver Chain",
+    "img": "b8b5b601-d707-41c9-9fb6-9610280285e6",
+    "how": "Watch 1 hour a day in the category for 3 days.",
+    "cost": "free",
+    "desc": "This badge was earned for watching 3 days of GTAVI during launch week.",
+    "how_src": "manual"
+   },
+   {
+    "name": "Gold Chain",
+    "img": "b7974da7-9af4-4ff6-8029-a9ca95b8b037",
+    "how": "Watch 1 hour a day in the category for 4 days.",
+    "cost": "free",
+    "desc": "This badge was earned for watching 4 days of GTAVI during launch week.",
+    "how_src": "manual"
+   },
+   {
+    "name": "Diamond Chain",
+    "img": "7498db8a-8085-4262-ac9c-b2d13591b75f",
+    "how": "Watch 1 hour a day in the category for 5 days.",
+    "cost": "free",
+    "desc": "This badge was earned for watching 5 days of GTAVI during launch week.",
+    "how_src": "manual"
+   },
+   {
+    "name": "Miami Chain",
+    "img": "015f3db0-1a3f-4e4a-970d-bea3adb3a331",
+    "how": "Watch 1 hour a day in the category for 6 days.",
+    "cost": "free",
+    "desc": "This badge was earned for watching 6 days of GTAVI during launch week.",
+    "how_src": "manual"
+   },
+   {
+    "name": "Golden Iguana",
+    "img": "62c3816a-87d6-4ca0-bce0-fca6bcfa719f",
+    "how": "Unlock all nine other GTA VI badges: the six chains (Purple, Bronze, Silver, Gold, Diamond, Miami) and the three sub badges (Welcome 2 Miami, Scored Big, Bleed Miami).",
+    "cost": "paid",
+    "desc": "This badge was earned by securing all the Emotes and Badges from the GTAVI launch.",
+    "how_src": "manual"
    }
   ]
  },
