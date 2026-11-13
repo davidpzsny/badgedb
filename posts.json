@@ -1071,13 +1071,13 @@
   "title": "Golden Iguana",
   "set": "golden-iguana",
   "posted": "2026-11-13T18:10:33+00:00",
-  "replied": false
+  "replied": true
  },
  "miami-chain": {
   "tweet": "2121304731343544670",
   "title": "Miami Chain",
   "set": "miami-chain",
   "posted": "2026-11-13T18:10:34+00:00",
-  "replied": false
+  "replied": true
  }
 }
