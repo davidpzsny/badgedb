@@ -1002,5 +1002,12 @@
   "posted": "2026-11-12T18:00:56+00:00",
   "replied": true,
   "reply": "Objective, channels and the exact end time: {url}"
+ },
+ "minecraft-golden-frog": {
+  "tweet": "2121073178944643202",
+  "title": "Minecraft Golden Frog",
+  "set": "minecraft-golden-frog",
+  "posted": "2026-11-13T02:50:28+00:00",
+  "replied": false
  }
 }

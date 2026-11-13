@@ -1,5 +1,21 @@
 [
  {
+  "id": "minecraft-golden-frog",
+  "name": "Minecraft Golden Frog",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Minecraft Golden Frog",
+    "img": "8d2de51b-76ac-4680-89c8-89e710663b09",
+    "how": "Watch a stream.",
+    "cost": "free",
+    "desc": "The Minecraft Golden Frog badge was earned by watching 15 minutes of The Streamer Awards 2026!"
+   }
+  ]
+ },
+ {
   "id": "streamer-awards-2026-vote-nov",
   "name": "The Streamer Awards 2026 (November)",
   "category": "The Streamer Awards",

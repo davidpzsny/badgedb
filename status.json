@@ -1,18 +1,18 @@
 {
  "popularity_http": {
-  "at": "2026-11-13T02:45:29+00:00",
-  "msg": "HTTP 403, 5389 bytes, starts with: <!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\"><meta name=\"robots\" content=\"noindex,nofollow\"><meta name=\"viewport\" content=\"width=device-width,initial-scal"
+  "at": "2026-11-13T02:50:30+00:00",
+  "msg": "HTTP 403, 5368 bytes, starts with: <!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\"><meta name=\"robots\" content=\"noindex,nofollow\"><meta name=\"viewport\" content=\"width=device-width,initial-scal"
  },
  "popularity": {
-  "at": "2026-11-13T02:45:29+00:00",
+  "at": "2026-11-13T02:50:30+00:00",
   "msg": "request failed: Expecting value: line 1 column 1 (char 0)"
  },
  "emotes": {
-  "at": "2026-11-13T02:45:33+00:00",
+  "at": "2026-11-13T02:50:33+00:00",
   "msg": "310 live, 0 new, 0 removed"
  },
  "top_categories": {
-  "at": "2026-11-13T02:45:32+00:00",
+  "at": "2026-11-13T02:50:32+00:00",
   "msg": "150 categories, #1 The Streamer Awards"
  },
  "drop_campaigns": {
@@ -24,29 +24,29 @@
   "msg": "The Streamer Awards 2026 (November) at 2026-11-12T17:00:00Z -> tweet 2120931959006253201"
  },
  "discord_events": {
-  "at": "2026-11-13T02:45:29+00:00",
+  "at": "2026-11-13T02:50:29+00:00",
   "msg": "0 created, 0 started, 0 updated, 0 closed"
  },
  "live_channels": {
-  "at": "2026-11-13T02:45:33+00:00",
+  "at": "2026-11-13T02:50:33+00:00",
   "msg": "9 running events, 55 live streams, badge_db live"
  },
  "reward_campaigns": {
-  "at": "2026-11-13T02:45:28+00:00",
+  "at": "2026-11-13T02:50:29+00:00",
   "msg": "ok via BadgeDBRewardCampaigns: 3 campaigns: Streamer Awards 2026 (2026-11-12T23:00 -> 2026-11-13T04:59); Pokémon Night Out Campaign (2026-10-16T17:00 -> 2026-11-23T22:59); Pokemon Evolutions (2026-10-16T17:00 -> 2027-01-30T22:59)"
  },
  "sdb_users": {
-  "at": "2026-11-13T02:20:33+00:00",
+  "at": "2026-11-13T02:50:33+00:00",
   "req": "2026-10-22T20:49:14Z",
-  "msg": "8 of 10 badges from the last 14 days updated; no number yet: Jordan x Space Jam, Gallica"
+  "msg": "8 of 11 badges from the last 14 days updated; no number yet: Jordan x Space Jam, Gallica; not in the list: Minecraft Golden Frog"
  },
  "last_chance": {
   "at": "2026-11-12T18:00:56+00:00",
   "msg": "Call of Duty: Modern Warfare 4 ends 2026-11-13T17:59:00Z -> tweet 2120939916930482666"
  },
  "twitch_chat": {
-  "at": "2026-11-10T19:30:43+00:00",
-  "msg": "sent: Twitch global badge added: Jordan x Space Jam https://badgedatabase.com/badges/jordan-x-space-jam/"
+  "at": "2026-11-13T02:50:29+00:00",
+  "msg": "sent: Twitch global badge added: Minecraft Golden Frog https://badgedatabase.com/badges/minecraft-golden-frog/"
  },
  "twitch_chat_test": {
   "at": "2026-11-06T20:43:39+00:00",
