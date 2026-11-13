@@ -1023,5 +1023,26 @@
   "posted": "2026-11-13T16:00:56+00:00",
   "replied": true,
   "reply": "Objective, channels and exact dates: {url}"
+ },
+ "bleed-miami": {
+  "tweet": "2121303416593133605",
+  "title": "Bleed Miami",
+  "set": "bleed-miami",
+  "posted": "2026-11-13T18:05:21+00:00",
+  "replied": false
+ },
+ "scored-big": {
+  "tweet": "2121303423886950422",
+  "title": "Scored Big",
+  "set": "scored-big",
+  "posted": "2026-11-13T18:05:23+00:00",
+  "replied": false
+ },
+ "welcome-2-miami": {
+  "tweet": "2121303429155054016",
+  "title": "Welcome 2 Miami",
+  "set": "welcome-2-miami",
+  "posted": "2026-11-13T18:05:24+00:00",
+  "replied": false
  }
 }

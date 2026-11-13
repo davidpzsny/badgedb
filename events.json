@@ -1,5 +1,53 @@
 [
  {
+  "id": "welcome-2-miami",
+  "name": "Welcome 2 Miami",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Welcome 2 Miami",
+    "img": "1c51d343-754e-4fee-a717-ec95cafb5482",
+    "how": "Objective not announced yet.",
+    "cost": "na",
+    "desc": "This badge was earned by subbing to a GTAVI streamer during launch."
+   }
+  ]
+ },
+ {
+  "id": "scored-big",
+  "name": "Scored Big",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Scored Big",
+    "img": "2acfc5b8-7907-4b05-9b30-e211a93ffc63",
+    "how": "Objective not announced yet.",
+    "cost": "na",
+    "desc": "This badge was earned by subbing to a GTAVI streamer during launch."
+   }
+  ]
+ },
+ {
+  "id": "bleed-miami",
+  "name": "Bleed Miami",
+  "category": "Unknown",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "Bleed Miami",
+    "img": "c7b8fc7d-7ebd-46e1-8f57-cc58ce51a9d1",
+    "how": "Objective not announced yet.",
+    "cost": "na",
+    "desc": "This badge was earned by subbing to a GTAVI streamer during launch."
+   }
+  ]
+ },
+ {
   "id": "minecraft-golden-frog",
   "name": "The Streamer Awards 2026: Minecraft Golden Frog",
   "category": "The Streamer Awards",

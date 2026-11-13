@@ -13,7 +13,10 @@
   <url><loc>https://badgedatabase.com/contact/</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://badgedatabase.com/leaderboard/</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>
   <url><loc>https://badgedatabase.com/changelog/</loc><lastmod>2026-11-13</lastmod><changefreq>weekly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://badgedatabase.com/badges/welcome-2-miami/</loc><lastmod>2026-11-13</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://badgedatabase.com/badges/scored-big/</loc><lastmod>2026-11-13</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://badgedatabase.com/badges/minecraft-golden-frog/</loc><lastmod>2026-11-13</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://badgedatabase.com/badges/bleed-miami/</loc><lastmod>2026-11-13</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://badgedatabase.com/badges/jordan-x-space-jam/</loc><lastmod>2026-11-10</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://badgedatabase.com/badges/gallica/</loc><lastmod>2026-11-06</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://badgedatabase.com/badges/doom-the-dark-ages/</loc><lastmod>2026-11-06</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
