@@ -587,10 +587,18 @@ def live_title(badges_meta):
     names = [m["title"] for m in badges_meta]
     return " & ".join(names[:2]) + (f" + {len(names) - 2} more" if len(names) > 2 else "")
 
+def with_category(how, ev):
+    """'... in the category.' -> '... in the Metaphor: ReFantazio category.' so posts name the category."""
+    if not how or "in the category" not in how: return how
+    if len(ev.get("categories") or []) > 1: return how.replace("in the category", "in one of the eligible categories")
+    cat = (ev.get("category") or "").split(" · ")[0].strip()
+    if not cat or cat.lower() in ("unknown", "various", "multiple") or re.search(r"\d+ (eligible )?categories", cat, re.I): return how
+    return how.replace("in the category", f"in the {cat} category")
+
 def live_post_text(ev, badges_meta):
     title = live_title(badges_meta)
     until = _dt(ev["end"]).strftime("%b %-d, %H:%M UTC")
-    how_of = {b.get("img"): (b.get("how") or "").strip() for b in ev.get("badges", []) if b.get("img")}
+    how_of = {b.get("img"): with_category((b.get("how") or "").strip(), ev) for b in ev.get("badges", []) if b.get("img")}
     hows = [how_of.get(m["img"], "") for m in badges_meta]
     if hows and all(h == hows[0] for h in hows):
         how = hows[0]                                   # same objective for every badge: say it once
@@ -1082,7 +1090,7 @@ X_ENDING_LATE_H = 3         # never post with less than this many hours left (e.
 def ending_post_text(ev, badges_meta, left_h):
     title = live_title(badges_meta)
     until = _dt(ev["end"]).strftime("%b %-d, %H:%M UTC")
-    how_of = {b.get("img"): (b.get("how") or "").strip() for b in ev.get("badges", []) if b.get("img")}
+    how_of = {b.get("img"): with_category((b.get("how") or "").strip(), ev) for b in ev.get("badges", []) if b.get("img")}
     hows = [how_of.get(m["img"], "") for m in badges_meta]
     if hows and all(h == hows[0] for h in hows):
         how = hows[0]
