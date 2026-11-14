@@ -1100,5 +1100,26 @@
   "posted": "2026-11-14T18:00:58+00:00",
   "replied": true,
   "reply": "Objective, channels and exact dates: {url}"
+ },
+ "ending:lol-worlds-2026": {
+  "tweet": "",
+  "title": "Worlds 2026 Supporter",
+  "set": "worlds-2026-supporter",
+  "replied": "discord only",
+  "posted": "2026-11-14T19:00:49+00:00"
+ },
+ "xending:lol-worlds-2026": {
+  "tweet": "2121679769913663708",
+  "title": "Worlds 2026 Supporter",
+  "set": "worlds-2026-supporter",
+  "sets": [
+   "worlds-2026-supporter"
+  ],
+  "titles": [
+   "Worlds 2026 Supporter"
+  ],
+  "posted": "2026-11-14T19:00:50+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
