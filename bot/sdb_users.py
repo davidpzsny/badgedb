@@ -78,6 +78,19 @@ def parse_json(page):
     return out
 
 
+def probe(page):
+    """What the list page holds besides the 100 rendered rows: links to other pages, embedded data with more badges."""
+    raw = page.replace('\\"', '"')
+    hrefs = sorted(set(h for h in re.findall(r'href="([^"]+)"', page) if re.search(r"page|offset|cursor|p=\d", h, re.I)))[:20]
+    sets_in_links = len({m.group(1).lower() for m in LINK_RE.finditer(page)})
+    set_ids = len(set(re.findall(r'"(?:set_?id|setId|setID)"\s*:\s*"([^"]+)"', raw)))
+    keys = sorted(set(re.findall(r'"(user_?count|userCount|usersCount|users_count|holders|totalPages|total_pages|pageCount|perPage|per_page|total)"', raw)))
+    api = sorted(set(re.findall(r'(?:https?://[^"\s\']*)?/api/[^"\s\'<>]{3,120}', raw)))[:20]
+    pg = [raw[max(0, m.start() - 150): m.end() + 150] for m in re.finditer(r"Page\s*\d+\s*of\s*\d+|totalPages|pageCount", raw)][:3]
+    return {"bytes": len(page), "sets_in_links": sets_in_links, "set_ids_in_data": set_ids, "keys": keys, "page_hrefs": hrefs,
+            "api_urls": api, "next_data": "__NEXT_DATA__" in page, "near_page": pg}
+
+
 def run():
     """Returns {status_key: {"at", "msg"}} for status.json; does nothing until the next turn is due (or asked for)."""
     req = _load(REQ, {})
@@ -101,6 +114,7 @@ def run():
     if resp.status_code != 200:
         out["sdb_users"]["msg"] = f"The badge list answered HTTP {resp.status_code} ({len(page)} bytes): {_text(page)[:300]}"[:600]
         return out
+    out["sdb_users_probe"] = {"at": _now(), "msg": json.dumps(probe(page), ensure_ascii=False)[:3000]}   # how the list pages
     found = parse_list(page)
     how = "list"
     if not any(found.get(s) is not None for s in targets):
