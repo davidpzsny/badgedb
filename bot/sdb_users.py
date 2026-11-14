@@ -78,7 +78,11 @@ def parse_next(page):
     def walk(o, depth=0):
         if depth > 40: return
         if isinstance(o, dict):
+            # {"<badge>": {"set_id": ..., "version": {...}}, "user_count": 2197, ...}: the set id can sit one level down
             sid = next((o[k] for k in ("set_id", "setId", "setID", "setid") if isinstance(o.get(k), str)), None)
+            if not sid and "user_count" in o:
+                sid = next((v[k] for v in o.values() if isinstance(v, dict)
+                            for k in ("set_id", "setId", "setID", "setid") if isinstance(v.get(k), str)), None)
             if sid and "user_count" in o:
                 k, uc = sid.lower(), o.get("user_count")
                 if isinstance(uc, (int, float)) and not isinstance(uc, bool): out[k] = max(out.get(k) or 0, int(uc))
@@ -127,11 +131,6 @@ def run():
     if resp.status_code != 200:
         out["sdb_users"]["msg"] = f"The badge list answered HTTP {resp.status_code} ({len(page)} bytes): {_text(page)[:300]}"[:600]
         return out
-    raw = page.replace('\\"', '"')
-    ucs = [m.start() for m in re.finditer(r'"user_count"', raw)]
-    out["sdb_users_shape"] = {"at": _now(), "msg": json.dumps({"user_count_hits": len(ucs),
-        "next_data_tag": bool(re.search(r'<script[^>]*id="__NEXT_DATA__"', page)), "next_f": page.count("self.__next_f.push"),
-        "samples": [raw[max(0, p - 500): p + 120] for p in ucs[:1] + ucs[200:201]]}, ensure_ascii=False)[:3500]}
     found, how = parse_next(page), "next"                          # every badge (embedded data)
     if sum(1 for v in found.values() if v is not None) < 50:
         found, how = parse_list(page), "list"                         # fallback: the 100 rows shown
