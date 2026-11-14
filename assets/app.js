@@ -474,12 +474,16 @@ function calRows(a0,a1){
   EVENTS.forEach(ev=>{ if(!ev.start||!ev.end) return; const s=Date.parse(ev.start), e=Date.parse(ev.end);
     if(!(s<a1 && e>a0)) return;
     if(!ev.badges.length) return;
-    // one row per event (its badges together, like a schedule); free when any of its badges can be earned for free
-    const cost = ev.badges.some(b => b.cost==="free") ? "free" : ev.badges.some(b => b.cost==="paid") ? "paid" : "na";
-    out.push({ev, b:ev.badges[0], bs:ev.badges, cost, s, e, st:status(ev)}); });
+    // one row per event (its badges together, like a schedule). An event with both sub and watch badges gets two rows,
+    // "(Subscribe)" and "(Watch)"; a row is free when any of its badges can be earned for free
+    const paid = ev.badges.filter(b => b.cost==="paid"), rest = ev.badges.filter(b => b.cost!=="paid");
+    const parts = paid.length && rest.length ? [["Subscribe", paid], ["Watch", rest]] : [[null, ev.badges]];
+    parts.forEach(([part, bs]) => {
+      const cost = bs.some(b => b.cost==="free") ? "free" : bs.some(b => b.cost==="paid") ? "paid" : "na";
+      out.push({ev, b:bs[0], bs, cost, s, e, st:status(ev), part, label: part ? `${ev.name} (${part})` : null}); }); });
   // schedule order: running events first, the one that ends soonest on top; then upcoming ones by their start
   const rank = r => r.st==="live" ? 0 : r.st==="soon" ? 1 : 2;
-  return out.sort((x,y)=> (rank(x)-rank(y)) || (rank(x)===0 ? x.e-y.e : x.s-y.s) || (x.s-y.s) || x.ev.id.localeCompare(y.ev.id));
+  return out.sort((x,y)=> (rank(x)-rank(y)) || (rank(x)===0 ? x.e-y.e : x.s-y.s) || (x.s-y.s) || x.ev.id.localeCompare(y.ev.id) || ((x.part==="Watch") - (y.part==="Watch")));
 }
 // when Twitch added a badge (ms); placeholders without a Twitch record use the fallback
 // (the event start once it has started, otherwise the bottom of the list)
@@ -516,12 +520,12 @@ function renderCalendar(id){
   const bars=shown.map((r,k)=>{
     const s=Math.max(r.s,a0), e=Math.min(r.e,a1);
     const left=(s-a0)/(a1-a0)*100, width=Math.max((e-s)/(a1-a0)*100, 1.2), w=Math.min(width,100-left);
-    const narrow = w < (n===7 ? 16 : 7), minPx = 34 + (Math.min(r.bs.length, 4) - 1) * 21;   // a short bar still fits every icon
+    const narrow = w < (n===7 ? 16 : 7), minPx = 34 + (Math.min(r.bs.length, 6) - 1) * 21;   // a short bar still fits every icon
     const one = r.bs.length===1, g = one ? (globalBadges.find(x=>x.imgId===r.b.img)||{}) : {}, set=g.set||"",
-          nm = one ? (g.name||r.b.name) : r.ev.name;                  // one badge: its name (and page); several: the event
-    const icon = r.bs.slice(0, 4).map((b, i) => { const bset = (globalBadges.find(x=>x.imgId===b.img)||{}).set || "";   // each icon: its own badge page
+          nm = r.label || (one ? (g.name||r.b.name) : r.ev.name);     // one badge: its name (and page); several: the event
+    const icon = r.bs.slice(0, 6).map((b, i) => { const bset = (globalBadges.find(x=>x.imgId===b.img)||{}).set || "";   // each icon: its own badge page
                  return `<span class="cal-ico${bset ? ' go' : ''}" data-bi="${i}"${bset ? ` data-bset="${esc(bset)}"` : ''}>${b.img ? `<img src="${esc(cdn(b.img))}" alt="${esc(b.name)}" loading="lazy">` : `<span class="ph">?</span>`}</span>`; }).join('')
-               + (r.bs.length > 4 ? `<span class="more">+${r.bs.length - 4}</span>` : '');
+               + (r.bs.length > 6 ? `<span class="more">+${r.bs.length - 6}</span>` : '');
     const spec = !!r.ev.time_tba, tag = specTag(r.ev);
     const label = `<span class="nm">${esc(nm)}</span>${tag}<span class="lft">${leftText(r)}</span>`;
     const inLabel = w < (n===7 ? 30 : 12) ? `<span class="nm">${esc(nm)}</span>${tag}` : label;
@@ -576,7 +580,7 @@ document.addEventListener('mouseover', e=>{
   const cal=b.closest('.cal'), r=cal && cal._rows && cal._rows[+b.dataset.k]; if(!r) return;
   const bn = b => (globalBadges.find(x=>x.imgId===b.img)||{}).name||b.name, ic = e.target.closest('.cal-ico');
   const one = !!ic || r.bs.length===1, bb = ic ? (r.bs[+ic.dataset.bi] || r.b) : r.b;
-  calTip.innerHTML = `<b>${esc(one ? bn(bb) : r.ev.name)}</b><div style="color:var(--muted)">${esc(one ? r.ev.name : r.bs.map(bn).join(', '))}${r.ev.category&&r.ev.category!=="Unknown"?` · ${esc(r.ev.category)}`:''}</div>
+  calTip.innerHTML = `<b>${esc(one ? bn(bb) : (r.label || r.ev.name))}</b><div style="color:var(--muted)">${esc(one ? r.ev.name : r.bs.map(bn).join(', '))}${r.ev.category&&r.ev.category!=="Unknown"?` · ${esc(r.ev.category)}`:''}</div>
     <div class="r"><span>Starts</span><span>${r.ev.time_tba ? fmtSpecDay(r.s) : fmtShort(r.s)}</span></div><div class="r"><span>Ends</span><span>${r.ev.time_tba ? fmtSpecDay(r.e) : fmtShort(r.e)}</span></div>
     ${r.ev.time_tba ? `<div style="margin-top:6px;color:#fbbf24">${SPEC_TIP}</div>` : ''}
     ${one?`<div class="r"><span>Cost</span><span>${{free:'Free',paid:'Sub / paid',na:'Unknown'}[bb.cost||'na']}</span></div>`:''}
