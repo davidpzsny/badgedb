@@ -127,6 +127,11 @@ def run():
     if resp.status_code != 200:
         out["sdb_users"]["msg"] = f"The badge list answered HTTP {resp.status_code} ({len(page)} bytes): {_text(page)[:300]}"[:600]
         return out
+    raw = page.replace('\\"', '"')
+    ucs = [m.start() for m in re.finditer(r'"user_count"', raw)]
+    out["sdb_users_shape"] = {"at": _now(), "msg": json.dumps({"user_count_hits": len(ucs),
+        "next_data_tag": bool(re.search(r'<script[^>]*id="__NEXT_DATA__"', page)), "next_f": page.count("self.__next_f.push"),
+        "samples": [raw[max(0, p - 500): p + 120] for p in ucs[:1] + ucs[200:201]]}, ensure_ascii=False)[:3500]}
     found, how = parse_next(page), "next"                          # every badge (embedded data)
     if sum(1 for v in found.values() if v is not None) < 50:
         found, how = parse_list(page), "list"                         # fallback: the 100 rows shown
