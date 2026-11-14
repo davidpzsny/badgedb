@@ -1,18 +1,18 @@
 {
  "popularity_http": {
-  "at": "2026-11-14T14:47:19+00:00",
+  "at": "2026-11-14T14:48:10+00:00",
   "msg": "HTTP 403, 5389 bytes, starts with: <!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\"><meta name=\"robots\" content=\"noindex,nofollow\"><meta name=\"viewport\" content=\"width=device-width,initial-scal"
  },
  "popularity": {
-  "at": "2026-11-14T14:47:19+00:00",
+  "at": "2026-11-14T14:48:10+00:00",
   "msg": "request failed: Expecting value: line 1 column 1 (char 0)"
  },
  "emotes": {
-  "at": "2026-11-14T14:47:22+00:00",
+  "at": "2026-11-14T14:48:14+00:00",
   "msg": "310 live, 0 new, 0 removed"
  },
  "top_categories": {
-  "at": "2026-11-14T14:47:21+00:00",
+  "at": "2026-11-14T14:48:13+00:00",
   "msg": "150 categories, #1 Just Chatting"
  },
  "drop_campaigns": {
@@ -24,20 +24,20 @@
   "msg": "Worlds 2026: K/DA Fan at 2026-11-13T16:00:00Z -> tweet 2121272105232683035"
  },
  "discord_events": {
-  "at": "2026-11-14T14:47:18+00:00",
+  "at": "2026-11-14T14:48:10+00:00",
   "msg": "0 created, 0 started, 0 updated, 0 closed"
  },
  "live_channels": {
-  "at": "2026-11-14T14:47:22+00:00",
+  "at": "2026-11-14T14:48:14+00:00",
   "msg": "8 running events, 48 live streams, badge_db live"
  },
  "reward_campaigns": {
-  "at": "2026-11-14T14:47:18+00:00",
+  "at": "2026-11-14T14:48:10+00:00",
   "msg": "ok via BadgeDBRewardCampaigns: 3 campaigns: Toying Around Add-On (2026-11-13T18:00 -> 2026-11-16T01:59); Pokémon Night Out Campaign (2026-10-16T17:00 -> 2026-11-23T22:59); Pokemon Evolutions (2026-10-16T17:00 -> 2027-01-30T22:59)"
  },
  "sdb_users": {
-  "at": "2026-11-14T14:47:22+00:00",
-  "req": "2026-11-14T15:10:00Z",
+  "at": "2026-11-14T14:48:14+00:00",
+  "req": "2026-11-14T15:20:00Z",
   "msg": "88 badges with a user count (list); 9 of 20 from the last 14 days; no number yet: Silver Chain, Purple Chain, Miami Chain, Golden Iguana, Gold Chain, Diamond Chain, Bronze Chain, Welcome 2 Miami, Scored Big, Bleed Miami, Gallica"
  },
  "last_chance": {
@@ -56,5 +56,9 @@
  "sdb_users_probe": {
   "at": "2026-11-14T14:45:35+00:00",
   "msg": "{\"bytes\": 791122, \"sets_in_links\": 99, \"set_ids_in_data\": 463, \"keys\": [\"user_count\"], \"page_hrefs\": [], \"api_urls\": [], \"next_data\": true, \"near_page\": []}"
+ },
+ "sdb_users_shape": {
+  "at": "2026-11-14T14:48:15+00:00",
+  "msg": "{\"user_count_hits\": 403, \"next_data_tag\": true, \"next_f\": 0, \"samples\": [\"\\\"flex gap-2 flex-wrap\\\"><div class=\\\"flex flex-col undefined\\\"><label for=\\\"sort_by\\\" class=\\\"text-neutral-500 uppercase font-bold\\\">Sort by</label><select id=\\\"sort_by\\\" name=\\\"sort_by\\\" class=\\\"px-2 py-1 rounded bg-neutral-800 hover:bg-neutral-700 transition undefined\\\"><option value=\\\"added_at\\\" selected=\\\"\\\">Added at</option><option value=\\\"removed_at\\\">Removed at</option><option value=\\\"updated_at\\\">Updated at</option><option value=\\\"start_at\\\">Start at</option><option value=\\\"end_at\\\">End at</option><option value=\\\"user_count\\\">User Count</option></select></div><div class=\\\"flex flex-col undefined\\\"><label for=\\\"sort_direction\\\" class=\\\"t\", \"rst-stand-2026-supporter\\\",\\\"version\\\":{\\\"id\\\":\\\"1\\\",\\\"image_url_1x\\\":\\\"https://static-cdn.jtvnw.net/badges/v1/ea899f87-f7f5-4d9d-9de9-173331341199/1\\\",\\\"image_url_2x\\\":\\\"https://static-cdn.jtvnw.net/badges/v1/ea899f87-f7f5-4d9d-9de9-173331341199/2\\\",\\\"image_url_4x\\\":\\\"https://static-cdn.jtvnw.net/badges/v1/ea899f87-f7f5-4d9d-9de9-173331341199/3\\\",\\\"title\\\":\\\"First Stand 2026 Supporter\\\",\\\"description\\\":\\\"This badge was rewarded to fans who supported First Stand 2026!\\\",\\\"click_action\\\":null,\\\"click_url\\\":null}},\\\"added\\\":true,\\\"user_count\\\":2197,\\\"removed\\\":false,\\\"updatedAt\\\":\\\"2026-11-14T14:07:51.701Z\\\",\\\"added_at\\\":\\\"2026-03-12T23:43:56.666Z\\\",\\\"cost\\\":\\\"p\"]}"
  }
 }
