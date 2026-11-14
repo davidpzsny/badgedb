@@ -1086,5 +1086,19 @@
   "set": "kda-fan",
   "replied": "discord only",
   "posted": "2026-11-14T16:00:48+00:00"
+ },
+ "live:metaphor-refantazio": {
+  "tweet": "2121664697040867644",
+  "title": "Gallica",
+  "set": "gallica",
+  "sets": [
+   "gallica"
+  ],
+  "titles": [
+   "Gallica"
+  ],
+  "posted": "2026-11-14T18:00:58+00:00",
+  "replied": true,
+  "reply": "Objective, channels and exact dates: {url}"
  }
 }
