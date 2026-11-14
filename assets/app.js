@@ -1122,15 +1122,20 @@ async function livePopularity(force = false){
   }catch(e){ return null; }          // blocked (CORS / network): keep whatever we already show
 }
 let liveTried = false;
+// every badge's count, refreshed by the bot every 30 minutes (popularity.json "sdb"); the older daily snapshot
+// ("counts") and the browser fetch below are only a fallback for when those numbers are missing
+const popSdb = () => POP && POP.sdb && Object.keys(POP.sdb).length >= 100 ? POP.sdb : null;
 function maybeLivePopularity(){
   if(liveTried || !READY) return; liveTried = true;
+  if(popSdb()) return;
   const today = new Date().toISOString().slice(0,10);
   if(POP && POP.updated === today) return;                         // the repo already has today's numbers
   livePopularity().then(c => { if(!c) return; POP = c; applyPopularity(); renderPopularity(); renderGlobal(); });
 }
 function applyPopularity(){
-  if(!POP || !POP.counts) return;
-  globalBadges.forEach(b => { b.users = POP.counts[b.set] || 0; });   // one consistent source; old snapshot numbers are dropped
+  const src = popSdb() || (POP && POP.counts);
+  if(!src) return;
+  globalBadges.forEach(b => { b.users = src[b.set] || 0; });   // one consistent source; old snapshot numbers are dropped
 }
 function renderPopularity(){
   const box = $('#popList'); if(!box) return;
@@ -1139,7 +1144,7 @@ function renderPopularity(){
   if(!ranked.length){ box.innerHTML = `<div class="empty">${READY ? 'No usage data yet — it is refreshed once a day.' : 'Loading…'}</div>`; $('#popStats').innerHTML=''; return; }
   const total = ranked.reduce((n, b) => n + b.users, 0), top = ranked[0], max = top.users;
   $('#popStats').innerHTML = `<div><b>${ranked.length}</b><span>badges ranked</span></div><div><b>${compact(total)}</b><span>badge users counted</span></div>
-    <div><b>${esc(top.name)}</b><span>most used · ${compact(top.users)} users${POP && POP.updated ? ` · updated ${fmt(POP.updated)}` : ' · older snapshot, refresh pending'}</span></div>`;
+    <div><b>${esc(top.name)}</b><span>most used · ${compact(top.users)} users${popSdb() && POP.sdb_updated ? ` · updated ${fmtFull(POP.sdb_updated)}` : POP && POP.updated ? ` · updated ${fmt(POP.updated)}` : ' · older snapshot, refresh pending'}</span></div>`;
   let list = ranked;
   if(pFilter === "event") list = list.filter(b => EV_BY_IMG[b.imgId]);
   if(pFilter === "2026") list = list.filter(b => (b.added || "").startsWith("2026"));
@@ -1688,7 +1693,7 @@ route(); setInterval(tick,1000);
 renderSideUser(); if(TW_USER) twFetchUser();
 const getJSON = u => fetch(u, {cache:'no-cache'}).then(r => r.ok ? r.json() : null);   // no-cache = ask the server, reuse the copy when unchanged (304)
 Promise.allSettled([getJSON('/badges.json'), getJSON('/events.json'), getJSON('/popularity.json')]).then(([b, e, pp]) => {
-  if(pp.status === 'fulfilled' && pp.value && pp.value.counts) POP = pp.value;
+  if(pp.status === 'fulfilled' && pp.value && (pp.value.counts || pp.value.sdb)) POP = pp.value;
   if(b.status === 'fulfilled' && Array.isArray(b.value) && b.value.length) globalBadges = normalize(b.value);
   if(e.status === 'fulfilled' && Array.isArray(e.value) && e.value.length){ EVENTS = e.value; indexEvents(); }
   applyPopularity();

@@ -23,7 +23,7 @@ channel campaign badges, global emotes, badge popularity and statistics. New bad
 | Channel Badges | `/channel/` · `/channel/<image-id>/` | Campaign badges (sub / watch / top supporter) collected from live channels |
 | Global Emotes | `/emotes/` | All global emotes; new ones get a date, removed ones move to "Removed" |
 | Top Categories | `/categories/` | Top 150 Twitch categories right now: viewers, live channels, biggest stream, badges you can earn there |
-| Badge Popularity | `/popularity/` | Badges ranked by users seen wearing them (data: PotatBotat) |
+| Badge Popularity | `/popularity/` | Badges ranked by users seen wearing them (counts refreshed every 30 min by `bot/sdb_users.py`) |
 | Statistics | `/stats/` | Badges per month / year, free vs paid, games with the most badges |
 | Contact | `/contact/` | Email / Discord / X, and a form that opens a pre-filled email (badge pages link here with "Report a mistake") |
 | Leaderboard | `/leaderboard/` | **Coming soon** page. Twitch only shares a badge collection with twitch.tv itself (other sites get 401 / forbidden, tested 2026-10-12), so the ranking needs another data source first |
@@ -233,7 +233,7 @@ OBS → Sources → + → Browser, URL above, Width `1920`, Height `1080`. It is
   (`AUTO_MIN`), and `/admin/` → **Overlay user counts** (writes `sdb-request.json`) makes the next run (within 5 minutes)
   do it right away. The counts are saved in `popularity.json` under `sdb`
   (`bot/sdb_users.py`; result in `status.json` → `sdb_users`). Badges without a number there fall back to
-  PotatBotat's count. The site itself keeps using PotatBotat's counts.
+  PotatBotat's count. Since Nov 14, 2026 the site uses these counts too, for every badge (one page load gives all of them).
   The last good copy is kept in the browser source, so the overlay stays filled if the data can't be loaded.
 - **After every change** set `OVERLAY_V` in `index.html` and `v` in `version.json` to the same new value. The overlay checks
   `version.json` every 30 seconds and reloads itself, so the stream PC needs no action (about 1 to 2 minutes after the commit).

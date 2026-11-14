@@ -1,10 +1,11 @@
 [
  {
   "date": "2026-11-14",
-  "title": "GTA VI dates and split schedule rows",
+  "title": "GTA VI dates, split schedule rows, user counts",
   "items": [
    {"type": "improved", "text": "Grand Theft Auto VI: dates announced. All 10 badges are available from Nov 18 11:00 to Dec 1 07:59 (UTC)."},
-   {"type": "improved", "text": "Timeline schedule: an event with both sub and watch badges now gets two rows, (Subscribe) and (Watch), like GTA VI and PAYDAY 3."}
+   {"type": "improved", "text": "Timeline schedule: an event with both sub and watch badges now gets two rows, (Subscribe) and (Watch), like GTA VI and PAYDAY 3."},
+   {"type": "improved", "text": "Badge popularity: user counts now come from one community badge tracker for every badge, including the newest ones, and refresh every 30 minutes instead of once a day."}
   ]
  },
  {

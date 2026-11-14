@@ -1,10 +1,11 @@
-"""User counts from an external badge list for the newest badges (the stream overlay's "Added in the last 14 days" column).
+"""User counts for every global badge from an external badge list (the site's badge popularity, badge pages and the
+stream overlay's "Added in the last 14 days" column).
 
 Runs on its own every AUTO_MIN minutes, and right away when asked for with the "Overlay user counts" button in /admin/
 (the button writes sdb-request.json; that runs when the request is newer than the last one handled). One page load a time:
-The global badge list at LIST_URL (newest first) shows "Users" for every badge. The counts go into popularity.json
-under "sdb" (only the stream overlay uses them; the site keeps PotatBotat's counts, which are counted differently and
-are much higher); the result is reported in status.json under "sdb_users".
+The global badge list at LIST_URL shows 100 badges per page, but the page carries the data of every badge
+(set_id + user_count) as embedded JSON, so one page load gives all counts. They go into popularity.json under "sdb"
+(the site and the overlay use them); the result is reported in status.json under "sdb_users".
 """
 import datetime, html as htmlmod, json, os, re
 import requests
@@ -66,6 +67,29 @@ def parse_list(page):
     return {sid: _num(v) for sid, v in use.items() if v}
 
 
+def parse_next(page):
+    """{set_id: users or None} for every badge from the page's embedded __NEXT_DATA__ JSON (several versions of one set:
+    the highest count)."""
+    m = re.search(r'<script[^>]*id="__NEXT_DATA__"[^>]*>(.*?)</script>', page, re.S)
+    if not m: return {}
+    try: data = json.loads(m.group(1))
+    except Exception: return {}
+    out = {}
+    def walk(o, depth=0):
+        if depth > 40: return
+        if isinstance(o, dict):
+            sid = next((o[k] for k in ("set_id", "setId", "setID", "setid") if isinstance(o.get(k), str)), None)
+            if sid and "user_count" in o:
+                k, uc = sid.lower(), o.get("user_count")
+                if isinstance(uc, (int, float)) and not isinstance(uc, bool): out[k] = max(out.get(k) or 0, int(uc))
+                else: out.setdefault(k, None)
+            for v in o.values(): walk(v, depth + 1)
+        elif isinstance(o, list):
+            for v in o: walk(v, depth + 1)
+    walk(data)
+    return out
+
+
 def parse_json(page):
     """Fallback: data embedded as JSON (e.g. a Next.js payload): a set id with a user count next to it."""
     raw = page.replace('\\"', '"')
@@ -76,19 +100,6 @@ def parse_json(page):
         if c and m.group(1).lower() not in out:
             out[m.group(1).lower()] = None if c.group(1) == "null" else int(c.group(1))
     return out
-
-
-def probe(page):
-    """What the list page holds besides the 100 rendered rows: links to other pages, embedded data with more badges."""
-    raw = page.replace('\\"', '"')
-    hrefs = sorted(set(h for h in re.findall(r'href="([^"]+)"', page) if re.search(r"page|offset|cursor|p=\d", h, re.I)))[:20]
-    sets_in_links = len({m.group(1).lower() for m in LINK_RE.finditer(page)})
-    set_ids = len(set(re.findall(r'"(?:set_?id|setId|setID)"\s*:\s*"([^"]+)"', raw)))
-    keys = sorted(set(re.findall(r'"(user_?count|userCount|usersCount|users_count|holders|totalPages|total_pages|pageCount|perPage|per_page|total)"', raw)))
-    api = sorted(set(re.findall(r'(?:https?://[^"\s\']*)?/api/[^"\s\'<>]{3,120}', raw)))[:20]
-    pg = [raw[max(0, m.start() - 150): m.end() + 150] for m in re.finditer(r"Page\s*\d+\s*of\s*\d+|totalPages|pageCount", raw)][:3]
-    return {"bytes": len(page), "sets_in_links": sets_in_links, "set_ids_in_data": set_ids, "keys": keys, "page_hrefs": hrefs,
-            "api_urls": api, "next_data": "__NEXT_DATA__" in page, "near_page": pg}
 
 
 def run():
@@ -103,9 +114,11 @@ def run():
     out = {"sdb_users": {"at": _now(), "req": req.get("at") if asked else st.get("req", ""), "msg": ""}}
     rows = _load(BADGES, [])
     cutoff = (datetime.date.today() - datetime.timedelta(days=DAYS)).isoformat()
-    targets = {}
+    targets, every = {}, {}                                         # the last 14 days (status message) / every badge
     for r in rows:                                                  # [title, img, added, free, users, set, desc]
-        if len(r) > 5 and r[5] and r[2] and r[2] >= cutoff: targets.setdefault(r[5].lower(), r[0])
+        if len(r) > 5 and r[5]:
+            every.setdefault(r[5].lower(), r[0])
+            if r[2] and r[2] >= cutoff: targets.setdefault(r[5].lower(), r[0])
     try:
         resp = requests.get(LIST_URL, headers=HEADERS, timeout=40)
         page = resp.text
@@ -114,11 +127,11 @@ def run():
     if resp.status_code != 200:
         out["sdb_users"]["msg"] = f"The badge list answered HTTP {resp.status_code} ({len(page)} bytes): {_text(page)[:300]}"[:600]
         return out
-    out["sdb_users_probe"] = {"at": _now(), "msg": json.dumps(probe(page), ensure_ascii=False)[:3000]}   # how the list pages
-    found = parse_list(page)
-    how = "list"
-    if not any(found.get(s) is not None for s in targets):
-        found, how = parse_json(page), "json"
+    found, how = parse_next(page), "next"                          # every badge (embedded data)
+    if sum(1 for v in found.values() if v is not None) < 50:
+        found, how = parse_list(page), "list"                         # fallback: the 100 rows shown
+        if not any(found.get(s) is not None for s in targets):
+            found, how = parse_json(page), "json"
     # nothing recognised: keep what the page looked like, so the parser can be fixed if the page changes its layout
     first = next((m for m in LINK_RE.finditer(page)), None)
     keys = sorted(set(re.findall(r'"(user_?count|userCount|usersCount|users_count|holders)"', page.replace('\\"', '"'))))
@@ -126,7 +139,8 @@ def run():
         "bytes": len(page), "links": len(LINK_RE.findall(page)), "users_labels": len(USERS_RE.findall(_text(page))), "json_keys": keys,
         "parsed": how, "sample": dict(list(found.items())[:8]),
         "html_near_first_badge": page[max(0, first.start() - 1200): first.start() + 1800] if first else page[:2500]}, ensure_ascii=False)}
-    counts = {s: found[s] for s in targets if found.get(s) is not None}
+    counts = {s: found[s] for s in every if found.get(s) is not None}
+    recent = [s for s in targets if found.get(s) is not None]
     missing = [targets[s] for s in targets if s not in found]
     pop = _load(POP_DB, {})
     if counts and any((pop.get("sdb") or {}).get(s) != n for s, n in counts.items()):   # only write when a number changed
@@ -134,7 +148,7 @@ def run():
         pop["sdb_updated"] = _now()
         json.dump(pop, open(POP_DB, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     na = [targets[s] for s in targets if s in found and found[s] is None]
-    out["sdb_users"]["msg"] = (f"{len(counts)} of {len(targets)} badges from the last {DAYS} days updated"
+    out["sdb_users"]["msg"] = (f"{len(counts)} badges with a user count ({how}); {len(recent)} of {len(targets)} from the last {DAYS} days"
                                + (f"; no number yet: {', '.join(na)}" if na else "")
                                + (f"; not in the list: {', '.join(missing)}" if missing else ""))[:600]
     print("sdb users:", out["sdb_users"]["msg"])
