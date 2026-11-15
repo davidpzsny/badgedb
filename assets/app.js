@@ -466,8 +466,7 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape') setMenu(false); }
 const CAL = { calHome:{offset:0,span:7,limit:10}, calTimeline:{offset:0,span:7,limit:0} };
 function calRange(st){
   const d=new Date(); d.setHours(0,0,0,0);
-  d.setDate(d.getDate() - ((d.getDay()+6)%7));               // Monday of the current week
-  d.setDate(d.getDate() + (st.span===7 ? st.offset*7 : st.offset*28 - 7));
+  d.setDate(d.getDate() + st.offset*st.span);                // today is always the first day (‹ › move a whole view)
   const a0=d.getTime(), end=new Date(d); end.setDate(end.getDate() + st.span);   // calendar days, so a clock change (DST) doesn't shift them
   return [a0, end.getTime()];
 }
