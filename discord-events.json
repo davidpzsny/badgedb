@@ -41,7 +41,7 @@
  },
  "jordan-x-space-jam": {
   "id": "1569955843439329365",
-  "sig": "[{\"description\": \"\\u2022 Jordan x Space Jam: Watch 15 minutes on twitch.tv/samham, twitch.tv/realkatieb or twitch.tv/itspikaaa.\\n\\nDetails and all dates: https://badgedatabase.com/badges/jordan-x-space-jam/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/jordan-x-space-jam/\"}, \"name\": \"Space Jam's 30th Anniversary\", \"scheduled_end_time\": \"2026-11-15T23:59:00Z\"}, \"2026-11-15T20:00:00Z\"]"
+  "sig": "[{\"description\": \"\\u2022 Jordan x Space Jam: Watch 15 minutes on one of the two eligible channels (not named yet).\\n\\nDetails and all dates: https://badgedatabase.com/badges/jordan-x-space-jam/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/jordan-x-space-jam/\"}, \"name\": \"Space Jam's 30th Anniversary\", \"scheduled_end_time\": \"2026-11-15T22:45:00Z\"}, \"2026-11-15T22:00:00Z\"]"
  },
  "metaphor-refantazio": {
   "id": "1570906863506165868",
@@ -50,5 +50,9 @@
  "gta-6": {
   "id": "1571079628347543683",
   "sig": "[{\"description\": \"\\u2022 Welcome 2 Miami: Subscribe (Tier 1) or gift a Tier 1 sub in the category.\\n\\u2022 Scored Big: Subscribe (Tier 1) or gift a Tier 1 sub in the category.\\n\\u2022 Bleed Miami: Subscribe (Tier 1) or gift a Tier 1 sub in the category.\\n\\u2022 Purple Chain: Watch 1 hour a day in the category for 1 day.\\n\\u2022 Bronze Chain: Watch 1 hour a day in the category for 2 days.\\n\\u2022 Silver Chain: Watch 1 hour a day in the category for 3 days.\\n\\u2022 Gold Chain: Watch 1 hour a day in the category for 4 days.\\n\\u2022 Diamond Chain: Watch 1 hour a day in the category for 5 days.\\n\\u2022 Miami Chain: Watch 1 hour a day in the category for 6 days.\\n\\u2022 Golden Iguana: Unlock all nine other GTA VI badges: the six chains (Purple, Bronze, Silver, Gold, Diamond, Miami) and the three sub badges (Welcome 2 Miami, Scored Big, Bleed Miami).\\n\\nDetails and all dates: https://badgedatabase.com/badges/welcome-2-miami/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/welcome-2-miami/\"}, \"name\": \"Grand Theft Auto VI\", \"scheduled_end_time\": \"2026-12-01T07:59:00Z\"}, \"2026-11-18T11:00:00Z\"]"
+ },
+ "doom-the-dark-ages": {
+  "id": "1571591678131834994",
+  "sig": "[{\"description\": \"\\u2022 DOOM: The Dark Ages: Subscribe (Tier 1) or gift a Tier 1 sub in the category.\\n\\nDetails and all dates: https://badgedatabase.com/badges/doom-the-dark-ages/\\nTimeline: https://badgedatabase.com/timeline/\", \"entity_metadata\": {\"location\": \"https://badgedatabase.com/badges/doom-the-dark-ages/\"}, \"name\": \"DOOM: The Dark Ages\", \"scheduled_end_time\": \"2026-12-11T16:59:00Z\"}, \"2026-11-16T17:00:00Z\"]"
  }
 }
