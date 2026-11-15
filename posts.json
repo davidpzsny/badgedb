@@ -1121,5 +1121,28 @@
   "posted": "2026-11-14T19:00:50+00:00",
   "replied": true,
   "reply": "Objective, channels and the exact end time: {url}"
+ },
+ "ending:twitchcon-sd": {
+  "tweet": "",
+  "title": "TwitchCon 2026 - San Diego - BeachBall",
+  "set": "twitchcon-2026---san-diego---beachball",
+  "replied": "discord only",
+  "posted": "2026-11-15T00:00:49+00:00"
+ },
+ "xending:twitchcon-sd": {
+  "tweet": "2121755272217583975",
+  "title": "TwitchCon 2026 - San Diego - BeachBall",
+  "set": "twitchcon-2026---san-diego---beachball",
+  "sets": [
+   "twitchcon-2026---san-diego---beachball",
+   "twitchcon-2026---san-diego---taco"
+  ],
+  "titles": [
+   "TwitchCon 2026 - San Diego - BeachBall",
+   "TwitchCon 2026 - San Diego - Taco"
+  ],
+  "posted": "2026-11-15T00:00:52+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
