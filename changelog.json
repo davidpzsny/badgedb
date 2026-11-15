@@ -3,7 +3,8 @@
   "date": "2026-11-15",
   "title": "Space Jam windows and cleaner X posts",
   "items": [
-   {"type": "improved", "text": "Space Jam's 30th Anniversary: the Jordan x Space Jam badge has three windows: Nov 13 (Samham), Nov 14 (Samham, RealKatieB, itspikaaa) and today from 20:00 UTC on the same three channels. The badge page lists all three."},
+   {"type": "improved", "text": "Space Jam's 30th Anniversary: the Jordan x Space Jam badge has three windows: Nov 13 (Samham), Nov 14 (Samham, RealKatieB, itspikaaa) and today from 22:00 to 22:45 UTC on two eligible channels. The badge page lists all three."},
+   {"type": "improved", "text": "DOOM: The Dark Ages: dates announced. The badge is available from Nov 16 17:00 to Dec 11 16:59 (UTC) for a Tier 1 sub or gift sub in the category."},
    {"type": "improved", "text": "Speculated end: when the start time is confirmed but only the day of the end is known, just the end is marked Speculated."},
    {"type": "fixed", "text": "X posts: badge names and objectives are no longer cut off in the middle. Shared parts of badge names are written once (e.g. TwitchCon 2026 - San Diego: BeachBall & Taco), and whatever does not fit is left out whole."}
   ]
