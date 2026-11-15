@@ -583,9 +583,17 @@ LIVE_WAIT_MIN = 2           # if an event starts within this many minutes, wait 
 LIVE_LATE_MIN = 90          # never announce an event that started longer ago than this
 def _dt(t): return datetime.datetime.fromisoformat(t.replace("Z", "+00:00"))
 
-def live_title(badges_meta):
+def _name_parts(badges_meta):
+    """(shared part, short names): 'TwitchCon 2026 - San Diego - BeachBall', '... - Taco' -> ('TwitchCon 2026 - San Diego',
+    ['BeachBall', 'Taco']). Without a shared part: ('', the names)."""
     names = [m["title"] for m in badges_meta]
-    return " & ".join(names[:2]) + (f" + {len(names) - 2} more" if len(names) > 2 else "")
+    if len(names) > 1:
+        p = os.path.commonprefix(names)
+        cut = max(p.rfind(" - "), p.rfind(" – "), p.rfind(": "))
+        if cut >= 3:
+            short = [n[cut:].lstrip(" -–:").strip() for n in names]
+            if all(short): return p[:cut].strip(), short
+    return "", names
 
 def with_category(how, ev):
     """'... in the category.' -> '... in the Metaphor: ReFantazio category.' so posts name the category."""
@@ -595,22 +603,53 @@ def with_category(how, ev):
     if not cat or cat.lower() in ("unknown", "various", "multiple") or re.search(r"\d+ (eligible )?categories", cat, re.I): return how
     return how.replace("in the category", f"in the {cat} category")
 
-def live_post_text(ev, badges_meta):
-    title = live_title(badges_meta)
-    until = _dt(ev["end"]).strftime("%b %-d, %H:%M UTC")
+def live_title(badges_meta, ev=None):
+    pre, names = _name_parts(badges_meta)
+    if pre:
+        return f"{pre}: " + " & ".join(names[:2]) + (f" + {len(names) - 2} more" if len(names) > 2 else "")
+    if len(names) > 2 and ev and ev.get("name"):                # many badges without a shared name: the event
+        return f"{ev['name']} ({len(names)} badges)"
+    return " & ".join(names[:2]) + (f" + {len(names) - 2} more" if len(names) > 2 else "")
+
+def objective_lines(ev, badges_meta):
+    """[(line, badges on it)]: one line when every badge has the same objective, else one line per objective with the
+    (short) names of its badges."""
+    _, names = _name_parts(badges_meta)
     how_of = {b.get("img"): with_category((b.get("how") or "").strip(), ev) for b in ev.get("badges", []) if b.get("img")}
-    hows = [how_of.get(m["img"], "") for m in badges_meta]
-    if hows and all(h == hows[0] for h in hows):
-        how = hows[0]                                   # same objective for every badge: say it once
-    else:                                               # different objectives: one line per badge, so it's clear which is which
-        how = "\n".join(f"• {m['title']}: {h}" for m, h in zip(badges_meta, hows) if h)
+    groups = {}
+    for n, m in zip(names, badges_meta):
+        h = how_of.get(m["img"], "")
+        if h: groups.setdefault(h, []).append(n)
+    if len(groups) == 1 and len(next(iter(groups.values()))) == len(badges_meta):
+        h = next(iter(groups)); return [(h, len(badges_meta))]
+    return [(f"• {', '.join(ns)}: {h}", len(ns)) for h, ns in groups.items()]
+
+def compose_post(head, items, tail, limit=275):
+    """head + as many WHOLE objective lines as fit + tail (X's weighted length). Nothing is cut in the middle: lines that
+    don't fit are left out and counted ("+N more badges"); a single long objective keeps its first whole sentences."""
+    def build(ls, more=0):
+        extra = [f"• +{more} more badge{'s' if more > 1 else ''}, details in the reply"] if more else []
+        body = "\n".join(ls + extra)
+        return f"{head}\n\n{body}{tail}" if body else head + tail
+    lines = [t for t, _ in items]
+    for k in range(len(lines), 0, -1):
+        more = sum(n for _, n in items[k:]) if len(items) > 1 else 0
+        t = build(lines[:k], more)
+        if _xlen(t) <= limit: return t
+    if lines:
+        sents = re.split(r"(?<=[.!?])\s+", lines[0])
+        for k in range(len(sents) - 1, 0, -1):
+            t = build([" ".join(sents[:k])], sum(n for _, n in items[1:]))
+            if _xlen(t) <= limit: return t
+    return head + tail
+
+def live_post_text(ev, badges_meta):
+    title = live_title(badges_meta, ev)
+    until = (_dt(ev["end"]).strftime("%b %-d") + " (end time not announced)") if ev.get("end_tba") \
+            else _dt(ev["end"]).strftime("%b %-d, %H:%M UTC")
     head = f"🟢 Now available on Twitch: {title}"
     tail = f"\n\n⏳ Until {until}\n#Twitch #TwitchBadges"
-    room = 270 - len(head) - len(tail)
-    if how and room > 20:
-        how = how if len(how) <= room else how[:room - 1].rstrip() + "…"
-        return f"{head}\n\n{how}{tail}"
-    return head + tail
+    return compose_post(head, objective_lines(ev, badges_meta), tail)
 
 def announce_live(events, live):
     """Post once per event when it starts. Waits up to LIVE_WAIT_MIN minutes so the post lands on time."""
@@ -646,8 +685,9 @@ def announce_live(events, live):
             try:
                 pngs = [requests.get(m["url"], timeout=30).content for m in meta[:5]]   # every badge of the event on the image
                 if len(meta) > 5: pngs += [b""] * (len(meta) - 5)                     # counted in the "+N" tile
-                card = make_card(pngs, live_title(meta), header="NOW AVAILABLE ON TWITCH",
-                                 header_sub="Get it before " + _dt(ev["end"]).strftime("%b %-d, %H:%M UTC"), accent=(52, 211, 153))
+                card = make_card(pngs, live_title(meta, ev), header="NOW AVAILABLE ON TWITCH",
+                                 header_sub=("Get it before the end of " + _dt(ev["end"]).strftime("%b %-d")) if ev.get("end_tba")
+                                            else "Get it before " + _dt(ev["end"]).strftime("%b %-d, %H:%M UTC"), accent=(52, 211, 153))
                 api = tweepy.API(tweepy.OAuth1UserHandler(*kw.values()))
                 media_ids = [api.media_upload(filename=f"{first['img']}-live.png", file=io.BytesIO(card)).media_id]
             except Exception as e:
@@ -913,7 +953,8 @@ def badge_list(meta):
 X_URL_LEN = 23                                     # X counts every link as 23 characters
 def _xlen(text):                                   # X's weighted length: links 23, most symbols and emoji (e.g. "•") 2
     light = lambda c: ord(c) <= 4351 or 8192 <= ord(c) <= 8205 or 8208 <= ord(c) <= 8223 or 8242 <= ord(c) <= 8247
-    return sum(1 if light(c) else 2 for c in re.sub(r"https?://\S+", "x" * X_URL_LEN, text))
+    links = r"https?://\S+|\b(?:[a-z0-9-]+\.)+(?:com|tv|gg|net|org|io|app|de|co)(?:/[^\s,]*)?"   # bare domains are links on X too
+    return sum(1 if light(c) else 2 for c in re.sub(links, "x" * X_URL_LEN, text, flags=re.I))
 
 def link_reply_text(v, site):
     """(text, urls) of the link reply. One badge: the template with its link. Several: one line per badge
@@ -1061,7 +1102,7 @@ def announce_ending(events, live):
     changed = False
     for ev in events:
         key = f"ending:{ev.get('id')}"
-        if not ev.get("end") or key in posts or ev.get("time_tba"): continue
+        if not ev.get("end") or key in posts or ev.get("time_tba") or ev.get("end_tba"): continue   # end time unknown: no "last chance"
         left = (_dt(ev["end"]) - now).total_seconds() / 3600
         if not (0 < left <= ENDING_SOON_HOURS): continue
         meta = [by_img[b["img"]] for b in ev.get("badges", []) if b.get("img") in by_img]
@@ -1069,7 +1110,7 @@ def announce_ending(events, live):
         end_ts = int(_dt(ev["end"]).timestamp())
         try:
             sent = discord_send("ending", {
-                "title": f"⏳ Ending soon: {live_title(meta)}",
+                "title": f"⏳ Ending soon: {live_title(meta, ev)}",
                 "description": f"Ends <t:{end_ts}:R> (<t:{end_ts}:f>)" + (discord_links(meta) if len(meta) > 1 else f"\n{site_url()}/badges/{meta[0]['set']}/"),
                 "url": f"{site_url()}/badges/{meta[0]['set']}/",
                 "thumbnail": {"url": meta[0]["url"]}, "color": 0xF59E0B})
@@ -1088,22 +1129,12 @@ X_ENDING_MIN_EVENT_H = 48   # only for events that ran at least this long (short
 X_ENDING_LATE_H = 3         # never post with less than this many hours left (e.g. after the bot was paused)
 
 def ending_post_text(ev, badges_meta, left_h):
-    title = live_title(badges_meta)
+    title = live_title(badges_meta, ev)
     until = _dt(ev["end"]).strftime("%b %-d, %H:%M UTC")
-    how_of = {b.get("img"): with_category((b.get("how") or "").strip(), ev) for b in ev.get("badges", []) if b.get("img")}
-    hows = [how_of.get(m["img"], "") for m in badges_meta]
-    if hows and all(h == hows[0] for h in hows):
-        how = hows[0]
-    else:
-        how = "\n".join(f"• {m['title']}: {h}" for m, h in zip(badges_meta, hows) if h)
     left = "Less than 24 hours left" if left_h > 20 else f"About {int(left_h)} hours left"
     head = f"⏳ Last chance on Twitch: {title}"
     tail = f"\n\n{left}, ends {until}\n#Twitch #TwitchBadges"
-    room = 270 - len(head) - len(tail)
-    if how and room > 20:
-        how = how if len(how) <= room else how[:room - 1].rstrip() + "…"
-        return f"{head}\n\n{how}{tail}"
-    return head + tail
+    return compose_post(head, objective_lines(ev, badges_meta), tail)
 
 def announce_last_chance_x(events, live, max_per_run=2):
     """One X post per event when it has less than ENDING_SOON_HOURS left; the link to the badge page follows as a reply."""
@@ -1114,7 +1145,7 @@ def announce_last_chance_x(events, live, max_per_run=2):
     due = []
     for ev in events:
         key = f"xending:{ev.get('id')}"
-        if not ev.get("start") or not ev.get("end") or key in posts or ev.get("time_tba"): continue
+        if not ev.get("start") or not ev.get("end") or key in posts or ev.get("time_tba") or ev.get("end_tba"): continue   # end time unknown: no "last chance"
         start, end = _dt(ev["start"]), _dt(ev["end"])
         left = (end - now).total_seconds() / 3600
         if not (X_ENDING_LATE_H <= left <= ENDING_SOON_HOURS): continue
@@ -1135,7 +1166,7 @@ def announce_last_chance_x(events, live, max_per_run=2):
             try:
                 pngs = [requests.get(m["url"], timeout=30).content for m in meta[:5]]
                 if len(meta) > 5: pngs += [b""] * (len(meta) - 5)
-                card = make_card(pngs, live_title(meta), header="LAST CHANCE ON TWITCH",
+                card = make_card(pngs, live_title(meta, ev), header="LAST CHANCE ON TWITCH",
                                  header_sub="Ends " + end.strftime("%b %-d, %H:%M UTC"), accent=(245, 158, 11))
                 api = tweepy.API(tweepy.OAuth1UserHandler(*kw.values()))
                 media_ids = [api.media_upload(filename=f"{first['img']}-ending.png", file=io.BytesIO(card)).media_id]

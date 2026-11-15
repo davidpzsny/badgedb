@@ -193,7 +193,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-11-11.1";   // bump together with version.json after every change
+const OVERLAY_V = "2026-11-15.1";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -366,7 +366,7 @@ function siteEventCards(now){
     if(!ev.start){ const a = added(ev); if(a && now - Date.parse(a) > STALE) return false; }   // no dates for 21+ days: the site counts it as ended
     return true;
   }).map(ev => ({ slot: ev.id, imgs: ev.badges.map(b => b.img).filter(Boolean), title: noLongDash(EVENT_TITLES[ev.id] || ev.name),
-                  desc: noLongDash(EVENT_DESC[ev.id] || eventDesc(ev)), start: ev.start || null, end: ev.end || null, tba: !!ev.time_tba }));
+                  desc: noLongDash(EVENT_DESC[ev.id] || eventDesc(ev)), start: ev.start || null, end: ev.end || null, tba: !!ev.time_tba, endTba: !!ev.end_tba }));
 }
 function overlayEvents(now){
   const list = siteEventCards(now).concat(EXTRA_EVENTS), t = x => x ? Date.parse(x) : null;
@@ -562,7 +562,7 @@ function eventView(e, now){
   if(start === null) return { e, status: 'UPCOMING', bg: '#d99e1e', fg: '#1a1205', cdTo: null, cdText: 'DATE TBA', startLabel: 'STARTS' };
   if(now < start && e.tba){ const d = new Date(start); return { e, status: 'UPCOMING', bg: '#d99e1e', fg: '#1a1205', cdText: `SPECULATED · ${MS[d.getUTCMonth()]} ${d.getUTCDate()}`, cdTo: null, startLabel: 'STARTS' }; }   // only the day is known: speculated time
   if(now < start)    return { e, status: 'UPCOMING', bg: '#d99e1e', fg: '#1a1205', cdTo: start, prefix: 'STARTS IN', startLabel: 'STARTS' };
-  if(end === null || now < end) return { e, status: 'ACTIVE', bg: '#3ba55d', fg: '#06160c', cdTo: end, prefix: e.tba ? 'ENDS IN ~' : 'ENDS IN', cdText: end === null ? 'LIVE' : '', startLabel: 'STARTED' };
+  if(end === null || now < end) return { e, status: 'ACTIVE', bg: '#3ba55d', fg: '#06160c', cdTo: end, prefix: e.tba || e.endTba ? 'ENDS IN ~' : 'ENDS IN', cdText: end === null ? 'LIVE' : '', startLabel: 'STARTED' };
   return { e, status: 'ENDED' };
 }
 function eventCard(v){
@@ -571,7 +571,7 @@ function eventCard(v){
     <div class="in"><div class="row">${e.imgs.length ? `<div class="imgs">${e.imgs.map(u => img(u)).join('')}</div>` : ''}<div class="title bc">${esc(e.title)}</div></div>
       <div class="desc b">${esc(e.desc)}</div>
       <div class="dates"><div><div class="dk bc">${v.startLabel}</div><div class="dv b">${e.start ? (e.tba ? dayStamp(Date.parse(e.start)) : stamp(Date.parse(e.start))) : 'To be announced'}</div></div>
-        <div><div class="dk bc">ENDS</div><div class="dv b">${e.end ? (e.tba ? dayStamp(Date.parse(e.end)) : stamp(Date.parse(e.end))) : 'To be announced'}</div></div></div></div></div>`;
+        <div><div class="dk bc">ENDS</div><div class="dv b">${e.end ? (e.tba || e.endTba ? dayStamp(Date.parse(e.end)) : stamp(Date.parse(e.end))) : 'To be announced'}</div></div></div></div></div>`;
 }
 // the NEW label always sits right after the name, also when a long name wraps to a second line
 function titleNew(title, isNew){

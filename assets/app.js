@@ -155,8 +155,10 @@ function countdown(iso){ let d=Math.max(0,Date.parse(iso)-Date.now()); const day
 const evCost = ev => ev.badges.some(b=>b.cost==="free")?"free":ev.badges.some(b=>b.cost==="paid")?"paid":"na";
 // events with only the days known (time_tba): the times are a guess, so they are marked "Speculated" and countdowns get a "~"
 const SPEC_TIP = "Speculated time: only the days are known so far, the exact time is not confirmed yet.";
-const specTag = ev => ev && ev.time_tba ? `<span class="spec-tag" title="${SPEC_TIP}">Speculated</span>` : "";
-const cdp = ev => ev && ev.time_tba ? "~" : "";
+// end_tba: the start is confirmed, only the day of the end is known (only the end is speculated)
+const SPEC_END_TIP = "Speculated end: the start time is confirmed, only the day it ends is known.";
+const specTag = ev => ev && (ev.time_tba || ev.end_tba) ? `<span class="spec-tag" title="${ev.time_tba ? SPEC_TIP : SPEC_END_TIP}">Speculated</span>` : "";
+const cdp = ev => ev && (ev.time_tba || (ev.end_tba && status(ev) === "live")) ? "~" : "";
 
 // event lookup by image id → objective + status for the archive drawer
 let EV_BY_IMG = {}, EVS_BY_IMG = {};
@@ -526,7 +528,7 @@ function renderCalendar(id){
     const icon = r.bs.slice(0, 6).map((b, i) => { const bset = (globalBadges.find(x=>x.imgId===b.img)||{}).set || "";   // each icon: its own badge page
                  return `<span class="cal-ico${bset ? ' go' : ''}" data-bi="${i}"${bset ? ` data-bset="${esc(bset)}"` : ''}>${b.img ? `<img src="${esc(cdn(b.img))}" alt="${esc(b.name)}" loading="lazy">` : `<span class="ph">?</span>`}</span>`; }).join('')
                + (r.bs.length > 6 ? `<span class="more">+${r.bs.length - 6}</span>` : '');
-    const spec = !!r.ev.time_tba, tag = specTag(r.ev);
+    const spec = !!(r.ev.time_tba || r.ev.end_tba), tag = specTag(r.ev);
     const label = `<span class="nm">${esc(nm)}</span>${tag}<span class="lft">${leftText(r)}</span>`;
     const inLabel = w < (n===7 ? 30 : 12) ? `<span class="nm">${esc(nm)}</span>${tag}` : label;
     const bar = `<button class="cal-bar ${r.cost} ${spec?'spec':''} ${r.st==='soon'?'soon':''} ${r.st==='ended'?'ended':''} ${r.s<a0?'cut-l':''} ${r.e>a1?'cut-r':''}"
@@ -581,8 +583,8 @@ document.addEventListener('mouseover', e=>{
   const bn = b => (globalBadges.find(x=>x.imgId===b.img)||{}).name||b.name, ic = e.target.closest('.cal-ico');
   const one = !!ic || r.bs.length===1, bb = ic ? (r.bs[+ic.dataset.bi] || r.b) : r.b;
   calTip.innerHTML = `<b>${esc(one ? bn(bb) : (r.label || r.ev.name))}</b><div style="color:var(--muted)">${esc(one ? r.ev.name : r.bs.map(bn).join(', '))}${r.ev.category&&r.ev.category!=="Unknown"?` · ${esc(r.ev.category)}`:''}</div>
-    <div class="r"><span>Starts</span><span>${r.ev.time_tba ? fmtSpecDay(r.s) : fmtShort(r.s)}</span></div><div class="r"><span>Ends</span><span>${r.ev.time_tba ? fmtSpecDay(r.e) : fmtShort(r.e)}</span></div>
-    ${r.ev.time_tba ? `<div style="margin-top:6px;color:#fbbf24">${SPEC_TIP}</div>` : ''}
+    <div class="r"><span>Starts</span><span>${r.ev.time_tba ? fmtSpecDay(r.s) : fmtShort(r.s)}</span></div><div class="r"><span>Ends</span><span>${r.ev.time_tba || r.ev.end_tba ? fmtSpecDay(r.e) : fmtShort(r.e)}</span></div>
+    ${r.ev.time_tba || r.ev.end_tba ? `<div style="margin-top:6px;color:#fbbf24">${r.ev.time_tba ? SPEC_TIP : SPEC_END_TIP}</div>` : ''}
     ${one?`<div class="r"><span>Cost</span><span>${{free:'Free',paid:'Sub / paid',na:'Unknown'}[bb.cost||'na']}</span></div>`:''}
     <div class="r"><span>Status</span><span>${leftText(r)}</span></div>
     ${one ? (bb.how?`<div style="margin-top:6px;color:var(--text)">${esc(bb.how)}</div>`:'')
@@ -1201,11 +1203,11 @@ function watchNowHtml(ev){
 }
 function openEvent(id){
   const ev=allEvents().find(e=>e.id===id); if(!ev) return; const st=status(ev);
-  const sp = ev.time_tba ? " (speculated time)" : "";
-  const cd = st==="live"?`<div class="cd" data-cd="${ev.end}" data-cdp="${cdp(ev)}">${cdp(ev)}${countdown(ev.end)}<small>until it ends${sp}</small></div>`:st==="soon"?`<div class="cd" data-cd="${ev.start}" data-cdp="${cdp(ev)}">${cdp(ev)}${countdown(ev.start)}<small>until it starts${sp}</small></div>`:"";
+  const sp = ev.time_tba || ev.end_tba ? " (speculated time)" : "", sps = ev.time_tba ? " (speculated time)" : "";   // end / start
+  const cd = st==="live"?`<div class="cd" data-cd="${ev.end}" data-cdp="${cdp(ev)}">${cdp(ev)}${countdown(ev.end)}<small>until it ends${sp}</small></div>`:st==="soon"?`<div class="cd" data-cd="${ev.start}" data-cdp="${cdp(ev)}">${cdp(ev)}${countdown(ev.start)}<small>until it starts${sps}</small></div>`:"";
   const bset = b => (globalBadges.find(x=>x.imgId===b.img)||{}).set || "", go = b => bset(b) ? ` class="go" data-badge="${esc(bset(b))}" data-type="global" role="link" tabindex="0" title="Open badge"` : '';
   open(`<div class="hero-img">${ev.badges.map(b=>`<span${go(b)}>${tile({...b,img:cdn(b.img)})}</span>`).join('')}</div><h3>${esc(ev.name)}</h3><div class="sub">${esc(ev.category)}</div>${cd}
-    <dl class="kv"><dt>Status</dt><dd>${{live:"Active now",soon:"Upcoming",ended:"Ended",tba:"Date not announced"}[st]}${st!=="ended"?specTag(ev):''}</dd><dt>Starts</dt><dd>${fmtWhen(ev.start, ev.time_tba)}</dd><dt>Ends</dt><dd>${fmtWhen(ev.end, ev.time_tba)}</dd></dl>
+    <dl class="kv"><dt>Status</dt><dd>${{live:"Active now",soon:"Upcoming",ended:"Ended",tba:"Date not announced"}[st]}${st!=="ended"?specTag(ev):''}</dd><dt>Starts</dt><dd>${fmtWhen(ev.start, ev.time_tba)}</dd><dt>Ends</dt><dd>${fmtWhen(ev.end, ev.time_tba || ev.end_tba)}</dd></dl>
     ${ev.note?`<p class="hint">${esc(ev.note)}</p>`:''}
     <div class="badgelist">${ev.badges.map(b=>`<div${go(b)}>${tile({...b,img:cdn(b.img)})}<span><b>${esc(b.name)}</b><span>${esc(b.how)}</span></span><span class="pill ${b.cost}" style="margin-left:auto;flex:none">${{free:"Free",paid:"Paid",na:"TBA"}[b.cost]}</span>${bset(b)?'<span class="chev" aria-hidden="true">›</span>':''}</div>`).join('')}</div>
     ${watchNowHtml(ev)}
@@ -1216,8 +1218,8 @@ function openBadge(set,type){
   const ev = EV_BY_IMG[b.imgId]; const st = ev?status(ev.ev):null;
   const how = b.how || (ev ? ev.b.how : "") || "No public description for this badge.";
   open(`<div class="hero-img">${tile(b)}</div><h3>${esc(b.name)}</h3><div class="sub">${type==='global'?'Twitch global badge':'Channel badge'}${(type==='global'?isFree(b):b.free)?' · <span class="pill free">Free</span>':''}${st==="live"?' · <span class="pill live">Active now</span>':st==="soon"?' · <span class="pill soon">Upcoming</span>':''}</div>
-    ${ev&&st==="live"?`<div class="cd" data-cd="${ev.ev.end}" data-cdp="${cdp(ev.ev)}">${cdp(ev.ev)}${countdown(ev.ev.end)}<small>until it ends${ev.ev.time_tba?' (speculated time)':''}</small></div>`:''}
-    <dl class="kv"><dt>How to get it</dt><dd>${esc(how)}</dd>${ev?`<dt>Event</dt><dd>${esc(ev.ev.name)}<br><span style="color:var(--muted)">${fmtWhen(ev.ev.start, ev.ev.time_tba)} – ${fmtWhen(ev.ev.end, ev.ev.time_tba)}</span></dd>`:''}${b.added?`<dt>Added</dt><dd>${fmt(b.added)}</dd>`:''}${b.users?`<dt>Users</dt><dd>${num(b.users)}</dd>`:''}<dt>Versions</dt><dd>${b.versions.length}</dd>${type==='global'?`<dt>Set ID</dt><dd><code>${esc(b.set)}</code></dd>`:''}</dl>
+    ${ev&&st==="live"?`<div class="cd" data-cd="${ev.ev.end}" data-cdp="${cdp(ev.ev)}">${cdp(ev.ev)}${countdown(ev.ev.end)}<small>until it ends${ev.ev.time_tba||ev.ev.end_tba?' (speculated time)':''}</small></div>`:''}
+    <dl class="kv"><dt>How to get it</dt><dd>${esc(how)}</dd>${ev?`<dt>Event</dt><dd>${esc(ev.ev.name)}<br><span style="color:var(--muted)">${fmtWhen(ev.ev.start, ev.ev.time_tba)} – ${fmtWhen(ev.ev.end, ev.ev.time_tba || ev.ev.end_tba)}</span></dd>`:''}${b.added?`<dt>Added</dt><dd>${fmt(b.added)}</dd>`:''}${b.users?`<dt>Users</dt><dd>${num(b.users)}</dd>`:''}<dt>Versions</dt><dd>${b.versions.length}</dd>${type==='global'?`<dt>Set ID</dt><dd><code>${esc(b.set)}</code></dd>`:''}</dl>
     ${b.versions.length>1?`<div class="versions">${b.versions.map(v=>`<span class="v">${tile({name:v.title||v.id,img:v.img})}<span>${esc(v.title&&v.title!==b.name?v.title.replace(b.name,'').trim()||v.id:v.id)}</span></span>`).join('')}</div>`:''}
     <div class="actions">${ev?`<button class="btn" data-openev="${ev.ev.id}">Open event</button>${calendarMenu(ev.ev)}`:''}<a class="btn ghost" href="${esc(b.img)}" target="_blank" rel="noopener">Open image</a><button class="btn ghost" data-copy="${esc(b.img)}">Copy image URL</button></div>`);
 }
@@ -1340,8 +1342,8 @@ function renderBadgePage(set){
   const twitchDesc = (b.how && b.how.toLowerCase()!==b.name.toLowerCase() ? b.how : "") || (ev && ev.b.desc) || "";
   const desc = twitchDesc || (ev ? `This badge is earned during the ${ev.ev.name} event: ${ev.b.how}` : "Twitch does not provide a description for this badge.");
   const context = ev ? (ev.ev.about || ev.ev.note || `This badge was added to promote ${ev.ev.name}${cat && !/any|unknown|twitch/i.test(cat) ? ` in the ${cat} category` : ""} on Twitch.`) : "";
-  const sp = ev && ev.ev.time_tba ? " (speculated time)" : "", p = ev ? cdp(ev.ev) : "";
-  const cd = st==="live" ? `<div class="bp-cd" data-cd="${ev.ev.end}" data-cdp="${p}">${p}${countdown(ev.ev.end)}<small>until it ends${sp}</small></div>` : st==="soon" ? `<div class="bp-cd" data-cd="${ev.ev.start}" data-cdp="${p}">${p}${countdown(ev.ev.start)}<small>until it starts${sp}</small></div>` : "";
+  const sp = ev && (ev.ev.time_tba || ev.ev.end_tba) ? " (speculated time)" : "", sps = ev && ev.ev.time_tba ? " (speculated time)" : "", p = ev ? cdp(ev.ev) : "";
+  const cd = st==="live" ? `<div class="bp-cd" data-cd="${ev.ev.end}" data-cdp="${p}">${p}${countdown(ev.ev.end)}<small>until it ends${sp}</small></div>` : st==="soon" ? `<div class="bp-cd" data-cd="${ev.ev.start}" data-cdp="${p}">${p}${countdown(ev.ev.start)}<small>until it starts${sps}</small></div>` : "";
   const bg = bpTheme==="dark" ? "#18181b" : "#f7f7f8";
   const others = ev ? (EVS_BY_IMG[ev.b.img] || []).filter(o => o.ev !== ev.ev) : [];   // the badge's other windows
   const isNew = others.length && (st === "live" || st === "soon") && others.every(o => status(o.ev) === "ended");
@@ -1351,7 +1353,7 @@ function renderBadgePage(set){
   const othersCard = others.length ? `<div class="card2 bp-wins"><h3>${others.every(o => status(o.ev) === "ended") ? "Earlier availability" : "Other availability"}</h3>
         ${others.map(o => `<div class="bp-win"><div class="bp-win-top">${winPill(o)}<b>${esc(o.ev.name)}</b></div>
           <dl class="kv2"><dt>Objective</dt><dd>${esc(o.b.how || "—")}</dd><dt>Channels</dt><dd>${channelsHtml(o.ev, (o.ev.category||"").split(" · ")[0])}</dd>
-            <dt>Started</dt><dd>${o.ev.start ? fmtWhen(o.ev.start, o.ev.time_tba) : "—"}</dd><dt>${status(o.ev) === "ended" ? "Ended" : "Ends"}</dt><dd>${o.ev.end ? fmtWhen(o.ev.end, o.ev.time_tba) : "—"}</dd></dl>
+            <dt>Started</dt><dd>${o.ev.start ? fmtWhen(o.ev.start, o.ev.time_tba) : "—"}</dd><dt>${status(o.ev) === "ended" ? "Ended" : "Ends"}</dt><dd>${o.ev.end ? fmtWhen(o.ev.end, o.ev.time_tba || o.ev.end_tba) : "—"}</dd></dl>
           <button class="btn ghost" data-ev="${esc(o.ev.id)}">Open event</button></div>`).join('')}
       </div>` : "";
   box.innerHTML = `
@@ -1386,7 +1388,7 @@ function renderBadgePage(set){
           <dt>Category</dt><dd>${cat && !/any|unknown|twitch/i.test(cat)?`<a href="${catUrl(cat)}?filter=drops" target="_blank" rel="noopener">${esc(cat)}</a>`:esc(cat||"—")}</dd>
           <dt>Channels</dt><dd>${ev?channelsHtml(ev.ev, cat):"Any"}</dd>
           <dt>Started</dt><dd>${ev&&ev.ev.start?fmtWhen(ev.ev.start, ev.ev.time_tba):(info.objective||info.category)&&!ev?"Not recorded":"—"}</dd>
-          <dt>Ends</dt><dd>${ev&&ev.ev.end?fmtWhen(ev.ev.end, ev.ev.time_tba):(info.objective||info.category)&&!ev?"Not recorded":"—"}</dd>
+          <dt>Ends</dt><dd>${ev&&ev.ev.end?fmtWhen(ev.ev.end, ev.ev.time_tba || ev.ev.end_tba):(info.objective||info.category)&&!ev?"Not recorded":"—"}</dd>
         </dl>
         ${ev?`<div class="actions" style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-ev="${ev.ev.id}">Open event</button>${calendarMenu(ev.ev)}</div>`:''}
       </div>
