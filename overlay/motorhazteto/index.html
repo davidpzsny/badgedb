@@ -110,6 +110,11 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 .ev .row{display:flex;align-items:center;gap:12px}
 .ev .imgs{display:flex;gap:6px;flex:none}
 .ev .imgs img{width:34px;height:34px;border-radius:7px}
+.ev .imgs img.c-free{box-shadow:0 0 0 2px #4ade80}                  /* free / paid badge: green / purple ring */
+.ev .imgs img.c-paid{box-shadow:0 0 0 2px #a970ff}
+.ev .imgs{padding:2px}
+.ev .costs{display:flex;gap:6px;margin-left:auto;flex:none;align-self:center}
+.ev .costs .pill{font-size:13px;padding:3px 8px}
 .ev .title{font-weight:800;font-size:22px;letter-spacing:.5px;text-transform:uppercase;line-height:1.02}
 .ev .desc{font-weight:400;font-size:15px;line-height:1.35;color:#b6b6bf;margin-top:11px}
 .ev .dates{display:flex;gap:28px;margin-top:14px;padding-top:12px;border-top:1px solid #1f1f23}
@@ -193,7 +198,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-11-16.1";   // bump together with version.json after every change
+const OVERLAY_V = "2026-11-16.2";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -372,7 +377,9 @@ function siteEventCards(now){
     if(!ev.start){ const a = added(ev); if(a && now - Date.parse(a) > STALE) return false; }   // no dates for 21+ days: the site counts it as ended
     return true;
   }).flatMap(ev => {
-    const card = (e, slot, title, desc) => ({ slot, imgs: e.badges.map(b => b.img).filter(Boolean), title: noLongDash(title), desc: noLongDash(desc || eventDesc(e)),
+    const card = (e, slot, title, desc) => ({ slot, imgs: e.badges.map(b => b.img).filter(Boolean), costs: e.badges.filter(b => b.img).map(b => b.cost || ''),
+                                             nfree: e.badges.filter(b => b.cost === 'free').length, npaid: e.badges.filter(b => b.cost === 'paid').length,
+                                             title: noLongDash(title), desc: noLongDash(desc || eventDesc(e)),
                                              start: ev.start || null, end: ev.end || null, tba: !!ev.time_tba, endTba: !!ev.end_tba });
     const name = EVENT_TITLES[ev.id] || ev.name, paid = ev.badges.filter(b => b.cost === 'paid'), rest = ev.badges.filter(b => b.cost !== 'paid');
     if(ev.badges.length > SPLIT_OVER && paid.length && rest.length)   // many sub + watch badges (e.g. GTA VI): two cards, like the site's schedule
@@ -578,10 +585,16 @@ function eventView(e, now){
   if(end === null || now < end) return { e, status: 'ACTIVE', bg: '#3ba55d', fg: '#06160c', cdTo: end, prefix: e.tba || e.endTba ? 'ENDS IN ~' : 'ENDS IN', cdText: end === null ? 'LIVE' : '', startLabel: 'STARTED' };
   return { e, status: 'ENDED' };
 }
+// FREE / PAID on an event card: "3 FREE" + "1 PAID" when it has both kinds
+function costPills(e){
+  const f = e.nfree || 0, p = e.npaid || 0, both = f && p;
+  const pill = (n, k) => `<span class="pill" style="color:${k === 'free' ? '#4ade80' : '#c4a1ff'};background:${k === 'free' ? '#123920' : '#2d1a4d'}">${both ? n + ' ' : ''}${k}</span>`;
+  return f || p ? `<span class="costs">${f ? pill(f, 'free') : ''}${p ? pill(p, 'paid') : ''}</span>` : '';
+}
 function eventCard(v){
   const e = v.e, cd = v.cdTo ? `<span class="cd bsc" style="color:${v.fg}" data-to="${v.cdTo}" data-prefix="${v.prefix}"></span>` : `<span class="cd bsc" style="color:${v.fg}">${v.cdText}</span>`;
   return `<div class="ev"><div class="bar" style="background:${v.bg}"><span class="st bc" style="color:${v.fg}">${v.status}</span>${cd}</div>
-    <div class="in"><div class="row">${e.imgs.length ? `<div class="imgs">${e.imgs.map(u => img(u)).join('')}</div>` : ''}<div class="title bc">${esc(e.title)}</div></div>
+    <div class="in"><div class="row">${e.imgs.length ? `<div class="imgs">${e.imgs.map((u, i) => img(u, e.costs && e.costs[i] ? 'c-' + e.costs[i] : '')).join('')}</div>` : ''}<div class="title bc">${esc(e.title)}</div>${costPills(e)}</div>
       <div class="desc b">${esc(e.desc)}</div>
       <div class="dates"><div><div class="dk bc">${v.startLabel}</div><div class="dv b">${e.start ? (e.tba ? dayStamp(Date.parse(e.start)) : stamp(Date.parse(e.start))) : 'To be announced'}</div></div>
         <div><div class="dk bc">ENDS</div><div class="dv b">${e.end ? (e.tba || e.endTba ? dayStamp(Date.parse(e.end)) : stamp(Date.parse(e.end))) : 'To be announced'}</div></div></div></div></div>`;
