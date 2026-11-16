@@ -1165,5 +1165,19 @@
   "posted": "2026-11-15T22:00:58+00:00",
   "replied": true,
   "reply": "Objective, channels and exact dates: {url}"
+ },
+ "live:doom-the-dark-ages": {
+  "tweet": "2122374445188923756",
+  "title": "DOOM: The Dark Ages",
+  "set": "doom-the-dark-ages",
+  "sets": [
+   "doom-the-dark-ages"
+  ],
+  "titles": [
+   "DOOM: The Dark Ages"
+  ],
+  "posted": "2026-11-16T17:01:14+00:00",
+  "replied": true,
+  "reply": "Objective, channels and exact dates: {url}"
  }
 }
