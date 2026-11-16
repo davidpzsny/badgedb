@@ -193,7 +193,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-11-15.1";   // bump together with version.json after every change
+const OVERLAY_V = "2026-11-16.1";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -242,7 +242,10 @@ const EVENT_TITLES = {
   'ultramarine': 'Warhammer 40,000: Space Marine II', 'rematch-blue-lock': 'Rematch', 'dnd-dungeon-masters': 'Dungeons & Dragons: Dungeon Masters',
   'witcher-3': 'The Witcher 3: Wild Hunt', 'ace-combat-8-nugget': 'ACE COMBAT 8: WINGS OF THEVE', 'alien-isolation': 'Alien: Isolation',
 };
+const SPLIT_OVER = 4;   // an event with more badges than this, both sub and watch ones, gets a (Subscribe) and a (Watch) card
 const EVENT_DESC = {
+  // 'event-id#Subscribe' / 'event-id#Watch': the text of one half of a split event
+  'gta-6#Subscribe': "Sub or gift a Tier 1 sub in Grand Theft Auto VI to earn Welcome 2 Miami, Scored Big and Bleed Miami. Golden Iguana: unlock all the other GTA VI badges (the six chains and the three sub badges).",
   // 'dayz': 'Sub or gift a Tier 1 sub to any channel live in DayZ during the Badlands launch.',
 };
 const EXTRA_EVENTS = [
@@ -339,6 +342,9 @@ function eventDesc(ev){
   const where = (ev.channels || []).length ? 'a participating channel' : 'any channel';
   if(hows.every(tba))
     return `The ${andJoin(names)} badge${names.length > 1 ? 's' : ''} will be available${inCat}. Objective${names.length > 1 ? 's' : ''} to be announced.`;
+  const chain = hows.map(h => h.match(/^(.+?) for (\d+) days?\.?$/i));       // e.g. the GTA VI chains: one line, days per badge
+  if(names.length > 2 && chain.every(Boolean) && new Set(chain.map(m => m[1].toLowerCase())).size === 1)
+    return `${cap(chain[0][1].replace(/\s+in the category/i, inCat))}: ` + names.map((n, i) => `${n} ${chain[i][2]} day${chain[i][2] === '1' ? '' : 's'}`).join(', ') + '.';
   const sh = hows.map(h => tba(h) ? null : shortHow(h));
   if(!generic && sh.every(Boolean)){
     const kinds = [...new Set(sh.map(x => x.text))];
@@ -365,8 +371,15 @@ function siteEventCards(now){
     if(ev.end && Date.parse(ev.end) <= now) return false;                                    // over
     if(!ev.start){ const a = added(ev); if(a && now - Date.parse(a) > STALE) return false; }   // no dates for 21+ days: the site counts it as ended
     return true;
-  }).map(ev => ({ slot: ev.id, imgs: ev.badges.map(b => b.img).filter(Boolean), title: noLongDash(EVENT_TITLES[ev.id] || ev.name),
-                  desc: noLongDash(EVENT_DESC[ev.id] || eventDesc(ev)), start: ev.start || null, end: ev.end || null, tba: !!ev.time_tba, endTba: !!ev.end_tba }));
+  }).flatMap(ev => {
+    const card = (e, slot, title, desc) => ({ slot, imgs: e.badges.map(b => b.img).filter(Boolean), title: noLongDash(title), desc: noLongDash(desc || eventDesc(e)),
+                                             start: ev.start || null, end: ev.end || null, tba: !!ev.time_tba, endTba: !!ev.end_tba });
+    const name = EVENT_TITLES[ev.id] || ev.name, paid = ev.badges.filter(b => b.cost === 'paid'), rest = ev.badges.filter(b => b.cost !== 'paid');
+    if(ev.badges.length > SPLIT_OVER && paid.length && rest.length)   // many sub + watch badges (e.g. GTA VI): two cards, like the site's schedule
+      return [card({ ...ev, badges: paid }, ev.id, `${name} (Subscribe)`, EVENT_DESC[ev.id + '#Subscribe']),
+              card({ ...ev, badges: rest }, ev.id + '-watch', `${name} (Watch)`, EVENT_DESC[ev.id + '#Watch'])];
+    return [card(ev, ev.id, name, EVENT_DESC[ev.id])];
+  });
 }
 function overlayEvents(now){
   const list = siteEventCards(now).concat(EXTRA_EVENTS), t = x => x ? Date.parse(x) : null;
