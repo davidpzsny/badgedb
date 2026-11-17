@@ -1179,5 +1179,26 @@
   "posted": "2026-11-16T17:01:14+00:00",
   "replied": true,
   "reply": "Objective, channels and exact dates: {url}"
+ },
+ "ending:qsmp-2-season-2": {
+  "tweet": "",
+  "title": "QSMP2",
+  "set": "qsmp2",
+  "replied": "discord only",
+  "posted": "2026-11-17T13:00:58+00:00"
+ },
+ "xending:qsmp-2-season-2": {
+  "tweet": "2122676375354016242",
+  "title": "QSMP2",
+  "set": "qsmp2",
+  "sets": [
+   "qsmp2"
+  ],
+  "titles": [
+   "QSMP2"
+  ],
+  "posted": "2026-11-17T13:01:00+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
