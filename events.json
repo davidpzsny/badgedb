@@ -43,7 +43,8 @@
     "cost": "free",
     "desc": "Watch 60 minutes of any channel streaming in the Old School RuneScape category during December 2026."
    }
-  ]
+  ],
+  "channel": "any"
  },
  {
   "id": "minecraft-golden-frog",
