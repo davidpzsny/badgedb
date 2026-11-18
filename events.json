@@ -1,57 +1,70 @@
 [
  {
-  "id": "runescape",
-  "name": "RuneScape",
-  "category": "RuneScape",
-  "start": "",
-  "end": "",
-  "badges": [
-   {
-    "name": "RuneScape Quest Icon",
-    "img": "bf75cdff-7b3a-4ba6-a1d5-e00563b9877e",
-    "how": "Watch a stream in the category.",
-    "cost": "free",
-    "desc": "Watch 60 minutes of any channel streaming in the RuneScape category"
-   }
-  ]
- },
- {
-  "id": "old-school-runescape",
-  "name": "Old School RuneScape",
+  "id": "osrs-hardcore-worlds",
+  "name": "Old School RuneScape Hardcore Worlds",
   "category": "Old School RuneScape",
-  "start": "",
-  "end": "",
+  "start": "2026-11-18T13:04:00Z",
+  "end": "2026-12-01T23:59:00Z",
+  "dates_src": "manual",
+  "name_src": "manual",
   "badges": [
    {
     "name": "RuneScape Bones",
     "img": "95507c79-f87e-4a0d-9940-92af830b3b36",
-    "how": "Watch a stream in the category.",
+    "how": "Watch 60 minutes in the category.",
     "cost": "free",
-    "desc": "Watch 60 minutes of any channel streaming in the Old School RuneScape category."
+    "desc": "Watch 60 minutes of any channel streaming in the Old School RuneScape category.",
+    "how_src": "manual"
    },
    {
     "name": "RuneScape Gnome Plush",
     "img": "8b5bf6d2-3f89-4c24-a6c2-c5eda04ce1e6",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
     "cost": "paid",
-    "desc": "Subscribe or Gift 1 sub to any channel streaming in the Old School RuneScape category."
+    "desc": "Subscribe or Gift 1 sub to any channel streaming in the Old School RuneScape category.",
+    "how_src": "manual"
+   }
+  ]
+ },
+ {
+  "id": "runescape-december",
+  "name": "RuneScape & Old School RuneScape",
+  "category": "RuneScape · Old School RuneScape",
+  "categories": [
+   "RuneScape",
+   "Old School RuneScape"
+  ],
+  "start": "",
+  "end": "",
+  "dates_src": "manual",
+  "name_src": "manual",
+  "note": "Dates not announced yet. The Santa Hat is for December 2026 (Twitch lists it twice, also as \"RuneScape Sant Hat\").",
+  "badges": [
+   {
+    "name": "RuneScape Santa Hat",
+    "img": "2bee9264-647c-4bdc-921f-cb5e651b1c64",
+    "how": "Watch 60 minutes in the Old School RuneScape category during December 2026.",
+    "cost": "free",
+    "desc": "Watch 60 minutes of any channel streaming in the Old School RuneScape category during December 2026.",
+    "how_src": "manual"
    },
    {
     "name": "RuneScape Sant Hat",
     "img": "044b64a3-3319-4749-973e-abc5e0dfe323",
-    "how": "Watch a stream in the category.",
+    "how": "Watch 60 minutes in the Old School RuneScape category during December 2026.",
     "cost": "free",
-    "desc": "Watch 60 minutes of any channel streaming in the Old School RuneScape category during December 2026."
+    "desc": "Watch 60 minutes of any channel streaming in the Old School RuneScape category during December 2026.",
+    "how_src": "manual"
    },
    {
-    "name": "RuneScape Santa Hat",
-    "img": "2bee9264-647c-4bdc-921f-cb5e651b1c64",
-    "how": "Watch a stream in the category.",
+    "name": "RuneScape Quest Icon",
+    "img": "bf75cdff-7b3a-4ba6-a1d5-e00563b9877e",
+    "how": "Watch 60 minutes in the RuneScape category.",
     "cost": "free",
-    "desc": "Watch 60 minutes of any channel streaming in the Old School RuneScape category during December 2026."
+    "desc": "Watch 60 minutes of any channel streaming in the RuneScape category",
+    "how_src": "manual"
    }
-  ],
-  "channel": "any"
+  ]
  },
  {
   "id": "minecraft-golden-frog",

@@ -1,8 +1,10 @@
 [
  {
   "date": "2026-11-18",
-  "title": "GTA VI posts",
+  "title": "RuneScape badges and GTA VI",
   "items": [
+   {"type": "new", "text": "Old School RuneScape Hardcore Worlds: RuneScape Bones (watch 60 minutes) and RuneScape Gnome Plush (Tier 1 sub or gift sub) in Old School RuneScape, Nov 18 13:04 to Dec 1 23:59 (UTC)."},
+   {"type": "new", "text": "RuneScape & Old School RuneScape: RuneScape Santa Hat (watch 60 minutes in Old School RuneScape during December) and RuneScape Quest Icon (watch 60 minutes in RuneScape). Dates not announced yet."},
    {"type": "improved", "text": "Grand Theft Auto VI: details from Twitch's announcement. Each Tier 1 sub (or gift) gives one random Heist badge and emote, 3 subs give all three; the Bling Badges need 1 hour of watching on different days (in a row or not, one badge per day); the Golden Iguana needs every badge and emote. Also the Heist Train and surprise daily game code drops."},
    {"type": "improved", "text": "X posts: a big event with both sub and watch badges (like GTA VI) gets two posts, (Subscribe) and (Watch), so every badge and objective is shown. Post images now fit six badges, and multi-day chains are listed day by day."}
   ]
