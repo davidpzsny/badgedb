@@ -618,7 +618,7 @@ def objective_lines(ev, badges_meta):
     _, names = _name_parts(badges_meta)
     cat = (ev.get("category") or "").split(" · ")[0].strip().lower()
     named = bool(cat) and cat in live_title(badges_meta, ev).lower()   # the title already says the category: not again per line
-    obj = lambda h: re.sub(r"\s+in the category(?=\.?$)", "", h) if named else with_category(h, ev)
+    obj = lambda h: re.sub(r"\s+in the category(?=[\s.,;:]|$)", "", h) if named else with_category(h, ev)
     how_of = {b.get("img"): obj((b.get("how") or "").strip()) for b in ev.get("badges", []) if b.get("img")}
     hs = [how_of.get(m["img"], "") for m in badges_meta]
     chain = [re.match(r"^(.+?) for (\d+) days?\.?$", h, re.I) for h in hs]
@@ -633,7 +633,7 @@ def objective_lines(ev, badges_meta):
         h = next(iter(groups)); return [(h, len(badges_meta))]
     return [(f"• {', '.join(ns)}: {h}", len(ns)) for h, ns in groups.items()]
 
-def compose_post(head, items, tail, limit=275):
+def compose_post(head, items, tail, limit=280):
     """head + as many WHOLE objective lines as fit + tail (X's weighted length). Nothing is cut in the middle: lines that
     don't fit are left out and counted ("+N more badges"); a single long objective keeps its first whole sentences."""
     def build(ls, more=0):

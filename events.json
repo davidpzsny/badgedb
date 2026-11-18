@@ -157,12 +157,12 @@
   "end": "2026-12-01T07:59:00Z",
   "dates_src": "manual",
   "name_src": "manual",
-  "note": "Launch week of the game. The chains need 1 hour of watching on separate days, from 1 day (Purple) up to 6 days (Miami).",
+  "note": "Nov 18 to 30. Bling Badges: watch 1 hour on different days, one badge per day (in a row or not, max one per day). Heist Collection: each sub gives one random badge and emote combo. Also: the Heist Train (a GTAVI Hype Train with six pixel-art rewards) and surprise daily drops of GTAVI Ultimate Edition codes for viewers.",
   "badges": [
    {
     "name": "Welcome 2 Miami",
     "img": "1c51d343-754e-4fee-a717-ec95cafb5482",
-    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "how": "Each Tier 1 sub (or gift) in the category gives one random Heist badge + emote; 3 subs give all.",
     "cost": "paid",
     "desc": "This badge was earned by subbing to a GTAVI streamer during launch.",
     "how_src": "manual"
@@ -170,7 +170,7 @@
    {
     "name": "Scored Big",
     "img": "2acfc5b8-7907-4b05-9b30-e211a93ffc63",
-    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "how": "Each Tier 1 sub (or gift) in the category gives one random Heist badge + emote; 3 subs give all.",
     "cost": "paid",
     "desc": "This badge was earned by subbing to a GTAVI streamer during launch.",
     "how_src": "manual"
@@ -178,7 +178,7 @@
    {
     "name": "Bleed Miami",
     "img": "c7b8fc7d-7ebd-46e1-8f57-cc58ce51a9d1",
-    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "how": "Each Tier 1 sub (or gift) in the category gives one random Heist badge + emote; 3 subs give all.",
     "cost": "paid",
     "desc": "This badge was earned by subbing to a GTAVI streamer during launch.",
     "how_src": "manual"
@@ -234,12 +234,13 @@
    {
     "name": "Golden Iguana",
     "img": "62c3816a-87d6-4ca0-bce0-fca6bcfa719f",
-    "how": "Unlock all nine other GTA VI badges: the six chains (Purple, Bronze, Silver, Gold, Diamond, Miami) and the three sub badges (Welcome 2 Miami, Scored Big, Bleed Miami).",
+    "how": "Collect every GTAVI badge and emote.",
     "cost": "paid",
     "desc": "This badge was earned by securing all the Emotes and Badges from the GTAVI launch. ",
     "how_src": "manual"
    }
-  ]
+  ],
+  "about": "Twitch's GTAVI launch campaign: six VI pendant Bling Badges for watching (purple, rose gold, silver, gold, diamond and iridescent), the Heist Collection for subscribing (three badges, each with an emote), and the rare Golden Iguana for collecting everything."
  },
  {
   "id": "payday-3",
