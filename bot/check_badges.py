@@ -604,6 +604,7 @@ def with_category(how, ev):
     return how.replace("in the category", f"in the {cat} category")
 
 def live_title(badges_meta, ev=None):
+    if ev and ev.get("_title"): return ev["_title"]             # one half of a split event: "GTA VI (Watch)"
     pre, names = _name_parts(badges_meta)
     if pre:
         return f"{pre}: " + " & ".join(names[:2]) + (f" + {len(names) - 2} more" if len(names) > 2 else "")
@@ -615,7 +616,15 @@ def objective_lines(ev, badges_meta):
     """[(line, badges on it)]: one line when every badge has the same objective, else one line per objective with the
     (short) names of its badges."""
     _, names = _name_parts(badges_meta)
-    how_of = {b.get("img"): with_category((b.get("how") or "").strip(), ev) for b in ev.get("badges", []) if b.get("img")}
+    cat = (ev.get("category") or "").split(" · ")[0].strip().lower()
+    named = bool(cat) and cat in live_title(badges_meta, ev).lower()   # the title already says the category: not again per line
+    obj = lambda h: re.sub(r"\s+in the category(?=\.?$)", "", h) if named else with_category(h, ev)
+    how_of = {b.get("img"): obj((b.get("how") or "").strip()) for b in ev.get("badges", []) if b.get("img")}
+    hs = [how_of.get(m["img"], "") for m in badges_meta]
+    chain = [re.match(r"^(.+?) for (\d+) days?\.?$", h, re.I) for h in hs]
+    if len(hs) > 2 and all(chain) and len({c.group(1).lower() for c in chain}) == 1:
+        pre = re.sub(r"\s+in the [^,]+ category$|\s+in the category$", "", chain[0].group(1))
+        return [(pre + ":", 0)] + [(f"• {n}: {c.group(2)} day{'' if c.group(2) == '1' else 's'}", 1) for n, c in zip(names, chain)]
     groups = {}
     for n, m in zip(names, badges_meta):
         h = how_of.get(m["img"], "")
@@ -632,6 +641,15 @@ def compose_post(head, items, tail, limit=275):
         body = "\n".join(ls + extra)
         return f"{head}\n\n{body}{tail}" if body else head + tail
     lines = [t for t, _ in items]
+    bare = tail.replace("\n#Twitch #TwitchBadges", "")
+    cut = lambda l: re.sub(r"^(• [^:]+: [^:]+?):\s.*$", r"\1.", l)   # "• Golden Iguana: Unlock all nine other GTA VI badges."
+    tries = [lines]
+    for i in range(len(lines) - 1, -1, -1):                          # shorten from the last line up, one at a time
+        tries.append(lines[:i] + [cut(l) for l in lines[i:]])
+    for ls in tries:                                                 # everything visible first (hashtags go before content)
+        for tl in (tail, bare):
+            t = f"{head}\n\n" + "\n".join(ls) + tl if ls else head + tl
+            if _xlen(t) <= limit: return t
     for k in range(len(lines), 0, -1):
         more = sum(n for _, n in items[k:]) if len(items) > 1 else 0
         t = build(lines[:k], more)
@@ -651,6 +669,22 @@ def live_post_text(ev, badges_meta):
     tail = f"\n\n⏳ Until {until}\n#Twitch #TwitchBadges"
     return compose_post(head, objective_lines(ev, badges_meta), tail)
 
+SPLIT_POST_OVER = 4   # an event with more badges than this, both sub and watch ones, is posted as (Subscribe) + (Watch)
+
+def post_parts(events):
+    """The events as they are posted: a big event with sub AND watch badges (e.g. GTA VI, 10 badges) becomes two posts,
+    "<name> (Subscribe)" and "<name> (Watch)", so every badge and objective fits (ids "<id>#Subscribe" / "<id>#Watch")."""
+    out = []
+    for ev in events:
+        bs = ev.get("badges") or []
+        paid = [b for b in bs if b.get("cost") == "paid"]; rest = [b for b in bs if b.get("cost") != "paid"]
+        if len(bs) > SPLIT_POST_OVER and paid and rest:
+            for part, sub in (("Subscribe", paid), ("Watch", rest)):
+                out.append({**ev, "id": f"{ev['id']}#{part}", "name": f"{ev['name']} ({part})", "_title": f"{ev['name']} ({part})", "badges": sub})
+        else:
+            out.append(ev)
+    return out
+
 def announce_live(events, live):
     """Post once per event when it starts. Waits up to LIVE_WAIT_MIN minutes so the post lands on time."""
     if not X_LIVE_POSTS: return
@@ -658,8 +692,9 @@ def announce_live(events, live):
     posts = load_json(POSTS_DB, {})
     now = datetime.datetime.now(datetime.timezone.utc)
     due = []
-    for ev in events:
+    for ev in post_parts(events):
         if not ev.get("start") or not ev.get("end") or f"live:{ev['id']}" in posts: continue
+        if "#" in ev["id"] and f"live:{ev['id'].split('#')[0]}" in posts: continue   # already posted as one event
         if ev.get("time_tba"): continue                          # only the days are known: the start time is a guess
         start, end = _dt(ev["start"]), _dt(ev["end"])
         if end <= now: continue
@@ -683,8 +718,8 @@ def announce_live(events, live):
                       access_token=os.environ["X_ACCESS_TOKEN"], access_token_secret=os.environ["X_ACCESS_SECRET"])
             media_ids = None
             try:
-                pngs = [requests.get(m["url"], timeout=30).content for m in meta[:5]]   # every badge of the event on the image
-                if len(meta) > 5: pngs += [b""] * (len(meta) - 5)                     # counted in the "+N" tile
+                pngs = [requests.get(m["url"], timeout=30).content for m in meta[:6]]   # every badge of the event on the image
+                if len(meta) > 6: pngs += [b""] * (len(meta) - 6)                     # counted in the "+N" tile
                 card = make_card(pngs, live_title(meta, ev), header="NOW AVAILABLE ON TWITCH",
                                  header_sub=("Get it before the end of " + _dt(ev["end"]).strftime("%b %-d")) if ev.get("end_tba")
                                             else "Get it before " + _dt(ev["end"]).strftime("%b %-d, %H:%M UTC"), accent=(52, 211, 153))
@@ -698,7 +733,7 @@ def announce_live(events, live):
         except Exception as e:
             print(f"now-available: X post failed for {ev['name']} ->", e)
         try:
-            discord_send("live", {"title": f"🟢 Now available: {' & '.join(m['title'] for m in meta[:3])}",
+            discord_send("live", {"title": f"🟢 Now available: {live_title(meta, ev)}",
                 "description": text.split("\n\n", 1)[-1].replace("#Twitch #TwitchBadges", "").strip() + discord_links(meta),
                 "url": f"{site_url()}/badges/{first['set']}/", "thumbnail": {"url": first["url"]}, "color": 0x34D399})
         except Exception as e:
@@ -866,10 +901,10 @@ def make_card(badge_png_bytes, title, subtitle="", header="NEW TWITCH GLOBAL BAD
     d.text((148, 82), header_sub, font=font(26, False), fill=(158, 154, 176))
     d.line((56, 150, W - 56, 150), fill=(45, 43, 58), width=2)
     # badges on rounded tiles, side by side and centered (one event can have several badges);
-    # more than 5 → the first 4 and a "+N" tile
+    # more than 6 → the first 5 and a "+N" tile
     pngs = list(badge_png_bytes) if isinstance(badge_png_bytes, (list, tuple)) else [badge_png_bytes]
     extra = 0
-    if len(pngs) > 5: extra = len(pngs) - 4; pngs = pngs[:4]
+    if len(pngs) > 6: extra = len(pngs) - 5; pngs = pngs[:5]
     n = len(pngs) + (1 if extra else 0); gap = 28 if n <= 3 else 22
     s = int(min(300, (W - 112 - gap * (n - 1)) / n)); x = (W - (s * n + gap * (n - 1))) // 2; y0 = 178 + (300 - s) // 2
     def blank():
@@ -1143,8 +1178,9 @@ def announce_last_chance_x(events, live, max_per_run=2):
     posts = load_json(POSTS_DB, {})
     now = datetime.datetime.now(datetime.timezone.utc)
     due = []
-    for ev in events:
+    for ev in post_parts(events):
         key = f"xending:{ev.get('id')}"
+        if "#" in ev["id"] and f"xending:{ev['id'].split('#')[0]}" in posts: continue
         if not ev.get("start") or not ev.get("end") or key in posts or ev.get("time_tba") or ev.get("end_tba"): continue   # end time unknown: no "last chance"
         start, end = _dt(ev["start"]), _dt(ev["end"])
         left = (end - now).total_seconds() / 3600
@@ -1164,8 +1200,8 @@ def announce_last_chance_x(events, live, max_per_run=2):
                       access_token=os.environ["X_ACCESS_TOKEN"], access_token_secret=os.environ["X_ACCESS_SECRET"])
             media_ids = None
             try:
-                pngs = [requests.get(m["url"], timeout=30).content for m in meta[:5]]
-                if len(meta) > 5: pngs += [b""] * (len(meta) - 5)
+                pngs = [requests.get(m["url"], timeout=30).content for m in meta[:6]]
+                if len(meta) > 6: pngs += [b""] * (len(meta) - 6)
                 card = make_card(pngs, live_title(meta, ev), header="LAST CHANCE ON TWITCH",
                                  header_sub="Ends " + end.strftime("%b %-d, %H:%M UTC"), accent=(245, 158, 11))
                 api = tweepy.API(tweepy.OAuth1UserHandler(*kw.values()))
