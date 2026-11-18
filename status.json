@@ -8,11 +8,11 @@
   "msg": "request failed: Expecting value: line 1 column 1 (char 0)"
  },
  "emotes": {
-  "at": "2026-11-18T13:05:27+00:00",
+  "at": "2026-11-18T13:10:35+00:00",
   "msg": "310 live, 0 new, 0 removed"
  },
  "top_categories": {
-  "at": "2026-11-18T13:05:26+00:00",
+  "at": "2026-11-18T13:10:34+00:00",
   "msg": "150 categories, #1 Grand Theft Auto VI"
  },
  "drop_campaigns": {
@@ -24,15 +24,15 @@
   "msg": "Grand Theft Auto VI (Watch) at 2026-11-18T11:00:00Z -> tweet 2123008551496925536"
  },
  "discord_events": {
-  "at": "2026-11-18T13:05:22+00:00",
+  "at": "2026-11-18T13:10:30+00:00",
   "msg": "0 created, 0 started, 0 updated, 0 closed"
  },
  "live_channels": {
-  "at": "2026-11-18T13:05:27+00:00",
+  "at": "2026-11-18T13:10:35+00:00",
   "msg": "7 running events, 56 live streams"
  },
  "reward_campaigns": {
-  "at": "2026-11-18T13:05:21+00:00",
+  "at": "2026-11-18T13:10:29+00:00",
   "msg": "ok via BadgeDBRewardCampaigns: 3 campaigns: Pokémon Night Out Campaign (2026-10-16T17:00 -> 2026-11-23T22:59); GTAVI Launch Celebration (2026-11-18T11:00 -> 2026-12-01T07:59); Pokemon Evolutions (2026-10-16T17:00 -> 2027-01-30T22:59)"
  },
  "sdb_users": {
@@ -45,7 +45,7 @@
   "msg": "Cyberpunk 2077: The Mox ends 2026-11-19T09:59:00Z -> tweet 2122993437393686782"
  },
  "twitch_chat": {
-  "at": "2026-11-18T12:45:35+00:00",
+  "at": "2026-11-18T13:10:29+00:00",
   "msg": "not sent (HTTP 200): Your message could not be sent, please try again later."
  },
  "twitch_chat_test": {
