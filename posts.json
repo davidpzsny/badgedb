@@ -1300,5 +1300,21 @@
   "set": "runescape-santa-hat",
   "posted": "2026-11-18T13:10:27+00:00",
   "replied": true
+ },
+ "live:osrs-hardcore-worlds": {
+  "tweet": "2123046987809341633",
+  "title": "RuneScape Bones",
+  "set": "runescape-bones",
+  "sets": [
+   "runescape-bones",
+   "runescape-gnome-plush"
+  ],
+  "titles": [
+   "RuneScape Bones",
+   "RuneScape Gnome Plush"
+  ],
+  "posted": "2026-11-18T13:33:41+00:00",
+  "replied": true,
+  "reply": "Objective, channels and exact dates: {url}"
  }
 }

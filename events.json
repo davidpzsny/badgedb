@@ -24,7 +24,8 @@
     "desc": "Subscribe or Gift 1 sub to any channel streaming in the Old School RuneScape category.",
     "how_src": "manual"
    }
-  ]
+  ],
+  "channel": "any"
  },
  {
   "id": "runescape-december",
