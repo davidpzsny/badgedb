@@ -1265,5 +1265,33 @@
   "posted": "2026-11-18T11:00:57+00:00",
   "replied": true,
   "reply": "Objective, channels and exact dates: {url}"
+ },
+ "runescape-bones": {
+  "tweet": "2123034862000976284",
+  "title": "RuneScape Bones",
+  "set": "runescape-bones",
+  "posted": "2026-11-18T12:45:30+00:00",
+  "replied": false
+ },
+ "runescape-gnome-plush": {
+  "tweet": "2123034869856944148",
+  "title": "RuneScape Gnome Plush",
+  "set": "runescape-gnome-plush",
+  "posted": "2026-11-18T12:45:31+00:00",
+  "replied": false
+ },
+ "runescape-quest-icon": {
+  "tweet": "2123034876198728157",
+  "title": "RuneScape Quest Icon",
+  "set": "runescape-quest-icon",
+  "posted": "2026-11-18T12:45:33+00:00",
+  "replied": false
+ },
+ "runescape-sant-hat": {
+  "tweet": "2123034882024645022",
+  "title": "RuneScape Sant Hat",
+  "set": "runescape-sant-hat",
+  "posted": "2026-11-18T12:45:34+00:00",
+  "replied": false
  }
 }

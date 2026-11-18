@@ -1,5 +1,51 @@
 [
  {
+  "id": "runescape",
+  "name": "RuneScape",
+  "category": "RuneScape",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "RuneScape Quest Icon",
+    "img": "bf75cdff-7b3a-4ba6-a1d5-e00563b9877e",
+    "how": "Watch a stream in the category.",
+    "cost": "free",
+    "desc": "Watch 60 minutes of any channel streaming in the RuneScape category"
+   }
+  ]
+ },
+ {
+  "id": "old-school-runescape",
+  "name": "Old School RuneScape",
+  "category": "Old School RuneScape",
+  "start": "",
+  "end": "",
+  "badges": [
+   {
+    "name": "RuneScape Bones",
+    "img": "95507c79-f87e-4a0d-9940-92af830b3b36",
+    "how": "Watch a stream in the category.",
+    "cost": "free",
+    "desc": "Watch 60 minutes of any channel streaming in the Old School RuneScape category."
+   },
+   {
+    "name": "RuneScape Gnome Plush",
+    "img": "8b5bf6d2-3f89-4c24-a6c2-c5eda04ce1e6",
+    "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
+    "cost": "paid",
+    "desc": "Subscribe or Gift 1 sub to any channel streaming in the Old School RuneScape category."
+   },
+   {
+    "name": "RuneScape Sant Hat",
+    "img": "044b64a3-3319-4749-973e-abc5e0dfe323",
+    "how": "Watch a stream in the category.",
+    "cost": "free",
+    "desc": "Watch 60 minutes of any channel streaming in the Old School RuneScape category during December 2026."
+   }
+  ]
+ },
+ {
   "id": "minecraft-golden-frog",
   "name": "The Streamer Awards 2026: Minecraft Golden Frog",
   "category": "The Streamer Awards",
