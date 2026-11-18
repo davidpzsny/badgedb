@@ -68,6 +68,11 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 @keyframes chipIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .chip .imgs{display:flex;align-items:center;gap:4px}
 .chip .imgs img{width:44px;height:44px;border-radius:9px}
+.chip.panel{gap:0;padding:9px 4px}                                  /* one panel with several badge groups side by side */
+.chip.panel .seg{display:flex;flex-direction:column;align-items:center;padding:0 14px}
+.chip.panel .imgs img{width:36px;height:36px;border-radius:8px}
+.chip.panel .a{margin-top:7px;font-size:12.5px}
+.chip.panel .dv{width:1px;align-self:stretch;margin:2px 0;background:#2a2a31}
 .chip .l{font-weight:700;font-size:17px;color:#efeff1;white-space:nowrap}
 .chip .a{font-weight:700;font-size:13px;letter-spacing:1.2px;text-transform:uppercase;white-space:nowrap;margin-top:5px;font-variant-numeric:tabular-nums}
 
@@ -195,7 +200,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-11-18.3";   // bump together with version.json after every change
+const OVERLAY_V = "2026-11-18.4";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -493,11 +498,12 @@ const inCategoryList = ev => Array.isArray(ev.categories) && !!streamCat && ev.c
 const SOON_MS = 24 * 3600e3;                 // upcoming badges get a "STARTS IN" chip from this long before their start
 /* hand-made header chips for a big event in its own category (by event id), instead of the automatic grouping:
    each chip lists its badges by name, with its own label and action line */
+const CHIP_PANEL = { 'gta-6': true };   // these events: all their chips in ONE panel side by side (no turns), short captions
 const CHIP_GROUPS = {
   'gta-6': [
-    { names: ['Purple Chain', 'Bronze Chain', 'Silver Chain', 'Gold Chain', 'Diamond Chain', 'Miami Chain'], label: 'Bling Badges', action: 'Watch 1 hour a day · 1 badge per day', color: '#4ade80' },
-    { names: ['Welcome 2 Miami', 'Scored Big', 'Bleed Miami'], label: 'Heist Collection', action: '1 sub = 1 random · 3 subs = all', color: '#c4a1ff' },
-    { names: ['Golden Iguana'], label: 'Golden Iguana', action: 'Collect every badge & emote', color: '#f5b83d' },
+    { names: ['Purple Chain', 'Bronze Chain', 'Silver Chain', 'Gold Chain', 'Diamond Chain', 'Miami Chain'], label: 'Bling Badges', action: 'Watch 1 hour a day · 1 badge per day', short: 'Watch 1h a day', color: '#4ade80' },
+    { names: ['Welcome 2 Miami', 'Scored Big', 'Bleed Miami'], label: 'Heist Collection', action: '1 sub = 1 random · 3 subs = all', short: '1 sub = 1 random', color: '#c4a1ff' },
+    { names: ['Golden Iguana'], label: 'Golden Iguana', action: 'Collect every badge & emote', short: 'Collect all', color: '#f5b83d' },
   ],
 };
 function autoAvailable(now){
@@ -509,6 +515,12 @@ function autoAvailable(now){
     if(!(now < end) || !(any || inStreamCategory(ev))) return;
     if(any && now < start) return;                     // any-category badges: only once they can be earned
     if(now < start && (ev.time_tba || start - now > SOON_MS)) return;   // later ones (e.g. LoL fan badges days away) stay out of the header
+    if(CHIP_GROUPS[ev.id] && !any && CHIP_PANEL[ev.id] && now >= start){
+      const segs = CHIP_GROUPS[ev.id].map(g => ({ imgs: g.names.map(n => ((ev.badges || []).find(b => b.name === n) || {}).img).filter(Boolean),
+                                                  label: g.label, action: g.short || g.action, actionColor: g.color })).filter(x => x.imgs.length);
+      if(segs.length) chips.push({ panel: segs, label: EVENT_TITLES[ev.id] || ev.name });
+      return;
+    }
     if(CHIP_GROUPS[ev.id] && !any){
       CHIP_GROUPS[ev.id].forEach(g => {
         const imgs = g.names.map(n => ((ev.badges || []).find(b => b.name === n) || {}).img).filter(Boolean);
@@ -650,6 +662,8 @@ function render(){
   const chipsChanged = setList('available', avail.map(a => {
     const action = a.soon ? `<div class="a bc" style="color:#f5b83d" data-to="${a.cdTo}" data-prefix="STARTS IN"></div>`
                           : `<div class="a bc" style="color:${a.actionColor}">${esc(a.action)}</div>`;
+    if(a.panel) return `<div class="chip panel">${a.panel.map(g => `<div class="seg" title="${esc(g.label)}"><div class="imgs">${g.imgs.map(u => img(u)).join('')}</div>
+        <div class="a bc" style="color:${g.actionColor}">${esc(g.action)}</div></div>`).join('<i class="dv"></i>')}</div>`;
     return `<div class="chip"><div class="imgs">${a.imgs.map(u => img(u)).join('')}</div><div style="line-height:1;min-width:0"><div class="l b">${esc(a.label)}</div>${action}</div></div>`; }).join(''));
   if(chipsChanged){ fillCountdowns(now, $('available')); fitChips(); }   // measured with the countdown text in
   $('availHead').textContent = avail.length && avail.every(a => a.soon) ? 'Coming Here' : 'Available Here';
