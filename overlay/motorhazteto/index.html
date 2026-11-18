@@ -106,6 +106,8 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 .ev .bar{display:flex;align-items:center;justify-content:space-between;padding:8px 16px}
 .ev .st{font-weight:800;font-size:17px;letter-spacing:1.5px}
 .ev .cd{font-weight:700;font-size:15px;letter-spacing:1px;opacity:.92;font-variant-numeric:tabular-nums}
+.ev .cd.hot{animation:cdPulse 1s ease-in-out infinite alternate}     /* last hour of an event */
+@keyframes cdPulse{from{opacity:1}to{opacity:.4}}
 .ev .in{padding:14px 16px 16px}
 .ev .row{display:flex;align-items:center;gap:12px}
 .ev .imgs{display:flex;gap:6px;flex:none}
@@ -193,7 +195,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-11-16.3";   // bump together with version.json after every change
+const OVERLAY_V = "2026-11-18.1";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -570,17 +572,22 @@ function setRoll(id, html, force){
 function refreshRolls(){ Object.keys(roll).forEach(id => setRoll(id, roll[id].html, true)); }   // re-measure (fonts, size)
 const img = (u, cls) => u ? `<img class="slot${cls ? ' ' + cls : ''}" src="${esc(badgeUrl(u))}" alt="">` : '';
 
+const ENDING_MS = 24 * 36e5;   // an active event with less than this left is shown as ENDING SOON (last hour: the countdown pulses)
 function eventView(e, now){
   const start = e.start ? Date.parse(e.start) : null, end = e.end ? Date.parse(e.end) : null;
   if(start === null) return { e, status: 'UPCOMING', bg: '#d99e1e', fg: '#1a1205', cdTo: null, cdText: 'DATE TBA', startLabel: 'STARTS' };
   if(now < start && e.tba){ const d = new Date(start); return { e, status: 'UPCOMING', bg: '#d99e1e', fg: '#1a1205', cdText: `SPECULATED · ${MS[d.getUTCMonth()]} ${d.getUTCDate()}`, cdTo: null, startLabel: 'STARTS' }; }   // only the day is known: speculated time
   if(now < start)    return { e, status: 'UPCOMING', bg: '#d99e1e', fg: '#1a1205', cdTo: start, prefix: 'STARTS IN', startLabel: 'STARTS' };
-  if(end === null || now < end) return { e, status: 'ACTIVE', bg: '#3ba55d', fg: '#06160c', cdTo: end, prefix: e.tba || e.endTba ? 'ENDS IN ~' : 'ENDS IN', cdText: end === null ? 'LIVE' : '', startLabel: 'STARTED' };
+  if(end === null || now < end){
+    const left = end === null ? Infinity : end - now, ending = left <= ENDING_MS;   // last 24 hours: red bar, "ENDING SOON"
+    return { e, status: 'ACTIVE', label: ending ? 'ENDING SOON' : 'ACTIVE', bg: ending ? '#e5484d' : '#3ba55d', fg: ending ? '#ffffff' : '#06160c',
+             hot: left <= 36e5, cdTo: end, prefix: e.tba || e.endTba ? 'ENDS IN ~' : 'ENDS IN', cdText: end === null ? 'LIVE' : '', startLabel: 'STARTED' };
+  }
   return { e, status: 'ENDED' };
 }
 function eventCard(v){
-  const e = v.e, cd = v.cdTo ? `<span class="cd bsc" style="color:${v.fg}" data-to="${v.cdTo}" data-prefix="${v.prefix}"></span>` : `<span class="cd bsc" style="color:${v.fg}">${v.cdText}</span>`;
-  return `<div class="ev"><div class="bar" style="background:${v.bg}"><span class="st bc" style="color:${v.fg}">${v.status}</span>${cd}</div>
+  const e = v.e, cd = v.cdTo ? `<span class="cd bsc${v.hot ? ' hot' : ''}" style="color:${v.fg}" data-to="${v.cdTo}" data-prefix="${v.prefix}"></span>` : `<span class="cd bsc" style="color:${v.fg}">${v.cdText}</span>`;
+  return `<div class="ev"><div class="bar" style="background:${v.bg}"><span class="st bc" style="color:${v.fg}">${v.label || v.status}</span>${cd}</div>
     <div class="in"><div class="row">${e.imgs.length ? `<div class="imgs">${e.imgs.map(u => img(u)).join('')}</div>` : ''}<div class="title bc">${esc(e.title)}</div></div>
       <div class="desc b">${esc(e.desc)}</div>
       <div class="dates"><div><div class="dk bc">${v.startLabel}</div><div class="dv b">${e.start ? (e.tba ? dayStamp(Date.parse(e.start)) : stamp(Date.parse(e.start))) : 'To be announced'}</div></div>
