@@ -1200,5 +1200,26 @@
   "posted": "2026-11-17T13:01:00+00:00",
   "replied": true,
   "reply": "Objective, channels and the exact end time: {url}"
+ },
+ "ending:cyberpunk-2077-the-mox": {
+  "tweet": "",
+  "title": "The Mox",
+  "set": "the-mox",
+  "replied": "discord only",
+  "posted": "2026-11-18T10:00:51+00:00"
+ },
+ "xending:cyberpunk-2077-the-mox": {
+  "tweet": "2122993437393686782",
+  "title": "The Mox",
+  "set": "the-mox",
+  "sets": [
+   "the-mox"
+  ],
+  "titles": [
+   "The Mox"
+  ],
+  "posted": "2026-11-18T10:00:53+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
