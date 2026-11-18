@@ -195,7 +195,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-11-18.2";   // bump together with version.json after every change
+const OVERLAY_V = "2026-11-18.3";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -491,6 +491,15 @@ function anyCategory(ev){
 const inCategoryList = ev => Array.isArray(ev.categories) && !!streamCat && ev.categories.some(c => normCat(c) === normCat(streamCat))
   && !((ev.channels || []).length && !(ev.channels || []).map(c => String(c).trim().toLowerCase()).includes(CHANNEL));
 const SOON_MS = 24 * 3600e3;                 // upcoming badges get a "STARTS IN" chip from this long before their start
+/* hand-made header chips for a big event in its own category (by event id), instead of the automatic grouping:
+   each chip lists its badges by name, with its own label and action line */
+const CHIP_GROUPS = {
+  'gta-6': [
+    { names: ['Purple Chain', 'Bronze Chain', 'Silver Chain', 'Gold Chain', 'Diamond Chain', 'Miami Chain'], label: 'Bling Badges', action: 'Watch 1 hour a day · 1 badge per day', color: '#4ade80' },
+    { names: ['Welcome 2 Miami', 'Scored Big', 'Bleed Miami'], label: 'Heist Collection', action: '1 sub = 1 random · 3 subs = all', color: '#c4a1ff' },
+    { names: ['Golden Iguana'], label: 'Golden Iguana', action: 'Collect every badge & emote', color: '#f5b83d' },
+  ],
+};
 function autoAvailable(now){
   if(!streamCat || !site.events) return [];
   const chips = [], withAny = ANY_CATEGORY_BADGES_IN.some(c => normCat(c) === normCat(streamCat));
@@ -500,6 +509,14 @@ function autoAvailable(now){
     if(!(now < end) || !(any || inStreamCategory(ev))) return;
     if(any && now < start) return;                     // any-category badges: only once they can be earned
     if(now < start && (ev.time_tba || start - now > SOON_MS)) return;   // later ones (e.g. LoL fan badges days away) stay out of the header
+    if(CHIP_GROUPS[ev.id] && !any){
+      CHIP_GROUPS[ev.id].forEach(g => {
+        const imgs = g.names.map(n => ((ev.badges || []).find(b => b.name === n) || {}).img).filter(Boolean);
+        if(!imgs.length) return;
+        chips.push(now < start ? { imgs, label: g.label, cdTo: start, soon: true } : { imgs, label: g.label, action: g.action, actionColor: g.color });
+      });
+      return;
+    }
     const groups = new Map();                  // badges of one event with the same objective share a chip (e.g. 5 LoL badges)
     (ev.badges || []).forEach(b => {
       const act = badgeAction(b); if(!act) return;
