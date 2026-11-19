@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1920">
+<meta name="robots" content="noindex">
+<title>BadgeDB GTA VI Scene</title>
+<!-- OBS Browser source, 1920x1080: the Grand Theft Auto VI badge scene. Data (dates, badges, user counts) comes from
+     the site's events.json / popularity.json, so nothing here needs editing when they change.
+     After every change bump PAGE_V below AND gta6-version.json to the same new value: the page checks it every 30 s
+     and reloads itself. -->
+<style>
+@font-face{font-family:'Barlow';font-weight:400;font-display:swap;src:url(fonts/barlow-400-latin.woff2) format('woff2')}
+@font-face{font-family:'Barlow';font-weight:600;font-display:swap;src:url(fonts/barlow-600-latin.woff2) format('woff2')}
+@font-face{font-family:'Barlow';font-weight:700;font-display:swap;src:url(fonts/barlow-700-latin.woff2) format('woff2')}
+@font-face{font-family:'Barlow';font-weight:800;font-display:swap;src:url(fonts/barlow-800-latin.woff2) format('woff2')}
+@font-face{font-family:'Barlow Condensed';font-weight:600;font-display:swap;src:url(fonts/barlow-condensed-600-latin.woff2) format('woff2')}
+@font-face{font-family:'Barlow Condensed';font-weight:700;font-display:swap;src:url(fonts/barlow-condensed-700-latin.woff2) format('woff2')}
+@font-face{font-family:'Barlow Condensed';font-weight:800;font-display:swap;src:url(fonts/barlow-condensed-800-latin.woff2) format('woff2')}
+@font-face{font-family:'Manrope';font-style:normal;font-display:swap;font-weight:200 800;src:url(../../assets/fonts/manrope-latin-wght-normal.woff2) format('woff2')}
+
+:root{--ink:#f4f1fb;--mut:#b9aed6;--dim:#8c80ad;--panel:rgba(17,9,38,.87);--line:rgba(255,255,255,.10);
+  --free:#4ade80;--sub:#c4a1ff;--gold:#ffc65c;--pink:#ff5fa2;--hot:#ff4d6d}
+html,body{margin:0;padding:0;background:#090418;overflow:hidden}
+*{box-sizing:border-box}
+.stage{position:relative;width:1920px;height:1080px;overflow:hidden;color:var(--ink);font-family:'Barlow',sans-serif;transform-origin:0 0;
+  background:linear-gradient(180deg,#090418 0%,#170a3a 30%,#3a0f5c 52%,#8a1f6e 66%,#e0507a 74%,#3a0f5c 74.1%,#1a0838 100%)}
+.bc{font-family:'Barlow Condensed',sans-serif}
+
+/* ---------- scenery: stars, sun on the horizon, neon grid floor, palm silhouettes ---------- */
+.stars{position:absolute;inset:0 0 40% 0;background-image:
+  radial-gradient(1.6px 1.6px at 6% 18%,#fff,transparent),radial-gradient(1.4px 1.4px at 14% 42%,#ffd9f0,transparent),
+  radial-gradient(1.2px 1.2px at 23% 9%,#fff,transparent),radial-gradient(1.6px 1.6px at 38% 30%,#e6dcff,transparent),
+  radial-gradient(1.3px 1.3px at 47% 12%,#fff,transparent),radial-gradient(1.5px 1.5px at 58% 36%,#ffd9f0,transparent),
+  radial-gradient(1.2px 1.2px at 66% 6%,#fff,transparent),radial-gradient(1.6px 1.6px at 79% 26%,#e6dcff,transparent),
+  radial-gradient(1.3px 1.3px at 88% 14%,#fff,transparent),radial-gradient(1.4px 1.4px at 95% 44%,#ffd9f0,transparent);opacity:.75}
+.sun{position:absolute;left:640px;top:799px;width:640px;height:640px;margin-left:-320px;margin-top:-320px;border-radius:50%;
+  background:linear-gradient(180deg,#ffe27a 0%,#ffb35c 38%,#ff6f91 70%,#d6338a 100%);
+  -webkit-mask-image:linear-gradient(180deg,#000 0 28%,transparent 28% 30%,#000 30% 34%,transparent 34% 36.5%,#000 36.5% 40%,transparent 40% 43%,#000 43% 46%,transparent 46% 50%);mask-image:linear-gradient(180deg,#000 0 28%,transparent 28% 30%,#000 30% 34%,transparent 34% 36.5%,#000 36.5% 40%,transparent 40% 43%,#000 43% 46%,transparent 46% 50%);
+  clip-path:inset(0 0 50% 0);opacity:.6}
+.glow{position:absolute;left:640px;top:799px;width:1300px;height:700px;margin-left:-650px;margin-top:-460px;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(255,111,145,.35),rgba(255,111,145,0))}
+.floor{position:absolute;left:-30%;right:-30%;top:799px;height:600px;perspective:340px;perspective-origin:50% 0;overflow:hidden}
+.floor i{position:absolute;inset:-100% 0 0 0;transform:rotateX(62deg);transform-origin:50% 0;will-change:transform;
+  background-image:linear-gradient(rgba(255,95,162,.55) 2px,transparent 2px),linear-gradient(90deg,rgba(255,95,162,.45) 2px,transparent 2px);
+  background-size:80px 80px;animation:roll 6s linear infinite}
+@keyframes roll{from{transform:rotateX(62deg) translateY(0)}to{transform:rotateX(62deg) translateY(80px)}}
+.floor::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(224,80,122,.55),rgba(26,8,56,0) 30%,rgba(26,8,56,.85) 85%)}
+.palm{position:absolute;bottom:-20px;width:440px;height:770px;fill:#12051f;opacity:.92}
+.palm.l{left:-120px} .palm.r{right:-130px;transform:scaleX(-1)}
+.palm.l2{left:150px;width:250px;height:440px;bottom:40px;opacity:.7} .palm.r2{right:190px;width:270px;height:470px;bottom:30px;opacity:.7;transform:scaleX(-1)}
+
+/* ---------- layout ---------- */
+.ui{position:absolute;inset:0;padding:40px 56px 30px;display:flex;flex-direction:column}
+.head{display:flex;align-items:flex-start;justify-content:space-between;gap:30px;height:212px;flex:none}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{width:46px;height:46px;display:block;filter:drop-shadow(0 0 12px rgba(167,139,250,.6))}
+.brand .wm{display:flex;flex-direction:column;font-family:'Manrope',sans-serif;font-weight:800;font-size:21px;line-height:.95;letter-spacing:-.04em}
+.brand .wm span:last-child{color:#c9b6ff}
+.brand .k{margin-left:18px;padding-left:18px;border-left:1px solid rgba(255,255,255,.22);font-weight:700;font-size:21px;letter-spacing:4px;text-transform:uppercase;color:#ffc2dc}
+.title{margin:6px 0 0 -4px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:152px;line-height:.9;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;
+  background:linear-gradient(180deg,#ffffff 0%,#ffffff 45%,#ffd1e6 70%,#ff8fc0 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 6px 0 rgba(122,21,92,.85)) drop-shadow(0 0 34px rgba(255,95,162,.45))}
+.cd{min-width:470px;padding:22px 30px 20px;border-radius:22px;background:var(--panel);border:1px solid var(--line);text-align:right;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.cd .k{font-weight:800;font-size:19px;letter-spacing:5px;text-transform:uppercase;color:#ffc2dc}
+.cd .v{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:92px;line-height:.95;margin-top:6px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cd .v small{font-size:52px;color:#ffc2dc;margin-left:6px}
+.cd .w{margin-top:8px;font-weight:600;font-size:19px;color:var(--mut)}
+.cd.hot{border-color:rgba(255,77,109,.7);box-shadow:0 0 0 2px rgba(255,77,109,.35),0 10px 40px rgba(0,0,0,.35)}
+.cd.hot .k{color:var(--hot)}
+.cd.hot.last .v{animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.55}}
+
+.body{flex:1;min-height:0;display:flex;gap:26px;margin-top:6px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:24px;box-shadow:0 14px 50px rgba(0,0,0,.35)}
+.ph{display:flex;align-items:center;gap:14px}
+.ph h2{margin:0;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:44px;line-height:1;letter-spacing:1px;text-transform:uppercase}
+.pill{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;letter-spacing:2px;text-transform:uppercase;border-radius:8px;padding:5px 10px 4px;line-height:1;white-space:nowrap}
+.pill.free{background:rgba(74,222,128,.16);color:var(--free);border:1px solid rgba(74,222,128,.45)}
+.pill.sub{background:rgba(196,161,255,.16);color:var(--sub);border:1px solid rgba(196,161,255,.45)}
+.pill.gold{background:rgba(255,198,92,.16);color:var(--gold);border:1px solid rgba(255,198,92,.5)}
+.ph .sp{flex:1}
+.tag{padding:9px 18px;border-radius:999px;font-weight:800;font-size:21px;color:#2a0b2e;background:linear-gradient(90deg,#ffd36e,#ff8fc0)}
+
+/* Bling Badges: a 6-day streak track */
+.bling{width:1172px;flex:none;padding:28px 34px 30px;display:flex;flex-direction:column}
+.bling .sub{margin-top:10px;font-weight:600;font-size:22px;color:var(--mut)}
+.bling .sub b{color:var(--ink)}
+.track{position:relative;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:16px;margin-top:28px}
+.track::before{content:'';position:absolute;left:8%;right:8%;top:21px;height:6px;border-radius:6px;
+  background:linear-gradient(90deg,#b05cff,#d98b6a,#d7dce6,#ffc65c,#bfe9ff,#ff6fd8);opacity:.85}
+.day{position:relative;display:flex;flex-direction:column;align-items:center}
+.day .n{position:relative;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:26px;
+  color:#1a0838;background:var(--c);box-shadow:0 0 0 5px rgba(17,9,38,.95),0 0 22px var(--c)}
+.day .card{margin-top:18px;width:100%;padding:28px 10px 22px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;text-align:center}
+.day img,.day .ph0{width:128px;height:128px;display:block;filter:drop-shadow(0 8px 18px rgba(0,0,0,.45))}
+.day .nm{margin-top:16px;font-weight:800;font-size:24px;line-height:1.05;white-space:nowrap}
+.day .rq{margin-top:6px;font-weight:600;font-size:18px;color:var(--mut);white-space:nowrap}
+.day .us{margin-top:10px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;letter-spacing:1px;text-transform:uppercase;color:var(--dim);min-height:20px;white-space:nowrap}
+.day .us b{color:var(--ink)}
+.steps{margin-top:auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;padding-top:24px}
+.step{display:flex;gap:14px;align-items:flex-start;padding:18px 18px 18px 16px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.step i{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-style:normal;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:24px;color:#2a0b2e;background:linear-gradient(135deg,#ffd36e,#ff8fc0)}
+.step p{margin:0;font-weight:600;font-size:20px;line-height:1.3;color:var(--mut)}
+.step p b{color:var(--ink);font-weight:800}
+
+/* right column */
+.side{flex:1;min-width:0;display:flex;flex-direction:column;gap:22px}
+.heist{padding:24px 30px 24px}
+.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px}
+.trio .b{display:flex;flex-direction:column;align-items:center;text-align:center;padding:14px 6px 12px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+.trio img,.trio .ph0{width:76px;height:76px;display:block;filter:drop-shadow(0 6px 14px rgba(0,0,0,.45))}
+.trio .nm{margin-top:10px;font-weight:800;font-size:20px;white-space:nowrap}
+.trio .us{margin-top:5px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;letter-spacing:1px;text-transform:uppercase;color:var(--dim);min-height:18px}
+.trio .us b{color:var(--ink)}
+.heist p,.extra p{margin:16px 0 0;font-weight:600;font-size:19.5px;line-height:1.35;color:var(--mut)}
+.heist p b,.extra p b{color:var(--ink);font-weight:800}
+.iguana{display:flex;align-items:center;gap:22px;padding:18px 30px;border-color:rgba(255,198,92,.35);
+  background:linear-gradient(100deg,rgba(62,38,50,.94),rgba(17,9,38,.9) 60%)}
+.iguana img,.iguana .ph0{width:84px;height:84px;flex:none;display:block;filter:drop-shadow(0 0 18px rgba(255,198,92,.55))}
+.iguana h3{margin:0;display:flex;align-items:center;gap:12px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:36px;line-height:1;text-transform:uppercase}
+.iguana p{margin:8px 0 0;font-weight:600;font-size:20px;line-height:1.3;color:var(--mut)}
+.iguana p b{color:var(--ink)}
+.extra{flex:1;min-height:0;padding:20px 30px;display:flex;flex-direction:column;justify-content:center}
+.extra h3{margin:0;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:28px;letter-spacing:1px;text-transform:uppercase;color:#ffc2dc}
+.extra p{margin-top:10px;white-space:nowrap}
+.extra p + p{margin-top:6px}
+.ph0{border-radius:16px;background:rgba(255,255,255,.08)}
+
+/* footer */
+.foot{height:74px;flex:none;margin-top:22px;display:flex;align-items:center;gap:26px;padding:0 28px;border-radius:20px;background:rgba(12,6,28,.86);border:1px solid var(--line)}
+.foot .cmd{font-weight:600;font-size:23px;color:var(--mut);white-space:nowrap}
+.foot .cmd b{color:var(--ink);font-weight:800;font-family:'Barlow Condensed',sans-serif;font-size:27px;letter-spacing:1px;padding:2px 9px;border-radius:8px;background:rgba(255,255,255,.08);margin:0 3px}
+.foot .sp{flex:1}
+.foot .x{display:flex;align-items:center;gap:10px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:25px;letter-spacing:.5px;white-space:nowrap}
+.foot .vs{width:1px;height:34px;background:rgba(255,255,255,.18)}
+.foot .site{display:flex;align-items:center;gap:12px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:27px;letter-spacing:1.5px;white-space:nowrap}
+.foot .site img{width:36px;height:36px}
+.ended .cd .k{color:var(--dim)}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="stars"></div>
+  <div class="glow"></div>
+  <div class="sun"></div>
+  <div class="floor"><i></i></div>
+  <svg width="0" height="0" style="position:absolute"><defs><symbol id="palm" viewBox="0 0 400 700">
+    <path d="M182 700 C192 520 203 330 226 176 L242 179 C224 336 216 520 214 700 Z"/>
+    <path d="M190 640 l26 -4 M193 580 l25 -4 M196 520 l24 -4 M199 460 l24 -4 M203 400 l23 -4 M207 340 l22 -4 M212 280 l21 -3 M218 222 l19 -3" stroke="#090314" stroke-width="5" opacity=".5"/>
+    <path d="M234 172 Q140 112 30 226 Q148 146 232 186 Z"/>
+    <path d="M234 172 Q336 104 400 236 Q318 146 236 186 Z"/>
+    <path d="M234 172 Q172 56 84 34 Q190 86 230 182 Z"/>
+    <path d="M234 172 Q304 44 386 54 Q290 96 238 182 Z"/>
+    <path d="M234 174 Q104 168 52 338 Q136 204 232 188 Z"/>
+    <path d="M234 174 Q356 178 376 346 Q322 210 236 188 Z"/>
+    <path d="M234 170 Q236 70 210 0 Q258 74 240 178 Z"/>
+    <circle cx="222" cy="194" r="13"/><circle cx="246" cy="196" r="12"/><circle cx="234" cy="210" r="12"/>
+  </symbol></defs></svg>
+  <svg class="palm l"><use href="#palm"/></svg>
+  <svg class="palm l2"><use href="#palm"/></svg>
+  <svg class="palm r"><use href="#palm"/></svg>
+  <svg class="palm r2"><use href="#palm"/></svg>
+
+  <div class="ui">
+    <div class="head">
+      <div>
+        <div class="brand"><img src="../../logo-320.png" alt=""><div class="wm"><span>Badge</span><span>Database</span></div><span class="k bc" id="kicker">Twitch badge event</span></div>
+        <div class="title" id="title">Grand Theft Auto VI</div>
+      </div>
+      <div class="cd" id="cd"><div class="k" id="cdK">Ends in</div><div class="v" id="cdV">&nbsp;</div><div class="w" id="cdW">&nbsp;</div></div>
+    </div>
+
+    <div class="body">
+      <div class="panel bling">
+        <div class="ph"><h2>Bling Badges</h2><span class="pill free">Free</span><span class="sp"></span><span class="tag">Watch 1 hour a day</span></div>
+        <div class="sub">Watch <b>1 hour</b> of any stream in the <b>Grand Theft Auto VI</b> category. Every day you do, you unlock the next chain.</div>
+        <div class="track" id="track"></div>
+        <div class="steps">
+          <div class="step"><i>1</i><p>Open any <b>Grand Theft Auto VI</b> stream and watch for <b>1 hour</b>.</p></div>
+          <div class="step"><i>2</i><p>Come back <b>another day</b>. The days don't have to be in a row, <b>one chain per day</b>.</p></div>
+          <div class="step"><i>3</i><p><b>6 days</b> unlock all six chains, ending with the <b>Miami Chain</b>.</p></div>
+        </div>
+      </div>
+
+      <div class="side">
+        <div class="panel heist">
+          <div class="ph"><h2>Heist Collection</h2><span class="pill sub">Sub</span></div>
+          <div class="trio" id="trio"></div>
+          <p>Each <b>Tier 1 sub or gift sub</b> to a GTA VI streamer unlocks <b>one random</b> badge with its emote. <b>3 subs</b> unlock all three.</p>
+        </div>
+        <div class="panel iguana" id="iguana"></div>
+        <div class="panel extra">
+          <h3>Also during the launch</h3>
+          <p><b>Heist Train:</b> a GTA VI Hype Train with 6 pixel-art rewards</p>
+          <p><b>Daily drops:</b> surprise GTA VI Ultimate Edition codes</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <span class="cmd">Type <b>!BADGES</b> for every active badge and <b>!SOON</b> for upcoming ones</span>
+      <span class="sp"></span>
+      <span class="x"><svg viewBox="0 0 24 24" width="20" height="20" fill="#fff" aria-label="X"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>@BadgeDatabase</span>
+      <span class="vs"></span>
+      <span class="site"><img src="logo.png" alt="">BADGEDATABASE.COM</span>
+    </div>
+  </div>
+</div>
+
+<script>
+const PAGE_V = "2026-11-19.1";   // bump together with gta6-version.json after every change
+const EVENT_ID = 'gta-6';
+const CHAINS = [   // the six Bling Badges, in day order, with the color of their day marker
+  ['Purple Chain', '#b05cff'], ['Bronze Chain', '#e0977a'], ['Silver Chain', '#dfe3ec'],
+  ['Gold Chain', '#ffc65c'], ['Diamond Chain', '#bfe9ff'], ['Miami Chain', '#ff6fd8']];
+const HEIST = ['Welcome 2 Miami', 'Scored Big', 'Bleed Miami'];
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cdn = id => 'https://static-cdn.jtvnw.net/badges/v1/' + id + '/3';
+const slug = s => String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const compact = n => n >= 1e6 ? (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M' : n >= 1e4 ? Math.round(n / 1e3) + 'K' : n >= 1e3 ? (n / 1e3).toFixed(1).replace(/\.0$/, '') + 'K' : String(n);
+
+// the 1920x1080 stage scales itself to the window (handy in a preview; in OBS the source is 1920x1080)
+function fit(){ const s = Math.min(innerWidth / 1920, innerHeight / 1080); $('stage').style.transform = s < .999 || s > 1.001 ? `scale(${s})` : ''; }
+addEventListener('resize', fit); fit();
+
+let ev = null, users = {};
+async function getJson(file){
+  for(const base of ['https://raw.githubusercontent.com/davidpzsny/badgedb/main/', 'https://badgedatabase.com/']){
+    try{ const r = await fetch(base + file + '?t=' + Date.now(), {cache: 'no-store'}); if(r.ok) return await r.json(); }catch(e){}
+  }
+  return null;
+}
+const cacheGet = k => { try{ return JSON.parse(localStorage.getItem('gta6_' + k) || 'null'); }catch(e){ return null; } };
+const cacheSet = (k, v) => { try{ localStorage.setItem('gta6_' + k, JSON.stringify(v)); }catch(e){} };
+
+const badge = name => (ev && (ev.badges || []).find(b => b.name === name)) || { name };
+const img = (b, cls) => b.img ? `<img src="${esc(cdn(b.img))}" alt="${esc(b.name)}"${cls ? ` class="${cls}"` : ''} onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'ph0'}))">` : '<span class="ph0"></span>';
+const usersLine = b => { const n = users[slug(b.name)] || 0; return n ? `<b>${compact(n)}</b> users` : ''; };
+
+function render(){
+  $('track').innerHTML = CHAINS.map(([name, c], i) => { const b = badge(name);
+    return `<div class="day" style="--c:${c}"><span class="n">${i + 1}</span><div class="card">${img(b)}
+      <div class="nm">${esc(name)}</div><div class="rq">1 hour on ${i + 1} day${i ? 's' : ''}</div><div class="us">${usersLine(b)}</div></div></div>`; }).join('');
+  $('trio').innerHTML = HEIST.map(name => { const b = badge(name);
+    return `<div class="b">${img(b)}<div class="nm">${esc(name)}</div><div class="us">${usersLine(b)}</div></div>`; }).join('');
+  const g = badge('Golden Iguana');
+  $('iguana').innerHTML = `${img(g)}<div><h3>Golden Iguana <span class="pill gold">Collect all</span></h3>
+    <p>Collect <b>every</b> GTA VI launch badge and emote to unlock it.${usersLine(g) ? ` <b>${compact(users[slug(g.name)])}</b> users so far.` : ''}</p></div>`;
+  if(ev && ev.start && ev.end){
+    const f = t => new Date(t).toLocaleDateString('en-US', {month: 'short', day: 'numeric', timeZone: 'UTC'});
+    $('kicker').textContent = `Twitch badge event · ${f(ev.start)} to ${f(Date.parse(ev.end) - 1)}`;
+  }
+  tick();
+}
+
+function tick(){
+  if(!ev || !ev.end) return;
+  const now = Date.now(), start = Date.parse(ev.start), end = Date.parse(ev.end), cd = $('cd');
+  const target = now < start ? start : end, ms = target - now;
+  const when = new Date(target).toLocaleString('en-US', {month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone: 'UTC'}).replace(',', ',') + ' UTC';
+  document.body.classList.toggle('ended', ms <= 0 && now >= end);
+  if(now >= end){ $('cdK').textContent = 'Event ended'; $('cdV').textContent = 'ENDED'; $('cdW').textContent = when; cd.className = 'cd'; return; }
+  const d = Math.floor(ms / 864e5), h = Math.floor(ms % 864e5 / 36e5), m = Math.floor(ms % 36e5 / 6e4), s = Math.floor(ms % 6e4 / 1e3), p = n => String(n).padStart(2, '0');
+  const big = d ? `${d}D ${p(h)}H ${p(m)}M` : h ? `${h}H ${p(m)}M` : `${m}M`, small = d ? '' : `<small>${p(s)}S</small>`;
+  const html = big + small; if($('cdV').innerHTML !== html) $('cdV').innerHTML = html;
+  const hot = now >= start && ms < 864e5;
+  $('cdK').textContent = now < start ? 'Starts in' : hot ? 'Ending soon' : 'Ends in';
+  $('cdW').textContent = when;
+  cd.className = 'cd' + (hot ? ' hot' : '') + (hot && ms < 36e5 ? ' last' : '');
+}
+
+async function load(){
+  let [evs, pop] = await Promise.all([getJson('events.json'), getJson('popularity.json')]);
+  if(Array.isArray(evs)) cacheSet('events', evs); else evs = cacheGet('events');
+  if(pop && (pop.sdb || pop.counts)) cacheSet('pop', pop); else pop = cacheGet('pop');
+  if(Array.isArray(evs)) ev = evs.find(e => e.id === EVENT_ID) || ev;
+  if(pop) users = Object.assign({}, pop.counts || {}, pop.sdb || {});
+  render();
+  if(!ev) setTimeout(load, 30000);
+}
+
+async function checkVersion(){
+  try{
+    const r = await fetch('gta6-version.json?t=' + Date.now(), {cache: 'no-store'}); if(!r.ok) return;
+    const v = String((await r.json()).v || '');
+    if(v && v !== PAGE_V && new URLSearchParams(location.search).get('v') !== v)
+      location.replace(location.pathname + '?v=' + encodeURIComponent(v));
+  }catch(e){}
+}
+
+(function fromCache(){ const e = cacheGet('events'), p = cacheGet('pop');
+  if(Array.isArray(e)) ev = e.find(x => x.id === EVENT_ID) || null; if(p) users = Object.assign({}, p.counts || {}, p.sdb || {}); })();
+render();
+setInterval(tick, 1000);
+load(); setInterval(load, 300000);
+setInterval(checkVersion, 30000); setTimeout(checkVersion, 5000);
+</script>
+</body>
+</html>
