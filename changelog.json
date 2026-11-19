@@ -1,5 +1,12 @@
 [
  {
+  "date": "2026-11-19",
+  "title": "Schedule shows yesterday too",
+  "items": [
+   {"type": "improved", "text": "Schedule (Timeline and Home): the week view now starts with yesterday, then today and the next 6 days (8 days in all). The 4-week view starts with yesterday too."}
+  ]
+ },
+ {
   "date": "2026-11-18",
   "title": "RuneScape badges and GTA VI",
   "items": [

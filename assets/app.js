@@ -464,10 +464,11 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape') setMenu(false); }
 
 /* ---------- badge calendar (one row per badge, BadgeBase-style) ---------- */
 const CAL = { calHome:{offset:0,span:7,limit:10}, calTimeline:{offset:0,span:7,limit:0} };
+const calDays = st => st.span===7 ? 8 : st.span;            // the week view: yesterday + the 7 days from today
 function calRange(st){
   const d=new Date(); d.setHours(0,0,0,0);
-  d.setDate(d.getDate() + st.offset*st.span);                // today is always the first day (‹ › move a whole view)
-  const a0=d.getTime(), end=new Date(d); end.setDate(end.getDate() + st.span);   // calendar days, so a clock change (DST) doesn't shift them
+  d.setDate(d.getDate() - 1 + st.offset*st.span);            // yesterday is the first day, then today (‹ › move a whole week / 4 weeks)
+  const a0=d.getTime(), end=new Date(d); end.setDate(end.getDate() + calDays(st));   // calendar days, so a clock change (DST) doesn't shift them
   return [a0, end.getTime()];
 }
 function calRows(a0,a1){
@@ -508,20 +509,20 @@ const textW = (() => { let c; return (t, px) => { if(!c){ c = document.createEle
   c.font = `700 ${px}px ${getComputedStyle(document.body).fontFamily}`; return c.measureText(String(t)).width; }; })();
 function renderCalendar(id){
   const el=document.getElementById(id); if(!el) return; const st=CAL[id];
-  const [a0,a1]=calRange(st), n=st.span, now=Date.now(), rows=calRows(a0,a1).filter(r => r.st!=='ended');
+  const [a0,a1]=calRange(st), n=calDays(st), wk=st.span===7, now=Date.now(), rows=calRows(a0,a1).filter(r => r.st!=='ended');
   const compact = window.matchMedia('(max-width:640px)').matches;
-  const cols = compact && n===28 ? 4 : n;                           // phones: 4 week columns instead of 28 day columns
+  const cols = compact && !wk ? 4 : n;                           // phones: 4 week columns instead of 28 day columns
   const days=Array.from({length:cols},(_,i)=>{ const step = cols===n ? DAY : 7*DAY, d=new Date(a0); d.setDate(d.getDate() + i * (cols===n ? 1 : 7));
     const t = cols===n ? d.toDateString()===new Date().toDateString() : (now>=d.getTime() && now<d.getTime()+step);
     if(compact) return `<div class="cal-day ${t?'today':''} ${cols===n&&[0,6].includes(d.getDay())?'wk':''}">${cols===n?d.toLocaleDateString(undefined,{weekday:'narrow'}):'Week of'}<b>${cols===n?d.getDate():d.toLocaleDateString(undefined,{month:'short',day:'numeric'})}</b></div>`;
     return `<div class="cal-day ${t?'today':''} ${[0,6].includes(d.getDay())?'wk':''}">${d.toLocaleDateString(undefined,{weekday:'short'})}<b>${d.toLocaleDateString(undefined,{month:'short',day:'numeric'})}</b></div>`; }).join('');
   const cut = st.limit && rows.length > st.limit + 2;          // hiding only one or two rows is not worth a button: show them
   const shown = cut && !st.all ? rows.slice(0, st.limit) : rows, more = rows.length - (st.limit || 0);
-  const W = Math.max(el.clientWidth || 1000, n===28 ? 1400 : 760);   // width of the day grid in px (for labels next to short bars)
+  const W = Math.max(el.clientWidth || 1000, wk ? 760 : 1400);   // width of the day grid in px (for labels next to short bars)
   const bars=shown.map((r,k)=>{
     const s=Math.max(r.s,a0), e=Math.min(r.e,a1);
     const left=(s-a0)/(a1-a0)*100, width=Math.max((e-s)/(a1-a0)*100, 1.2), w=Math.min(width,100-left);
-    const narrow = w < (n===7 ? 16 : 7), minPx = 34 + (Math.min(r.bs.length, 6) - 1) * 21;   // a short bar still fits every icon
+    const narrow = w < (wk ? 14 : 7), minPx = 34 + (Math.min(r.bs.length, 6) - 1) * 21;   // a short bar still fits every icon
     const one = r.bs.length===1, g = one ? (globalBadges.find(x=>x.imgId===r.b.img)||{}) : {}, set=g.set||"",
           nm = r.label || (one ? (g.name||r.b.name) : r.ev.name);     // one badge: its name (and page); several: the event
     const icon = r.bs.slice(0, 6).map((b, i) => { const bset = (globalBadges.find(x=>x.imgId===b.img)||{}).set || "";   // each icon: its own badge page
@@ -529,7 +530,7 @@ function renderCalendar(id){
                + (r.bs.length > 6 ? `<span class="more">+${r.bs.length - 6}</span>` : '');
     const spec = !!(r.ev.time_tba || r.ev.end_tba), tag = specTag(r.ev);
     const label = `<span class="nm">${esc(nm)}</span>${tag}<span class="lft">${leftText(r)}</span>`;
-    const inLabel = w < (n===7 ? 30 : 12) ? `<span class="nm">${esc(nm)}</span>${tag}` : label;
+    const inLabel = w < (wk ? 26 : 12) ? `<span class="nm">${esc(nm)}</span>${tag}` : label;
     const bar = `<button class="cal-bar ${r.cost} ${spec?'spec':''} ${r.st==='soon'?'soon':''} ${r.st==='ended'?'ended':''} ${r.s<a0?'cut-l':''} ${r.e>a1?'cut-r':''}"
       style="left:${left}%;width:${narrow?`max(${w}%,${minPx}px)`:w+'%'}" data-k="${k}" ${set?`data-set="${esc(set)}"`:`data-ev="${esc(r.ev.id)}"`}>${icon}${narrow?'':inLabel}</button>`;
     // short bars: the name (with the countdown under it) goes next to the bar, on the right when it fits there,
@@ -554,17 +555,17 @@ function renderCalendar(id){
   el.innerHTML = `
     <div class="cal-head"><h3><span class="st live"></span>${id==="calHome"?"Badges available right now":"Schedule"} <span class="pill live">${liveCount} active</span></h3>
       <span class="cal-range">${label}</span>
-      <div class="seg mini" data-calview="${id}"><button data-span="7" class="${n===7?'on':''}">Week</button><button data-span="28" class="${n===28?'on':''}">4 weeks</button></div>
+      <div class="seg mini" data-calview="${id}"><button data-span="7" class="${wk?'on':''}">Week</button><button data-span="28" class="${wk?'':'on'}">4 weeks</button></div>
       <div class="cal-nav" data-calnav="${id}"><button data-d="-1" aria-label="Previous">‹</button><button class="today" data-d="0">Today</button><button data-d="1" aria-label="Next">›</button></div>
     </div>
-    <div class="cal-scroll"><div class="cal-inner" style="--n:${cols};--g:${cols};${n===28&&!compact?'min-width:1400px':''}">
+    <div class="cal-scroll"><div class="cal-inner" style="--n:${cols};--g:${cols};${!wk&&!compact?'min-width:1400px':''}">
       <div class="cal-days">${days}</div>
       <div class="cal-body">${rows.length?bars:`<div class="cal-empty">${READY?'No badges with known dates in this range.':'Loading…'}</div>`}${nowX}</div>
     </div></div>
     <div class="cal-foot"><span><i style="background:rgba(52,211,153,.5)"></i>Free</span><span><i style="background:rgba(139,92,246,.6)"></i>Sub / paid</span><span><i style="border:1px dashed var(--line-2)"></i>Starts later</span>
       <span><i class="spec-sw"></i>Speculated time</span><span class="sp">* Ending soonest first; badges of one event share a row. Shown in your local time (${esc(Intl.DateTimeFormat().resolvedOptions().timeZone||'')}). Hover a badge for details, click to open it.</span></div>`;
   el._rows = rows;
-  if(n===28 && !compact){ const sc=el.querySelector('.cal-scroll'); if(sc && now>=a0 && now<a1) sc.scrollLeft = Math.max(0,(now-a0)/(a1-a0)*sc.scrollWidth - sc.clientWidth/3); }
+  if(!wk && !compact){ const sc=el.querySelector('.cal-scroll'); if(sc && now>=a0 && now<a1) sc.scrollLeft = Math.max(0,(now-a0)/(a1-a0)*sc.scrollWidth - sc.clientWidth/3); }
 }
 function renderCalendars(){ renderCalendar('calHome'); renderCalendar('calTimeline'); }
 document.addEventListener('click', e=>{
