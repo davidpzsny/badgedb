@@ -114,6 +114,30 @@
   ]
  },
  {
+  "id": "jordan-x-space-jam-nov19",
+  "name": "Space Jam's 30th Anniversary (Nov 19)",
+  "category": "Grand Theft Auto VI",
+  "start": "2026-11-19T20:00:00Z",
+  "end": "2026-11-20T20:59:00Z",
+  "dates_src": "manual",
+  "name_src": "manual",
+  "channels": [
+   "Samham"
+  ],
+  "note": "A fourth window of the Jordan x Space Jam badge, on twitch.tv/samham in the Grand Theft Auto VI category.",
+  "badges": [
+   {
+    "name": "Jordan x Space Jam",
+    "img": "f7d0e088-2870-4b20-93e8-ab0fedfe50e4",
+    "how": "Watch 15 minutes on twitch.tv/samham in the Grand Theft Auto VI category.",
+    "cost": "free",
+    "desc": "This badge was earned by watching Jordan x Space Jam streams during TwitchCon San Diego 2026!",
+    "how_src": "manual"
+   }
+  ],
+  "about": "Jordan Brand's Jumpman badge for the 30th anniversary of Space Jam, given out on changing channels during TwitchCon San Diego 2026."
+ },
+ {
   "id": "jordan-x-space-jam",
   "name": "Space Jam's 30th Anniversary",
   "category": "Unknown",
