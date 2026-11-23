@@ -13,7 +13,7 @@
     "img": "95507c79-f87e-4a0d-9940-92af830b3b36",
     "how": "Watch 60 minutes in the category.",
     "cost": "free",
-    "desc": "Watch 60 minutes of any channel streaming in the Old School RuneScape category.",
+    "desc": "This badge was earned by watching 60 minutes of any channel streaming in the Old School RuneScape category.",
     "how_src": "manual"
    },
    {
@@ -21,7 +21,7 @@
     "img": "8b5bf6d2-3f89-4c24-a6c2-c5eda04ce1e6",
     "how": "Subscribe (Tier 1) or gift a Tier 1 sub in the category.",
     "cost": "paid",
-    "desc": "Subscribe or Gift 1 sub to any channel streaming in the Old School RuneScape category.",
+    "desc": "This badge was earned by subscribing or gifting a sub to any channel streaming in the Old School RuneScape category.",
     "how_src": "manual"
    }
   ],
@@ -46,7 +46,7 @@
     "img": "2bee9264-647c-4bdc-921f-cb5e651b1c64",
     "how": "Watch 60 minutes in the Old School RuneScape category during December 2026.",
     "cost": "free",
-    "desc": "Watch 60 minutes of any channel streaming in the Old School RuneScape category during December 2026.",
+    "desc": "This badge was earned by watching 60 minutes of any channel streaming in the Old School RuneScape category during December 2026.",
     "how_src": "manual"
    },
    {
@@ -62,7 +62,7 @@
     "img": "bf75cdff-7b3a-4ba6-a1d5-e00563b9877e",
     "how": "Watch 60 minutes in the RuneScape category.",
     "cost": "free",
-    "desc": "Watch 60 minutes of any channel streaming in the RuneScape category.",
+    "desc": "This badge was earned by watching 60 minutes of any channel streaming in the RuneScape category.",
     "how_src": "manual"
    }
   ]
