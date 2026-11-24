@@ -200,7 +200,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 </div>
 
 <script>
-const OVERLAY_V = "2026-11-18.4";   // bump together with version.json after every change
+const OVERLAY_V = "2026-11-24.1";   // bump together with version.json after every change
 
 /* =========================== EDIT YOUR CONTENT HERE ===========================
    Left column: filled automatically from badgedatabase.com (every badge set added in the
@@ -498,7 +498,9 @@ const inCategoryList = ev => Array.isArray(ev.categories) && !!streamCat && ev.c
 const SOON_MS = 24 * 3600e3;                 // upcoming badges get a "STARTS IN" chip from this long before their start
 /* hand-made header chips for a big event in its own category (by event id), instead of the automatic grouping:
    each chip lists its badges by name, with its own label and action line */
-const CHIP_PANEL = { 'gta-6': true };   // these events: all their chips in ONE panel side by side (no turns), short captions
+/* these events: their chips grouped into panels by label, short captions; the panels take turns in the header
+   (watch badges, then sub badges, ...) */
+const CHIP_PANEL = { 'gta-6': [['Bling Badges'], ['Heist Collection', 'Golden Iguana']] };
 const CHIP_GROUPS = {
   'gta-6': [
     { names: ['Purple Chain', 'Bronze Chain', 'Silver Chain', 'Gold Chain', 'Diamond Chain', 'Miami Chain'], label: 'Bling Badges', action: 'Watch 1 hour a day · 1 badge per day', short: 'Watch 1h a day', color: '#4ade80' },
@@ -516,9 +518,13 @@ function autoAvailable(now){
     if(any && now < start) return;                     // any-category badges: only once they can be earned
     if(now < start && (ev.time_tba || start - now > SOON_MS)) return;   // later ones (e.g. LoL fan badges days away) stay out of the header
     if(CHIP_GROUPS[ev.id] && !any && CHIP_PANEL[ev.id] && now >= start){
-      const segs = CHIP_GROUPS[ev.id].map(g => ({ imgs: g.names.map(n => ((ev.badges || []).find(b => b.name === n) || {}).img).filter(Boolean),
-                                                  label: g.label, action: g.short || g.action, actionColor: g.color })).filter(x => x.imgs.length);
-      if(segs.length) chips.push({ panel: segs, label: EVENT_TITLES[ev.id] || ev.name });
+      const seg = g => ({ imgs: g.names.map(n => ((ev.badges || []).find(b => b.name === n) || {}).img).filter(Boolean),
+                          label: g.label, action: g.short || g.action, actionColor: g.color });
+      const turns = Array.isArray(CHIP_PANEL[ev.id]) ? CHIP_PANEL[ev.id] : [CHIP_GROUPS[ev.id].map(g => g.label)];
+      turns.forEach(labels => {
+        const segs = CHIP_GROUPS[ev.id].filter(g => labels.includes(g.label)).map(seg).filter(x => x.imgs.length);
+        if(segs.length) chips.push({ panel: segs, label: EVENT_TITLES[ev.id] || ev.name });
+      });
       return;
     }
     if(CHIP_GROUPS[ev.id] && !any){
@@ -675,11 +681,12 @@ function render(){
   fillCountdowns(now);
 }
 
-/* header chips: when they don't all fit next to each other, show them one at a time, switching every 6 seconds */
+/* header chips: shown one at a time, switching every 6 seconds, when there is more than one (watch and sub badges take
+   turns) or when they don't all fit next to each other */
 let chipIdx = 0;
 function fitChips(){
   const list = $('available'); list.classList.remove('rot'); list.style.width = ''; chipIdx = 0;
-  if(list.children.length > 1 && list.scrollWidth > list.clientWidth + 2){
+  if(list.children.length > 1){
     const widest = Math.max(...[...list.children].map(c => c.offsetWidth));      // same width for every turn, so nothing jumps
     list.classList.add('rot'); list.children[0].classList.add('on'); list.style.width = widest + 'px';
   }
