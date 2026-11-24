@@ -6,7 +6,8 @@
    {"type": "fixed", "text": "RuneScape & Old School RuneScape (December): the event now lists only the RuneScape Santa Hat and the RuneScape Quest Icon. The \"RuneScape Sant Hat\" stays in the badge archive, but it is no longer shown as part of the event."},
    {"type": "fixed", "text": "Get notified: the X logo is visible again in dark mode, and the cards show their address on one line."},
    {"type": "improved", "text": "Questions on the badge lists and the FAQ page are now a clean, open list instead of boxes."},
-   {"type": "fixed", "text": "Insights menu: on its pages (Top Categories, Statistics, Badge Popularity, Leaderboard) the purple line now sits under \"Insights\" in the top bar instead of slipping into the open menu."}
+   {"type": "fixed", "text": "Insights menu: on its pages (Top Categories, Statistics, Badge Popularity, Leaderboard) the purple line now sits under \"Insights\" in the top bar instead of slipping into the open menu."},
+   {"type": "fixed", "text": "The \"RuneScape Sant Hat\" no longer shows up on its own under \"Date not announced\" or in the badge counts. It is only listed in the global badge archive as a newly added badge."}
   ]
  },
  {

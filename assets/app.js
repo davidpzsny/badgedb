@@ -428,9 +428,11 @@ function evAdded(ev){
   return ds[0] ? Date.parse(ds[0]) : null;
 }
 function isStale(ev){ if(ev.start) return false; const a = evAdded(ev); return !!a && (Date.now() - a) > STALE_DAYS*864e5; }
+// badges that only belong in the archive (e.g. a duplicate Twitch added by mistake): never shown as an event
+const ARCHIVE_ONLY = new Set(['runescape-sant-hat']);
 function orphanEvents(){
   const seen = new Set(Object.keys(EV_BY_IMG));
-  return globalBadges.filter(b => !seen.has(b.imgId) && b.added && (Date.now() - Date.parse(b.added)) < STALE_DAYS*864e5)
+  return globalBadges.filter(b => !seen.has(b.imgId) && !ARCHIVE_ONLY.has(b.set) && b.added && (Date.now() - Date.parse(b.added)) < STALE_DAYS*864e5)
     .map(b => ({ id:"orphan-"+b.set, name:b.name, category:"Unknown", start:"", end:"",
                  badges:[{ name:b.name, img:b.imgId, how:b.how || "Objective not confirmed yet.", cost: b.free ? "free" : "na" }] }));
 }
