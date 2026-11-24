@@ -1289,3 +1289,24 @@ h3{font-weight:650;letter-spacing:-.01em}
 .social:hover{transform:none}
 .social .ic{background:transparent;color:var(--text);border:1px solid var(--line-2);border-radius:999px}
 .tool:hover{transform:none}
+
+/* questions (badge lists and the FAQ page): a clean hairline list instead of boxes */
+.faq{gap:0;margin:30px 0 34px;border-top:1px solid var(--line)}
+.faq details,.faq-page details{background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:0;box-shadow:none}
+.faq details[open],.faq-page details[open]{border-color:var(--line)}
+.faq summary{font-weight:600;font-size:15px;padding:18px 0;gap:16px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::before{display:none}
+.faq summary::after{content:"+";margin-left:auto;font-size:20px;line-height:1;font-weight:400;color:var(--muted);transition:transform .15s}
+.faq details[open] summary::after,.faq-page details[open] summary::after{transform:rotate(45deg)}
+.faq p{padding:0 0 20px;max-width:72ch;line-height:1.65}
+.faq-page{gap:0;border-top:1px solid var(--line)}
+.faq-page summary{font-weight:600;padding:20px 0}
+.faq-page summary::after{font-weight:400}
+
+/* Get notified: X icon visible on dark, wider cards, addresses on one line */
+.social .ic{color:var(--text)!important}
+.social > span:not(.ic){min-width:0}
+.social small{display:block;word-break:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (min-width:881px){ #socials{grid-template-columns:repeat(3,minmax(0,1fr))} }
+.faq p a{color:var(--purple-2);font-weight:600}

@@ -39,7 +39,7 @@
   "end": "",
   "dates_src": "manual",
   "name_src": "manual",
-  "note": "Dates not announced yet. The Santa Hat is for December 2026 (Twitch lists it twice, also as \"RuneScape Sant Hat\").",
+  "note": "Dates not announced yet. The Santa Hat is for December 2026.",
   "badges": [
    {
     "name": "RuneScape Santa Hat",
@@ -47,14 +47,6 @@
     "how": "Watch 60 minutes in the Old School RuneScape category during December 2026.",
     "cost": "free",
     "desc": "This badge was earned by watching 60 minutes of any channel streaming in the Old School RuneScape category during December 2026.",
-    "how_src": "manual"
-   },
-   {
-    "name": "RuneScape Sant Hat",
-    "img": "044b64a3-3319-4749-973e-abc5e0dfe323",
-    "how": "Watch 60 minutes in the Old School RuneScape category during December 2026.",
-    "cost": "free",
-    "desc": "Watch 60 minutes of any channel streaming in the Old School RuneScape category during December 2026.",
     "how_src": "manual"
    },
    {
