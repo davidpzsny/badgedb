@@ -1,6 +1,13 @@
 [
  {
   "date": "2026-11-24",
+  "title": "Timeline filter applies to the schedule",
+  "items": [
+   {"type": "improved", "text": "Timeline: the All / Free / Sub / paid filter and the search box now filter the Schedule too, not only the event cards below it. With Free you only see the watch rows, with Sub / paid only the sub rows."}
+  ]
+ },
+ {
+  "date": "2026-11-24",
   "title": "RuneScape Santa Hat and small fixes",
   "items": [
    {"type": "fixed", "text": "RuneScape & Old School RuneScape (December): the event now lists only the RuneScape Santa Hat and the RuneScape Quest Icon. The \"RuneScape Sant Hat\" stays in the badge archive, but it is no longer shown as part of the event."},

@@ -452,6 +452,7 @@ function renderEvents(){
   delete buckets.ended;                              // finished events stay in the archive, not on the timeline
   buckets.tba.sort((a,b)=>evNewest(b)-evNewest(a));  // events without dates: newest first
   for(const k of Object.keys(buckets)){ const K=k[0].toUpperCase()+k.slice(1); $('#ev'+K).innerHTML = buckets[k].length?buckets[k].map(ev=>eventCard(ev,k)).join(''):`<div class="empty">${evQuery?'No events match your search.':READY?'Nothing here right now.':'Loading…'}</div>`; $('#n'+K).textContent = badgeCount(buckets[k])||''; }
+  try{ renderCalendar('calTimeline'); }catch(e){}       // the schedule follows the same filter
 }
 const DAY=864e5, COLW=46;
 /* ---------- mobile menu ---------- */
@@ -509,9 +510,16 @@ function leftText(r){
 // width of a text in the site's bold font, for placing labels next to short calendar bars
 const textW = (() => { let c; return (t, px) => { if(!c){ c = document.createElement('canvas').getContext('2d'); }
   c.font = `700 ${px}px ${getComputedStyle(document.body).fontFamily}`; return c.measureText(String(t)).width; }; })();
+// the Timeline page's search box and All / Free / Sub filter apply to its schedule too (rows of the home page stay unfiltered)
+function calMatch(r){
+  if(evFilter==="free" && !r.bs.some(b => b.cost==="free")) return false;
+  if(evFilter==="paid" && !r.bs.some(b => b.cost==="paid")) return false;
+  if(evQuery){ const hay = (r.ev.name+" "+r.ev.category+" "+r.bs.map(b => b.name+" "+b.how).join(" ")).toLowerCase(); if(!hay.includes(evQuery)) return false; }
+  return true;
+}
 function renderCalendar(id){
   const el=document.getElementById(id); if(!el) return; const st=CAL[id];
-  const [a0,a1]=calRange(st), n=calDays(st), wk=st.span===7, now=Date.now(), rows=calRows(a0,a1).filter(r => r.st!=='ended');
+  const [a0,a1]=calRange(st), n=calDays(st), wk=st.span===7, now=Date.now(), rows=calRows(a0,a1).filter(r => r.st!=='ended' && (id!=='calTimeline' || calMatch(r)));
   const compact = window.matchMedia('(max-width:640px)').matches;
   const cols = compact && !wk ? 4 : n;                           // phones: 4 week columns instead of 28 day columns
   const days=Array.from({length:cols},(_,i)=>{ const step = cols===n ? DAY : 7*DAY, d=new Date(a0); d.setDate(d.getDate() + i * (cols===n ? 1 : 7));
@@ -562,7 +570,7 @@ function renderCalendar(id){
     </div>
     <div class="cal-scroll"><div class="cal-inner" style="--n:${cols};--g:${cols};${!wk&&!compact?'min-width:1400px':''}">
       <div class="cal-days">${days}</div>
-      <div class="cal-body">${rows.length?bars:`<div class="cal-empty">${READY?'No badges with known dates in this range.':'Loading…'}</div>`}${nowX}</div>
+      <div class="cal-body">${rows.length?bars:`<div class="cal-empty">${READY?(id==='calTimeline'&&(evFilter!=='all'||evQuery)?'No badges match your filter in this range.':'No badges with known dates in this range.'):'Loading…'}</div>`}${nowX}</div>
     </div></div>
     <div class="cal-foot"><span><i style="background:rgba(52,211,153,.5)"></i>Free</span><span><i style="background:rgba(139,92,246,.6)"></i>Sub / paid</span><span><i style="border:1px dashed var(--line-2)"></i>Starts later</span>
       <span><i class="spec-sw"></i>Speculated time</span><span class="sp">* Ending soonest first; badges of one event share a row. Shown in your local time (${esc(Intl.DateTimeFormat().resolvedOptions().timeZone||'')}). Hover a badge for details, click to open it.</span></div>`;
