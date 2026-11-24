@@ -1310,3 +1310,13 @@ h3{font-weight:650;letter-spacing:-.01em}
 .social small{display:block;word-break:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media (min-width:881px){ #socials{grid-template-columns:repeat(3,minmax(0,1fr))} }
 .faq p a{color:var(--purple-2);font-weight:600}
+/* Insights dropdown: the current page is highlighted inside the menu; the purple line goes under "Insights" */
+@media (min-width:881px){
+  .side .nav[aria-label="Insights"] a.on::after{display:none}
+  .side .nav[aria-label="Insights"] a.on{background:var(--panel-2);color:var(--text)}
+  .side .nav[aria-label="Insights"] h6{position:relative}
+  .side .nav[aria-label="Insights"]:has(a.on) h6::before{content:"";position:absolute;left:12px;right:12px;bottom:-15px;height:2px;border-radius:2px;background:var(--purple)}
+}
+@media (min-width:881px) and (max-width:1220px){
+  .side .nav a.on::after,.side .nav[aria-label="Insights"]:has(a.on) h6::before{left:9px;right:9px}
+}
