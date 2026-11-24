@@ -1,5 +1,14 @@
 [
  {
+  "date": "2026-11-24",
+  "title": "A cleaner, calmer look",
+  "items": [
+   {"type": "improved", "text": "New design: on desktop the side menu is now a slim navigation bar at the top (Insights opens a small menu), the content is centered with more space, and colors are calmer: no glow, no gradients, the logo's purple only as an accent."},
+   {"type": "improved", "text": "Home: a new header with the live stream next to it, and the badge counts (active, upcoming, date TBA, free today) in one clean row."},
+   {"type": "improved", "text": "The 24/7 stream bar is now a small floating button in the bottom right corner on desktop. Free and Sub labels are simple outlined tags."}
+  ]
+ },
+ {
   "date": "2026-11-20",
   "title": "Jordan x Space Jam is back",
   "items": [

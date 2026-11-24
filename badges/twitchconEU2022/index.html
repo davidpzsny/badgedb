@@ -32,9 +32,9 @@
 <link rel="preload" href="/assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://static-cdn.jtvnw.net">
 <script>/* theme before first paint: badgedb_theme = light | dark | system (default dark) */(function(){try{var t=localStorage.getItem("badgedb_theme")||"dark",l=t==="light"||(t==="system"&&matchMedia("(prefers-color-scheme: light)").matches);document.documentElement.setAttribute("data-theme",l?"light":"dark");if(l){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content","#F5F4F9");}}catch(e){}})();</script>
-<link rel="stylesheet" href="/assets/app.css?v=dff5d8f30a">
+<link rel="stylesheet" href="/assets/app.css?v=9b8043243d">
 <meta name="twitch-client-id" content="nqfd84n7ko17trxgtfepmsw5ys3375">
-<meta name="changelog-latest" content="2026-11-20.0169">
+<meta name="changelog-latest" content="2026-11-24.0172">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://badgedatabase.com/"}, {"@type": "ListItem", "position": 2, "name": "Global Badges", "item": "https://badgedatabase.com/badges/"}, {"@type": "ListItem", "position": 3, "name": "TwitchCon 2022 - Amsterdam"}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "TwitchCon 2022 - Amsterdam – Twitch Global Badge", "description": "TwitchCon 2022 - Amsterdam is a Twitch global badge. Attended TwitchCon Amsterdam 2022", "url": "https://badgedatabase.com/badges/twitchconEU2022/", "primaryImageOfPage": {"@type": "ImageObject", "url": "https://static-cdn.jtvnw.net/badges/v1/e4744003-50b7-4eb8-9b47-a7b1616a30c6/3"}, "isPartOf": {"@type": "WebSite", "name": "Badge Database", "url": "https://badgedatabase.com/"}}</script>
 </head>
@@ -85,27 +85,18 @@
       </div>
     </div>
     </div>
+    <header class="topbar" id="topbar"><div class="theme-sw" id="themeTop" role="group" aria-label="Theme"></div><div class="tu" id="topUser"></div></header>
   </aside>
 
-  <header class="topbar" id="topbar"><div class="theme-sw" id="themeTop" role="group" aria-label="Theme"></div><div class="tu" id="topUser"></div></header>
   <main id="main">
     <!-- HOME -->
     <section data-page="home" hidden>
       <div class="hero2">
         <div class="hero2-l">
-          <div class="brandrow">
-            <img class="biglogo" src="/logo-192.png" srcset="/logo-192.png 1x, /logo-320.png 2x" width="108" height="108" alt="Badge Database logo">
-            <div class="wm"><span>Badge</span><span>Database</span></div>
-          </div>
-          <h1 class="hero2-h">Every Twitch badge.<br>Exactly when to get it.</h1>
-          <p class="lead">Live countdowns for active badge drops, upcoming events before they start, and the complete global badge archive — <b id="hArchive">370</b> sets and counting.</p>
+          <p class="eyebrow"><span class="live-dot"></span>Live Twitch badge tracker</p>
+          <h1 class="hero2-h">Every Twitch badge.<br><span>Exactly when to get it.</span></h1>
+          <p class="lead">Live countdowns for active badge drops, upcoming events before they start, and the complete global badge archive, <b id="hArchive">370</b> sets and counting.</p>
           <div class="hero2-cta"><a class="btn" href="/timeline/">View timeline</a><a class="btn ghost" href="/badges/">Browse all badges</a></div>
-          <div class="hero2-stats">
-            <a class="hs live" href="/timeline/" data-jump="evLive" data-evf="all"><span class="hs-l"><i></i>Active now</span><b id="sLive">0</b><small>to earn right now</small></a>
-            <a class="hs soon" href="/timeline/" data-jump="evSoon" data-evf="all"><span class="hs-l"><i></i>Upcoming</span><b id="sSoon">0</b><small>dates known</small></a>
-            <a class="hs tba" href="/timeline/" data-jump="evTba" data-evf="all"><span class="hs-l"><i></i>Date TBA</span><b id="sTba">0</b><small>no dates yet</small></a>
-            <a class="hs free" href="/timeline/" data-jump="evLive" data-evf="free"><span class="hs-l"><i></i>Free today</span><b id="sFree">0</b><small>no sub needed</small></a>
-          </div>
         </div>
         <div class="hero2-r">
           <div class="stream-card">
@@ -114,6 +105,13 @@
             <div class="sc-foot"><span>Live countdowns for every active badge, 24/7.</span><a class="btn ghost" href="https://www.twitch.tv/subs/badge_db" target="_blank" rel="noopener">Subscribe</a></div>
           </div>
         </div>
+      </div>
+
+      <div class="hero2-stats">
+        <a class="hs live" href="/timeline/" data-jump="evLive" data-evf="all"><span class="hs-l"><i></i>Active now</span><b id="sLive">0</b><small>to earn right now</small></a>
+        <a class="hs soon" href="/timeline/" data-jump="evSoon" data-evf="all"><span class="hs-l"><i></i>Upcoming</span><b id="sSoon">0</b><small>dates known</small></a>
+        <a class="hs tba" href="/timeline/" data-jump="evTba" data-evf="all"><span class="hs-l"><i></i>Date TBA</span><b id="sTba">0</b><small>no dates yet</small></a>
+        <a class="hs free" href="/timeline/" data-jump="evLive" data-evf="free"><span class="hs-l"><i></i>Free today</span><b id="sFree">0</b><small>no sub needed</small></a>
       </div>
 
       <div class="lastc" id="lastChance" hidden></div>
@@ -596,6 +594,6 @@
   </div>
 </div>
 
-<script src="/assets/app.js?v=dff5d8f30a"></script>
+<script src="/assets/app.js?v=9b8043243d"></script>
 </body>
 </html>
