@@ -1323,5 +1323,32 @@
   "set": "jordan-x-space-jam",
   "replied": "discord only",
   "posted": "2026-11-20T10:57:25+00:00"
+ },
+ "ending:payday-3": {
+  "tweet": "",
+  "title": "Joy",
+  "set": "joy",
+  "replied": "discord only",
+  "posted": "2026-11-26T12:00:56+00:00"
+ },
+ "xending:payday-3": {
+  "tweet": "2125922759012241730",
+  "title": "Joy",
+  "set": "joy",
+  "sets": [
+   "joy",
+   "clover",
+   "kawaiidozer",
+   "pearl"
+  ],
+  "titles": [
+   "Joy",
+   "Clover",
+   "KawaiiDozer",
+   "Pearl"
+  ],
+  "posted": "2026-11-26T12:00:58+00:00",
+  "replied": true,
+  "reply": "Objective, channels and the exact end time: {url}"
  }
 }
